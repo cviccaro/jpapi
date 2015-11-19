@@ -12,10 +12,22 @@
 */
 
 $app->get('/', function () use ($app) {
-    return $app->welcome();
+	d($app);
+    return '';
 });
 
 $app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers\Auth'], function($app) {
     $app->post('authenticate', 'AuthController@authenticate');
     $app->get('authenticate/refresh','AuthController@refresh');
+});
+
+/**
+ * Routes for resource blog
+ */
+$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
+	$app->get('blog', 'BlogsController@all');
+	$app->get('blog/{id}', 'BlogsController@get');
+	$app->post('blog', 'BlogsController@add');
+	$app->put('blog/{id}', 'BlogsController@put');
+	$app->delete('blog/{id}', 'BlogsController@remove');
 });
