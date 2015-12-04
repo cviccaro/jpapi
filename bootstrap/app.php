@@ -86,8 +86,10 @@ $app->middleware([
 */
 
 $app->register('Tymon\JWTAuth\Providers\JWTAuthServiceProvider');
+$app->register('App\Providers\AppServiceProvider');
 
 //Development
+$app->register('App\Providers\CommandServiceProvider');
 $app->register('Wn\Generators\CommandsServiceProvider');
 $app->register('Conner\Kint\KintServiceProvider');
 $app->register('Vluzrmos\Tinker\TinkerServiceProvider');
