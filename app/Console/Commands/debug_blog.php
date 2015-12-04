@@ -2,6 +2,7 @@
 namespace App\Console\Commands;
 
 use App\Blog;
+use App\Image;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -29,16 +30,11 @@ class DebugBlogCommand extends Command {
      */
     public function fire()
     {
-      $blog = Blog::find(1);
-      $matches = [];
-      $pattern = '/<img[\s\w]?src=[\'|\"]([^\'|\"]*)[\'|\"]/';
-      preg_match_all($pattern, $blog->body, $matches);
-  
-      $replaced = preg_replace_callback($pattern, function($matches) {
-        $this->info('Matches: ' . print_r($matches, true));
-        return str_replace($matches[1], '/images/' . basename($matches[1]), $matches[0]);
-      }, $blog->body);
-      $this->info($replaced);
+      $img = Image::where('path', 'asdasdasd')->first();
+      if (!$img) {
+        $this->info('no image for path asdasdasd');
+      }
+      //$this->info(print_r($img, true));
       // if (!empty($matches)) {
       //   foreach($matches[1] as $url) {
       //       if (!empty($url)) {

@@ -12,12 +12,12 @@
 */
 
 $app->get('/', function () use ($app) {
-	d($app);
     return '';
 });
 
+
 $app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers\Auth'], function($app) {
-    $app->post('authenticate', 'AuthController@authenticate');
+    $app->post('authenticate', 'AuthKeyController@authenticate');
     $app->get('authenticate/refresh','AuthController@refresh');
 });
 
@@ -30,4 +30,15 @@ $app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middlewa
 	$app->post('blog', 'BlogsController@add');
 	$app->put('blog/{id}', 'BlogsController@put');
 	$app->delete('blog/{id}', 'BlogsController@remove');
+});
+
+/**
+ * Routes for resource staff
+ */
+$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
+	$app->get('staff', 'StaffController@all');
+	$app->get('staff/{id}', 'StaffController@get');
+	$app->post('staff', 'StaffController@add');
+	$app->put('staff/{id}', 'StaffController@put');
+	$app->delete('staff/{id}', 'StaffController@remove');
 });

@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Symfony\Component\Console\Input\InputOption;
 
 class PullBlogsCommand extends Command {
 
@@ -19,7 +20,7 @@ class PullBlogsCommand extends Command {
      *
      * @var string
      */
-    protected $description = 'Run my command.';
+    protected $description = 'Import blogs from jpenterprises.com';
 
     /**
      * Execute the console command.
@@ -27,14 +28,20 @@ class PullBlogsCommand extends Command {
      * @return void
      */
     public function fire()
-    {
+    {   
+        $truncate = $this->option('truncate') || FALSE;
+        
         DB::table('blogs')->truncate();
         $this->info('Emptying the blogs table');
 
-        DB::table('jobs')->truncate();
-        DB::table('images')->truncate();     
+        if ($truncate) {
+            DB::table('jobs')->truncate();
+            $this->info('Emptying the jobs table');
+            DB::table('images')->truncate();
+            $this->info('Emptying the images table');
+        }
 
-        $blogs = (array)json_decode(file_get_contents('http://www.jpenterprises.com/jp_export/blogs'));
+        $blogs = (array)json_decode(file_get_contents('http://www.jpenterprises.com/jp_export/blog'));
         $this->info('Just downloaded ' . count($blogs) . ' blogs');
 
         $this->info('Pushing to BlogService Queue');
@@ -42,6 +49,12 @@ class PullBlogsCommand extends Command {
             Queue::push('App\Queue\BlogService', $blog);
         }
         $this->info(count($blogs) . ' jobs created in BlogService Queue.  Run php artisan queue:work --daemon to import all blogs.');
+    }
+
+    public function getOptions() {
+        return [
+            ['truncate', 'truncate', InputOption::VALUE_NONE, 'Truncate the jobs and images table?']
+        ];
     }
 
 }
