@@ -17,16 +17,18 @@ $app->get('/', function () use ($app) {
 
 
 $app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers\Auth'], function($app) {
-    $app->post('authenticate', 'AuthKeyController@authenticate');
+    $app->post('authenticate', 'AuthController@authenticate');
     $app->get('authenticate/refresh','AuthController@refresh');
 });
 
 /**
  * Routes for resource blog
  */
-$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
+$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers'], function($app) {
 	$app->get('blog', 'BlogsController@all');
 	$app->get('blog/{id}', 'BlogsController@get');
+});
+$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
 	$app->post('blog', 'BlogsController@add');
 	$app->put('blog/{id}', 'BlogsController@put');
 	$app->delete('blog/{id}', 'BlogsController@remove');
@@ -35,9 +37,11 @@ $app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middlewa
 /**
  * Routes for resource staff
  */
-$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
+$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers'], function($app) {
 	$app->get('staff', 'StaffController@all');
 	$app->get('staff/{id}', 'StaffController@get');
+});
+$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
 	$app->post('staff', 'StaffController@add');
 	$app->put('staff/{id}', 'StaffController@put');
 	$app->delete('staff/{id}', 'StaffController@remove');

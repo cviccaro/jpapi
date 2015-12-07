@@ -17,18 +17,18 @@ class AuthController extends Controller {
 
 	public function authenticate(Request $request) {
 
-		$credentials = $request->only('name', 'password');
+		$credentials = $request->only('email', 'password');
 
 		try {
 			if (! $token = JWTAuth::attempt($credentials)) {
-				return response()->json(['error' => 'invalid_credentials'], 401);
+				return response(['error' => 'invalid_credentials', 'creds' => $credentials], 401, ['Access-Control-Allow-Origin' => '*']);
 			}
 		}
 		catch (JWTException $e) {
 			return response()->json(['error' => 'could_not_create_token'], 500);
 		}
 
-		return response()->json(compact('token'));
+		return response(compact('token'), 200);
 	}
 
 	public function refresh(Request $request){
@@ -38,7 +38,7 @@ class AuthController extends Controller {
 	     try {
 	         // attempt to refresh token for the user
 	         if (! $token = JWTAuth::parseToken('bearer','authorization', $oldtoken)->refresh()) {
-	             return response()>json(['error' => 'invalid_token'], 401);
+	             return response(['error' => 'invalid_credentials', 'creds' => $credentials], 401, ['Access-Control-Allow-Origin' => '*']);
 	         }
 	     } 
 	     catch (JWTException $e) {
