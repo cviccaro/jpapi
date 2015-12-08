@@ -16,7 +16,7 @@ $app->get('/', function () use ($app) {
 });
 
 
-$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers\Auth'], function($app) {
+$app->group(['namespace' => 'App\Http\Controllers\Auth'], function($app) {
     $app->post('authenticate', 'AuthController@authenticate');
     $app->get('authenticate/refresh','AuthController@refresh');
 });
@@ -24,11 +24,11 @@ $app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers\Auth'], fun
 /**
  * Routes for resource blog
  */
-$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers'], function($app) {
+$app->group(['namespace' => 'App\Http\Controllers'], function($app) {
 	$app->get('blog', 'BlogsController@all');
 	$app->get('blog/{id}', 'BlogsController@get');
 });
-$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
+$app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
 	$app->post('blog', 'BlogsController@add');
 	$app->put('blog/{id}', 'BlogsController@put');
 	$app->delete('blog/{id}', 'BlogsController@remove');
@@ -37,12 +37,20 @@ $app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middlewa
 /**
  * Routes for resource staff
  */
-$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers'], function($app) {
+$app->group(['namespace' => 'App\Http\Controllers'], function($app) {
 	$app->get('staff', 'StaffController@all');
 	$app->get('staff/{id}', 'StaffController@get');
 });
-$app->group(['prefix' => 'api', 'namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
+$app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
 	$app->post('staff', 'StaffController@add');
 	$app->put('staff/{id}', 'StaffController@put');
 	$app->delete('staff/{id}', 'StaffController@remove');
+});
+
+/** 
+ * Routes for Metadata
+ */
+$app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
+	$app->get('meta/blog/category', 'BlogsController@getCategories');
+	$app->get('meta/columns/{table_name}', 'MetaController@getColumns');
 });
