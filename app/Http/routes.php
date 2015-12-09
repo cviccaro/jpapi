@@ -54,3 +54,5 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'],
 	$app->get('meta/blog/category', 'BlogsController@getCategories');
 	$app->get('meta/columns/{table_name}', 'MetaController@getColumns');
 });
+
+$app->get('images/{path}', ['namespace' => 'App\Http\Controllers', 'uses' => 'ImageController@get']);

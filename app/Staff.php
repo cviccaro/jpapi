@@ -2,6 +2,7 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\URL;
 
 class Staff extends Model {
 
@@ -16,7 +17,7 @@ class Staff extends Model {
 	
 	public function getImageAttribute() {
 		if ($this->attributes['image'] !== NULL) {
-			return Image::where('id', $this->attributes['image'])->first()->path;	
+			return URL::to('images/' . basename(Image::where('id', $this->attributes['image'])->first()->path));
 		}
 		return $this->attributes['image'];
 	}
