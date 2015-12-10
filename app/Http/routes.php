@@ -26,6 +26,7 @@ $app->group(['namespace' => 'App\Http\Controllers\Auth'], function($app) {
  */
 $app->group(['namespace' => 'App\Http\Controllers'], function($app) {
 	$app->get('blog', 'BlogsController@all');
+	$app->get('blog/recent', 'BlogsController@recent');
 	$app->get('blog/{id}', 'BlogsController@get');
 });
 $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
@@ -45,6 +46,19 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'],
 	$app->post('staff', 'StaffController@add');
 	$app->put('staff/{id}', 'StaffController@put');
 	$app->delete('staff/{id}', 'StaffController@remove');
+});
+
+/**
+ * Routes for resource work
+ */
+$app->group(['namespace' => 'App\Http\Controllers'], function($app) {
+	$app->get('work', 'WorkController@all');
+	$app->get('work/{id}', 'WorkController@get');
+});
+$app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
+	$app->post('work', 'WorkController@add');
+	$app->put('work/{id}', 'WorkController@put');
+	$app->delete('work/{id}', 'WorkController@remove');
 });
 
 /** 

@@ -1,6 +1,7 @@
 <?php 
 namespace App\Http\Controllers;
 
+use App\Blog;
 use Illuminate\Support\Facades\DB;
 
 class BlogsController extends Controller {
@@ -15,6 +16,10 @@ class BlogsController extends Controller {
 			$carry[$item->id] = $item->name;
 			return $carry;
 		}, []);
+	}
+
+	public function recent() {
+		return Blog::whereNotNull('image')->orderBy('created_at', 'desc')->take(3)->get();
 	}
 
 }
