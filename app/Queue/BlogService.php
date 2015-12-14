@@ -50,7 +50,7 @@ class BlogService {
 					}
 				}
 				$body = preg_replace_callback($pattern, function($m) {
-				  return str_replace($m[1], '/images/' . basename($m[1]), $m[0]);
+				  return str_replace($m[1], '{{' . basename($m[1]) . '}}', $m[0]);
 				}, $body);
 			}
 		}

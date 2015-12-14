@@ -6,6 +6,7 @@ use App\Image;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\URL;
 
 class DebugBlogCommand extends Command {
 
@@ -30,10 +31,18 @@ class DebugBlogCommand extends Command {
      */
     public function fire()
     {
-      $img = Image::where('path', 'asdasdasd')->first();
-      if (!$img) {
-        $this->info('no image for path asdasdasd');
-      }
+      $_SERVER['HTTP_HOST'] = 'http://omg';
+      $blog = Blog::where('id', 1)->first();
+
+      $blog->body = preg_replace_callback('/{{[^}]*}}/', function($matches) {
+        $path = 'resources/assets/images/' . str_replace(['{{','}}'], ['', ''], $matches[0]);
+        $img = Image::where('path', $path)->first();
+        return URL::to('images/' . basename($img['path']));
+      }, $blog->body);
+
+      $this->info($blog->body);
+      $this->info($blog->image);
+      $this->info(print_r($_SERVER, TRUE));
       //$this->info(print_r($img, true));
       // if (!empty($matches)) {
       //   foreach($matches[1] as $url) {

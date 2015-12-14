@@ -25,4 +25,14 @@ class Blog extends Model {
 		}
 		return $this->attributes['image'];
 	}
+
+	public function getBodyAttribute() {
+		$body = $this->attributes['body'];
+		$body = preg_replace_callback('/{{[^}]*}}/', function($matches) {
+		  $path = 'resources/assets/images/' . str_replace(['{{','}}'], ['', ''], $matches[0]);
+		  $img = Image::where('path', $path)->first();
+		  return URL::to('images/' . basename($img['path']));
+		}, $body);
+		return $body;
+	}
 }
