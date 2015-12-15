@@ -17,7 +17,7 @@ class Blog extends Model {
 	];
 
 	public function getCategoryAttribute() {
-		return BlogCategory::where('id', $this->attributes['category'])->first()->name;
+		return BlogCategory::where('id', $this->attributes['category'])->first();
 	}
 	public function getImageAttribute() {
 		if ($this->attributes['image'] !== NULL) {
