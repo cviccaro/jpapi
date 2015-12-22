@@ -1,5 +1,7 @@
 <?php
 
+use App\ImageBuilder;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -12,6 +14,8 @@
 */
 
 $app->get('/', function () use ($app) {
+	$builder = ImageBuilder::test();
+	d($builder);
     return '';
 });
 
@@ -64,9 +68,14 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'],
 /** 
  * Routes for Metadata
  */
-$app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
-	$app->get('meta/blog/category', 'BlogsController@getCategories');
-	$app->get('meta/columns/{table_name}', 'MetaController@getColumns');
-});
+$app->get('meta/blog/category', 'BlogsController@getCategories');
 
+/**
+ * Images
+ */
+$app->post('upload', [
+	'middleware' => 'jwt.auth',
+	'namespace' => 'App\Http\Controllers', 
+	'uses' => 'ImageController@upload'
+]);
 $app->get('images/{path}', ['namespace' => 'App\Http\Controllers', 'uses' => 'ImageController@get']);
