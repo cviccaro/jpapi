@@ -22,8 +22,15 @@ class BlogsController extends Controller {
 		}, []);
 	}
 
-	public function recent() {
-		return Blog::whereNotNull('image')->orderBy('created_at', 'desc')->take(3)->get();
+	public function recent(Request $request) {
+		$take = $request->input('take', 3);
+		$skip = $request->input('skip', 0);
+		$blog_count = Blog::whereNotNull('image')->count();
+		$blogs = Blog::whereNotNull('image')->orderBy('created_at', 'desc')->take($take)->skip($skip)->get();
+		return $this->respond('done', [
+			'blogs' => $blogs,
+			'remaining' => max(0, $blog_count - $take - $skip)
+		]);
 	}
 	/**
 	 * Overrides RESTActions::add().

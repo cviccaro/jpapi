@@ -1,5 +1,7 @@
 <?php
 
+use App\Blog;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -11,7 +13,8 @@
 |
 */
 
-$app->get('/', function () use ($app) {;
+$app->get('/', function () use ($app) {
+	d(Blog::whereNotNull('image')->count());
     return '';
 });
 
