@@ -26,7 +26,19 @@ class WorkTableSeeder extends Seeder
             'TANDBERG Misc. Product Collateral' => 'Cisco',
             'Showtime Catalog' => 'Cicci',
             'Cable Tie Installation Tool Packaging' => 'Thomas & Betts',
-            'Fall Military Catalog' => 'Galls'
+            'Fall Military Catalog' => 'Galls',
+            'Sample Project 1' => 'Kennametal',
+            'Sample Project 2' => 'Adobe',
+            'Sample Project 3' => 'Cisco',
+            'Sample Project 4' => 'Cicci',
+            'Sample Project 5' => 'Thomas & Betts',
+            'Sample Project 6' => 'Galls',
+            'Sample Project 7' => 'Kennametal',
+            'Sample Project 8' => 'Adobe',
+            'Sample Project 9' => 'Cisco',
+            'Sample Project 10' => 'Cicci',
+            'Sample Project 11' => 'Thomas & Betts',
+            'Sample Project 12' => 'Galls',
         );
 
         foreach($seeds as $title => $client) {

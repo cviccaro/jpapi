@@ -56,6 +56,7 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'],
  */
 $app->group(['namespace' => 'App\Http\Controllers'], function($app) {
 	$app->get('work', 'WorkController@all');
+	$app->get('work/recent', 'WorkController@recent');
 	$app->get('work/{id}', 'WorkController@get');
 });
 $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.auth'], function($app) {
