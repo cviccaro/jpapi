@@ -24,17 +24,7 @@ class Image extends Model {
 
 		$filename = $file->getClientOriginalName();
 		if (static::named($filename)->first() !== NULL) {
-			$name_parts = explode('.',$filename);
-			$extension = array_pop($name_parts);
-			$continue = true;
-			$i = 0;
-			while ($continue) {
-				$candidate_name = implode('.', $name_parts) . '_' . $i++ . '.' . $extension;
-				if (static::named($candidate_name)->first() === NULL) {
-					$continue = false;
-					$filename = $candidate_name;
-				}
-			}
+			$filename = static::findCandidateFilename($filename);
 		}
 
 		if ($moved = $file->move($destination, $filename)) {
@@ -44,5 +34,36 @@ class Image extends Model {
 		}
 
 		return FALSE;
+	}
+
+	public static function createFromBase64($filename, $base64_string) {
+		$filename = static::findCandidateFilename($filename);
+
+		$img_data = explode(',', $base64_string);
+		$dir = 'resources/assets/images';
+		$realpath = realpath(base_path() . '/' . $dir) . '/' . $filename;
+		$path = $dir . '/' . $filename;
+
+		if (file_put_contents($realpath, base64_decode($img_data[1]))) {
+			return static::create([
+				'path' => $path
+			]);
+		}
+		return FALSE;
+	}
+
+	public static function findCandidateFilename($filename) {
+		$name_parts = explode('.',$filename);
+		$extension = array_pop($name_parts);
+		$continue = true;
+		$i = 0;
+		while ($continue) {
+			$candidate_name = implode('.', $name_parts) . '_' . $i++ . '.' . $extension;
+			if (static::named($candidate_name)->first() === NULL) {
+				$continue = false;
+				$filename = $candidate_name;
+			}
+		}
+		return $filename;
 	}
 }
