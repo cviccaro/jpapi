@@ -50,13 +50,11 @@ class AuthController extends Controller {
 
 	 public function check(Request $request) {
 	 	try {
-	 		$token = $request->header('Authorization');
 	 		$parsed = JWTAuth::parseToken();
-	 		return response()->json(['token' => $token, 'parsed' => $parsed],200);
+	 		return response()->json(['success' => $parsed->getPayload()['exp'] - time()],200);
 	 	}
 	 	catch (JWTException $e) {
-	 		return response()->json(['error' => 'no_token_found'], 200);
+	 		return response()->json(['error' => $e->getMessage()], 401, ['Access-Control-Allow-Origin' => '*']);
 	 	}
-	 	//$parsed = JWTAuth::parseToken('bearer', 'authorization', $oldtoken);
 	 }
 }
