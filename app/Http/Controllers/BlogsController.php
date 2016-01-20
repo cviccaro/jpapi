@@ -21,7 +21,16 @@ class BlogsController extends Controller {
 			return $carry;
 		}, []);
 	}
-
+	public function all(Request $request) {
+		$take = $request->input('take', 9);
+		$skip = $request->input('skip', 0);
+		$blog_count = Blog::all()->count();
+		$blogs = Blog::orderBy('created_at', 'desc')->take($take)->skip($skip)->get();
+		return $this->respond('done', [
+			'blogs' => $blogs,
+			'remaining' => max(0, $blog_count - $take - $skip)
+		]);
+	}
 	public function recent(Request $request) {
 		$take = $request->input('take', 3);
 		$skip = $request->input('skip', 0);

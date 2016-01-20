@@ -1,6 +1,7 @@
 <?php namespace App\Http\Controllers;
 
 use App\Image;
+use Illuminate\Http\Request;
 
 
 class StaffController extends Controller {
@@ -21,7 +22,7 @@ class StaffController extends Controller {
 
 		$this->processImage($request, $data);
 
-		$staff = Staff::create($data);
+		$staff = $m::create($data);
 
 		return $this->respond('done', $staff);
 	}
