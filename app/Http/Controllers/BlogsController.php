@@ -22,7 +22,7 @@ class BlogsController extends Controller {
 		}, []);
 	}
 	public function all(Request $request) {
-		$take = $request->input('take', 9);
+		$take = $request->input('take', 99999);
 		$skip = $request->input('skip', 0);
 		$blog_count = Blog::all()->count();
 		$blogs = Blog::orderBy('created_at', 'desc')->take($take)->skip($skip)->get();
