@@ -16,9 +16,12 @@ class StaffService {
 
 		// Process image from field
 		$image = null;
-		if (isset($data['image'])) {
-			$image = $this->makeImage($data['image']);
-		}
+		// if (isset($data['image'])) {
+		// 	$image = $this->makeImage($data['image']);
+		// }
+		// else {
+		$image = $this->makeImage(['filename' => 'staff-placeholder-' . rand(1,5) . '_0.jpg']);
+		// }
 
 		$staff = Staff::create([
 			'first_name' => $first_name,

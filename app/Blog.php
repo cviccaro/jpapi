@@ -3,12 +3,13 @@ namespace App;
 
 use App\BlogCategory;
 use App\Image;
+use App\Site;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\URL;
 
 class Blog extends Model {
 
-	protected $fillable = ["title", "description", "body", "category", "image", "created_at", "updated_at"];
+	protected $fillable = ["title", "description", "body", "category", "image", "site", "created_at", "updated_at"];
 
 	protected $dates = [];
 
@@ -34,5 +35,9 @@ class Blog extends Model {
 		  return URL::to('images/' . basename($img['path']));
 		}, $body);
 		return $body;
+	}
+
+	public function getSiteAttribute() {
+		return Site::where('id', $this->attributes['site'])->first()->name;
 	}
 }

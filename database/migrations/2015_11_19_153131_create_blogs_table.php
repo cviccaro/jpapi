@@ -14,6 +14,7 @@ class CreateBlogsTable extends Migration
             $table->string('description')->nullable();
             $table->text('body');
             $table->string('category')->nullable();
+            $table->string('site')->nullable();
             $table->string('image')->nullable();
             // Constraints declaration
             $table->timestamps();

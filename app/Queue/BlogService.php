@@ -5,9 +5,13 @@ namespace App\Queue;
 use App\Blog;
 use App\BlogCategory;
 use App\Image;
+use Faker\Factory;
 
 class BlogService {
+
 	public function fire($job, $data) {
+		$factory = \Faker\Factory::create();
+
 		// Process category
 		$category = $data['category'];
 		$category_id = NULL;
@@ -28,6 +32,13 @@ class BlogService {
 		$image = null;
 		if (isset($data['image'])) {
 			$image = $this->makeImage($data['image']);
+		}
+		else {
+			$image_path = $factory->image('resources/assets/images', 340, 206);
+			$image = Image::create([
+			    'path' => $image_path
+			]);
+			$image = $image->id;
 		}
 
 		// Process body for images to fetch
@@ -60,6 +71,7 @@ class BlogService {
 			'body' => $body,
 			'category' => $category_id,
 			'image' => $image,
+			'site' => rand(1,3),
 			'created_at' => $data['created_at'],
 			'updated_at' => $data['updated_at']
 		]);
