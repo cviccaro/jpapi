@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\URL;
 
 class Blog extends Model {
 
-	protected $fillable = ["title", "description", "body", "category", "image", "site", "created_at", "updated_at"];
+	protected $fillable = ["title", "identifier", "description", "body", "category", "author", "image", "site", "created_at", "updated_at"];
 
 	protected $dates = [];
 
@@ -39,5 +39,11 @@ class Blog extends Model {
 
 	public function getSiteAttribute() {
 		return Site::where('id', $this->attributes['site'])->first()->name;
+	}
+
+	public static function createIdentifier($string) {
+		$stripped = str_replace('_', '-', preg_replace("/[^a-z0-9\_\-\s]+/i", "", $string));
+		$hypenated = strtolower(implode('-',explode(' ', $stripped)));
+		return $hypenated;
 	}
 }

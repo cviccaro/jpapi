@@ -20,7 +20,8 @@ class StaffService {
 		// 	$image = $this->makeImage($data['image']);
 		// }
 		// else {
-		$image = $this->makeImage(['filename' => 'staff-placeholder-' . rand(1,5) . '_0.jpg']);
+		$filename = 'staff-placeholder-' . rand(1,5) . '_0.jpg';
+		$image = $this->makeImage(['filename' => $filename, 'url' => 'resources/assets/images/' . $filename]);
 		// }
 
 		$staff = Staff::create([
@@ -48,8 +49,17 @@ class StaffService {
 		else {
 			$make = true;
 		}
-
-		if ($make) {
+		if (file_exists($realpath)) {
+			if ($first = Image::where('path', $path)->first()) {
+				$img = $first;
+			}
+			else {
+				$img = Image::create([
+					'path' => $path
+				]);
+			}
+		}
+		else if ($make) {
 			$data = file_get_contents($image['url']);
 
 			file_put_contents($realpath, $data);

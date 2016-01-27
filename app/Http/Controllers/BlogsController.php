@@ -53,6 +53,8 @@ class BlogsController extends Controller {
 		$this->processImage($request, $data);
 		$this->processCategory($request, $data);
 
+		unset($data['site']);
+
 		$blog = Blog::create($data);
 
 		return $this->respond('done', $blog);
@@ -80,10 +82,22 @@ class BlogsController extends Controller {
 
 		$data = $request->all();
 
+		unset($data['site']);
+
 		$this->processImage($request, $data);
 		$this->processCategory($request, $data);
 
 		$model->update($data);
+		return $this->respond('done', $model);
+	}
+
+	public function getFromIdentifier(Request $request, $string) {
+		$m = self::MODEL;
+
+		$model = $m::where('identifier', $string)->first();
+		if(is_null($model)){
+			return 'OMFG';
+		}
 		return $this->respond('done', $model);
 	}
 

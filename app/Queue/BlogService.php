@@ -65,11 +65,18 @@ class BlogService {
 				}, $body);
 			}
 		}
+
+		$identifier = Blog::createIdentifier($data['title']);
+		
+		$authors = array('Jane Doe', 'John Doe');
+
 		Blog::create([
 			'title' => $data['title'],
+			'identifier' => $identifier,
 			'description' => $data['body']['summary'],
 			'body' => $body,
 			'category' => $category_id,
+			'author' => $authors[rand(0,1)],
 			'image' => $image,
 			'site' => rand(1,3),
 			'created_at' => $data['created_at'],
