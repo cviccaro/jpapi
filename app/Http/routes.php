@@ -33,6 +33,7 @@ $app->group(['namespace' => 'App\Http\Controllers'], function($app) {
 	$app->get('blog/recent', 'BlogsController@recent');
 	$app->get('blog/{id}', 'BlogsController@get');
 	$app->get('blog-from-identifier/{id}', 'BlogsController@getFromIdentifier');
+	$app->get('blog-related/{id}', 'BlogsController@getRelated');
 });
 $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.refresh'], function($app) {
 	$app->post('blog', 'BlogsController@add');

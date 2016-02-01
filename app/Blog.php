@@ -46,4 +46,9 @@ class Blog extends Model {
 		$hypenated = strtolower(implode('-',explode(' ', $stripped)));
 		return $hypenated;
 	}
+
+	public function scopeCategorized($query, $name) {
+		$category = BlogCategory::where('name', $name)->first();
+		return $query->where('category', $category->id)->get();
+	}
 }

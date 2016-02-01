@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 
 use App\Blog;
 use App\BlogCategory;
+use App\Site;
 use App\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -96,9 +97,22 @@ class BlogsController extends Controller {
 
 		$model = $m::where('identifier', $string)->first();
 		if(is_null($model)){
-			return 'OMFG';
+			return $this->respond('not_found');
 		}
 		return $this->respond('done', $model);
+	}
+
+
+	public function getRelated(Request $request, $id) {
+		$m = self::MODEL;
+		$model = $m::find($id);
+		if(is_null($model)){
+			return $this->respond('not_found');
+		}
+		$max = $request->input('max', 3);
+		$site = Site::where('name', $model->site)->first();
+		$models = Blog::where('id', '!=', $id)->where('site', $site->id)->take($max)->get();
+		return $this->respond('done', $models);
 	}
 
 
