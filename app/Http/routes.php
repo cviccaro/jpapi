@@ -1,6 +1,7 @@
 <?php
 
 use App\Blog;
+use App\Site;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,7 +15,19 @@ use App\Blog;
 */
 
 $app->get('/', function () use ($app) {
-	d(Blog::whereNotNull('image')->count());
+	$take = 10;
+	$skip = 0;
+	$filter_json = '{
+		"site": "creative"
+	}';
+	$filter = json_decode($filter_json);
+	$site = Site::where('name', $filter->site)->first();
+	$blogs = Blog::orderBy('created_at', 'desc');
+	if (1 == 1) {
+		$blogs = $blogs->where('site', $site->id);
+	}
+	$blogs = $blogs->take($take)->skip($skip)->get();
+	d($blogs);
     return '';
 });
 
