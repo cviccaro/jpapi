@@ -1,10 +1,8 @@
-<?php 
+<?php
 namespace App\Http\Controllers;
 
 use App\Blog;
-use App\BlogCategory;
 use App\Site;
-use App\Image;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,7 +15,7 @@ class BlogsController extends Controller {
 
 	public function getCategories() {
 		$categories = DB::select('select id, name from blog_categories');
-		return array_reduce($categories, function($carry, $item) {
+		return array_reduce($categories, function ($carry, $item) {
 			$carry[$item->id] = $item->name;
 			return $carry;
 		}, []);
@@ -29,27 +27,28 @@ class BlogsController extends Controller {
 		$blogs = Blog::orderBy('created_at', 'desc')->take($take)->skip($skip)->get();
 		return $this->respond('done', [
 			'blogs' => $blogs,
-			'remaining' => max(0, $blog_count - $take - $skip)
+			'remaining' => max(0, $blog_count - $take - $skip),
 		]);
 	}
 	public function recent(Request $request) {
 		$take = $request->input('take', 3);
 		$skip = $request->input('skip', 0);
-		
+
 		$blogs = Blog::orderBy('created_at', 'desc');
+		$blog_count = Blog::all()->count();
 		if ($request->has('site')) {
 			$site = Site::where('name', $request->input('site'))->first();
 			$blogs = $blogs->where('site', $site->id);
+			$blog_count = Blog::all()->where('site', $site->name)->count();
 		}
 		$blogs = $blogs
-					->take($take)
-					->skip($skip)
-					->get();
-		$blog_count = Blog::all()->count();
+			->take($take)
+			->skip($skip)
+			->get();
 
 		return $this->respond('done', [
 			'blogs' => $blogs,
-			'remaining' => max(0, $blog_count - $take - $skip)
+			'remaining' => max(0, $blog_count - $take - $skip),
 		]);
 	}
 	/**
@@ -81,13 +80,12 @@ class BlogsController extends Controller {
 	/**
 	 * Overrides RESTActions::put().
 	 */
-	public function put(Request $request, $id)
-	{
+	public function put(Request $request, $id) {
 		$m = self::MODEL;
 		$this->validate($request, $m::$rules);
 		$model = $m::find($id);
 
-		if(is_null($model)){
+		if (is_null($model)) {
 			return $this->respond('not_found');
 		}
 
@@ -106,17 +104,16 @@ class BlogsController extends Controller {
 		$m = self::MODEL;
 
 		$model = $m::where('identifier', $string)->first();
-		if(is_null($model)){
+		if (is_null($model)) {
 			return $this->respond('not_found');
 		}
 		return $this->respond('done', $model);
 	}
 
-
 	public function getRelated(Request $request, $id) {
 		$m = self::MODEL;
 		$model = $m::find($id);
-		if(is_null($model)){
+		if (is_null($model)) {
 			return $this->respond('not_found');
 		}
 		$max = $request->input('max', 3);
@@ -124,6 +121,5 @@ class BlogsController extends Controller {
 		$models = Blog::where('id', '!=', $id)->where('site', $site->id)->take($max)->get();
 		return $this->respond('done', $models);
 	}
-
 
 }
