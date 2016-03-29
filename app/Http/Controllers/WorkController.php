@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Http\Controllers;
 
@@ -18,8 +18,18 @@ class WorkController extends Controller {
 		return $this->respond('done', [
 			'work' => $work,
 			'remaining' => max(0, $count - 6 - $skip),
-			'total' => $count
+			'total' => $count,
 		]);
+	}
+
+	public function getFromUri(Request $request, $string) {
+		$m = self::MODEL;
+
+		$model = $m::where('uri', $string)->first();
+		if (is_null($model)) {
+			return $this->respond('not_found');
+		}
+		return $this->respond('done', $model);
 	}
 
 }
