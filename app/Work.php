@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App;
 
 use App\Client;
@@ -8,14 +8,15 @@ use Illuminate\Support\Facades\URL;
 
 class Work extends Model {
 
-	protected $fillable = ["title", "body", "client", "image"];
+	protected $fillable = ["uri", "title", "body", "client", "image"];
 
 	protected $dates = [];
 
 	public static $rules = [
+		"uri" => "required",
 		"title" => "required",
 		"body" => "required",
-		"client" => "required"
+		"client" => "required",
 	];
 
 	protected $table = 'work';
@@ -29,5 +30,11 @@ class Work extends Model {
 
 	public function getClientAttribute() {
 		return Client::where('id', $this->attributes['client'])->first()->name;
+	}
+
+	public static function createUri($title) {
+		$stripped = str_replace('_', '-', preg_replace("/[^a-z0-9\_\-\s]+/i", "", $title));
+		$hypenated = strtolower(implode('-', explode(' ', $stripped)));
+		return $hypenated;
 	}
 }
