@@ -1,32 +1,31 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
-class CreateClientsTable extends Migration
-{
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
-    public function up()
-    {
-        Schema::create('clients', function(Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('short_name');
-            $table->timestamps();
-        });
-    }
+class CreateClientsTable extends Migration {
+	/**
+	 * Run the migrations.
+	 *
+	 * @return void
+	 */
+	public function up() {
+		Schema::create('clients', function (Blueprint $table) {
+			$table->increments('id');
+			$table->string('name');
+			$table->string('short_name');
+			$table->string('image')->nullable();
+			$table->boolean('featured')->default(false);
+			$table->timestamps();
+		});
+	}
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
-    public function down()
-    {
-        Schema::drop('clients');
-    }
+	/**
+	 * Reverse the migrations.
+	 *
+	 * @return void
+	 */
+	public function down() {
+		Schema::drop('clients');
+	}
 }

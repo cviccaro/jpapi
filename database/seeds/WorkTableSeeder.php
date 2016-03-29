@@ -23,20 +23,20 @@ class WorkTableSeeder extends Seeder {
 			'2014 Print Contest' => 'Adobe',
 			'TANDBERG Misc. Product Collateral' => 'Cisco',
 			'Showtime Catalog' => 'Cicci',
-			'Cable Tie Installation Tool Packaging' => 'Thomas & Betts',
-			'Fall Military Catalog' => 'Galls',
+			'Cable Tie Installation Tool Packaging' => 'Thomas and Betts',
 			'Sample Project 1' => 'Kennametal',
 			'Sample Project 2' => 'Adobe',
 			'Sample Project 3' => 'Cisco',
 			'Sample Project 4' => 'Cicci',
-			'Sample Project 5' => 'Thomas & Betts',
-			'Sample Project 6' => 'Galls',
-			'Sample Project 7' => 'Kennametal',
-			'Sample Project 8' => 'Adobe',
-			'Sample Project 9' => 'Cisco',
-			'Sample Project 10' => 'Cicci',
-			'Sample Project 11' => 'Thomas & Betts',
-			'Sample Project 12' => 'Galls',
+			'Sample Project 5' => 'Fisher Scientific',
+			'Sample Project 6' => 'Henry Schein',
+			'Sample Project 7' => 'Kobold',
+			'Sample Project 8' => 'LA Turbine',
+			'Sample Project 9' => 'NetworkKing',
+			'Sample Project 10' => 'Quantum',
+			'Sample Project 11' => 'WESCO',
+			'Sample Project 12' => 'Adobe',
+			'Sample Project 13' => 'Cisco',
 		);
 
 		foreach ($seeds as $title => $client) {
@@ -47,10 +47,12 @@ class WorkTableSeeder extends Seeder {
 
 			$uri = Work::createUri($title);
 
+			$body = implode("<br />", $factory->paragraphs());
+
 			Work::create([
 				'uri' => $uri,
 				'title' => $title,
-				'body' => $factory->realText(),
+				'body' => $body,
 				'client' => Client::where('short_name', $client)->first()->id,
 				'image' => $image->id,
 			]);

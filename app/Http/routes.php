@@ -14,8 +14,7 @@ use App\Blog;
  */
 
 $app->get('/', function () use ($app) {
-	$blog_count = Blog::all()->where('site', 'publishing')->count();
-	d(array('count' => $blog_count));
+	echo app()->basePath();
 	return '';
 });
 
@@ -55,6 +54,20 @@ $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.refresh
 });
 
 /**
+ * Routes for resource staff
+ */
+$app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
+	$app->get('clients', 'ClientController@all');
+	$app->get('clients/featured', 'ClientController@featured');
+	$app->get('clients/{id}', 'ClientController@get');
+});
+// $app->group(['namespace' => 'App\Http\Controllers', 'middleware' => 'jwt.refresh'], function ($app) {
+// 	$app->post('staff', 'StaffController@add');
+// 	$app->put('staff/{id}', 'StaffController@put');
+// 	$app->delete('staff/{id}', 'StaffController@remove');
+// });
+
+/**
  * Routes for resource work
  */
 $app->group(['namespace' => 'App\Http\Controllers'], function ($app) {
@@ -82,4 +95,5 @@ $app->post('upload', [
 	'namespace' => 'App\Http\Controllers',
 	'uses' => 'ImageController@upload',
 ]);
-$app->get('images/{path}', ['namespace' => 'App\Http\Controllers', 'uses' => 'ImageController@get']);
+$app->get('images/{path}', ['name' => 'Image', 'namespace' => 'App\Http\Controllers', 'uses' => 'ImageController@get']);
+$app->get('images/clients/{path}', ['name' => 'ClientImage', 'namespace' => 'App\Http\Controllers', 'uses' => 'ImageController@get']);

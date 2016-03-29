@@ -29,7 +29,7 @@ class Work extends Model {
 	}
 
 	public function getClientAttribute() {
-		return Client::where('id', $this->attributes['client'])->first()->name;
+		return Client::where('id', $this->attributes['client'])->first();
 	}
 
 	public static function createUri($title) {
