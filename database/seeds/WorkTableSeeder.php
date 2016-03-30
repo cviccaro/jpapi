@@ -3,6 +3,7 @@
 use App\Client;
 use App\Image;
 use App\Work;
+use App\WorkImage;
 use Faker\Factory;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,10 @@ class WorkTableSeeder extends Seeder {
 	 * @return void
 	 */
 	public function run() {
+		DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+		DB::table('work_images')->truncate();
 		DB::table('work')->truncate();
+		DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
 		$factory = Faker\Factory::create();
 
@@ -40,22 +44,38 @@ class WorkTableSeeder extends Seeder {
 		);
 
 		foreach ($seeds as $title => $client) {
-			$image_path = $factory->image('resources/assets/images', 340, 206);
-			$image = Image::create([
-				'path' => $image_path,
+			$image_ids = array();
+			for ($i = 0; $i < 3; $i++) {
+				$image_path = $factory->image('resources/assets/images', 1731, 500);
+				$image = Image::create([
+					'path' => $image_path,
+				]);
+				$image_ids[] = $image->id;
+			}
+
+			$thumb_path = $factory->image('resources/assets/images', 340, 206);
+			$thumb = Image::create([
+				'path' => $thumb_path,
 			]);
 
 			$uri = Work::createUri($title);
 
 			$body = implode("<br />", $factory->paragraphs());
 
-			Work::create([
+			$work = Work::create([
 				'uri' => $uri,
 				'title' => $title,
 				'body' => $body,
 				'client' => Client::where('short_name', $client)->first()->id,
-				'image' => $image->id,
+				'image' => $thumb->id,
 			]);
+
+			foreach ($image_ids as $image_id) {
+				WorkImage::create([
+					'image_id' => $image_id,
+					'work_id' => $work->id,
+				]);
+			}
 		}
 	}
 }

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\File\File;
 class ImageController extends Controller {
 	public function get(Request $request, $path) {
 		$image_path = '/resources/assets/images/';
+
 		if ($request->route()[1]['name'] === 'ClientImage') {
 			$image_path .= 'clients/';
 		}
