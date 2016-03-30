@@ -10,6 +10,8 @@ class Work extends Model {
 
 	protected $fillable = ["uri", "title", "body", "client", "image"];
 
+	protected $appends = ['gallery'];
+
 	protected $dates = [];
 
 	public static $rules = [
@@ -36,5 +38,9 @@ class Work extends Model {
 		$stripped = str_replace('_', '-', preg_replace("/[^a-z0-9\_\-\s]+/i", "", $title));
 		$hypenated = strtolower(implode('-', explode(' ', $stripped)));
 		return $hypenated;
+	}
+
+	public function getGalleryAttribute() {
+		return WorkImage::where('work_id', $this->id)->get();
 	}
 }
