@@ -1,4 +1,4 @@
-<?php 
+<?php
 namespace App;
 
 use App\BlogCategory;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\URL;
 
 class Blog extends Model {
 
-	protected $fillable = ["title", "identifier", "description", "body", "category", "author", "image", "site", "created_at", "updated_at"];
+	protected $fillable = ["title", "uri", "description", "body", "category", "author", "image", "site", "created_at", "updated_at"];
 
 	protected $dates = [];
 
@@ -29,10 +29,10 @@ class Blog extends Model {
 
 	public function getBodyAttribute() {
 		$body = $this->attributes['body'];
-		$body = preg_replace_callback('/{{[^}]*}}/', function($matches) {
-		  $path = 'resources/assets/images/' . str_replace(['{{','}}'], ['', ''], $matches[0]);
-		  $img = Image::where('path', $path)->first();
-		  return URL::to('images/' . basename($img['path']));
+		$body = preg_replace_callback('/{{[^}]*}}/', function ($matches) {
+			$path = 'resources/assets/images/' . str_replace(['{{', '}}'], ['', ''], $matches[0]);
+			$img = Image::where('path', $path)->first();
+			return URL::to('images/' . basename($img['path']));
 		}, $body);
 		return $body;
 	}
@@ -41,9 +41,9 @@ class Blog extends Model {
 		return Site::where('id', $this->attributes['site'])->first()->name;
 	}
 
-	public static function createIdentifier($string) {
+	public static function createUri($string) {
 		$stripped = str_replace('_', '-', preg_replace("/[^a-z0-9\_\-\s]+/i", "", $string));
-		$hypenated = strtolower(implode('-',explode(' ', $stripped)));
+		$hypenated = strtolower(implode('-', explode(' ', $stripped)));
 		return $hypenated;
 	}
 

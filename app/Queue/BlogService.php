@@ -22,8 +22,8 @@ class BlogService {
 				$blog_category = BlogCategory::create([
 					'name' => $category_name,
 					'description' => $category['description'],
-					'parent' => NULL
-				]);	
+					'parent' => NULL,
+				]);
 			}
 			$category_id = $blog_category->id;
 		}
@@ -32,11 +32,10 @@ class BlogService {
 		$image = null;
 		if (isset($data['image'])) {
 			$image = $this->makeImage($data['image']);
-		}
-		else {
+		} else {
 			$image_path = $factory->image('resources/assets/images', 340, 206);
 			$image = Image::create([
-			    'path' => $image_path
+				'path' => $image_path,
 			]);
 			$image = $image->id;
 		}
@@ -48,7 +47,7 @@ class BlogService {
 			$pattern = '/<img.*src=[\'\"]([^\'\"]*)[\'\"]/';
 			preg_match_all($pattern, $body, $matches);
 			if (!empty($matches)) {
-				foreach($matches[1] as $url) {
+				foreach ($matches[1] as $url) {
 					if (!empty($url)) {
 						if (substr($url, 0, 6) == '/sites') {
 							$url = 'http://www.jpenterprises.com' . $url;
@@ -60,27 +59,27 @@ class BlogService {
 						]);
 					}
 				}
-				$body = preg_replace_callback($pattern, function($m) {
-				  return str_replace($m[1], '{{' . basename($m[1]) . '}}', $m[0]);
+				$body = preg_replace_callback($pattern, function ($m) {
+					return str_replace($m[1], '{{' . basename($m[1]) . '}}', $m[0]);
 				}, $body);
 			}
 		}
 
-		$identifier = Blog::createIdentifier($data['title']);
-		
+		$uri = Blog::createUri($data['title']);
+
 		$authors = array('Jane Doe', 'John Doe');
 
 		Blog::create([
 			'title' => $data['title'],
-			'identifier' => $identifier,
+			'uri' => $uri,
 			'description' => $data['body']['summary'],
 			'body' => $body,
 			'category' => $category_id,
-			'author' => $authors[rand(0,1)],
+			'author' => $authors[rand(0, 1)],
 			'image' => $image,
-			'site' => rand(1,3),
+			'site' => rand(1, 3),
 			'created_at' => $data['created_at'],
-			'updated_at' => $data['updated_at']
+			'updated_at' => $data['updated_at'],
 		]);
 		$job->delete();
 	}
@@ -93,11 +92,9 @@ class BlogService {
 		$make = false;
 		if (!file_exists($realpath)) {
 			$make = true;
-		}
-		else if ($first = Image::where('path', $path)->first()) {
+		} else if ($first = Image::where('path', $path)->first()) {
 			$img = $first;
-		}
-		else {
+		} else {
 			$make = true;
 		}
 
@@ -107,7 +104,7 @@ class BlogService {
 			file_put_contents($realpath, $data);
 
 			$img = Image::create([
-				'path' => $path
+				'path' => $path,
 			]);
 		}
 

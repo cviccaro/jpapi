@@ -100,10 +100,10 @@ class BlogsController extends Controller {
 		return $this->respond('done', $model);
 	}
 
-	public function getFromIdentifier(Request $request, $string) {
+	public function getFromUri(Request $request, $string) {
 		$m = self::MODEL;
 
-		$model = $m::where('identifier', $string)->first();
+		$model = $m::where('uri', $string)->first();
 		if (is_null($model)) {
 			return $this->respond('not_found');
 		}
