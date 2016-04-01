@@ -16,7 +16,7 @@ class WorkImage extends Model {
 	protected $table = 'work_images';
 
 	public function getImageUrlAttribute() {
-		$img = Image::where('id', $this->id)->first();
+		$img = Image::where('id', $this->image_id)->first();
 		return URL::to('images/' . basename($img['path']));
 	}
 }
