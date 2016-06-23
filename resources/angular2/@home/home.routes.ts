@@ -2,7 +2,7 @@ import { HomeComponent } from './index';
 
 export const HomeRoutes = [
     {
-        path: '',
+        path: 'admin',
         component: HomeComponent,
         index: true
     },

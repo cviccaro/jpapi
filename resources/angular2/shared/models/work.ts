@@ -1,0 +1,9 @@
+export interface Work {
+	id: number;
+	title: string;
+	body: string;
+	image: string;
+	client: string;
+	created_at: string;
+	updated_at: string;
+}

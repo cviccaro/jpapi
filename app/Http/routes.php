@@ -11,11 +11,20 @@
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function() {
+    return Redirect::to('/admin');
+});
+
+Route::get('/admin', function () {
+    return view('welcome');
+});
+
+Route::get('/admin/blogs', function () {
     return view('welcome');
 });
 
 Route::get('blog', 'BlogsController@all');
+Route::get('blogs', 'BlogsController@paged');
 Route::get('blog/recent', 'BlogsController@recent');
 Route::get('blog/uri/{uri}', 'BlogsController@getFromUri');
 Route::get('blog/{id}', 'BlogsController@get');

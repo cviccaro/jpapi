@@ -13,6 +13,9 @@ var http_1 = require('@angular/http');
 var router_1 = require('@angular/router');
 var sidenav_1 = require('@angular2-material/sidenav');
 var toolbar_1 = require('@angular2-material/toolbar');
+var icon_1 = require('@angular2-material/icon');
+var button_1 = require('@angular2-material/button');
+var list_1 = require('@angular2-material/list');
 var AppComponent = (function () {
     function AppComponent() {
     }
@@ -22,10 +25,14 @@ var AppComponent = (function () {
             templateUrl: './app.component.html',
             styleUrls: ['./app.component.css'],
             viewProviders: [http_1.HTTP_PROVIDERS],
+            providers: [icon_1.MdIconRegistry],
             directives: [
                 router_1.ROUTER_DIRECTIVES,
                 sidenav_1.MD_SIDENAV_DIRECTIVES,
-                toolbar_1.MD_TOOLBAR_DIRECTIVES
+                toolbar_1.MD_TOOLBAR_DIRECTIVES,
+                icon_1.MD_ICON_DIRECTIVES,
+                button_1.MD_BUTTON_DIRECTIVES,
+                list_1.MD_LIST_DIRECTIVES
             ]
         }), 
         __metadata('design:paramtypes', [])

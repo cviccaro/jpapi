@@ -1,0 +1,1 @@
+{"version":3,"sources":["@blogs/index.ts"],"names":[],"mappings":";;;;AAGA,iBAAc,mBAAmB,CAAC,EAAA;AAClC,iBAAc,gBAAgB,CAAC,EAAA","file":"@blogs/index.js","sourcesContent":["/**\n * This barrel file provides the export for the lazy loaded BlogComponent.\n */\nexport * from './blogs.component';\nexport * from './blogs.routes';\n"],"sourceRoot":"/source/"}

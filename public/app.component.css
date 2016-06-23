@@ -5,7 +5,7 @@
   margin: 20px; }
 
 :host .app-sidenav {
-  padding: 10px;
+  padding: 0;
   min-width: 100px; }
 
 :host .app-content md-checkbox {

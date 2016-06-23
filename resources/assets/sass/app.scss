@@ -1,2 +1,84 @@
 // @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
+md-list-item {
+	display: block;
+  &.odd {
+    background: rgba(0,0,0,0.04)
+  }
+  .md-list-item-content {
+  	width: 100%;
+  	display: flex;
+  	-webkit-align-items: flex-start;
+  	-ms-flex-align: start;
+  	align-items: flex-start;
+  	-webkit-justify-content: center;
+  	-ms-flex-pack: center;
+  	justify-content: center;
+    .md-button {
+      // Center vertically
+      margin-top: auto;
+      margin-bottom: auto;
+    }
+  }
+  &:last-child {
+    md-divider {
+      display: none;
+    }
+  }
+}
+[flex="50"] {
+	width: 50%;
+	display: flex;
+	max-width: 50%;
+}
+md-toolbar {
+	md-toolbar-row {
+		.md-title {
+			margin: 0;
+		}
+	}
+	button[md-button],
+	button[md-raised-button] {
+		height: 36px;
+	}
+}
+button[md-button],
+button[md-raised-button] {
+	md-icon {
+		position: relative;
+		top: 8px;
+	}
+}
+
+.md-danger[md-raised-button],
+.md-danger[md-button],
+.md-danger[md-fab],
+.md-danger[md-mini-fab] {
+	background-color: #E82309;
+	color: #fff;
+}
+
+.layout-align-center-center,
+.layout-align-end-center,
+.layout-align-space-around-center,
+.layout-align-space-between-center,
+.layout-align-start-center {
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+	-webkit-align-content: center;
+	-ms-flex-line-pack: center;
+	align-content: center;
+	max-width: 100%;
+}
+
+.layout-align-end,
+.layout-align-end-center,
+[layout-align="end center"],
+.layout-align-end-end,
+.layout-align-end-start,
+.layout-align-end-stretch {
+	-webkit-justify-content: flex-end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
+}

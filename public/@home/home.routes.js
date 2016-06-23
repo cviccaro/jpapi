@@ -2,7 +2,7 @@
 var index_1 = require('./index');
 exports.HomeRoutes = [
     {
-        path: '',
+        path: 'admin',
         component: index_1.HomeComponent,
         index: true
     },
