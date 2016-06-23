@@ -1,38 +1,44 @@
-var elixir = require('laravel-elixir');
-
-var concat = require('gulp-concat');
-var ts = require('gulp-typescript');
-var gulp   = require('gulp');
 var Elixir = require('laravel-elixir');
-var fileExists = require('file-exists');
-var path = require('path');
-var promise = require('es6-promise');
-
-var _ = require('underscore');
-
 var $ = Elixir.Plugins;
 var config = Elixir.config;
 
-// overwrite elixir config values
-var tsFolder = 'resources/typescript'; // would be config.get('assets.js.typescript.folder');
-var tsOutput = config.get('public.js.outputFolder');
+var concat = require('gulp-concat');
+var ts = require('gulp-typescript');
+var sass = require('gulp-sass');
+var gulp   = require('gulp');
+var fileExists = require('file-exists');
+var path = require('path');
+var promise = require('es6-promise');
+var _ = require('underscore');
 
+
+/**
+ * Typescript elixir task
+ *
+ * @return
+ */
 Elixir.extend('typescript', function(src, output, options) {
-    var paths = prepGulpPaths(src, output);
+    var paths = new Elixir.GulpPaths()
+        .src(src)
+        .output(output, 'app.js');
+
     new Elixir.Task('typescript', function() {
+
         this.log(paths.src, paths.output);
 
         // check if there is an tsconfig.json file --> initialize ts project
         var tsProject = null;
-        var tsConfigPath = path.join(tsFolder, 'tsconfig.json');
-        if(fileExists(tsConfigPath)){
+        var tsConfigPath = path.join(path.dirname(paths.src.baseDir), 'tsconfig.json');
+
+        if (fileExists(tsConfigPath)){
             tsProject = ts.createProject(tsConfigPath, options);
-        }else{
+        } else{
             // useful default options
             options = _.extend({
                 sortOutput: true
             }, options);
         }
+
         return (
             gulp
             .src(paths.src.path)
@@ -54,18 +60,51 @@ Elixir.extend('typescript', function(src, output, options) {
     .ignore(paths.output.path);
 });
 
+
 /**
- * Prep the Gulp src and output paths.
+ * SASS
  *
- * @param  {string|Array} src
- * @param  {string|null}  output
- * @return {GulpPaths}
  */
-var prepGulpPaths = function(src, output) {
-    return new Elixir.GulpPaths()
-        .src(src, tsFolder)
-        .output(output || tsOutput, 'app.js');
-};
+Elixir.extend('angular2Sass', function(src, output, options) {
+    var paths = new Elixir.GulpPaths()
+        .src(src)
+        .output(output);
+
+    var baseDir = path.dirname(paths.src.baseDir);
+
+    new Elixir.Task('angular2Sass', function() {
+        var name = 'angular2Sass';
+
+        if (options === undefined) {
+            options = {
+                outputStyle: config.production ? 'compressed' : 'nested',
+                precision: 10
+            };
+        }
+
+        this.log(paths.src, paths.output);
+
+        return (
+            gulp
+            .src(paths.src.path)
+            .pipe($.if(config.sourcemaps, $.sourcemaps.init()))
+            .pipe(sass(options))
+            .on('error', function(e) {
+                new Elixir.Notification().error(e, name + ' Compilation Failed');
+
+                this.emit('end');
+            })
+            .pipe($.if(config.css.autoprefix.enabled, $.autoprefixer(config.css.autoprefix.options)))
+            // .pipe($.concat(paths.output.name))
+            .pipe($.if(config.production, $.cssnano(config.css.cssnano.pluginOptions)))
+            .pipe($.if(config.sourcemaps, $.sourcemaps.write('.')))
+            .pipe(gulp.dest(paths.output.baseDir))
+            .pipe(new Elixir.Notification(name + ' Compiled!'))
+        );
+    })
+    .watch(path.join(baseDir, '/**/*.+(sass|scss)'))
+    .ignore(paths.output.path);
+});
 
 /*
  |--------------------------------------------------------------------------
@@ -78,10 +117,9 @@ var prepGulpPaths = function(src, output) {
  |
  */
 
-elixir(function(mix) {
+Elixir(function(mix) {
     mix.sass('app.scss');
 
-    //mix.copy('node_modules/', 'public/node_modules/');
     // mix.copy('node_modules/@angular', 'public/node_modules/@angular');
     // mix.copy('node_modules/rxjs', 'public/node_modules/rxjs');
     // mix.copy('node_modules/systemjs', 'public/node_modules/systemjs');
@@ -93,16 +131,12 @@ elixir(function(mix) {
     // mix.copy('node_modules/angular2-in-memory-web-api', 'public/node_modules/angular2-in-memory-web-api');
     // mix.copy('node_modules/reflect-metadata', 'public/node_modules/reflect-metadata');
 
-    mix.copy('resources/typescript/systemjs.config.js', 'public/systemjs.config.js');
+    // mix.copy('node_modules/@angular2-material', 'public/node_modules/@angular2-material');
 
-    mix.typescript('resources/typescript/**/*.ts', 'public/app/app.js', {
-    	target: "es5",
-    	module: "system",
-    	moduleResolution: "node",
-    	sourceMap: true,
-    	emitDecoratorMetadata: true,
-    	experimentalDecorators: true,
-    	removeComments: false,
-    	noImplicitAny: false
-    });
+    mix.copy('resources/angular2/systemjs.config.js', 'public/systemjs.config.js');
+
+    mix.typescript('resources/angular2/**/*.ts', 'public/app.js');
+
+    mix.angular2Sass('resources/angular2/**/*.scss', 'public/');
+    mix.copy('resources/angular2/**/*.html', 'public/');
 });
