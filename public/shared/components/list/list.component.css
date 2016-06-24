@@ -1,0 +1,45 @@
+:host {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column; }
+  :host md-list md-list-item {
+    display: block; }
+    :host md-list md-list-item.odd {
+      background: rgba(0, 0, 0, 0.04); }
+    :host md-list md-list-item .md-list-item-content {
+      width: 100%;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-align: start;
+      align-items: flex-start;
+      -ms-flex-pack: center;
+      justify-content: center; }
+      :host md-list md-list-item .md-list-item-content .item-text [md-line] {
+        margin: 0;
+        line-height: 1.45em; }
+      :host md-list md-list-item .md-list-item-content .actions button {
+        margin: auto 15px; }
+    :host md-list md-list-item:last-child md-divider {
+      display: none; }
+  :host md-toolbar button[md-button],
+  :host md-toolbar button[md-raised-button] {
+    height: 36px; }
+  :host md-toolbar .list-info {
+    padding-left: 0.5em;
+    border-left: 1px solid #ccc;
+    line-height: normal; }
+  :host md-toolbar .list-title {
+    padding-right: 0.5em;
+    margin: auto 0;
+    line-height: normal; }
+  :host md-toolbar .sorts {
+    -ms-flex-pack: justify;
+    justify-content: space-between; }
+    :host md-toolbar .sorts md-input-container label {
+      font-size: 14px; }
+    :host md-toolbar .sorts md-input-container select {
+      font-size: 14px;
+      min-width: 120px; }
+
+/*# sourceMappingURL=list.component.css.map */

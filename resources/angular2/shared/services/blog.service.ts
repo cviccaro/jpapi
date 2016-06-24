@@ -4,6 +4,9 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class BlogService {
+    private list: any;
+    private byId: any[];
+
 	constructor(public http: Http) {
 		this.http = http;
 	}
@@ -15,7 +18,30 @@ export class BlogService {
 			query.set(key, param);
 		}
 
-	    return this.http.get('/blogs', {search: query})
-	        .map((res) => res.json());
+	    return this.http.get('/blogs/paged', {search: query})
+	        .map(res => res.json());
+	}
+
+    setList(res) {
+        this.list = res;
+        return this;
+    }
+
+    getList() {
+        return this.list;
+    }
+
+	find(id: number, cached?: boolean) {
+        if (cached && this.byId[id] !== undefined) {
+            return this.byId[id];
+        }
+
+        return this.http.get('/blog/' + id)
+            .map(res => res.json());
+	}
+
+	cache(blog) {
+        this.byId[blog.id] = blog;
+        return this;
 	}
 }

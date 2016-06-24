@@ -23,8 +23,26 @@ var BlogService = (function () {
             var param = params[key];
             query.set(key, param);
         }
-        return this.http.get('/blogs', { search: query })
+        return this.http.get('/blogs/paged', { search: query })
             .map(function (res) { return res.json(); });
+    };
+    BlogService.prototype.setList = function (res) {
+        this.list = res;
+        return this;
+    };
+    BlogService.prototype.getList = function () {
+        return this.list;
+    };
+    BlogService.prototype.find = function (id, cached) {
+        if (cached && this.byId[id] !== undefined) {
+            return this.byId[id];
+        }
+        return this.http.get('/blog/' + id)
+            .map(function (res) { return res.json(); });
+    };
+    BlogService.prototype.cache = function (blog) {
+        this.byId[blog.id] = blog;
+        return this;
     };
     BlogService = __decorate([
         core_1.Injectable(), 

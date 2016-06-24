@@ -9,59 +9,97 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var icon_1 = require('@angular2-material/icon');
-var button_1 = require('@angular2-material/button');
-var input_1 = require('@angular2-material/input');
-var list_1 = require('@angular2-material/list');
-var toolbar_1 = require('@angular2-material/toolbar');
 var index_1 = require('../shared/index');
 var BlogsComponent = (function () {
     function BlogsComponent(blogService) {
         this.blogService = blogService;
-        this.perPage = 15;
-        this.descending = true;
-        this.sort = 'created_at';
-        this.blogs = [];
-        this.from = 0;
-        this.to = 0;
-        this.total = 0;
-        this.lastPage = 0;
-        this.currentPage = 0;
-        this.blogService = blogService;
+        this.listData = [];
+        this.listConfig = {
+            sortOptions: [
+                { name: 'Updated At', value: 'updated_at' },
+                { name: 'Created At', value: 'created_at' },
+                { name: 'Title', value: 'title' },
+                { name: 'Category', value: 'category' }
+            ],
+            perPageOptions: [5, 10, 15, 25, 50, 100],
+            sort: {
+                by: 'updated_at',
+                descending: true
+            },
+            page: {
+                currentPage: 1,
+                from: 0,
+                to: 0,
+                total: 0,
+                lastPage: 0,
+                perPage: 15
+            }
+        };
     }
     BlogsComponent.prototype.ngOnInit = function () {
+        var res = this.blogService.getCachedResponse();
+        this.listData = res.data.map(this.mapList);
+        this.listConfig.page = {
+            currentPage: res.current_page,
+            from: res.from,
+            to: res.to,
+            total: res.total,
+            lastPage: res.last_page,
+            perPage: res.per_page
+        };
+    };
+    BlogsComponent.prototype.mapList = function (blog) {
+        return {
+            id: blog.id,
+            title: blog.title,
+            subtitle: blog.category.name,
+            dates: {
+                updated_at: blog.updated_at,
+                created_at: blog.created_at
+            }
+        };
+    };
+    BlogsComponent.prototype.fetch = function (params) {
         var _this = this;
-        this.blogService.all()
-            .subscribe(function (blogs) {
-            console.log('got blogs: ', blogs);
-            _this.blogs = blogs.data;
-            _this.from = blogs.from;
-            _this.to = blogs.to;
-            _this.total = blogs.total;
-            _this.lastPage = blogs.last_page;
-            _this.currentPage = blogs.current_page;
-            _this.perPage = blogs.per_page;
+        if (params === void 0) { params = {}; }
+        var page = params.page || this.listConfig.page;
+        var sort = params.sort || this.listConfig.sort;
+        this.sub = this.blogService.all({
+            current_page: page.currentPage,
+            length: page.perPage,
+            order_by: sort.by,
+            descending: sort.descending,
+        })
+            .subscribe(function (json) {
+            _this.listData = json.data.map(_this.mapList);
+            _this.listConfig.page = {
+                from: json.from,
+                to: json.to,
+                total: json.total,
+                lastPage: json.last_page,
+                currentPage: json.current_page,
+                perPage: json.per_page
+            };
         });
     };
-    BlogsComponent.prototype.changePerPage = function () {
-        console.log('changePerPage!', arguments);
+    BlogsComponent.prototype.edit = function (item) {
+        console.log('edit this item: ', item);
     };
-    BlogsComponent.prototype.order = function () {
-        console.log('order!', arguments, this);
+    BlogsComponent.prototype._delete = function (item) {
+        console.log('delete this item: ', item);
+    };
+    BlogsComponent.prototype.ngOnDestroy = function () {
+        if (this.sub)
+            this.sub.unsubscribe();
     };
     BlogsComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
             selector: 'jpa-blogs',
-            templateUrl: 'blogs.component.html',
-            styleUrls: ['blogs.component.css'],
-            providers: [icon_1.MdIconRegistry, index_1.BlogService],
+            templateUrl: './blogs.component.html',
+            styleUrls: ['./blogs.component.css'],
             directives: [
-                button_1.MD_BUTTON_DIRECTIVES,
-                icon_1.MD_ICON_DIRECTIVES,
-                input_1.MD_INPUT_DIRECTIVES,
-                toolbar_1.MD_TOOLBAR_DIRECTIVES,
-                list_1.MD_LIST_DIRECTIVES,
+                index_1.ListComponent
             ]
         }), 
         __metadata('design:paramtypes', [index_1.BlogService])

@@ -41,15 +41,15 @@ class BlogsController extends Controller
 
         $current_page = $request->input('current_page', 1) - 1;
         $length = $request->input('length', 15);
-        $order_by = $request->input('order_by', 'created_at');
-        $order_by_direction = $request->input('order_by_direction', 'desc');
-        $descending = $order_by_direction === 'desc';
+        $order_by = $request->input('order_by', 'updated_at');
+        $descending = $request->input('descending', 'true') === 'true';
 
         $blogs = Blog::where('created_at', '>', $created_at)
             ->get();
 
         $blogs = $blogs->sortBy(function ($blog) use ($order_by) {
             switch ($order_by) {
+                case 'updated_at':
                 case 'created_at':
                     return \Carbon\Carbon::parse($blog->{$order_by})->timestamp;
                     break;

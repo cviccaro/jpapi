@@ -1,0 +1,5 @@
+<md-content class="md-whiteframe-6dp">
+    <jpa-list listTitle="Blogs" [listConfig]="listConfig" [listData]="listData" (listUpdate)="fetch($event)"
+    (listItemEdit)="edit($event)" (listItemDelete)="_delete($event)">
+    </jpa-list>
+</md-content>

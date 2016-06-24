@@ -1,0 +1,1 @@
+{"version":3,"sources":["@work/index.ts"],"names":[],"mappings":";;;;AAGA,iBAAc,kBAAkB,CAAC,EAAA;AACjC,iBAAc,eAAe,CAAC,EAAA","file":"@work/index.js","sourcesContent":["/**\r\n * This barrel file provides the export for the lazy loaded WorkComponent.\r\n */\r\nexport * from './work.component';\r\nexport * from './work.routes';\r\n"],"sourceRoot":"/source/"}

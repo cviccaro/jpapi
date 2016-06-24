@@ -14,17 +14,18 @@
 Route::get('/', function() {
     return Redirect::to('/admin');
 });
-
 Route::get('/admin', function () {
     return view('welcome');
 });
-
-Route::get('/admin/blogs', function () {
+Route::get('/admin/{page}', function () {
+    return view('welcome');
+});
+Route::get('/admin/{page}/{subpage}', function () {
     return view('welcome');
 });
 
 Route::get('blog', 'BlogsController@all');
-Route::get('blogs', 'BlogsController@paged');
+Route::get('blogs/paged', 'BlogsController@paged');
 Route::get('blog/recent', 'BlogsController@recent');
 Route::get('blog/uri/{uri}', 'BlogsController@getFromUri');
 Route::get('blog/{id}', 'BlogsController@get');
@@ -38,6 +39,7 @@ Route::get('clients/featured', 'ClientController@featured');
 Route::get('clients/{id}', 'ClientController@get');
 
 Route::get('work', 'WorkController@all');
+Route::get('work/paged', 'WorkController@paged');
 Route::get('work/recent', 'WorkController@recent');
 Route::get('work/uri/{uri}', 'WorkController@getFromUri');
 Route::get('work/{id}', 'WorkController@get');

@@ -2,12 +2,14 @@
 <html>
     <head>
         <title>Laravel</title>
-        <base href="/">
+        <base href="/admin">
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.min.css"> -->
         <link href="css/app.css" rel="stylesheet" type="text/css">
 
         <!-- 1. Load libraries -->
@@ -24,7 +26,7 @@
          </script>
     </head>
     <body>
-        <my-app>Loading...</my-app>
+        <jpa-app>Loading...</jpa-app>
 
         <script>
         // function.name (all IE)

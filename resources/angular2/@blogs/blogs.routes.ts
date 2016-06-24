@@ -1,9 +1,19 @@
-import { BlogsComponent } from './index';
+import { BlogIndexComponent, BlogListComponent, BlogComponent } from './index';
+
+import { BlogsGuard, BlogGuard } from '../shared/index';
 
 export const BlogsRoutes = [
     {
-        path: 'admin/blogs',
-        component: BlogsComponent,
-        index: true
+        path: '',
+        redirectTo: '/blogs',
+        terminal: true
+    },
+    {
+        path: 'blogs',
+        component: BlogIndexComponent,
+        children: [
+            { path: ':id', component: BlogComponent },
+            { path: '', component: BlogListComponent, canActivate: [BlogsGuard] }
+        ]
     },
 ];

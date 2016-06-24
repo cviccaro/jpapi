@@ -11,7 +11,6 @@ var path = require('path');
 var promise = require('es6-promise');
 var _ = require('underscore');
 
-
 /**
  * Typescript elixir task
  *
@@ -126,12 +125,14 @@ Elixir(function(mix) {
     // mix.copy('node_modules/es6-promise', 'public/node_modules/es6-promise');
     // mix.copy('node_modules/es6-shim', 'public/node_modules/es6-shim');
     // mix.copy('node_modules/zone.js/', 'public/node_modules/zone.js/');
-
     // mix.copy('node_modules/core-js', 'public/node_modules/core-js');
     // mix.copy('node_modules/angular2-in-memory-web-api', 'public/node_modules/angular2-in-memory-web-api');
     // mix.copy('node_modules/reflect-metadata', 'public/node_modules/reflect-metadata');
+    // mix.copy('node_modules/moment', 'public/node_modules/moment');
+    // mix.copy('node_modules/angular2-moment', 'public/node_modules/angular2-moment');
 
     // mix.copy('node_modules/@angular2-material', 'public/node_modules/@angular2-material');
+    //mix.copy('node_modules/ng2-material', 'public/node_modules/ng2-material');
 
     mix.copy('resources/angular2/systemjs.config.js', 'public/systemjs.config.js');
 
