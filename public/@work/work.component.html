@@ -1,5 +1,5 @@
 <div class="container">
-    <h1 *ngIf="work">Edit Work {{ work.id }}</h1>
+    <h1 *ngIf="work">{{ isNew ? 'Create' : 'Edit' }} Work {{ isNew ? '' : 'ID ' + work.id }}</h1>
     <form *ngIf="work" #workForm="ngForm" (ngSubmit)="onSubmit()">
       <div layout="row">
         <div class="form-group" flex="50">
@@ -30,7 +30,7 @@
       <div layout="row">
         <div class="form-group gallery" flex="100">
           <label>Gallery</label>
-          <md-grid-list cols="4">
+          <md-grid-list cols="4" *ngIf="work.gallery">
              <md-grid-tile *ngFor="let image of work.gallery" flex="25"><img [src]="image.image_url" /></md-grid-tile>
              <md-grid-tile *ngIf="work.gallery.length % 4 !== 1" flex="25">
              </md-grid-tile>

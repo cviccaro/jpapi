@@ -16,6 +16,7 @@ var ListComponent = (function () {
         this.listUpdate = new core_1.EventEmitter();
         this.listItemEdit = new core_1.EventEmitter();
         this.listItemDelete = new core_1.EventEmitter();
+        this.listItemAdd = new core_1.EventEmitter();
     }
     ListComponent.prototype.ngOnInit = function () {
         console.log('ListComponent initialized.', this);
@@ -25,6 +26,9 @@ var ListComponent = (function () {
             config: this.listConfig,
             data: this.listData
         });
+    };
+    ListComponent.prototype.add = function () {
+        this.listItemAdd.emit('');
     };
     ListComponent.prototype.edit = function (item, $event) {
         this.listItemEdit.emit(item);
@@ -56,6 +60,10 @@ var ListComponent = (function () {
         core_1.Output(), 
         __metadata('design:type', Object)
     ], ListComponent.prototype, "listItemDelete", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], ListComponent.prototype, "listItemAdd", void 0);
     ListComponent = __decorate([
         core_1.Component({
             selector: 'jpa-list',

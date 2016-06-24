@@ -91,4 +91,8 @@ export class WorkListComponent implements OnInit {
     _delete(item) {
         console.log('delete this item: ', item);
     }
+
+    add() {
+        this.router.navigate(['/work', 'new']);
+    }
 }

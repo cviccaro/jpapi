@@ -15,13 +15,13 @@ Route::get('/', function () {
     return Redirect::to('/admin');
 });
 Route::get('/admin', function () {
-    return view('welcome');
+    return view('angular');
 });
 Route::get('/admin/{page}', function () {
-    return view('welcome');
+    return view('angular');
 });
 Route::get('/admin/{page}/{subpage}', function () {
-    return view('welcome');
+    return view('angular');
 });
 
 Route::get('blog', 'BlogsController@all');
@@ -48,6 +48,7 @@ Route::get('work/{id}', 'WorkController@get');
 
 Route::get('images/{path}', 'ImageController@get');
 
+Route::post('work', 'WorkController@create');
 Route::put('work/{id}', 'WorkController@put');
 
 /*
@@ -75,7 +76,7 @@ Route::group(['middleware' => 'jwt.refresh'], function () {
     Route::put('staff/{id}', 'StaffController@put');
     Route::delete('staff/{id}', 'StaffController@remove');
 
-    Route::post('work', 'WorkController@add');
+    // Route::post('work', 'WorkController@create');
     // Route::put('work/{id}', 'WorkController@put');
     Route::delete('work/{id}', 'WorkController@remove');
 });

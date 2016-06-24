@@ -23,18 +23,23 @@ h1,h2,h3,h4,h5,p,div,p {
     background-color: material-color('red', '500')!important;
     color: #fff!important;
 }
+
+.md-secondary,
 .md-secondary[md-raised-button],
 .md-secondary[md-button],
 .md-secondary[md-fab],
-.md-secondary[md-mini-fab] {
+.md-secondary[md-mini-fab],
+.md-secondary[md-icon-button] {
     background-color: material-color('light-green', '600');
     color: #fff;
 }
 
+.md-danger,
 .md-danger[md-raised-button],
 .md-danger[md-button],
 .md-danger[md-fab],
-.md-danger[md-mini-fab] {
+.md-danger[md-mini-fab],
+.md-danger[md-icon-button] {
     background-color: material-color('red', '900');
     color: #fff;
 }

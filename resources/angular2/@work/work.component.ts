@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {NgForm} from '@angular/common';
 import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 
@@ -22,25 +22,48 @@ export class WorkComponent implements OnInit {
     public uploader:FileUploader = new FileUploader({url: 'wtf'});
     public hasBaseDropZoneOver: boolean = false;
     //public toasterConfig: ToasterConfig;
+    private isNew: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
         private service: WorkService,
         private clientService: ClientService,
-        private toasterService: ToasterService
+        private toasterService: ToasterService,
+        private router: Router
     ) { }
     
     ngOnInit() {
-        let id = +this.route.snapshot.params['id'];
-        
+        console.log({
+            snapshot: this.route.snapshot,
+            params: this.route.snapshot.params,
+            id: this.route.snapshot.params['id']
+        });
+
         this.clientService.options().subscribe(res => {
             this.clients = res;
         });
-        this.service.find(id).subscribe(res => {
-            this.work = res;
-        });
 
-        console.log('WorkComponent initialized.', this);
+        this.isNew = this.route.snapshot.params['id'] === 'new';
+
+        if (this.isNew) {
+            console.log('NEW: WorkComponent initialized.', this);
+            this.work = {
+                title: '',
+                body: '',
+                image: '',
+                client: {
+                    id: ''
+                }
+            };
+        } else {
+            let id = +this.route.snapshot.params['id'];
+
+            this.service.find(id).subscribe(res => {
+                this.work = res;
+            });
+
+            console.log('EDIT: WorkComponent initialized.', this);
+        }
     }
 
     onSubmit() {
@@ -75,13 +98,26 @@ export class WorkComponent implements OnInit {
     }
 
     save() {
-        console.log('Save work. ', this.work);
-        this.service.update(this.work.id, this.work)
-            .subscribe(res => {
-                console.log('response from update: ', res);
-                this.work = res;
-                this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
-            });
+        if (this.isNew) {
+            console.log('Save NEW work. ', this.work);
+            this.service.create(this.work)
+                .subscribe(res => {
+                    this.toasterService.pop('success', 'Success!', this.work.title + ' has been created.  Redirecting to its page.');
+                    setTimeout(() => {
+                        this.isNew = false;
+                        this.work = res;
+                        this.router.navigate(['/work', res.id]);
+                    }, 6000);
+                });
+        } else {
+            console.log('Save UPDATED work. ', this.work);
+            this.service.update(this.work.id, this.work)
+                .subscribe(res => {
+                    console.log('response from update: ', res);
+                    this.work = res;
+                    this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
+                });
+        }
     }
 
     ceil(a) {

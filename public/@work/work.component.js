@@ -16,24 +16,45 @@ var angular2_toaster_1 = require('angular2-toaster');
 var index_1 = require('../shared/index');
 var Rx_1 = require('rxjs/Rx');
 var WorkComponent = (function () {
-    function WorkComponent(route, service, clientService, toasterService) {
+    function WorkComponent(route, service, clientService, toasterService, router) {
         this.route = route;
         this.service = service;
         this.clientService = clientService;
         this.toasterService = toasterService;
+        this.router = router;
         this.uploader = new ng2_file_upload_1.FileUploader({ url: 'wtf' });
         this.hasBaseDropZoneOver = false;
+        this.isNew = false;
     }
     WorkComponent.prototype.ngOnInit = function () {
         var _this = this;
-        var id = +this.route.snapshot.params['id'];
+        console.log({
+            snapshot: this.route.snapshot,
+            params: this.route.snapshot.params,
+            id: this.route.snapshot.params['id']
+        });
         this.clientService.options().subscribe(function (res) {
             _this.clients = res;
         });
-        this.service.find(id).subscribe(function (res) {
-            _this.work = res;
-        });
-        console.log('WorkComponent initialized.', this);
+        this.isNew = this.route.snapshot.params['id'] === 'new';
+        if (this.isNew) {
+            console.log('NEW: WorkComponent initialized.', this);
+            this.work = {
+                title: '',
+                body: '',
+                image: '',
+                client: {
+                    id: ''
+                }
+            };
+        }
+        else {
+            var id = +this.route.snapshot.params['id'];
+            this.service.find(id).subscribe(function (res) {
+                _this.work = res;
+            });
+            console.log('EDIT: WorkComponent initialized.', this);
+        }
     };
     WorkComponent.prototype.onSubmit = function () {
         var _this = this;
@@ -63,13 +84,27 @@ var WorkComponent = (function () {
     };
     WorkComponent.prototype.save = function () {
         var _this = this;
-        console.log('Save work. ', this.work);
-        this.service.update(this.work.id, this.work)
-            .subscribe(function (res) {
-            console.log('response from update: ', res);
-            _this.work = res;
-            _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been saved.');
-        });
+        if (this.isNew) {
+            console.log('Save NEW work. ', this.work);
+            this.service.create(this.work)
+                .subscribe(function (res) {
+                _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been created.  Redirecting to its page.');
+                setTimeout(function () {
+                    _this.isNew = false;
+                    _this.work = res;
+                    _this.router.navigate(['/work', res.id]);
+                }, 6000);
+            });
+        }
+        else {
+            console.log('Save UPDATED work. ', this.work);
+            this.service.update(this.work.id, this.work)
+                .subscribe(function (res) {
+                console.log('response from update: ', res);
+                _this.work = res;
+                _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been saved.');
+            });
+        }
     };
     WorkComponent.prototype.ceil = function (a) {
         return Math.ceil(a);
@@ -113,7 +148,7 @@ var WorkComponent = (function () {
             styleUrls: ['./work.component.css'],
             directives: [ng2_file_upload_1.FILE_UPLOAD_DIRECTIVES, icon_1.MD_ICON_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.WorkService, index_1.ClientService, angular2_toaster_1.ToasterService])
+        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.WorkService, index_1.ClientService, angular2_toaster_1.ToasterService, router_1.Router])
     ], WorkComponent);
     return WorkComponent;
 }());

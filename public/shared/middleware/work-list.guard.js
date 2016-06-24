@@ -17,7 +17,7 @@ var WorkListGuard = (function () {
     }
     WorkListGuard.prototype.canActivate = function () {
         var _this = this;
-        console.info('WorkListGuard# getting blogs for the first time.');
+        console.info('WorkListGuard# getting work for the first time.');
         return Rx_1.Observable.create(function (observer) {
             _this.sub = _this.workService.all({
                 current_page: 1,

@@ -47,13 +47,16 @@ export class WorkService {
 	}
 
 	update(id, attributes) {
-		const base = window.location.protocol + '//' + window.location.hostname;
-		let url = base + '/work/' + id;
-		console.log('put to ', {
-			base: base,
-			url: url
-		});
+		let url = window.location.protocol + '//' + window.location.hostname + '/work/' + id;
+
 		return this.http.put(url, attributes)
+			.map(res => res.json());
+	}
+
+	create(attributes) {
+		let url = window.location.protocol + '//' + window.location.hostname + '/work';
+
+		return this.http.post(url, attributes)
 			.map(res => res.json());
 	}
 }

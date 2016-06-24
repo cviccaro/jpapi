@@ -33,6 +33,8 @@
     padding-right: 0.5em;
     margin: auto 0;
     line-height: normal; }
+  :host md-toolbar .list-toolbar-actions {
+    margin-left: 1em; }
   :host md-toolbar .sorts {
     -ms-flex-pack: justify;
     justify-content: space-between; }

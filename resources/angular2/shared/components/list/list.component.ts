@@ -22,6 +22,7 @@ export class ListComponent implements OnInit {
     @Output() listUpdate = new EventEmitter();
     @Output() listItemEdit = new EventEmitter();
     @Output() listItemDelete = new EventEmitter();
+    @Output() listItemAdd = new EventEmitter();
 
     ngOnInit() {
         console.log('ListComponent initialized.', this);
@@ -32,6 +33,10 @@ export class ListComponent implements OnInit {
             config: this.listConfig,
             data: this.listData
         });
+    }
+
+    add() {
+        this.listItemAdd.emit('');
     }
 
     edit(item, $event) {

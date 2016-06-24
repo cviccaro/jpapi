@@ -45,13 +45,13 @@ var WorkService = (function () {
         return this;
     };
     WorkService.prototype.update = function (id, attributes) {
-        var base = window.location.protocol + '//' + window.location.hostname;
-        var url = base + '/work/' + id;
-        console.log('put to ', {
-            base: base,
-            url: url
-        });
+        var url = window.location.protocol + '//' + window.location.hostname + '/work/' + id;
         return this.http.put(url, attributes)
+            .map(function (res) { return res.json(); });
+    };
+    WorkService.prototype.create = function (attributes) {
+        var url = window.location.protocol + '//' + window.location.hostname + '/work';
+        return this.http.post(url, attributes)
             .map(function (res) { return res.json(); });
     };
     WorkService = __decorate([

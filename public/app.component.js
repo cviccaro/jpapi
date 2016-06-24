@@ -14,11 +14,16 @@ var router_1 = require('@angular/router');
 var angular2_material_1 = require('./shared/libs/angular2-material');
 var angular2_toaster_1 = require('angular2-toaster');
 var AppComponent = (function () {
-    function AppComponent() {
+    function AppComponent(router) {
+        this.router = router;
         this.toasterConfig = new angular2_toaster_1.ToasterConfig({
             showCloseButton: true
         });
     }
+    AppComponent.prototype.navigateTo = function (link) {
+        console.log('navigate to: ', link);
+        this.router.navigate(link);
+    };
     AppComponent = __decorate([
         core_1.Component({
             selector: 'jpa-app',
@@ -32,7 +37,7 @@ var AppComponent = (function () {
                 angular2_toaster_1.ToasterContainerComponent
             ]
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [router_1.Router])
     ], AppComponent);
     return AppComponent;
 }());

@@ -1,11 +1,11 @@
 export interface Work {
-	id: number;
+	id?: number;
 	title: string;
 	body: string;
 	image: string;
-	client: string;
-	created_at: string;
-	updated_at: string;
+	client: any;
+	created_at?: string;
+	updated_at?: string;
 	image_new?: {
 		name: string;
 		base64: string;

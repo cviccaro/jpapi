@@ -81,6 +81,9 @@ var WorkListComponent = (function () {
     WorkListComponent.prototype._delete = function (item) {
         console.log('delete this item: ', item);
     };
+    WorkListComponent.prototype.add = function () {
+        this.router.navigate(['/work', 'new']);
+    };
     WorkListComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
