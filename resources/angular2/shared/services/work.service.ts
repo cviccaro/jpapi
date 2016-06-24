@@ -4,6 +4,9 @@ import 'rxjs/add/operator/map';
 
 @Injectable()
 export class WorkService {
+	private list: any;
+	private byId: any[];
+
 	constructor(public http: Http) {
 		this.http = http;
 	}
@@ -18,5 +21,39 @@ export class WorkService {
 
 	    return this.http.get('/work/paged', {search: query})
 	        .map((res) => res.json());
+	}
+
+	setList(res) {
+	    this.list = res;
+	    return this;
+	}
+
+	getList() {
+	    return this.list;
+	}
+
+	find(id: number, cached?: boolean) {
+        if (cached && this.byId[id] !== undefined) {
+            return this.byId[id];
+        }
+
+        return this.http.get('/work/' + id)
+            .map(res => res.json());
+	}
+
+	cache(work) {
+        this.byId[work.id] = work;
+        return this;
+	}
+
+	update(id, attributes) {
+		const base = window.location.protocol + '//' + window.location.hostname;
+		let url = base + '/work/' + id;
+		console.log('put to ', {
+			base: base,
+			url: url
+		});
+		return this.http.put(url, attributes)
+			.map(res => res.json());
 	}
 }

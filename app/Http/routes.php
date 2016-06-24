@@ -11,7 +11,7 @@
 |
 */
 
-Route::get('/', function() {
+Route::get('/', function () {
     return Redirect::to('/admin');
 });
 Route::get('/admin', function () {
@@ -38,11 +38,17 @@ Route::get('clients', 'ClientController@all');
 Route::get('clients/featured', 'ClientController@featured');
 Route::get('clients/{id}', 'ClientController@get');
 
+Route::get('options/clients', 'ClientController@options');
+
 Route::get('work', 'WorkController@all');
 Route::get('work/paged', 'WorkController@paged');
 Route::get('work/recent', 'WorkController@recent');
 Route::get('work/uri/{uri}', 'WorkController@getFromUri');
 Route::get('work/{id}', 'WorkController@get');
+
+Route::get('images/{path}', 'ImageController@get');
+
+Route::put('work/{id}', 'WorkController@put');
 
 /*
 |--------------------------------------------------------------------------
@@ -70,6 +76,6 @@ Route::group(['middleware' => 'jwt.refresh'], function () {
     Route::delete('staff/{id}', 'StaffController@remove');
 
     Route::post('work', 'WorkController@add');
-    Route::put('work/{id}', 'WorkController@put');
+    // Route::put('work/{id}', 'WorkController@put');
     Route::delete('work/{id}', 'WorkController@remove');
 });

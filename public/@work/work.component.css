@@ -1,4 +1,14 @@
-:host {
-  margin: 0; }
+:host md-grid-list {
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  display: -ms-flexbox;
+  display: flex; }
+  :host md-grid-list md-grid-tile {
+    width: 250px;
+    float: left;
+    display: block;
+    overflow: hidden; }
+    :host md-grid-list md-grid-tile img {
+      width: 100%; }
 
 /*# sourceMappingURL=work.component.css.map */

@@ -1,92 +1,133 @@
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {NgForm} from '@angular/common';
+import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 
-import {Work, WorkService, ListComponent, ListConfig} from '../shared/index';
+import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
+import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2-toaster';
 
-/**
- * This class represents the lazy loaded BlogsComponent.
- */
+import {WorkService, Work, ClientService} from '../shared/index';
+
+import { Observable } from 'rxjs/Rx';
+
 @Component({
     moduleId: module.id,
-    selector: 'jpa-work',
     templateUrl: './work.component.html',
     styleUrls: ['./work.component.css'],
-    providers: [WorkService],
-    directives: [
-        ListComponent
-	]
+    directives: [FILE_UPLOAD_DIRECTIVES, MD_ICON_DIRECTIVES]
 })
 export class WorkComponent implements OnInit {
+    public work: Work;
+    public clients: string[];
+    public uploader:FileUploader = new FileUploader({url: 'wtf'});
+    public hasBaseDropZoneOver: boolean = false;
+    //public toasterConfig: ToasterConfig;
 
-    listData: any[] = [];
-    listConfig: ListConfig;
+    constructor(
+        private route: ActivatedRoute,
+        private service: WorkService,
+        private clientService: ClientService,
+        private toasterService: ToasterService
+    ) { }
+    
+    ngOnInit() {
+        let id = +this.route.snapshot.params['id'];
+        
+        this.clientService.options().subscribe(res => {
+            this.clients = res;
+        });
+        this.service.find(id).subscribe(res => {
+            this.work = res;
+        });
 
-	constructor(public workService: WorkService) {
-        this.listConfig = {
-            sortOptions: [
-                { name: 'Updated At', value: 'updated_at' },
-                { name: 'Created At', value: 'created_at' },
-                { name: 'Title', value: 'title' },
-                { name: 'Category', value: 'category' }
-            ],
-            perPageOptions: [5, 10, 15, 25, 50, 100],
-            sort: {
-                by: 'updated_at',
-                descending: true
-            },
-            page: {
-                currentPage: 1,
-                from: 0,
-                to: 0,
-                total: 0,
-                lastPage: 0,
-                perPage: 15
-            }
-        };
-	}
+        console.log('WorkComponent initialized.', this);
+    }
 
-	ngOnInit() {
-        this.fetch();
-	}
-
-    fetch(params: { page?: any, sort?: any } = {}) {
-        let page = params.page || this.listConfig.page;
-        let sort = params.sort || this.listConfig.sort;
-
-        this.workService.all({
-            current_page: page.currentPage,
-            length: page.perPage,
-            order_by: sort.by,
-            descending: sort.descending,
-        })
-        .subscribe(json => {
-            this.listData = json.data.map(work => {
-                return {
-                    id: work.id,
-                    title: work.title,
-                    subtitle: work.client.name,
-                    dates: {
-                        updated_at: work.updated_at,
-                        created_at: work.created_at
-                    }
-                };
+    onSubmit() {
+        if (this.uploader.queue.length) {
+            window['_files'] = this.uploader.queue;
+            console.log('Working through gallery queue with ' + this.uploader.queue.length + ' files', {
+                queue: this.uploader.queue
             });
 
-            this.listConfig.page = {
-                from: json.from,
-                to: json.to,
-                total: json.total,
-                lastPage: json.last_page,
-                currentPage: json.current_page,
-                perPage: json.per_page
+            if (this.work.gallery_new === undefined) this.work.gallery_new = [];
+
+            let i = 0;
+            const length = this.uploader.queue.length;
+
+            this.uploader.queue.forEach(item => {
+                item._isLast = ++i === length;
+
+                this.readFile(item._file)
+                    .subscribe(file => {
+                        this.work.gallery_new.push(file);
+                        this.uploader.removeFromQueue(item);
+                        if (item._isLast) {
+                            this.save();
+                        }
+                    });
+            });
+
+            return;
+        }
+
+        this.save();
+    }
+
+    save() {
+        console.log('Save work. ', this.work);
+        this.service.update(this.work.id, this.work)
+            .subscribe(res => {
+                console.log('response from update: ', res);
+                this.work = res;
+                this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
+            });
+    }
+
+    ceil(a) {
+        return Math.ceil(a);
+    }
+
+    imageFieldChanged(e) {
+        let file = e.target.files[0];
+        const filename = file.name;
+
+        console.log('imageFieldChanged to ' + filename);
+
+        let reader = new FileReader();
+
+        reader.onload = readerEvt => {
+            let base64 = btoa(readerEvt.target['result']);
+
+            this.work.image_new = {
+                name: filename,
+                base64: base64
             };
+        };
+
+        reader.readAsBinaryString(file);
+    }
+
+    readFile(file) : Observable<any> {
+        const filename = file.name;
+
+        return Observable.create(observer => {
+            let reader = new FileReader();
+
+            reader.onload = readerEvt => {
+                let base64 = btoa(readerEvt.target['result']);
+
+                observer.next({
+                    name: filename,
+                    base64: base64
+                });
+            };
+
+            reader.readAsBinaryString(file);
         });
     }
 
-    edit(item) {
-        console.log('edit this item: ', item);
-    }
-
-    _delete(item) {
-        console.log('delete this item: ', item);
+    fileOverBase(e:any):void {
+      this.hasBaseDropZoneOver = e;
     }
 }

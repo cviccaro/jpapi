@@ -13,6 +13,8 @@
         'hammerjs': 'node_modules/hammerjs',
         '@angular2-material': 'node_modules/@angular2-material',
         'ng2-material': 'node_modules/ng2-material',
+        'ng2-file-upload': 'node_modules/ng2-file-upload',
+        'angular2-toaster': 'node_modules/angular2-toaster',
         'rxjs': 'node_modules/rxjs',
     };
 
@@ -24,7 +26,9 @@
         'moment': { main: 'moment.js', defaultExtension: 'js' },
         'angular2-moment': { main: 'index.js', defaultExtension: 'js' },
         'ng2-material': { main: 'index.js', defaultExtension: 'js' },
-        'hammerjs': { main: 'hammer.js', defaultExtension: 'js' }
+        'hammerjs': { main: 'hammer.js', defaultExtension: 'js' },
+        'ng2-file-upload': { main: 'ng2-file-upload.js', defaultExtension: 'js' },
+        'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' }
     };
 
     var ngPackageNames = [

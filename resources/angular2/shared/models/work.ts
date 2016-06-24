@@ -6,4 +6,10 @@ export interface Work {
 	client: string;
 	created_at: string;
 	updated_at: string;
+	image_new?: {
+		name: string;
+		base64: string;
+	},
+	gallery?:[any],
+	gallery_new?: any;
 }

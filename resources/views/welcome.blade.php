@@ -9,6 +9,7 @@
         <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+        <link rel="stylesheet" type="text/css" href="/node_modules/angular2-toaster/lib/toaster.css" />
         <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.min.css"> -->
         <link href="css/app.css" rel="stylesheet" type="text/css">
 

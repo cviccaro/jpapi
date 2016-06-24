@@ -1,3 +1,15 @@
 :host {
-	margin: 0;
+	md-grid-list {
+		justify-content: space-between;
+		display: flex;
+		md-grid-tile {
+			width: 250px;
+			float: left;
+			display: block;
+			overflow: hidden;
+			img {
+				width: 100%;
+			}
+		}
+	}
 }

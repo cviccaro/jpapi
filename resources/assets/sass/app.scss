@@ -1,6 +1,6 @@
 $font-family-sans-serif: 'Lato', sans-serif;
 
-//@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import 'node_modules/sass-material-colors/sass/sass-material-colors';
 
 
@@ -39,6 +39,7 @@ h1,h2,h3,h4,h5,p,div,p {
     color: #fff;
 }
 
+
 /**
 | Titles
 |
@@ -56,6 +57,11 @@ h1,h2,h3,h4,h5 {
     width: 20%;
     display: flex;
     max-width: 20%;
+}
+[flex="25"] {
+    width: 25%;
+    display: flex;
+    max-width: 25%;
 }
 [flex="30"] {
     width: 30%;
@@ -87,13 +93,25 @@ h1,h2,h3,h4,h5 {
     display: flex;
     max-width: 80%;
 }
+[flex="90"] {
+    width: 90%;
+    display: flex;
+    max-width: 90%;
+}
+[flex="100"] {
+    width: 100%;
+    display: flex;
+    max-width: 100%;
+}
 
 [layout="row"],
 .layout-row {
+    display: flex;
     flex-direction: row;
 }
 [layout="column"],
 .layout-column {
+    display: flex;
     flex-direction: column;
 }
 .layout-align-center-center,
@@ -120,4 +138,55 @@ h1,h2,h3,h4,h5 {
 	-webkit-justify-content: flex-end;
     -ms-flex-pack: end;
     justify-content: flex-end;
+}
+
+
+/**
+| Forms
+| 
+**/
+
+.ng-valid[required] {
+  border-left: 5px solid material-color('green'); /* green */
+}
+
+.ng-invalid {
+  border-left: 5px solid material-color('red'); /* red */
+}
+
+form {
+    [layout="row"] {
+        .form-group {
+            flex-direction: column;
+            display: flex;
+            label {
+                display: block;
+            }
+            &.image {
+                img {
+                    width: 340px;
+                }
+            }
+        }
+        .form-group[flex="50"] {
+            margin-right: 1%;
+            &:last-child {
+                margin-left: 1%;
+                margin-right: 0;
+            }
+        }
+    }
+    textarea {
+        min-height: 125px;
+    }
+    .file-drop-zone { border: dotted 3px lightgray; }
+    .nv-file-over { border: dotted 3px material-color('light-green'); } /* Default class applied to drop zones on over */
+    .upload-label {
+        margin-top: 2em;
+    }
+    .form-actions {
+        border-top: 1px solid #eee;
+        padding-top: 2em;
+        margin-top: 2em;
+    }
 }

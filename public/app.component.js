@@ -12,8 +12,12 @@ var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 var router_1 = require('@angular/router');
 var angular2_material_1 = require('./shared/libs/angular2-material');
+var angular2_toaster_1 = require('angular2-toaster');
 var AppComponent = (function () {
     function AppComponent() {
+        this.toasterConfig = new angular2_toaster_1.ToasterConfig({
+            showCloseButton: true
+        });
     }
     AppComponent = __decorate([
         core_1.Component({
@@ -21,10 +25,11 @@ var AppComponent = (function () {
             templateUrl: './app.component.html',
             styleUrls: ['./app.component.css'],
             viewProviders: [http_1.HTTP_PROVIDERS],
-            providers: [angular2_material_1.MATERIAL_PROVIDERS],
+            providers: [angular2_material_1.MATERIAL_PROVIDERS, angular2_toaster_1.ToasterService],
             directives: [
                 router_1.ROUTER_DIRECTIVES,
-                angular2_material_1.MATERIAL_DIRECTIVES
+                angular2_material_1.MATERIAL_DIRECTIVES,
+                angular2_toaster_1.ToasterContainerComponent
             ]
         }), 
         __metadata('design:paramtypes', [])

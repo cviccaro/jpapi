@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Image;
 use App\Work;
+use App\WorkImage;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
@@ -85,5 +87,61 @@ class WorkController extends Controller
         $json['data'] = $data;
 
         return $this->respond('done', $json);
+    }
+
+    public function put(Request $request, $id)
+    {
+        $m = self::MODEL;
+        $this->validate($request, $m::$rules);
+        $model = $m::find($id);
+
+        if (is_null($model)) {
+            return $this->respond('not_found');
+        }
+
+        $data = $request->all();
+
+        if ($request->has('client')) {
+            $client_id = intval($request->get('client')['id']);
+            $data['client'] = $client_id;
+        }
+
+        if ($request->has('image_new')) {
+            $imageNew = $request->input('image_new');
+            $base64_string = $imageNew['base64'];
+            $filename = $imageNew['name'];
+            // if ($image = Image::createFromBase64($filename, $base64_string)) {
+            //     $data['image'] = $image->id;
+            //     unset($data['image_new']);
+            // }
+        } else {
+            unset($data['image']);
+        }
+
+        // $gallery = [];
+        // if ($request->has('gallery')) {
+        //     $gallery = array_reduce($data['gallery'], function ($carry, $item) {
+        //         $carry[] = $item['id'];
+        //         return $carry;
+        //     }, []);
+        // }
+
+        if ($request->has('gallery_new')) {
+            $gallery_new = $request->get('gallery_new');
+            foreach ($gallery_new as $file) {
+                \Log::info('Adding gallery new item: ' . $file['name']);
+                $base64_string = $file['base64'];
+                $filename = $file['name'];
+                if ($image = Image::createFromBase64($filename, $base64_string)) {
+                    WorkImage::create(['work_id' => $id, 'image_id' => $image->id]);
+                    \Log::info('Created new image at ID ' . $image->id . ' and added to gallery.');
+                } else {
+                    \Log::info('Image creation failed.');
+                }
+            }
+        }
+
+        $model->update($data);
+        return $this->respond('done', $m::find($id));
     }
 }

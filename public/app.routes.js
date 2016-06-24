@@ -8,7 +8,8 @@ var routes = index_1.HomeRoutes.concat(index_2.BlogsRoutes, index_3.WorkRoutes);
 exports.APP_ROUTER_PROVIDERS = [
     router_1.provideRouter(routes),
     index_4.BlogsGuard,
-    index_4.BlogGuard
+    index_4.BlogGuard,
+    index_4.WorkListGuard
 ];
 
 //# sourceMappingURL=app.routes.js.map

@@ -130,6 +130,8 @@ Elixir(function(mix) {
     // mix.copy('node_modules/reflect-metadata', 'public/node_modules/reflect-metadata');
     // mix.copy('node_modules/moment', 'public/node_modules/moment');
     // mix.copy('node_modules/angular2-moment', 'public/node_modules/angular2-moment');
+    // mix.copy('node_modules/ng2-file-upload', 'public/node_modules/ng2-file-upload');
+    // mix.copy('node_modules/angular2-toaster', 'public/node_modules/angular2-toaster');
 
     // mix.copy('node_modules/@angular2-material', 'public/node_modules/@angular2-material');
     //mix.copy('node_modules/ng2-material', 'public/node_modules/ng2-material');

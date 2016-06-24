@@ -9,87 +9,111 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var router_1 = require('@angular/router');
+var icon_1 = require('@angular2-material/icon');
+var ng2_file_upload_1 = require('ng2-file-upload');
+var angular2_toaster_1 = require('angular2-toaster');
 var index_1 = require('../shared/index');
+var Rx_1 = require('rxjs/Rx');
 var WorkComponent = (function () {
-    function WorkComponent(workService) {
-        this.workService = workService;
-        this.listData = [];
-        this.listConfig = {
-            sortOptions: [
-                { name: 'Updated At', value: 'updated_at' },
-                { name: 'Created At', value: 'created_at' },
-                { name: 'Title', value: 'title' },
-                { name: 'Category', value: 'category' }
-            ],
-            perPageOptions: [5, 10, 15, 25, 50, 100],
-            sort: {
-                by: 'updated_at',
-                descending: true
-            },
-            page: {
-                currentPage: 1,
-                from: 0,
-                to: 0,
-                total: 0,
-                lastPage: 0,
-                perPage: 15
-            }
-        };
+    function WorkComponent(route, service, clientService, toasterService) {
+        this.route = route;
+        this.service = service;
+        this.clientService = clientService;
+        this.toasterService = toasterService;
+        this.uploader = new ng2_file_upload_1.FileUploader({ url: 'wtf' });
+        this.hasBaseDropZoneOver = false;
     }
     WorkComponent.prototype.ngOnInit = function () {
-        this.fetch();
-    };
-    WorkComponent.prototype.fetch = function (params) {
         var _this = this;
-        if (params === void 0) { params = {}; }
-        var page = params.page || this.listConfig.page;
-        var sort = params.sort || this.listConfig.sort;
-        this.workService.all({
-            current_page: page.currentPage,
-            length: page.perPage,
-            order_by: sort.by,
-            descending: sort.descending,
-        })
-            .subscribe(function (json) {
-            _this.listData = json.data.map(function (work) {
-                return {
-                    id: work.id,
-                    title: work.title,
-                    subtitle: work.client.name,
-                    dates: {
-                        updated_at: work.updated_at,
-                        created_at: work.created_at
-                    }
-                };
+        var id = +this.route.snapshot.params['id'];
+        this.clientService.options().subscribe(function (res) {
+            _this.clients = res;
+        });
+        this.service.find(id).subscribe(function (res) {
+            _this.work = res;
+        });
+        console.log('WorkComponent initialized.', this);
+    };
+    WorkComponent.prototype.onSubmit = function () {
+        var _this = this;
+        if (this.uploader.queue.length) {
+            window['_files'] = this.uploader.queue;
+            console.log('Working through gallery queue with ' + this.uploader.queue.length + ' files', {
+                queue: this.uploader.queue
             });
-            _this.listConfig.page = {
-                from: json.from,
-                to: json.to,
-                total: json.total,
-                lastPage: json.last_page,
-                currentPage: json.current_page,
-                perPage: json.per_page
-            };
+            if (this.work.gallery_new === undefined)
+                this.work.gallery_new = [];
+            var i_1 = 0;
+            var length_1 = this.uploader.queue.length;
+            this.uploader.queue.forEach(function (item) {
+                item._isLast = ++i_1 === length_1;
+                _this.readFile(item._file)
+                    .subscribe(function (file) {
+                    _this.work.gallery_new.push(file);
+                    _this.uploader.removeFromQueue(item);
+                    if (item._isLast) {
+                        _this.save();
+                    }
+                });
+            });
+            return;
+        }
+        this.save();
+    };
+    WorkComponent.prototype.save = function () {
+        var _this = this;
+        console.log('Save work. ', this.work);
+        this.service.update(this.work.id, this.work)
+            .subscribe(function (res) {
+            console.log('response from update: ', res);
+            _this.work = res;
+            _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been saved.');
         });
     };
-    WorkComponent.prototype.edit = function (item) {
-        console.log('edit this item: ', item);
+    WorkComponent.prototype.ceil = function (a) {
+        return Math.ceil(a);
     };
-    WorkComponent.prototype._delete = function (item) {
-        console.log('delete this item: ', item);
+    WorkComponent.prototype.imageFieldChanged = function (e) {
+        var _this = this;
+        var file = e.target.files[0];
+        var filename = file.name;
+        console.log('imageFieldChanged to ' + filename);
+        var reader = new FileReader();
+        reader.onload = function (readerEvt) {
+            var base64 = btoa(readerEvt.target['result']);
+            _this.work.image_new = {
+                name: filename,
+                base64: base64
+            };
+        };
+        reader.readAsBinaryString(file);
+    };
+    WorkComponent.prototype.readFile = function (file) {
+        var filename = file.name;
+        return Rx_1.Observable.create(function (observer) {
+            var reader = new FileReader();
+            reader.onload = function (readerEvt) {
+                var base64 = btoa(readerEvt.target['result']);
+                observer.next({
+                    name: filename,
+                    base64: base64
+                });
+            };
+            reader.readAsBinaryString(file);
+        });
+    };
+    WorkComponent.prototype.fileOverBase = function (e) {
+        this.hasBaseDropZoneOver = e;
     };
     WorkComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
-            selector: 'jpa-work',
             templateUrl: './work.component.html',
             styleUrls: ['./work.component.css'],
-            providers: [index_1.WorkService],
-            directives: [
-                index_1.ListComponent
-            ]
+            directives: [ng2_file_upload_1.FILE_UPLOAD_DIRECTIVES, icon_1.MD_ICON_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [index_1.WorkService])
+        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.WorkService, index_1.ClientService, angular2_toaster_1.ToasterService])
     ], WorkComponent);
     return WorkComponent;
 }());

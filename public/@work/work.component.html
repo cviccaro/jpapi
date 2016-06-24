@@ -1,4 +1,93 @@
-<md-content class="md-whiteframe-6dp">
-    <jpa-list listTitle="Work" [listConfig]="listConfig" [listData]="listData" (listUpdate)="fetch($event)" (listItemEdit)="edit($event)" (listItemDelete)="_delete($event)">
-    </jpa-list>
-</md-content>
+<div class="container">
+    <h1 *ngIf="work">Edit Work {{ work.id }}</h1>
+    <form *ngIf="work" #workForm="ngForm" (ngSubmit)="onSubmit()">
+      <div layout="row">
+        <div class="form-group" flex="50">
+          <label for="title">Title</label>
+          <input type="text" class="form-control" required [(ngModel)]="work.title" name="title">
+        </div>
+        <div class="form-group" flex="50">
+          <label for="client">Client</label>
+          <select class="form-control" required name="client" [(ngModel)]="work.client.id">
+            <option *ngFor="let client of clients" [value]="client.id">{{client.name}}</option>
+          </select>
+        </div>
+      </div>
+      <div layout="row">
+        <div class="form-group" flex="100">
+          <label for="body">Body</label>
+          <textarea class="form-control" name="body" [(ngModel)]="work.body" required>
+          </textarea>
+        </div>
+      </div>
+      <div layout="row">
+        <div class="form-group image" flex="100">
+          <label for="image_new">Image</label>
+          <input name="image_new" type="file" (change)="imageFieldChanged($event)" accept="image/jpg, image/jpeg, image/png, image/gif" />
+          <img *ngIf="work.image" [src]="work.image" />
+        </div>
+      </div>
+      <div layout="row">
+        <div class="form-group gallery" flex="100">
+          <label>Gallery</label>
+          <md-grid-list cols="4">
+             <md-grid-tile *ngFor="let image of work.gallery" flex="25"><img [src]="image.image_url" /></md-grid-tile>
+             <md-grid-tile *ngIf="work.gallery.length % 4 !== 1" flex="25">
+             </md-grid-tile>
+          </md-grid-list>
+          <label class="upload-label">Upload new files</label>
+          <div ng2FileDrop
+               [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
+               (fileOver)="fileOverBase($event)"
+               [uploader]="uploader"
+               class="well file-drop-zone">
+               Drop files here
+          </div>
+          <table class="table">
+              <thead>
+              <tr>
+                  <th width="50%">Name</th>
+                  <th>Size</th>
+                  <th>Progress</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let item of uploader.queue">
+                  <td><strong>{{ item?.file?.name }}</strong></td>
+                  <td *ngIf="uploader.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
+                  <td *ngIf="uploader.isHTML5">
+                      <div class="progress" style="margin-bottom: 0;">
+                          <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                      </div>
+                  </td>
+                  <td class="text-center">
+                      <span *ngIf="item.isSuccess"><md-icon>done</md-icon></span>
+                      <span *ngIf="item.isCancel"><md-icon>highlight_off</md-icon></span>
+                      <span *ngIf="item.isError"><md-icon>delete</md-icon></span>
+                  </td>
+                  <td nowrap>
+                      <button type="button" class="btn btn-success btn-xs"
+                              (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                          <md-icon>file_upload</md-icon> Upload
+                      </button>
+                      <button type="button" class="btn btn-warning btn-xs"
+                              (click)="item.cancel()" [disabled]="!item.isUploading">
+                          <md-icon>cancel</md-icon> Cancel
+                      </button>
+                      <button type="button" class="btn btn-danger btn-xs"
+                              (click)="item.remove()">
+                          <md-icon>delete</md-icon> Remove
+                      </button>
+                  </td>
+              </tr>
+              </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn btn-default" [disabled]="!workForm.form.valid">Submit</button>
+      </div>
+    </form>
+</div>

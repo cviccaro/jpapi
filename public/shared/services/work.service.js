@@ -26,6 +26,34 @@ var WorkService = (function () {
         return this.http.get('/work/paged', { search: query })
             .map(function (res) { return res.json(); });
     };
+    WorkService.prototype.setList = function (res) {
+        this.list = res;
+        return this;
+    };
+    WorkService.prototype.getList = function () {
+        return this.list;
+    };
+    WorkService.prototype.find = function (id, cached) {
+        if (cached && this.byId[id] !== undefined) {
+            return this.byId[id];
+        }
+        return this.http.get('/work/' + id)
+            .map(function (res) { return res.json(); });
+    };
+    WorkService.prototype.cache = function (work) {
+        this.byId[work.id] = work;
+        return this;
+    };
+    WorkService.prototype.update = function (id, attributes) {
+        var base = window.location.protocol + '//' + window.location.hostname;
+        var url = base + '/work/' + id;
+        console.log('put to ', {
+            base: base,
+            url: url
+        });
+        return this.http.put(url, attributes)
+            .map(function (res) { return res.json(); });
+    };
     WorkService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [http_1.Http])
