@@ -47,6 +47,7 @@ Route::get('work/uri/{uri}', 'WorkController@getFromUri');
 Route::get('work/{id}', 'WorkController@get');
 
 Route::get('images/{path}', 'ImageController@get');
+Route::get('images/clients/{path}', 'ImageController@getClientImage');
 
 Route::post('work', 'WorkController@create');
 Route::put('work/{id}', 'WorkController@put');

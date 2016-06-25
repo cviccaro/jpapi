@@ -4,19 +4,29 @@
  */
 (function(global) {
     // map tells the System loader where to look for things
-    var map = {
-        'app': '/', // 'dist',
-        '@angular': 'node_modules/@angular',
-        'angular2-in-memory-web-api': 'node_modules/angular2-in-memory-web-api',
-        'moment': 'node_modules/moment',
-        'angular2-moment': 'node_modules/angular2-moment',
-        'hammerjs': 'node_modules/hammerjs',
-        '@angular2-material': 'node_modules/@angular2-material',
-        'ng2-material': 'node_modules/ng2-material',
-        'ng2-file-upload': 'node_modules/ng2-file-upload',
-        'angular2-toaster': 'node_modules/angular2-toaster',
-        'rxjs': 'node_modules/rxjs',
-    };
+    var modules = [
+      'rxjs',
+      '@angular',
+      'angular2-in-memory-web-api',
+      'moment',
+      'angular2-moment',
+      '@angular2-material',
+      // 'ng2-material',
+      'ng2-file-upload',
+      'angular2-toaster',
+      'angular2-localstorage'
+    ];
+
+    var map = modules.reduce(function(carry, module) {
+      switch(module) {
+        case 'angular2-localstorage':
+          carry[module] = 'node_modules/' + module + '/dist'
+          break;
+        default:
+          carry[module] = 'node_modules/' + module;
+      }
+      return carry;
+    }, {app:'/'});
 
     // packages tells the System loader how to load when no filename and/or no extension
     var packages = {
@@ -28,7 +38,8 @@
         'ng2-material': { main: 'index.js', defaultExtension: 'js' },
         'hammerjs': { main: 'hammer.js', defaultExtension: 'js' },
         'ng2-file-upload': { main: 'ng2-file-upload.js', defaultExtension: 'js' },
-        'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' }
+        'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' },
+        'angular2-localstorage': { main: 'index.js', defaultExtension: 'js' }
     };
 
     var ngPackageNames = [

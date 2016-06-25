@@ -151,6 +151,10 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         /*
+         * Libraries Service Providers
+         */
+        Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        /*
          * Application Service Providers...
          */
         App\Providers\AppServiceProvider::class,
@@ -204,6 +208,12 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        /*
+         * Libraries Facacdes
+         */
+
+        'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class
     ],
 
 ];

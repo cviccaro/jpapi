@@ -10,7 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
-var icon_1 = require('@angular2-material/icon');
+var angular2_material_1 = require('../shared/libs/angular2-material');
 var ng2_file_upload_1 = require('ng2-file-upload');
 var angular2_toaster_1 = require('angular2-toaster');
 var index_1 = require('../shared/index');
@@ -24,6 +24,7 @@ var WorkComponent = (function () {
         this.router = router;
         this.uploader = new ng2_file_upload_1.FileUploader({ url: 'wtf' });
         this.hasBaseDropZoneOver = false;
+        this.submitted = false;
         this.isNew = false;
     }
     WorkComponent.prototype.ngOnInit = function () {
@@ -84,6 +85,7 @@ var WorkComponent = (function () {
     };
     WorkComponent.prototype.save = function () {
         var _this = this;
+        this.submitted = true;
         if (this.isNew) {
             console.log('Save NEW work. ', this.work);
             this.service.create(this.work)
@@ -146,7 +148,7 @@ var WorkComponent = (function () {
             moduleId: module.id,
             templateUrl: './work.component.html',
             styleUrls: ['./work.component.css'],
-            directives: [ng2_file_upload_1.FILE_UPLOAD_DIRECTIVES, icon_1.MD_ICON_DIRECTIVES]
+            directives: [ng2_file_upload_1.FILE_UPLOAD_DIRECTIVES, angular2_material_1.MATERIAL_DIRECTIVES]
         }), 
         __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.WorkService, index_1.ClientService, angular2_toaster_1.ToasterService, router_1.Router])
     ], WorkComponent);

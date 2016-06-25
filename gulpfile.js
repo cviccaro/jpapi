@@ -132,9 +132,14 @@ Elixir(function(mix) {
     // mix.copy('node_modules/angular2-moment', 'public/node_modules/angular2-moment');
     // mix.copy('node_modules/ng2-file-upload', 'public/node_modules/ng2-file-upload');
     // mix.copy('node_modules/angular2-toaster', 'public/node_modules/angular2-toaster');
+    // mix.copy('node_modules/es6-promise', 'public/node_modules/es6-promise');
+    // mix.copy('node_modules/promise', 'public/node_modules/promise');
+    // mix.copy('node_modules/angular2-localstorage', 'public/node_modules/angular2-localstorage');
 
     // mix.copy('node_modules/@angular2-material', 'public/node_modules/@angular2-material');
     //mix.copy('node_modules/ng2-material', 'public/node_modules/ng2-material');
+
+    //mix.typescript('node_modules/angular2-localstorage/**/*.ts', 'public/node_modules/angular2-localstorage/angular2-localstorage.js');
 
     mix.copy('resources/angular2/systemjs.config.js', 'public/systemjs.config.js');
 

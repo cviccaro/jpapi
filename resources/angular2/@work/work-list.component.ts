@@ -11,7 +11,6 @@ import {Work, WorkService, ListComponent, ListConfig} from '../shared/index';
     selector: 'jpa-work-list',
     templateUrl: './work-list.component.html',
     styleUrls: ['./work-list.component.css'],
-    providers: [WorkService],
     directives: [
         ListComponent
 	]
@@ -46,8 +45,22 @@ export class WorkListComponent implements OnInit {
 	}
 
 	ngOnInit() {
-        this.fetch();
+        let list = this.workService.getList();
+
+        this.parseList(list);
 	}
+
+    parseList(json) {
+        this.listData = json.data.map(this.mapList);
+        this.listConfig.page = {
+            from: json.from,
+            to: json.to,
+            total: json.total,
+            lastPage: json.last_page,
+            currentPage: json.current_page,
+            perPage: json.per_page
+        };
+    }
 
     fetch(params: { page?: any, sort?: any } = {}) {
         let page = params.page || this.listConfig.page;
@@ -59,33 +72,24 @@ export class WorkListComponent implements OnInit {
             order_by: sort.by,
             descending: sort.descending,
         })
-        .subscribe(json => {
-            this.listData = json.data.map(work => {
-                return {
-                    id: work.id,
-                    title: work.title,
-                    subtitle: work.client.name,
-                    dates: {
-                        updated_at: work.updated_at,
-                        created_at: work.created_at
-                    }
-                };
-            });
+        .subscribe(json => this.parseList(json));
+    }
 
-            this.listConfig.page = {
-                from: json.from,
-                to: json.to,
-                total: json.total,
-                lastPage: json.last_page,
-                currentPage: json.current_page,
-                perPage: json.per_page
-            };
-        });
+    mapList(work: any) {
+        return {
+            id: work.id,
+            title: work.title,
+            subtitle: work.client.name,
+            dates: {
+                updated_at: work.updated_at,
+                created_at: work.created_at
+            }
+        };
     }
 
     edit(work: Work) {
         console.log('ROUTE TO:', ['/work', work.id]);
-        this.router.navigate(['/work', work.id]);        
+        this.router.navigate(['/work', work.id]);
     }
 
     _delete(item) {

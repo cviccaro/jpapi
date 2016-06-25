@@ -39,7 +39,19 @@ var WorkListComponent = (function () {
         };
     }
     WorkListComponent.prototype.ngOnInit = function () {
-        this.fetch();
+        var list = this.workService.getList();
+        this.parseList(list);
+    };
+    WorkListComponent.prototype.parseList = function (json) {
+        this.listData = json.data.map(this.mapList);
+        this.listConfig.page = {
+            from: json.from,
+            to: json.to,
+            total: json.total,
+            lastPage: json.last_page,
+            currentPage: json.current_page,
+            perPage: json.per_page
+        };
     };
     WorkListComponent.prototype.fetch = function (params) {
         var _this = this;
@@ -52,27 +64,18 @@ var WorkListComponent = (function () {
             order_by: sort.by,
             descending: sort.descending,
         })
-            .subscribe(function (json) {
-            _this.listData = json.data.map(function (work) {
-                return {
-                    id: work.id,
-                    title: work.title,
-                    subtitle: work.client.name,
-                    dates: {
-                        updated_at: work.updated_at,
-                        created_at: work.created_at
-                    }
-                };
-            });
-            _this.listConfig.page = {
-                from: json.from,
-                to: json.to,
-                total: json.total,
-                lastPage: json.last_page,
-                currentPage: json.current_page,
-                perPage: json.per_page
-            };
-        });
+            .subscribe(function (json) { return _this.parseList(json); });
+    };
+    WorkListComponent.prototype.mapList = function (work) {
+        return {
+            id: work.id,
+            title: work.title,
+            subtitle: work.client.name,
+            dates: {
+                updated_at: work.updated_at,
+                created_at: work.created_at
+            }
+        };
     };
     WorkListComponent.prototype.edit = function (work) {
         console.log('ROUTE TO:', ['/work', work.id]);
@@ -90,7 +93,6 @@ var WorkListComponent = (function () {
             selector: 'jpa-work-list',
             templateUrl: './work-list.component.html',
             styleUrls: ['./work-list.component.css'],
-            providers: [index_1.WorkService],
             directives: [
                 index_1.ListComponent
             ]

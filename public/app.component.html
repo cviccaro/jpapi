@@ -6,21 +6,24 @@
           <span md-line>Home</span>
           <span md-line class="secondary">Go home</span>
         </a>
+        <a md-list-item [routerLink]="['/blogs']">
+          <md-icon md-list-icon>view_headline</md-icon>
+          <span md-line>Blogs</span>
+          <span md-line class="secondary">Edit the blog content</span>
+        </a>
+        </md-nav-list>
+        <md-nav-list>
+        <a md-list-item [routerLink]="['/work']">
+          <md-icon md-list-icon>work</md-icon>
+          <span md-line>Work</span>
+          <span md-line class="secondary">Edit the work content</span>
+        </a>
+        <a *ngIf="loggedIn" md-list-item (click)="logout()">
+          <md-icon md-list-icon>power_settings_new</md-icon>
+          <span md-line>Logout</span>
+          <span md-line class="secondary">Logout of the app</span>
+        </a>
       </md-nav-list>
-        <md-nav-list>
-          <a md-list-item [routerLink]="['/blogs']">
-            <md-icon md-list-icon>view_headline</md-icon>
-            <span md-line>Blogs</span>
-            <span md-line class="secondary">Edit the blog content</span>
-          </a>
-        </md-nav-list>
-        <md-nav-list>
-          <a md-list-item [routerLink]="['/work']">
-            <md-icon md-list-icon>work</md-icon>
-            <span md-line>Work</span>
-            <span md-line class="secondary">Edit the work content</span>
-          </a>
-        </md-nav-list>
     </md-sidenav>
 
     <md-toolbar color="primary">

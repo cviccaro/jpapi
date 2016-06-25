@@ -6,14 +6,15 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet">
-        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
-        <link rel="stylesheet" type="text/css" href="/node_modules/angular2-toaster/lib/toaster.css" />
-        <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-material-design/4.0.1/bootstrap-material-design.min.css"> -->
-        <link href="css/app.css" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+        <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/angular-material/1.0.9/angular-material.min.css" rel="stylesheet" /> -->
+        <link href="/node_modules/angular2-toaster/lib/toaster.css" rel="stylesheet" />
+        <link href="css/app.css" rel="stylesheet" />
 
         <!-- 1. Load libraries -->
+         <!-- <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script> -->
          <!-- Polyfill(s) for older browsers -->
          <script src="/node_modules/core-js/client/shim.min.js"></script>
          <script src="/node_modules/zone.js/dist/zone.js"></script>

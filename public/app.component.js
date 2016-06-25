@@ -11,18 +11,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 var router_1 = require('@angular/router');
-var angular2_material_1 = require('./shared/libs/angular2-material');
 var angular2_toaster_1 = require('angular2-toaster');
+var angular2_material_1 = require('./shared/libs/angular2-material');
+var index_1 = require('./shared/index');
 var AppComponent = (function () {
-    function AppComponent(router) {
+    function AppComponent(router, authService) {
         this.router = router;
+        this.authService = authService;
+        this.loggedIn = false;
         this.toasterConfig = new angular2_toaster_1.ToasterConfig({
             showCloseButton: true
         });
+        this.loggedIn = this.authService.authorized;
     }
     AppComponent.prototype.navigateTo = function (link) {
         console.log('navigate to: ', link);
         this.router.navigate(link);
+    };
+    AppComponent.prototype.logout = function () {
+        this.authService.logout();
+        this.router.navigate(['/login']);
     };
     AppComponent = __decorate([
         core_1.Component({
@@ -37,7 +45,7 @@ var AppComponent = (function () {
                 angular2_toaster_1.ToasterContainerComponent
             ]
         }), 
-        __metadata('design:paramtypes', [router_1.Router])
+        __metadata('design:paramtypes', [router_1.Router, index_1.AuthService])
     ], AppComponent);
     return AppComponent;
 }());

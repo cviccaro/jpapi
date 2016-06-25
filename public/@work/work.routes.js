@@ -13,7 +13,8 @@ exports.WorkRoutes = [
         children: [
             { path: ':id', component: index_1.WorkComponent },
             { path: '', component: index_1.WorkListComponent, canActivate: [index_2.WorkListGuard] }
-        ]
+        ],
+        canActivate: [index_2.AuthGuard]
     },
 ];
 

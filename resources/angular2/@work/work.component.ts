@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgForm} from '@angular/common';
-import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
+import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 
 import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
 import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2-toaster';
@@ -14,13 +14,15 @@ import { Observable } from 'rxjs/Rx';
     moduleId: module.id,
     templateUrl: './work.component.html',
     styleUrls: ['./work.component.css'],
-    directives: [FILE_UPLOAD_DIRECTIVES, MD_ICON_DIRECTIVES]
+    directives: [FILE_UPLOAD_DIRECTIVES, MATERIAL_DIRECTIVES]
 })
 export class WorkComponent implements OnInit {
     public work: Work;
     public clients: string[];
     public uploader:FileUploader = new FileUploader({url: 'wtf'});
     public hasBaseDropZoneOver: boolean = false;
+    public submitted = false;
+
     //public toasterConfig: ToasterConfig;
     private isNew: boolean = false;
 
@@ -31,7 +33,7 @@ export class WorkComponent implements OnInit {
         private toasterService: ToasterService,
         private router: Router
     ) { }
-    
+
     ngOnInit() {
         console.log({
             snapshot: this.route.snapshot,
@@ -98,6 +100,7 @@ export class WorkComponent implements OnInit {
     }
 
     save() {
+        this.submitted = true;
         if (this.isNew) {
             console.log('Save NEW work. ', this.work);
             this.service.create(this.work)

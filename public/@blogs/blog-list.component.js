@@ -39,16 +39,8 @@ var BlogListComponent = (function () {
         };
     }
     BlogListComponent.prototype.ngOnInit = function () {
-        var res = this.blogService.getList();
-        this.listData = res.data.map(this.mapList);
-        this.listConfig.page = {
-            currentPage: res.current_page,
-            from: res.from,
-            to: res.to,
-            total: res.total,
-            lastPage: res.last_page,
-            perPage: res.per_page
-        };
+        var json = this.blogService.getList();
+        this.parseList(json);
     };
     BlogListComponent.prototype.mapList = function (blog) {
         return {
@@ -59,6 +51,17 @@ var BlogListComponent = (function () {
                 updated_at: blog.updated_at,
                 created_at: blog.created_at
             }
+        };
+    };
+    BlogListComponent.prototype.parseList = function (json) {
+        this.listData = json.data.map(this.mapList);
+        this.listConfig.page = {
+            from: json.from,
+            to: json.to,
+            total: json.total,
+            lastPage: json.last_page,
+            currentPage: json.current_page,
+            perPage: json.per_page
         };
     };
     BlogListComponent.prototype.fetch = function (params) {
@@ -72,17 +75,7 @@ var BlogListComponent = (function () {
             order_by: sort.by,
             descending: sort.descending,
         })
-            .subscribe(function (json) {
-            _this.listData = json.data.map(_this.mapList);
-            _this.listConfig.page = {
-                from: json.from,
-                to: json.to,
-                total: json.total,
-                lastPage: json.last_page,
-                currentPage: json.current_page,
-                perPage: json.per_page
-            };
-        });
+            .subscribe(function (json) { return _this.parseList(json); });
     };
     BlogListComponent.prototype.edit = function (blog) {
         console.log('ROUTE TO:', ['/blogs', blog.id]);

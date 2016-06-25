@@ -12,19 +12,18 @@ class ImageController extends Controller
     public function get(Request $request, $path)
     {
         $image_path = '/resources/assets/images/';
-        // dd($request->route());
-        // if ($request->route()[1]['name'] === 'ClientImage') {
-        //     $image_path .= 'clients/';
-        // }
-
         $file_path = base_path() . $image_path . urldecode($path);
-        //dd($path);
+
         try {
             $file = new File($file_path);
             return response(file_get_contents($file_path), 200, ['Content-Type' => $file->getMimeType()]);
         } catch (Exception $e) {
             abort(404);
         }
+    }
+
+    public function getClientImage(Request $request, $path) {
+        return $this->get($request, 'clients/' . $path);
     }
 
     public function upload(Request $request)

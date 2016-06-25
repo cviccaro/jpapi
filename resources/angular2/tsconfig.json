@@ -16,6 +16,7 @@
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
     "noFallthroughCasesInSwitch": true
+    //"outFile": "assets/built/app.js",
   },
   "compileOnSave": false
 }

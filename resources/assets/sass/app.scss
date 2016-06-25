@@ -1,21 +1,23 @@
 $font-family-sans-serif: 'Lato', sans-serif;
 
+@import "animations";
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import 'node_modules/sass-material-colors/sass/sass-material-colors';
 
-
+/**
+| Base
+|
+**/
 body, md-list, md-list-item, md-line, md-button, md-content, md-card, md-input-container,
 h1,h2,h3,h4,h5,p,div,p {
     font-family: $font-family-sans-serif;
+    letter-spacing: -0.25px;
 }
-
 
 /**
 | Colors
-|-
 |
 **/
-
 .md-primary {
     background-color: material-color('blue-grey', '600')!important;
 }
@@ -26,7 +28,6 @@ h1,h2,h3,h4,h5,p,div,p {
 
 .md-secondary,
 .md-secondary[md-raised-button],
-.md-secondary[md-button],
 .md-secondary[md-fab],
 .md-secondary[md-mini-fab],
 .md-secondary[md-icon-button] {
@@ -36,14 +37,12 @@ h1,h2,h3,h4,h5,p,div,p {
 
 .md-danger,
 .md-danger[md-raised-button],
-.md-danger[md-button],
 .md-danger[md-fab],
 .md-danger[md-mini-fab],
 .md-danger[md-icon-button] {
     background-color: material-color('red', '900');
     color: #fff;
 }
-
 
 /**
 | Titles
@@ -52,10 +51,27 @@ h1,h2,h3,h4,h5,p,div,p {
 h1,h2,h3,h4,h5 {
     font-weight: normal;
 }
+h3 {
+    font-size: 20px;
+}
+
+/**
+| Buttons, Icons
+|
+**/
+button[md-button],
+button[md-raised-button] {
+    md-icon {
+        vertical-align: middle;
+    }
+}
+md-icon.spin {
+    animation: fa-spin 2s infinite linear;
+    -webkit-animation: fa-spin 2s infinite linear;
+}
 
 /**
 | Flex
-|-
 |
 **/
 [flex="20"] {
@@ -148,15 +164,17 @@ h1,h2,h3,h4,h5 {
 
 /**
 | Forms
-| 
+|
 **/
 
-.ng-valid[required] {
-  border-left: 5px solid material-color('green'); /* green */
-}
+form.submitted {
+    .ng-valid[required] {
+      border-left: 5px solid material-color('green'); /* green */
+    }
 
-.ng-invalid {
-  border-left: 5px solid material-color('red'); /* red */
+    .ng-invalid {
+      border-left: 5px solid material-color('red'); /* red */
+    }
 }
 
 form {
@@ -193,5 +211,6 @@ form {
         border-top: 1px solid #eee;
         padding-top: 2em;
         margin-top: 2em;
+        text-align: right;
     }
 }

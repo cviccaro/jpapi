@@ -5,7 +5,7 @@ var forms_1 = require('@angular/forms');
 var app_component_1 = require('./app.component');
 var app_routes_1 = require('./app.routes');
 var index_1 = require('./shared/index');
-platform_browser_dynamic_1.bootstrap(app_component_1.AppComponent, [
+var appPromise = platform_browser_dynamic_1.bootstrap(app_component_1.AppComponent, [
     forms_1.disableDeprecatedForms(),
     forms_1.provideForms(),
     http_1.HTTP_PROVIDERS,

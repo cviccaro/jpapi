@@ -46,17 +46,9 @@ export class BlogListComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-        var res = this.blogService.getList();
+        var json = this.blogService.getList();
 
-        this.listData = res.data.map(this.mapList);
-        this.listConfig.page = {
-            currentPage: res.current_page,
-            from: res.from,
-            to: res.to,
-            total: res.total,
-            lastPage: res.last_page,
-            perPage: res.per_page
-        };
+        this.parseList(json);
 	}
 
     mapList(blog: any) {
@@ -71,6 +63,19 @@ export class BlogListComponent implements OnInit, OnDestroy {
         };
     }
 
+    parseList(json: any) {
+        this.listData = json.data.map(this.mapList);
+
+        this.listConfig.page = {
+            from: json.from,
+            to: json.to,
+            total: json.total,
+            lastPage: json.last_page,
+            currentPage: json.current_page,
+            perPage: json.per_page
+        };
+    }
+
     fetch(params: { page?: any, sort?: any } = {}) {
         let page = params.page || this.listConfig.page;
         let sort = params.sort || this.listConfig.sort;
@@ -81,18 +86,7 @@ export class BlogListComponent implements OnInit, OnDestroy {
             order_by: sort.by,
             descending: sort.descending,
         })
-        .subscribe(json => {
-            this.listData = json.data.map(this.mapList);
-
-            this.listConfig.page = {
-                from: json.from,
-                to: json.to,
-                total: json.total,
-                lastPage: json.last_page,
-                currentPage: json.current_page,
-                perPage: json.per_page
-            };
-        });
+        .subscribe(json => this.parseList(json));
     }
 
     edit(blog: Blog) {

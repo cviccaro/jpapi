@@ -2,9 +2,11 @@ import {Component} from '@angular/core';
 import { HTTP_PROVIDERS } from '@angular/http';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 
+import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2-toaster';
+
 import { MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS } from './shared/libs/angular2-material';
 
-import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2-toaster';
+import { AuthService } from './shared/index';
 
 @Component({
     selector: 'jpa-app',
@@ -18,17 +20,25 @@ import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2
         ToasterContainerComponent
     ]
 })
-export class AppComponent { 
-	public toasterConfig: ToasterConfig;
+export class AppComponent {
+	toasterConfig: ToasterConfig;
+    loggedIn = false;
 
-	constructor(public router: Router) {
+	constructor(public router: Router, private authService: AuthService) {
 		this.toasterConfig = new ToasterConfig({
 		    showCloseButton: true
 		});
+
+        this.loggedIn = this.authService.authorized;
 	}
 
     navigateTo(link) {
         console.log('navigate to: ', link);
         this.router.navigate(link);
+    }
+
+    logout() {
+        this.authService.logout();
+        this.router.navigate(['/login']);
     }
 }

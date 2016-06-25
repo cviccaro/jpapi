@@ -1,6 +1,6 @@
 import { WorkIndexComponent, WorkListComponent, WorkComponent } from './index';
 
-import { WorkListGuard } from '../shared/index';
+import { AuthGuard, WorkListGuard } from '../shared/index';
 
 export const WorkRoutes = [
     {
@@ -14,6 +14,7 @@ export const WorkRoutes = [
         children: [
             { path: ':id', component: WorkComponent },
             { path: '', component: WorkListComponent, canActivate: [WorkListGuard] }
-        ]
+        ],
+        canActivate: [AuthGuard]
     },
 ];
