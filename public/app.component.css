@@ -1,5 +1,28 @@
+/**
+ * Retrieves a color value from the $material-colors Sass map
+ * Inspired by https://github.com/nilskaspersson/Google-Material-UI-Color-Palette/
+ *
+ * @function
+ * @param {string} color-name             - quoted, lower-case, dasherized color
+ *                                          name (e.g. 'pink', 'amber')
+ * @param {string} [color-variant='500']  - quoted, lowercase color variant (e.g.
+ *                                          '200', 'a100')
+ */
+/**
+ * Colors
+ */
+/**
+ * Fonts
+ */
+/**
+ * Animations & Transitions
+ */
+/**
+ * Transition mixins
+ */
 :host .app-content {
-  padding: 20px; }
+  padding: 0 0 100px 0;
+  background: #f5f5f5; }
 
 :host .app-sidenav {
   padding: 0;

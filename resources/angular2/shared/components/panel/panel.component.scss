@@ -101,19 +101,23 @@ $label_width: 25%;
     .panel-content {
         height: 0;
         overflow: hidden;
-
+        flex-flow: column;
+        flex-direction: column;
         @include basic-transition;
 
-        display: -webkit-box;
-        display: -webkit-flex;
-        display: -ms-flexbox;
-        display: flex;
-        -webkit-box-pack: justify;
-        -webkit-justify-content: space-between;
-        -ms-flex-pack: justify;
-        justify-content: space-between;
         margin: 0 -8px;
 
+        .panel-content-top,
+        .panel-content-bottom {
+            display: -webkit-box;
+            display: -webkit-flex;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-pack: justify;
+            -webkit-justify-content: space-between;
+            -ms-flex-pack: justify;
+            justify-content: space-between;
+        }
         .panel-content-spacer {
             margin: 0;
             width: 25%;
@@ -179,7 +183,15 @@ $label_width: 25%;
         }
 
         .panel-summary {
-            color: $accent;
+            .summary-text {
+                color: $accent;
+            }
+        }
+    }
+
+    &.expanded.changed {
+        .panel-summary .summary-text {
+            color: $black;
         }
     }
 
@@ -220,6 +232,12 @@ $label_width: 25%;
             outline: none;
             padding: 0;
             width: 100%;
+        }
+        select.panel-control-element {
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            border: none;
         }
 
         .panel-control-infix {

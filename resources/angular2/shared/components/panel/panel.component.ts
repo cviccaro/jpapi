@@ -29,6 +29,8 @@ import { MdHint } from '@angular2-material/input';
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { JpaPanelContent } from './content/index';
 
+import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
+
 export const JPA_PANEL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     useExisting: forwardRef(() => JpaPanel),
     multi: true
@@ -42,6 +44,7 @@ const JPA_PANEL_VALID_INPUT_TYPE = [
     'select',
     'textarea',
     'image',
+    'images'
     // 'checkbox',
     // 'number',
     // 'date'
@@ -49,7 +52,8 @@ const JPA_PANEL_VALID_INPUT_TYPE = [
 
 const JPA_PANEL_UNDERLINE_HIDDEN = [
     'textarea',
-    'image'
+    'image',
+    'images'
 ];
 
 let nextUniqueId = 0;
@@ -71,7 +75,7 @@ export class JpaPanelDuplicatedHintError extends MdError {
     selector: 'jpa-panel',
     templateUrl: './panel.component.html',
     styleUrls: ['./panel.component.css'],
-    directives: [MATERIAL_DIRECTIVES, NgIf, NgModel, NgSelectOption, JpaPanelContent],
+    directives: [MATERIAL_DIRECTIVES, NgIf, NgModel, NgSelectOption, JpaPanelContent, FILE_UPLOAD_DIRECTIVES],
     providers: [JPA_PANEL_VALUE_ACCESSOR],
     pipes: [SlicePipe],
     host: {
@@ -87,8 +91,15 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
     private _isTextfield: boolean = false;
     private _isTextarea: boolean = false;
     private _isImage: boolean = false;
+    private _isMultipleImages: boolean = false;
     private _isSelect: boolean = false;
     private _hasContent: boolean = false;
+    private _hasContentRight: boolean = false;
+    private _hasContentBottom: boolean = false;
+
+    private _newImages: any[] = [];
+    private hasBaseDropZoneOver: boolean = false;
+    public uploader:FileUploader = new FileUploader({url: 'wtf'});
 
     /** Callback registered via registerOnTouched (ControlValueAccessor) */
     private _onTouchedCallback: () => void = noop;
@@ -106,6 +117,7 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
             case 'select': this._isSelect = true; break;
             case 'textarea': this._isTextarea = true; break;
             case 'image': this._isImage = true; break;
+            case 'images': this._isMultipleImages = true; break;
         }
     }
 
@@ -174,6 +186,8 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
 
     @Input() currentImage: string = null;
 
+    @Input() fullWidth: boolean = false;
+
     private _blurEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
     private _focusEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
     private _expandedEmitter: EventEmitter<any> = new EventEmitter<any>();
@@ -210,12 +224,7 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
         }
     }
 
-    private _initialSummary: any = false;
-
-    set initialSummary(v: any) {
-        this._initialSummary = v;
-    }
-    get initialSummary() { return this._initialSummary || ''; }
+    @Input() editText: string;
 
     get summary(): any {
         return this._summary;
@@ -224,12 +233,17 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
     set summary(value: any) {
         switch(this.type) {
             case 'select':
-                let filtered = this._optionChildren.filter(opt => {
-                   return opt['_element']['nativeElement']['value'] == this._value;
-                });
-                if (filtered.length) {
-                    this._summary = filtered[0]['_element']['nativeElement']['innerHTML'];
-                }
+                console.log('(SELECT) SET SUMMARY FOR VALUE ' + value);
+                let interval = setInterval(() => {
+                    let filtered = this._optionChildren.filter(opt => {
+                        return opt['_element']['nativeElement']['value'] == this._value;
+                    });
+                    console.log('(SELECT) FILTERED OPTIONS: ', filtered);
+                    if (filtered.length) {
+                        this._summary = filtered[0]['_element']['nativeElement']['innerHTML'];
+                        clearInterval(interval);
+                    }
+                }, 250);
                 break;
             case 'image':
                 this._summary = value || '';
@@ -254,28 +268,43 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
         switch(this.type) {
             case 'select': return this._selectElement.nativeElement;
             case 'textarea': return this._textareaElement.nativeElement;
-            default: return this._inputElement.nativeElement;
+            default:
+                if (this._inputElement) {
+                    return this._inputElement.nativeElement;
+                }
         }
+
+        return false;
     }
 
     /** Set focus on input */
     focus() {
-        this.nativeElement.focus();
+        if (this.nativeElement) {
+            this.nativeElement.focus();
+        }
     }
 
     /** @internal */
     handleFocus(event: FocusEvent) {
         console.debug('JpaPanel#handleFocus ', event);
-        this._focused = true;
-        this._focusEmitter.emit(event);
+        if (this.expanded) {
+            this._focused = true;
+            this._focusEmitter.emit(event);
+        } else {
+            console.debug('skipping focus for non-expanded panel');
+        }
     }
 
     /** @internal */
     handleBlur(event: FocusEvent) {
         console.debug('JpaPanel#handleBlur ', event);
-        this._focused = false;
-        this._onTouchedCallback();
-        this._blurEmitter.emit(event);
+        if (this.expanded) {
+            this._focused = false;
+            this._onTouchedCallback();
+            this._blurEmitter.emit(event);
+        } else {
+            console.debug('skipping blur for non-expanded panel');
+        }
     }
 
     /** @internal */
@@ -313,7 +342,6 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
         console.debug('JpaPanel#writeValue('+this.type+')', value);
         this._value = value;
         if (!this._initialValue) this._initialValue = value;
-        if (!this._initialSummary) this.initialSummary = value;
         this.summary = value;
     }
 
@@ -348,30 +376,36 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
 
         this._hasContent = !!this._contentChildren.length;
 
+        if (this._hasContent) {
+            this._contentChildren.forEach(panel => {
+                if (panel.align === 'bottom') {
+                    this._hasContentBottom = true;
+                } else if (panel.align === 'right') {
+                    this._hasContentRight = true;
+                }
+            })
+        }
+
         console.debug('JpaPanel#ngAfterContentInit', this);
     }
 
     ngAfterViewInit() {
         switch (this.type) {
             case 'image':
-                console.log('IS THERE AN IMAGE PREVIEW?');
-                if (this._imagePreview) {
-                    console.log('YES!');
-                    if (this.currentImageSize === null) {
-                        this._imagePreview.nativeElement.onload = (e) => {
-                            console.log('IMAGE LOADED!');
-                            this._imageLoaded = true;
-                            this.currentImageSize = {w: this._imagePreview.nativeElement.naturalWidth, h: this._imagePreview.nativeElement.naturalHeight};
-                            if (!this._expanded) {
-                                this._summary = this.currentImageSize.w + 'x' + this.currentImageSize.h + 'px';
-                            }
-                        };
-                    }
+                if (this._imagePreview && this.currentImageSize === null) {
+                    this._imagePreview.nativeElement.onload = (e) => {
+                        console.log('IMAGE LOADED!');
+                        this._imageLoaded = true;
+                        this.currentImageSize = {w: this._imagePreview.nativeElement.naturalWidth, h: this._imagePreview.nativeElement.naturalHeight};
+                        if (!this._expanded) {
+                            this._summary = this.currentImageSize.w + 'x' + this.currentImageSize.h + 'px';
+                        }
+                    };
                 }
                 this.value = this.nativeElement.value;
             break;
             default:
-                this.value = this.nativeElement.value;
+                if (this.nativeElement) { this.value = this.nativeElement.value; }
         }
 
         console.debug('JpaPanel#AfterViewInit  (' + this.type + ')', this);
@@ -446,20 +480,65 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
 
     /** internal **/
     onToggle() {
-        if (this._expanded) {
-            if (this.placeholder) {
-                this._summary = this.placeholder;
-            } else {
-                this._summary = `Edit ${this.label}`;
-            }
-        } else {
-            if (this.type === 'select' && !this._summary) {
-                this._summary = this.initialSummary;
-            } else if (this.type === 'image' && this.currentImage && this.currentImageSize !== null) {
-                this._summary = this.currentImageSize.w + 'x' + this.currentImageSize.h + 'px';
-            }
-        }
+        // if (this._expanded) {
+        //     this.initialSummary = this._summary;
+        //     if (this.placeholder) {
+        //         this._summary = this.placeholder;
+        //     } else {
+        //         this._summary = `Edit ${this.label}`;
+        //     }
+        // } else {
+        //     if (this.type === 'select' && !this._summary) {
+        //         this._summary = this.initialSummary;
+        //     } else if (this.type === 'image' && this.currentImage && this.currentImageSize !== null) {
+        //         this._summary = this.currentImageSize.w + 'x' + this.currentImageSize.h + 'px';
+        //     } else {
+        //         this._summary = this.value;
+        //     }
+        // }
 
         this._expandedEmitter.emit(this._expanded);
+        if (this._hasContent) {
+            this._contentChildren.forEach(panelContent => {
+                panelContent.onToggle(this._expanded);
+            });
+        }
     }
+
+    /**
+     * File Upload
+     */
+    fileOverBase(e:any):void {
+      this.hasBaseDropZoneOver = e;
+    }
+
+    onFileDrop(files: File[]) {
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+            this.readFile(file)
+                .subscribe(read => {
+                    this._newImages.push(read);
+                    console.log('Added image to newImages: ', read);
+                });
+        }
+    }
+
+    readFile(file: File) : Observable<any> {
+            const filename = file.name;
+
+            return Observable.create(observer => {
+                let reader = new FileReader();
+
+                reader.onload = readerEvt => {
+                    let base64 = btoa(readerEvt.target['result']);
+
+                    observer.next({
+                        name: filename,
+                        base64: base64
+                    });
+                };
+
+                reader.readAsBinaryString(file);
+            });
+        }
 }

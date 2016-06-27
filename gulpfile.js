@@ -122,7 +122,6 @@ Elixir(function(mix) {
     // mix.copy('node_modules/@angular', 'public/node_modules/@angular');
     // mix.copy('node_modules/rxjs', 'public/node_modules/rxjs');
     // mix.copy('node_modules/systemjs', 'public/node_modules/systemjs');
-    // mix.copy('node_modules/es6-promise', 'public/node_modules/es6-promise');
     // mix.copy('node_modules/es6-shim', 'public/node_modules/es6-shim');
     // mix.copy('node_modules/zone.js/', 'public/node_modules/zone.js/');
     // mix.copy('node_modules/core-js', 'public/node_modules/core-js');

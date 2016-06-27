@@ -95,12 +95,18 @@
   :host .panel-content {
     height: 0;
     overflow: hidden;
+    -ms-flex-flow: column;
+    flex-flow: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
     transition: all 250ms cubic-bezier(0.75, 0.17, 0.59, 1.09);
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-pack: justify;
-    justify-content: space-between;
     margin: 0 -8px; }
+    :host .panel-content .panel-content-top,
+    :host .panel-content .panel-content-bottom {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-pack: justify;
+      justify-content: space-between; }
     :host .panel-content .panel-content-spacer {
       margin: 0;
       width: 25%; }
@@ -127,8 +133,10 @@
     padding: 40px 0 24px; }
   :host.changed md-card-title {
     color: #1976d2; }
-  :host.changed .panel-summary {
+  :host.changed .panel-summary .summary-text {
     color: #1976d2; }
+  :host.expanded.changed .panel-summary .summary-text {
+    color: #000; }
   :host .panel-control {
     min-width: 25%;
     min-height: 26px;
@@ -154,6 +162,12 @@
       outline: none;
       padding: 0;
       width: 100%; }
+    :host .panel-control select.panel-control-element {
+      -moz-appearance: none;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      border: none; }
     :host .panel-control .panel-control-infix {
       position: relative; }
     :host .panel-control .panel-control-underline {

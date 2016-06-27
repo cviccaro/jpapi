@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
+var forms_1 = require('@angular/forms');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var angular2_toaster_1 = require('angular2-toaster');
 var index_1 = require('../shared/index');
@@ -48,7 +49,8 @@ var LoginComponent = (function () {
             selector: 'jpa-login',
             templateUrl: './login.component.html',
             styleUrls: ['./login.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES]
+            directives: [forms_1.FORM_DIRECTIVES, angular2_material_1.MATERIAL_DIRECTIVES],
+            providers: [forms_1.FORM_PROVIDERS, angular2_material_1.MATERIAL_PROVIDERS]
         }), 
         __metadata('design:paramtypes', [router_1.Router, index_1.AuthService, angular2_toaster_1.ToasterService])
     ], LoginComponent);
