@@ -1,0 +1,149 @@
+<md-card>
+    <md-card-title-group>
+        <md-card-title>
+            {{ label }} <span *ngIf="required" class="md-placeholder-required">*</span>
+        </md-card-title>
+        <div class="panel-summary">
+            <div class="summary-text-wrapper">
+                <span class="summary-text" *ngIf="!_isImage">
+                    {{ summary | slice:0:50 }}
+                    <span class="summary-ellipsis" *ngIf="summary.length > 50">...</span>
+                </span>
+                <span class="summary-text" *ngIf="_isImage" [innerHTML]="summary"></span>
+                <md-icon [hidden]="!_expanded" class="md-20">help_outline</md-icon>
+            </div>
+            <div class="summary-image" *ngIf="_isImage && currentImage" [hidden]="_expanded">
+                <span [hidden]="_imageLoaded">Loading...<md-icon class="spin">update</md-icon></span>
+                <img [src]="currentImage" class="image-preview" #imagePreview />
+            </div>
+        </div>
+        <button class="toggle" md-icon-button (click)="toggle($event)">
+            <md-icon>keyboard_arrow_down</md-icon>
+        </button>
+    </md-card-title-group>
+    <div class="panel-content"
+        [class.panel-content-input]="_isTextfield" [class.panel-content-select]="_isSelect"
+        [class.panel-content-textarea]="_isTextarea" [class.panel-content-image]="_isImage">
+        <div class="panel-content-spacer"></div>
+        <div class="panel-control">
+            <div class="panel-control-table">
+                <div class="panel-control-infix">
+                    <input *ngIf="_isTextfield"
+                       #input
+                       aria-target
+                       class="panel-control-element text"
+                       [class.md-end]="align == 'end'"
+                       [attr.aria-label]="ariaLabel"
+                       [attr.aria-labelledby]="ariaLabelledBy"
+                       [attr.aria-disabled]="ariaDisabled"
+                       [attr.aria-required]="ariaRequired"
+                       [attr.aria-invalid]="ariaInvalid"
+                       [attr.autocomplete]="autoComplete"
+                       [autofocus]="autoFocus"
+                       [disabled]="disabled"
+                       [id]="inputId"
+                       [attr.max]="max"
+                       [attr.maxlength]="maxLength"
+                       [attr.min]="min"
+                       [attr.minlength]="minLength"
+                       [readonly]="readOnly"
+                       [required]="required"
+                       [spellcheck]="spellCheck"
+                       [attr.step]="step"
+                       [attr.tabindex]="tabIndex"
+                       [attr.name]="name"
+                       (focus)="handleFocus($event)"
+                       (blur)="handleBlur($event)"
+                       [(ngModel)]="value"
+                       (change)="handleChange($event)" />
+
+                    <select *ngIf="_isSelect"
+                           #select
+                           aria-target
+                           class="panel-control-element select"
+                           [class.md-end]="align == 'end'"
+                           [attr.aria-label]="ariaLabel"
+                           [attr.aria-labelledby]="ariaLabelledBy"
+                           [attr.aria-disabled]="ariaDisabled"
+                           [attr.aria-required]="ariaRequired"
+                           [attr.aria-invalid]="ariaInvalid"
+                           [autofocus]="autoFocus"
+                           [disabled]="disabled"
+                           [id]="inputId"
+                           [attr.list]="list"
+                           [required]="required"
+                           [attr.step]="step"
+                           [attr.tabindex]="tabIndex"
+                           [attr.name]="name"
+                           (focus)="handleFocus($event)"
+                           (blur)="handleBlur($event)"
+                           [(ngModel)]="value"
+                           (change)="handleChange($event)">
+                        <ng-content select="option"></ng-content>
+                    </select>
+                    <textarea *ngIf="_isTextarea"
+                        #textarea
+                        aria-target
+                        class="panel-control-element form-control textarea"
+                        [class.md-end]="align == 'end'"
+                        [attr.aria-label]="ariaLabel"
+                        [attr.aria-labelledby]="ariaLabelledBy"
+                        [attr.aria-disabled]="ariaDisabled"
+                        [attr.aria-required]="ariaRequired"
+                        [attr.aria-invalid]="ariaInvalid"
+                        [attr.autocomplete]="autoComplete"
+                        [autofocus]="autoFocus"
+                        [disabled]="disabled"
+                        [id]="inputId"
+                        [attr.max]="max"
+                        [attr.maxlength]="maxLength"
+                        [attr.min]="min"
+                        [attr.minlength]="minLength"
+                        [readonly]="readOnly"
+                        [required]="required"
+                        [spellcheck]="spellCheck"
+                        [attr.step]="step"
+                        [attr.tabindex]="tabIndex"
+                        [attr.name]="name"
+                        (focus)="handleFocus($event)"
+                        (blur)="handleBlur($event)"
+                        [(ngModel)]="value"
+                        (change)="handleChange($event)">
+                    </textarea>
+                    <input *ngIf="_isImage"
+                        #input
+                        type="file"
+                        accept="image/jpg, image/jpeg, image/png, image/gif"
+                        aria-target
+                        class="panel-control-element image"
+                        [class.md-end]="align == 'end'"
+                        [attr.aria-label]="ariaLabel"
+                        [attr.aria-labelledby]="ariaLabelledBy"
+                        [attr.aria-disabled]="ariaDisabled"
+                        [attr.aria-required]="ariaRequired"
+                        [attr.aria-invalid]="ariaInvalid"
+                        [autofocus]="autoFocus"
+                        [disabled]="disabled"
+                        [id]="inputId"
+                        [required]="required"
+                        [attr.step]="step"
+                        [attr.tabindex]="tabIndex"
+                        [attr.name]="name"
+                        (focus)="handleFocus($event)"
+                        (blur)="handleBlur($event)"
+                        [(ngModel)]="value"
+                        (change)="handleChange($event)" />
+                </div>
+            </div>
+            <div class="panel-control-underline" [class.md-disabled]="disabled" [hidden]="_underlineHidden">
+              <span class="panel-control-ripple" [class.md-focused]="focused" [class.md-accent]="dividerColor == 'accent'" [class.md-warn]="dividerColor == 'warn'"></span>
+            </div>
+            <div *ngIf="hintLabel != ''" class="md-hint">{{hintLabel}}</div>
+            <ng-content select="md-hint"></ng-content>
+        </div>
+        <div class="panel-content-right" *ngIf="_hasContent">
+            <ng-content select="jpa-panel-content"></ng-content>
+        </div>
+        <div class="panel-content-spacer-end"></div>
+    </div>
+</md-card>

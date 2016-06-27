@@ -39,7 +39,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://jpapi.localhost'),
 
     /*
     |--------------------------------------------------------------------------
@@ -151,9 +151,10 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         /*
-         * Libraries Service Providers
+         * 3rd-party Service Providers
          */
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Barryvdh\Debugbar\ServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -209,11 +210,12 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
 
         /*
-         * Libraries Facacdes
+         * 3rd-party Facacdes
          */
 
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
-        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class
+        'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'Debugbar' => Barryvdh\Debugbar\Facade::class,
     ],
 
 ];

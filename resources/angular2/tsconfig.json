@@ -2,7 +2,6 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "moduleResolution": "node",
     "declaration": false,
     "removeComments": true,
     "noLib": false,
@@ -15,8 +14,14 @@
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
-    "noFallthroughCasesInSwitch": true
-    //"outFile": "assets/built/app.js",
+    "noFallthroughCasesInSwitch": false
   },
+  "exclude": [
+    "node_modules",
+    "public",
+    "typings/index.d.ts",
+    "typings/modules",
+    "resources/typescript"
+  ],
   "compileOnSave": false
 }

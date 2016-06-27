@@ -1,9 +1,6 @@
 :host .app-content {
   padding: 20px; }
 
-:host .app-content md-card {
-  margin: 20px; }
-
 :host .app-sidenav {
   padding: 0;
   min-width: 100px; }

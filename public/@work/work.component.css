@@ -1,7 +1,10 @@
-:host md-grid-list {
-  -ms-flex-pack: justify;
-  justify-content: space-between; }
-  :host md-grid-list md-grid-tile img {
-    width: 100%; }
+:host {
+  background: #f5f5f5;
+  display: block; }
+  :host md-grid-list {
+    -ms-flex-pack: justify;
+    justify-content: space-between; }
+    :host md-grid-list md-grid-tile img {
+      width: 100%; }
 
 /*# sourceMappingURL=work.component.css.map */

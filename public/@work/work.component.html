@@ -1,34 +1,47 @@
-<div class="container">
-    <h2 *ngIf="work">{{ isNew ? 'Create' : 'Edit' }} Work {{ isNew ? '' : work.title }}</h2>
-    <form *ngIf="work" #workForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
-      <div layout="row">
-        <div class="form-group" flex="50">
-          <label for="title">Title</label>
-          <input type="text" class="form-control" required [(ngModel)]="work.title" name="title">
+<div class="container" *ngIf="ready">
+    {{ work | json }}
+    <h2 class="form-title" *ngIf="work">{{ isNew ? 'Create' : 'Edit' }} Work {{ isNew ? '' : work.title }}</h2>
+    <form #workForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
+      <jpa-panel-group>
+        <jpa-panel #titlePanel label="Title" [(ngModel)]="work.title" name="title" type="text" placeholder="Enter a title" required>
+          <md-hint align="end">{{titlePanel.characterCount}} / 100</md-hint>
+        </jpa-panel>
+        <jpa-panel #clientPanel label="Client" [(ngModel)]="work.client.id" name="client" type="select" placeholder="Select a client" required>
+          <option *ngFor="let client of clients" [value]="client.id">{{client.name}}</option>
+        </jpa-panel>
+        <jpa-panel #bodyPanel label="Body" [(ngModel)]="work.body" name="body" type="textarea" placeholder="Write a body" required>
+          <md-hint align="end">{{bodyPanel.characterCount}} / &infin;</md-hint>
+        </jpa-panel>
+        <jpa-panel label="Image" type="image" name="image_new" placeholder="Select an image" [(ngModel)]="work.image_new" [currentImage]="work.image">
+          <jpa-panel-content [image]="work.image"></jpa-panel-content>
+        </jpa-panel>
+      </jpa-panel-group>
+<!--       <div class="row form-group">
+        <div class="col-md-6">
+          <md-input name="title" [(ngModel)]="work.title" required type="text" placeholder="Title" class="full-width">
+          </md-input>
         </div>
-        <div class="form-group" flex="50">
-          <label for="client">Client</label>
-          <select class="form-control" required name="client" [(ngModel)]="work.client.id">
+        <div class="col-md-6">
+          <jpa-md-select required name="client" [(ngModel)]="work.client.id" placeholder="Client" class="full-width">
             <option *ngFor="let client of clients" [value]="client.id">{{client.name}}</option>
-          </select>
+          </jpa-md-select>
         </div>
-      </div>
-      <div layout="row">
-        <div class="form-group" flex="100">
+      </div> -->
+<!--       <div class="row form-group">
+        <div class="col-md-12">
           <label for="body">Body</label>
-          <textarea class="form-control" name="body" [(ngModel)]="work.body" required>
-          </textarea>
+          <textarea class="form-control" name="body" [(ngModel)]="work.body" required></textarea>
         </div>
-      </div>
-      <div layout="row">
-        <div class="form-group image" flex="100">
+      </div> -->
+<!--       <div class="row form-group image">
+        <div class="col-md-12">
           <label for="image_new">Image</label>
           <input name="image_new" type="file" (change)="imageFieldChanged($event)" accept="image/jpg, image/jpeg, image/png, image/gif" />
           <img *ngIf="work.image" [src]="work.image" />
         </div>
-      </div>
-      <div layout="row">
-        <div class="form-group gallery" flex="100">
+      </div> -->
+      <div class="row form-group gallery">
+        <div class="col-md-12">
           <label>Gallery</label>
           <md-grid-list cols="4" *ngIf="work.gallery" rowHeight="16:9">
              <md-grid-tile *ngFor="let image of work.gallery" flex="25"><img [src]="image.image_url" /></md-grid-tile>
@@ -86,8 +99,10 @@
           </table>
         </div>
       </div>
-      <div class="form-actions">
-        <button type="submit" md-raised-button color="secondary" [disabled]="!workForm.form.valid"><md-icon>save</md-icon> Save</button>
+      <div class="row form-actions">
+        <div class="col-md-12">
+          <button type="submit" md-raised-button color="secondary" [disabled]="!workForm.form.valid"><md-icon>save</md-icon> Save</button>
+        </div>
       </div>
     </form>
 </div>

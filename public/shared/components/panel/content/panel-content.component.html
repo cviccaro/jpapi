@@ -1,0 +1,11 @@
+<div class="panel-content-pane-image" *ngIf="_hasImage">
+    <h4>Current Image</h4>
+    <div class="info">
+        {{ imageExtension }}<br />
+        {{ img.naturalWidth }}x{{img.naturalHeight}}px
+    </div>
+    <div class="image">
+        <img [src]="image" #img />
+    </div>
+</div>
+<ng-content></ng-content>

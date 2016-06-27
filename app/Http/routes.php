@@ -81,3 +81,11 @@ Route::group(['middleware' => 'jwt.refresh'], function () {
     // Route::put('work/{id}', 'WorkController@put');
     Route::delete('work/{id}', 'WorkController@remove');
 });
+
+Route::get('test', function() {
+    $token = 'omg';
+
+    $arr = array_merge(['expires' => 1239213], compact('token'));
+
+    dd($arr);
+});

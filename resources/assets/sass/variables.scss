@@ -1,0 +1,36 @@
+@import 'node_modules/sass-material-colors/sass/sass-material-colors';
+
+/**
+ * Colors
+ */
+
+$primary: material-color('blue-grey', '600');
+$secondary: material-color('light-green', '600');
+$accent: material-color('blue', '700');
+$danger: material-color('red', '900');
+$white: #fff;
+$black: #000;
+$black_54: rgba(0,0,0,0.54);
+$grey_200: material-color('grey', '200');
+$grey_100: material-color('grey', '100');
+$grey_50: material-color('grey', '50');
+$blue_700: material-color('blue', '700');
+
+/**
+ * Fonts
+ */
+$font-family-sans-serif: 'Lato', sans-serif;
+
+/**
+ * Animations & Transitions
+ */
+$transition_duration: 250ms;
+$transition_ease: cubic-bezier(.75,.17,.59,1.09);
+
+/**
+ * Transition mixins
+ */
+
+@mixin basic-transition {
+    transition: all $transition_duration $transition_ease;
+}

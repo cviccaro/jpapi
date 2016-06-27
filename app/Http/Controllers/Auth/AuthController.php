@@ -16,12 +16,25 @@ class AuthController extends Controller
            if (! $token = \JWTAuth::attempt($credentials)) {
                return response(['error' => 'invalid_credentials', 'errorText' => 'The username or password was incorrect.', 'credentials' => $credentials], 401, ['Access-Control-Allow-Origin' => '*']);
            }
-       }
-       catch (JWTException $e) {
-           return response()->json(['error' => 'could_not_create_token'], 500);
+       } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+
+           return response()->json(['error' => 'token_expired'], $e->getStatusCode());
+
+       } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+
+           return response()->json(['error' => 'token_invalid'], $e->getStatusCode());
+
+       } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
+
+           return response()->json(['error' => 'token_absent'], $e->getStatusCode());
+
        }
 
-       return response(compact('token'), 200);
+       $expires = \JWTAuth::getPayload($token)['exp'];
+
+       $json = array_merge(['expires' => $expires], compact('token'));
+
+       return response($json, 200);
    }
 
    public function refresh(Request $request){
@@ -38,7 +51,11 @@ class AuthController extends Controller
             return response()->json(['error' => 'could_not_refresh_token'], 500);
         }
 
-        return response()->json(compact('token'));
+        $expires = \JWTAuth::getPayload($token)['exp'];
+
+        $json = array_merge(['expires' => $expires], compact('token'));
+
+        return response($json, 200);
     }
 
     public function check(Request $request) {
@@ -49,5 +66,31 @@ class AuthController extends Controller
        catch (JWTException $e) {
            return response()->json(['error' => $e->getMessage()], 401, ['Access-Control-Allow-Origin' => '*']);
        }
+    }
+
+    public function getAuthenticatedUser()
+    {
+        try {
+
+            if (! $user = \JWTAuth::parseToken()->authenticate()) {
+                return response()->json(['user_not_found'], 404);
+            }
+
+        } catch (Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+
+            return response()->json(['token_expired'], $e->getStatusCode());
+
+        } catch (Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+
+            return response()->json(['token_invalid'], $e->getStatusCode());
+
+        } catch (Tymon\JWTAuth\Exceptions\JWTException $e) {
+
+            return response()->json(['token_absent'], $e->getStatusCode());
+
+        }
+
+        // the token is valid and we have found the user via the sub claim
+        return response()->json(compact('user'));
     }
 }

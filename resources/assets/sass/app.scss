@@ -1,6 +1,5 @@
-$font-family-sans-serif: 'Lato', sans-serif;
-
 @import "animations";
+@import "variables";
 @import "node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 @import 'node_modules/sass-material-colors/sass/sass-material-colors';
 
@@ -18,12 +17,17 @@ h1,h2,h3,h4,h5,p,div,p {
 | Colors
 |
 **/
+$primary: material-color('blue-grey', '600');
+$secondary: material-color('light-green', '600');
+$accent: material-color('red', '500');
+$danger: material-color('red', '900');
+
 .md-primary {
-    background-color: material-color('blue-grey', '600')!important;
+    background-color: $primary!important;
 }
 .md-accent {
-    background-color: material-color('red', '500')!important;
-    color: #fff!important;
+    background-color: $accent!important;
+    color: $white!important;
 }
 
 .md-secondary,
@@ -31,8 +35,8 @@ h1,h2,h3,h4,h5,p,div,p {
 .md-secondary[md-fab],
 .md-secondary[md-mini-fab],
 .md-secondary[md-icon-button] {
-    background-color: material-color('light-green', '600');
-    color: #fff;
+    background-color: $secondary;
+    color: $white;
 }
 
 .md-danger,
@@ -40,8 +44,34 @@ h1,h2,h3,h4,h5,p,div,p {
 .md-danger[md-fab],
 .md-danger[md-mini-fab],
 .md-danger[md-icon-button] {
-    background-color: material-color('red', '900');
-    color: #fff;
+    background-color: $danger;
+    color: $white;
+}
+
+md-input {
+    .md-input-placeholder.md-focused {
+        color: $primary!important;
+    }
+    .md-input-underline .md-input-ripple {
+        background-color: $primary!important;
+    }
+}
+
+md-input.ng-invalid.ng-touched {
+    .md-input-placeholder.md-focused {
+        color: $danger!important;
+    }
+    .md-input-underline {
+        .md-input-ripple {
+            background-color: $danger!important;
+        }
+        border-color: $danger!important;
+    }
+}
+
+.md-input-placeholder.md-float:not(.md-empty) .md-placeholder-required,
+.md-input-placeholder.md-float.md-focused .md-placeholder-required {
+    color: $danger!important;
 }
 
 /**
@@ -70,96 +100,105 @@ md-icon.spin {
     -webkit-animation: fa-spin 2s infinite linear;
 }
 
+md-icon {
+    &.md-20 {
+        font-size: 20px;
+    }
+}
+
 /**
 | Flex
 |
 **/
-[flex="20"] {
-    width: 20%;
-    display: flex;
-    max-width: 20%;
-}
-[flex="25"] {
-    width: 25%;
-    display: flex;
-    max-width: 25%;
-}
-[flex="30"] {
-    width: 30%;
-    display: flex;
-    max-width: 30%;
-}
-[flex="40"] {
-    width: 40%;
-    display: flex;
-    max-width: 40%;
-}
-[flex="50"] {
-    width: 50%;
-    display: flex;
-    max-width: 50%;
-}
-[flex="60"] {
-    width: 60%;
-    display: flex;
-    max-width: 60%;
-}
-[flex="70"] {
-    width: 70%;
-    display: flex;
-    max-width: 70%;
-}
-[flex="80"] {
-    width: 80%;
-    display: flex;
-    max-width: 80%;
-}
-[flex="90"] {
-    width: 90%;
-    display: flex;
-    max-width: 90%;
-}
-[flex="100"] {
+.full-width {
     width: 100%;
-    display: flex;
-    max-width: 100%;
 }
+// [flex="20"] {
+//     width: 20%;
+//     display: flex;
+//     max-width: 20%;
+// }
+// [flex="25"] {
+//     width: 25%;
+//     display: flex;
+//     max-width: 25%;
+// }
+// [flex="30"] {
+//     width: 30%;
+//     display: flex;
+//     max-width: 30%;
+// }
+// [flex="40"] {
+//     width: 40%;
+//     display: flex;
+//     max-width: 40%;
+// }
+// [flex="50"] {
+//     width: 50%;
+//     display: flex;
+//     max-width: 50%;
+// }
+// [flex="60"] {
+//     width: 60%;
+//     display: flex;
+//     max-width: 60%;
+// }
+// [flex="70"] {
+//     width: 70%;
+//     display: flex;
+//     max-width: 70%;
+// }
+// [flex="80"] {
+//     width: 80%;
+//     display: flex;
+//     max-width: 80%;
+// }
+// [flex="90"] {
+//     width: 90%;
+//     display: flex;
+//     max-width: 90%;
+// }
+// [flex="100"] {
+//     width: 100%;
+//     display: flex;
+//     max-width: 100%;
+// }
 
-[layout="row"],
-.layout-row {
-    display: flex;
-    flex-direction: row;
-}
-[layout="column"],
-.layout-column {
-    display: flex;
-    flex-direction: column;
-}
-.layout-align-center-center,
-.layout-align-end-center,
-[layout-align="end center"],
-.layout-align-space-around-center,
-.layout-align-space-between-center,
-.layout-align-start-center {
-	-webkit-align-items: center;
-	-ms-flex-align: center;
-	align-items: center;
-	-webkit-align-content: center;
-	-ms-flex-line-pack: center;
-	align-content: center;
-	max-width: 100%;
-}
+// [layout="row"],
+// .layout-row {
+//     display: flex;
+//     flex-direction: row;
+// }
+// [layout="column"],
+// .layout-column {
+//     display: flex;
+//     flex-direction: column;
+// }
+// .layout-align-center-center,
+// .layout-align-end-center,
+// [layout-align="end center"],
+// .layout-align-space-around-center,
+// .layout-align-space-between-center,
+// .layout-align-start-center {
+// 	-webkit-align-items: center;
+// 	-ms-flex-align: center;
+// 	align-items: center;
+// 	-webkit-align-content: center;
+// 	-ms-flex-line-pack: center;
+// 	align-content: center;
+// 	max-width: 100%;
+// }
 
-.layout-align-end,
-.layout-align-end-center,
-[layout-align="end center"],
-.layout-align-end-end,
-.layout-align-end-start,
-.layout-align-end-stretch {
-	-webkit-justify-content: flex-end;
-    -ms-flex-pack: end;
-    justify-content: flex-end;
-}
+// .layout-align-end,
+// .layout-align-end-center,
+// [layout-align="end center"],
+// .layout-align-end-end,
+// .layout-align-end-start,
+// .layout-align-end-stretch {
+// 	-webkit-justify-content: flex-end;
+//     -ms-flex-pack: end;
+//     justify-content: flex-end;
+// }
 
 
 /**
@@ -167,17 +206,24 @@ md-icon.spin {
 |
 **/
 
-form.submitted {
-    .ng-valid[required] {
-      border-left: 5px solid material-color('green'); /* green */
-    }
+// form.submitted {
+//     .ng-valid[required] {
+//       border-left: 5px solid material-color('green'); /* green */
+//     }
 
-    .ng-invalid {
-      border-left: 5px solid material-color('red'); /* red */
-    }
+//     .ng-invalid {
+//       border-left: 5px solid material-color('red'); /* red */
+//     }
+// }
+.form-title {
+    margin-bottom: 25px;
+    padding-bottom: 7px;
+    border-bottom: 1px solid #eee;
 }
-
 form {
+    .row.form-group {
+        margin-bottom: 20px;
+    }
     [layout="row"] {
         .form-group {
             flex-direction: column;
@@ -208,9 +254,9 @@ form {
         margin-top: 2em;
     }
     .form-actions {
-        border-top: 1px solid #eee;
-        padding-top: 2em;
-        margin-top: 2em;
+        // border-top: 1px solid #eee;
+        // padding-top: 2em;
+        //margin-top: 1em;
         text-align: right;
     }
 }

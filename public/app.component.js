@@ -29,7 +29,7 @@ var AppComponent = (function () {
         this.router.navigate(link);
     };
     AppComponent.prototype.logout = function () {
-        this.authService.logout();
+        this.authService.reset();
         this.router.navigate(['/login']);
     };
     AppComponent = __decorate([

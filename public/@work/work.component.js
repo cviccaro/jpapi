@@ -10,11 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
+var Rx_1 = require('rxjs/Rx');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var ng2_file_upload_1 = require('ng2-file-upload');
 var angular2_toaster_1 = require('angular2-toaster');
 var index_1 = require('../shared/index');
-var Rx_1 = require('rxjs/Rx');
 var WorkComponent = (function () {
     function WorkComponent(route, service, clientService, toasterService, router) {
         this.route = route;
@@ -26,20 +26,16 @@ var WorkComponent = (function () {
         this.hasBaseDropZoneOver = false;
         this.submitted = false;
         this.isNew = false;
+        this.ready = false;
+        this._once = {};
     }
     WorkComponent.prototype.ngOnInit = function () {
         var _this = this;
-        console.log({
-            snapshot: this.route.snapshot,
-            params: this.route.snapshot.params,
-            id: this.route.snapshot.params['id']
-        });
         this.clientService.options().subscribe(function (res) {
             _this.clients = res;
         });
         this.isNew = this.route.snapshot.params['id'] === 'new';
         if (this.isNew) {
-            console.log('NEW: WorkComponent initialized.', this);
             this.work = {
                 title: '',
                 body: '',
@@ -48,13 +44,16 @@ var WorkComponent = (function () {
                     id: ''
                 }
             };
+            console.debug('WorkComponent#Create initialized.', this);
         }
         else {
             var id = +this.route.snapshot.params['id'];
             this.service.find(id).subscribe(function (res) {
                 _this.work = res;
+                console.debug('setting work model to ', res);
+                _this.ready = true;
             });
-            console.log('EDIT: WorkComponent initialized.', this);
+            console.debug('WorkComponent#Edit initialized.', this);
         }
     };
     WorkComponent.prototype.onSubmit = function () {
@@ -140,6 +139,14 @@ var WorkComponent = (function () {
             reader.readAsBinaryString(file);
         });
     };
+    WorkComponent.prototype.once = function (prop) {
+        if (this._once[prop]) {
+            return this._once[prop];
+        }
+        var val = prop.split('.').reduce(function (carry, next) { return carry[next]; }, this);
+        this._once[prop] = val;
+        return val;
+    };
     WorkComponent.prototype.fileOverBase = function (e) {
         this.hasBaseDropZoneOver = e;
     };
@@ -148,7 +155,7 @@ var WorkComponent = (function () {
             moduleId: module.id,
             templateUrl: './work.component.html',
             styleUrls: ['./work.component.css'],
-            directives: [ng2_file_upload_1.FILE_UPLOAD_DIRECTIVES, angular2_material_1.MATERIAL_DIRECTIVES]
+            directives: [ng2_file_upload_1.FILE_UPLOAD_DIRECTIVES, angular2_material_1.MATERIAL_DIRECTIVES, index_1.JpaMdSelectComponent, index_1.JpaPanel, index_1.JpaPanelGroup, index_1.JpaPanelContent]
         }), 
         __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.WorkService, index_1.ClientService, angular2_toaster_1.ToasterService, router_1.Router])
     ], WorkComponent);

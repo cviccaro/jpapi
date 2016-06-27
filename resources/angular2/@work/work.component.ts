@@ -1,20 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentChecked, AfterContentInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NgForm} from '@angular/common';
+import { Observable } from 'rxjs/Rx';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-
 import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
 import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2-toaster';
 
-import {WorkService, Work, ClientService} from '../shared/index';
+import {WorkService, Work, ClientService, JpaMdSelectComponent, JpaPanel, JpaPanelGroup, JpaPanelContent} from '../shared/index';
 
-import { Observable } from 'rxjs/Rx';
 
 @Component({
     moduleId: module.id,
     templateUrl: './work.component.html',
     styleUrls: ['./work.component.css'],
-    directives: [FILE_UPLOAD_DIRECTIVES, MATERIAL_DIRECTIVES]
+    directives: [FILE_UPLOAD_DIRECTIVES, MATERIAL_DIRECTIVES, JpaMdSelectComponent, JpaPanel, JpaPanelGroup, JpaPanelContent]
 })
 export class WorkComponent implements OnInit {
     public work: Work;
@@ -25,6 +24,7 @@ export class WorkComponent implements OnInit {
 
     //public toasterConfig: ToasterConfig;
     private isNew: boolean = false;
+    private ready: boolean = false;
 
     constructor(
         private route: ActivatedRoute,
@@ -35,11 +35,11 @@ export class WorkComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        console.log({
-            snapshot: this.route.snapshot,
-            params: this.route.snapshot.params,
-            id: this.route.snapshot.params['id']
-        });
+        // console.log({
+        //     snapshot: this.route.snapshot,
+        //     params: this.route.snapshot.params,
+        //     id: this.route.snapshot.params['id']
+        // });
 
         this.clientService.options().subscribe(res => {
             this.clients = res;
@@ -48,7 +48,6 @@ export class WorkComponent implements OnInit {
         this.isNew = this.route.snapshot.params['id'] === 'new';
 
         if (this.isNew) {
-            console.log('NEW: WorkComponent initialized.', this);
             this.work = {
                 title: '',
                 body: '',
@@ -57,14 +56,17 @@ export class WorkComponent implements OnInit {
                     id: ''
                 }
             };
+            console.debug('WorkComponent#Create initialized.', this);
         } else {
             let id = +this.route.snapshot.params['id'];
 
             this.service.find(id).subscribe(res => {
                 this.work = res;
+                console.debug('setting work model to ', res);
+                this.ready = true;
             });
 
-            console.log('EDIT: WorkComponent initialized.', this);
+            console.debug('WorkComponent#Edit initialized.', this);
         }
     }
 
@@ -164,6 +166,18 @@ export class WorkComponent implements OnInit {
 
             reader.readAsBinaryString(file);
         });
+    }
+
+    private _once = {};
+
+    once(prop) {
+        if (this._once[prop]) {
+            return this._once[prop];
+        }
+
+        var val = prop.split('.').reduce((carry, next) => { return carry[next]; }, this)
+        this._once[prop] = val;
+        return val;
     }
 
     fileOverBase(e:any):void {

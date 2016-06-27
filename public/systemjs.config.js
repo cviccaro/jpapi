@@ -14,7 +14,8 @@
       // 'ng2-material',
       'ng2-file-upload',
       'angular2-toaster',
-      'angular2-localstorage'
+      //'angular2-localstorage',
+      'angular2-jwt'
     ];
 
     var map = modules.reduce(function(carry, module) {
@@ -35,11 +36,12 @@
         'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
         'moment': { main: 'moment.js', defaultExtension: 'js' },
         'angular2-moment': { main: 'index.js', defaultExtension: 'js' },
-        'ng2-material': { main: 'index.js', defaultExtension: 'js' },
+        // 'ng2-material': { main: 'index.js', defaultExtension: 'js' },
         'hammerjs': { main: 'hammer.js', defaultExtension: 'js' },
         'ng2-file-upload': { main: 'ng2-file-upload.js', defaultExtension: 'js' },
         'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' },
-        'angular2-localstorage': { main: 'index.js', defaultExtension: 'js' }
+        // 'angular2-localstorage': { main: 'index.js', defaultExtension: 'js' },
+        'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' }
     };
 
     var ngPackageNames = [

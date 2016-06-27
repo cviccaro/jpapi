@@ -12,7 +12,6 @@ export class BlogsGuard implements CanActivate, OnDestroy {
     constructor(private blogService: BlogService) {}
 
     canActivate() {
-        console.info('BlogsGuard# getting blogs for the first time.');
         return Observable.create(observer => {
             this.sub = this.blogService.all({
                current_page: 1,

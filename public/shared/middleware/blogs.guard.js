@@ -17,7 +17,6 @@ var BlogsGuard = (function () {
     }
     BlogsGuard.prototype.canActivate = function () {
         var _this = this;
-        console.info('BlogsGuard# getting blogs for the first time.');
         return Rx_1.Observable.create(function (observer) {
             _this.sub = _this.blogService.all({
                 current_page: 1,
