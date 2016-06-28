@@ -16,6 +16,7 @@ var progress_bar_1 = require('@angular2-material/progress-bar');
 var icon_1 = require('@angular2-material/icon');
 var Rx_1 = require('rxjs/Rx');
 var grid_image_1 = require('./grid-image/grid-image');
+var uploader_1 = require('./uploader');
 var noop = function () { };
 var nextUniqueId = 0;
 exports.JPA_FILE_UPLOAD_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCESSOR, {
@@ -23,7 +24,8 @@ exports.JPA_FILE_UPLOAD_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_AC
     multi: true
 });
 var JpaFileUploadComponent = (function () {
-    function JpaFileUploadComponent() {
+    function JpaFileUploadComponent(uploader) {
+        this.uploader = uploader;
         this.isDragOver = false;
         this.isLoading = false;
         this._progressIndeterminate = true;
@@ -49,10 +51,12 @@ var JpaFileUploadComponent = (function () {
         this.tabIndex = null;
         this.fileAdded = new core_1.EventEmitter();
         this.gridImageLoaded = new core_1.EventEmitter();
+        this.onImageUploaded = new core_1.EventEmitter();
         this.onImageRemove = new core_1.EventEmitter();
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
         this.change = new core_1.EventEmitter();
+        console.debug('FileUploadComponent created! ', this);
     }
     JpaFileUploadComponent.prototype.onDragOver = function (e) {
         var transfer = this._getTransfer(e);
@@ -210,6 +214,8 @@ var JpaFileUploadComponent = (function () {
             });
             this._hasNew = true;
             this.isLoading = false;
+            e._hasNew = true;
+            this.onImageUploaded.emit(e);
         }
         else {
             var id = e.config.id;
@@ -299,6 +305,10 @@ var JpaFileUploadComponent = (function () {
     __decorate([
         core_1.Output(), 
         __metadata('design:type', Object)
+    ], JpaFileUploadComponent.prototype, "onImageUploaded", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
     ], JpaFileUploadComponent.prototype, "onImageRemove", void 0);
     __decorate([
         core_1.ViewChildren(grid_image_1.GridImage), 
@@ -333,9 +343,9 @@ var JpaFileUploadComponent = (function () {
                 forms_1.NgModel,
                 grid_image_1.GridImage
             ],
-            providers: [exports.JPA_FILE_UPLOAD_VALUE_ACCESSOR]
+            providers: [exports.JPA_FILE_UPLOAD_VALUE_ACCESSOR, uploader_1.FileUploader]
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [uploader_1.FileUploader])
     ], JpaFileUploadComponent);
     return JpaFileUploadComponent;
 }());

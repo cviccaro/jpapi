@@ -5,7 +5,7 @@ import {MdIcon} from '@angular2-material/icon';
 @Component({
     moduleId: module.id,
     selector: 'jpa-grid-image',
-    template: '<div class="shade"><span class="remove" [hidden]="!hovering" (click)="remove()"><md-icon>delete_forever</md-icon></span></div><img #image class="grid-image" [src]="imageConfig.image_url" [alt]="imageConfig.alt" [title]="imageConfig.title" [class.new]="imageConfig.isNew" />',
+    templateUrl: './grid-image.html',
     styleUrls: ['./grid-image.css'],
     directives: [
         MdIcon

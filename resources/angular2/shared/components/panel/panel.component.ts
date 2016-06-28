@@ -542,10 +542,8 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     }
 
 
-    imageUploadLoaded(e: any) {
-        console.log('PanelComponent# imageUploadLoaded ', e);
-        if (e.config.isNew) {
-            this._setGallerySummary();
-        }
+    onGalleryImageUpload(e: any) {
+        console.log('PanelComponent# onGalleryImageUpload ', e);
+        this._setGallerySummary();
     }
 }

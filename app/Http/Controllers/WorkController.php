@@ -118,6 +118,8 @@ class WorkController extends Controller
         } else {
             unset($data['image']);
         }
+        $should_delete = 0;
+        $deleted = 0;
 
         if ($request->has('gallery')) {
             // Reduce gallery in request to list of ids
@@ -132,8 +134,10 @@ class WorkController extends Controller
                 return !in_array($id, $gallery);
             });
 
+            $should_delete = count($to_delete);
+
             if ($to_delete) {
-                WorkImage::whereIn('id', $to_delete)->delete();
+                $deleted = WorkImage::whereIn('id', $to_delete)->delete();
             }
             // $gallery = array_reduce($data['gallery'], function ($carry, $item) {
             //     if (!isset($item['isNew']) || $item['isNew'] !== true) {
@@ -146,6 +150,8 @@ class WorkController extends Controller
             // $data['gallery'] = $gallery;
         }
 
+        $added = 0;
+
         if ($request->has('gallery_new')) {
             $gallery_new = $request->get('gallery_new');
             foreach ($gallery_new as $file) {
@@ -155,6 +161,7 @@ class WorkController extends Controller
                 if ($image = Image::createFromBase64($filename, $base64_string)) {
                     WorkImage::create(['work_id' => $id, 'image_id' => $image->id]);
                     \Log::info('Created new image at ID ' . $image->id . ' and added to gallery.');
+                    $added++;
                 } else {
                     \Log::info('Image creation failed.');
                 }
@@ -162,6 +169,8 @@ class WorkController extends Controller
         }
 
         $model->update($data);
+
+        \Log::info('Updated work model with ID ' . $model->id . '.  Deleted ' . $deleted . ' (Should have deleted ' . $should_delete . ') images from gallery.  Added ' . $added . ' images to gallery.');
         return $this->respond('done', $m::find($id));
     }
 

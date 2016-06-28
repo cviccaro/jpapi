@@ -23,6 +23,7 @@ import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 import { Observable } from 'rxjs/Rx';
 
 import {GridImage} from './grid-image/grid-image';
+import { FileUploader } from './uploader';
 
 const noop = () => { };
 let nextUniqueId = 0;
@@ -44,7 +45,7 @@ export const JPA_FILE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
         NgModel,
         GridImage
     ],
-    providers: [JPA_FILE_UPLOAD_VALUE_ACCESSOR]
+    providers: [JPA_FILE_UPLOAD_VALUE_ACCESSOR, FileUploader]
 })
 export class JpaFileUploadComponent implements AfterViewInit, OnChanges, ControlValueAccessor {
     public isDragOver: boolean = false;
@@ -67,6 +68,10 @@ export class JpaFileUploadComponent implements AfterViewInit, OnChanges, Control
     private _onChangeCallback: (_: any) => void = (...args) => {
         console.debug('JpaFileUploadComponent#onChangeCallback:', args);
     };
+
+    constructor(public uploader: FileUploader) {
+        console.debug('FileUploadComponent created! ', this);
+    }
 
     /**
      * Aria related inputs.
@@ -94,6 +99,7 @@ export class JpaFileUploadComponent implements AfterViewInit, OnChanges, Control
      */
     @Output() fileAdded: EventEmitter<File[]> = new EventEmitter<File[]>();
     @Output() gridImageLoaded = new EventEmitter();
+    @Output() onImageUploaded = new EventEmitter();
     @Output() onImageRemove = new EventEmitter();
 
 
@@ -294,6 +300,8 @@ export class JpaFileUploadComponent implements AfterViewInit, OnChanges, Control
             });
             this._hasNew = true;
             this.isLoading = false;
+            e._hasNew = true;
+            this.onImageUploaded.emit(e);
         } else {
             let id = e.config.id;
             console.log('FileUpload# gallery Image (id '+id+') loaded. ', e);

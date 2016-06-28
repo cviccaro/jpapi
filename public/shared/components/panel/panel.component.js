@@ -443,11 +443,9 @@ var JpaPanel = (function () {
             });
         }
     };
-    JpaPanel.prototype.imageUploadLoaded = function (e) {
-        console.log('PanelComponent# imageUploadLoaded ', e);
-        if (e.config.isNew) {
-            this._setGallerySummary();
-        }
+    JpaPanel.prototype.onGalleryImageUpload = function (e) {
+        console.log('PanelComponent# onGalleryImageUpload ', e);
+        this._setGallerySummary();
     };
     __decorate([
         core_1.Input('aria-label'), 
