@@ -23,14 +23,14 @@ export class JpaPanelGroup implements AfterViewInit, AfterContentInit {
      * Implementing AfterContentInit
      */
     ngAfterContentInit() {
-        console.log('Subscribing to ' + this._panelChildren.length + ' panel changes. ');
+        //console.log('Subscribing to ' + this._panelChildren.length + ' panel changes. ');
         // this._panelChildren.changes.subscribe(panel => {
         //     console.log('panel change! ', panel);
         // });
         this._panelChildren.forEach(panel => {
-            console.log('Subscribing to onExpand for this panel', panel);
+            //console.log('Subscribing to onExpand for this panel', panel);
             panel.onExpand.subscribe(e => {
-                console.log('expand event: ', e);
+                //console.log('expand event: ', e);
                 this.childExpanded = e;
             });
         })
@@ -40,6 +40,6 @@ export class JpaPanelGroup implements AfterViewInit, AfterContentInit {
      * Implementing AFterViewInit
      */
     ngAfterViewInit() {
-        console.log('JpaPanelGroup#afterViewInit', this);
+        //console.log('JpaPanelGroup#afterViewInit', this);
     }
 }

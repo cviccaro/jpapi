@@ -21,17 +21,13 @@ var JpaPanelGroup = (function () {
     });
     JpaPanelGroup.prototype.ngAfterContentInit = function () {
         var _this = this;
-        console.log('Subscribing to ' + this._panelChildren.length + ' panel changes. ');
         this._panelChildren.forEach(function (panel) {
-            console.log('Subscribing to onExpand for this panel', panel);
             panel.onExpand.subscribe(function (e) {
-                console.log('expand event: ', e);
                 _this.childExpanded = e;
             });
         });
     };
     JpaPanelGroup.prototype.ngAfterViewInit = function () {
-        console.log('JpaPanelGroup#afterViewInit', this);
     };
     __decorate([
         core_1.HostBinding('class.child-expanded'), 

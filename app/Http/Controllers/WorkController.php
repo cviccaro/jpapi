@@ -100,7 +100,7 @@ class WorkController extends Controller
 
         $data = $request->all();
 
-        $current_gallery = \App\Work::find(18)->gallery->pluck('id')->toArray();
+        $current_gallery_ids = \App\Work::find(18)->gallery->pluck('id')->toArray();
 
         if ($request->has('client')) {
             $client_id = intval($request->get('client')['id']);
@@ -119,16 +119,16 @@ class WorkController extends Controller
             unset($data['image']);
         }
 
-        $gallery = [];
         if ($request->has('gallery')) {
+            // Reduce gallery in request to list of ids
             $gallery = array_reduce($data['gallery'], function ($carry, $item) {
-                if (!isset($item['isNew']) || $item['isNew'] !== true) {
+                if ($item['id'] !== 'new') {
                     $carry[] = $item['id'];
                 }
                 return $carry;
             }, []);
                      
-            $to_delete = array_filter($current_gallery, function ($id) use ($gallery) {
+            $to_delete = array_filter($current_gallery_ids, function ($id) use ($gallery) {
                 return !in_array($id, $gallery);
             });
 
@@ -138,7 +138,7 @@ class WorkController extends Controller
             // $gallery = array_reduce($data['gallery'], function ($carry, $item) {
             //     if (!isset($item['isNew']) || $item['isNew'] !== true) {
             //         $carry[] = $item['id'];
-            //     } else if (in_array($item['id'], $current_gallery)) {
+            //     } else if (in_array($item['id'], $current_gallery_ids)) {
 
             //     }
             //     return $carry;

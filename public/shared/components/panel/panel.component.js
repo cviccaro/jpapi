@@ -106,7 +106,6 @@ var JpaPanel = (function () {
         this._currentImageSize = null;
     }
     JpaPanel.prototype.ngOnInit = function () {
-        console.info('JpaPanel.' + this.type + ' ' + this.name + '#onInit ', this.type);
         switch (this.type) {
             case 'text':
                 this._isTextfield = true;
@@ -202,7 +201,7 @@ var JpaPanel = (function () {
         },
         set: function (v) {
             v = this._convertValueForInputType(v);
-            console.debug('JpaPanel@set value(): ', v);
+            console.debug('JpaPanel' + this.type + '.' + this.name + '# set value(): ', v);
             if (v !== this._value) {
                 this._value = v;
                 this._onChangeCallback(v);
@@ -306,9 +305,7 @@ var JpaPanel = (function () {
         console.debug('JpaPanel.' + this.type + ' ' + this.name + '#handleChange: ', event, this);
         switch (this.type) {
             case 'images':
-                var value = this.value || [];
-                value.push(event[0]);
-                this.value = value;
+                this.value = event;
                 break;
             case 'select':
                 this.value = event.target.value;

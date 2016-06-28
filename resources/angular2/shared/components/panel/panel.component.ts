@@ -120,7 +120,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
      * and before the children are.  Set up the panel.
      */
     ngOnInit() {
-        console.info('JpaPanel.'+this.type+' ' + this.name + '#onInit ', this.type);
+        //console.info('JpaPanel.'+this.type+' ' + this.name + '#onInit ', this.type);
         switch(this.type) {
             case 'text': this._isTextfield = true; break;
             case 'select': this._isSelect = true; break;
@@ -241,7 +241,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     };
     @Input() set value(v: any) {
         v = this._convertValueForInputType(v);
-        console.debug('JpaPanel@set value(): ', v);
+        console.debug('JpaPanel'+this.type+'.'+this.name+'# set value(): ', v);
         if (v !== this._value) {
             this._value = v;
             this._onChangeCallback(v);
@@ -351,9 +351,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleChange: ', event, this);
         switch (this.type) {
             case 'images':
-                let value = this.value || [];
-                value.push(event[0]);
-                this.value = value;
+                this.value = event;
                 break;
             case 'select':
                 this.value = (<HTMLSelectElement>event.target).value;

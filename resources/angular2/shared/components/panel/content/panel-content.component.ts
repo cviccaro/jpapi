@@ -32,7 +32,7 @@ export class JpaPanelContent implements OnInit, AfterViewInit {
         }
     }
     ngAfterViewInit() {
-        console.debug('PanelContent view initialized.', this);
+        //console.debug('PanelContent view initialized.', this);
 
         // if (this._gridList) {
         //     console.log('CHECK OUT OUR SWEET LAYOUT TILES FUNCTION: ' , this._gridList['_layoutTiles']);
@@ -41,7 +41,7 @@ export class JpaPanelContent implements OnInit, AfterViewInit {
     }
 
     onToggle(expanded: boolean) {
-        console.log('PanelContentChild just saw its parent toggle ', expanded);
+        //console.log('PanelContentChild just saw its parent toggle ', expanded);
         // if (expanded) {
         //     if (this._gridList) {
         //         console.log(this._gridList);

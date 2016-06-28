@@ -31,10 +31,8 @@ var JpaPanelContent = (function () {
         }
     };
     JpaPanelContent.prototype.ngAfterViewInit = function () {
-        console.debug('PanelContent view initialized.', this);
     };
     JpaPanelContent.prototype.onToggle = function (expanded) {
-        console.log('PanelContentChild just saw its parent toggle ', expanded);
     };
     __decorate([
         core_1.Input(), 
