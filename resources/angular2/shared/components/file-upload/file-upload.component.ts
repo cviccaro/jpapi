@@ -94,6 +94,8 @@ export class JpaFileUploadComponent implements AfterViewInit, OnChanges, Control
      */
     @Output() fileAdded: EventEmitter<File[]> = new EventEmitter<File[]>();
     @Output() gridImageLoaded = new EventEmitter();
+    @Output() onImageRemove = new EventEmitter();
+
 
     /**
      * Content directives
@@ -132,16 +134,10 @@ export class JpaFileUploadComponent implements AfterViewInit, OnChanges, Control
             let k = i;
 
             this.isLoading = true;
-            reader.addEventListener('progress', e => {
-                console.log('added file progress: ', e);
-            });
             reader.addEventListener('load', e => {
-                console.log('added file READ: ', {
-                    e: e,
-                    result: reader.result
-                });
-
-                let newImage = {id: 'new', image_url: reader.result, isNew: true};
+                let filename = file.name;
+                let newImage = {id: 'new', name: filename, image_url: reader.result, isNew: true};
+                console.log('Loaded new image: ', newImage);
                 this.images.push(newImage);
                 let value = this.value;
                 value.push(newImage);
@@ -187,8 +183,13 @@ export class JpaFileUploadComponent implements AfterViewInit, OnChanges, Control
      */
 
     ngOnInit() {
-        this.isLoading = !!this.images.length;
-        this._count = this.images.length;
+        if (this.images === undefined) {
+            this.isLoading = false;
+            this._count = 0;
+        } else {
+            this.isLoading = !!this.images.length;
+            this._count = this.images.length;
+        }
     }
 
     ngAfterViewInit() {
@@ -254,6 +255,9 @@ export class JpaFileUploadComponent implements AfterViewInit, OnChanges, Control
         this._onTouchedCallback = fn;
     }
 
+    private _isArray(a) {
+        return Array.isArray(a) && a.length;
+    }
 
     /** internal */
     private _stopEvent(e: Event) {
@@ -301,5 +305,21 @@ export class JpaFileUploadComponent implements AfterViewInit, OnChanges, Control
 
         e._hasNew = this._hasNew;
         this.gridImageLoaded.emit(e);
+    }
+
+    imageRemoved(e: any) {
+        console.log('FileUpload # image Removed', {
+            e: e,
+            value: this.value
+        });
+        this.images.splice(e.index, 1);
+
+        if (this.value && this.value.length) {
+            let idx = this.value.indexOf(e.config);
+            if (idx !== -1) {
+                this.value.splice(idx, 1);
+            }
+        }
+        this.onImageRemove.emit(e);
     }
 }

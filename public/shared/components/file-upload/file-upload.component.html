@@ -36,9 +36,9 @@
     (dragover)="onDragOver($event)"
     (dragleave)="onDragLeave($event)"
     (drop)="onFileDrop($event)">
-    <md-grid-list cols="4" rowHeight="16:9">
+    <md-grid-list cols="4" rowHeight="16:9" *ngIf="_isArray(images)">
         <md-grid-tile *ngFor="let image of images; let index = index" flex="25">
-          <jpa-grid-image [imageConfig]="image" (imageLoaded)="imageLoaded($event)"></jpa-grid-image>
+          <jpa-grid-image [imageConfig]="image" (imageLoaded)="imageLoaded($event)" (imageRemoved)="imageRemoved($event)" [index]="index"></jpa-grid-image>
         </md-grid-tile>
         <md-grid-tile *ngIf="images.length % 4 !== 1" flex="25"></md-grid-tile>
     </md-grid-list>

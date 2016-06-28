@@ -12,14 +12,14 @@
                 <span class="summary-text imagefield" *ngIf="_isImage" [innerHTML]="summary"></span>
                 <span class="summary-text gallery" *ngIf="_isGallery">
                   <div class="count">
-                    <md-icon color="primary">panorama</md-icon>&nbsp;&nbsp;{{ gallery.length - value?.length }} pictures in gallery <span *ngIf="value" class="new"> + {{value.length}} new</span>
+                    <md-icon color="primary">panorama</md-icon>&nbsp;&nbsp;{{ gallery?.length - value?.length }} pictures in gallery <span *ngIf="value" class="new"> + {{value.length}} new</span>
                   </div>
                 </span>
             </div>
             <div class="summary-text-wrapper" [hidden]="!_expanded">
               <span class="summary-text edit-text">{{ editText }} <md-icon class="md-20">help_outline</md-icon></span>
             </div>
-            <div class="summary-image" *ngIf="_isImage && currentImage" [hidden]="_expanded">
+            <div class="summary-image" *ngIf="_isImage && currentImage && !_valueChanged" [hidden]="_expanded">
                 <span [hidden]="_imageLoaded">Loading...<md-icon class="spin">update</md-icon></span>
                 <img [src]="currentImage" class="image-preview" #imagePreview />
             </div>

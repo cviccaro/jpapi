@@ -44,6 +44,7 @@ var WorkComponent = (function () {
                     id: ''
                 }
             };
+            this.ready = true;
             console.debug('WorkComponent#Create initialized.', this);
         }
         else {
@@ -57,10 +58,32 @@ var WorkComponent = (function () {
         }
     };
     WorkComponent.prototype.onSubmit = function () {
-        console.log(this.work);
+        this.save();
     };
     WorkComponent.prototype.save = function () {
-        console.log(this.work);
+        var _this = this;
+        this.submitted = true;
+        if (this.isNew) {
+            console.log('Save NEW work. ', this.work);
+            this.service.create(this.work)
+                .subscribe(function (res) {
+                _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been created.  Redirecting to its page.');
+                setTimeout(function () {
+                    _this.isNew = false;
+                    _this.work = res;
+                    _this.router.navigate(['/work', res.id]);
+                }, 6000);
+            });
+        }
+        else {
+            console.log('Save UPDATED work. ', this.work);
+            this.service.update(this.work.id, this.work)
+                .subscribe(function (res) {
+                console.log('response from update: ', res);
+                _this.work = res;
+                _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been saved.');
+            });
+        }
     };
     WorkComponent.prototype.ceil = function (a) {
         return Math.ceil(a);

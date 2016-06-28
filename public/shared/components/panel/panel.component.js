@@ -99,6 +99,7 @@ var JpaPanel = (function () {
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
         this._expandedEmitter = new core_1.EventEmitter();
+        this.imageFieldChanged = new core_1.EventEmitter();
         this._initialValue = null;
         this._valueChanged = false;
         this._imageLoaded = false;
@@ -121,6 +122,8 @@ var JpaPanel = (function () {
                 break;
             case 'images':
                 this._isGallery = true;
+                this._empty = true;
+                console.log('set it to empty');
                 this._hasContentBottom = true;
                 this.fullWidth = true;
                 break;
@@ -191,7 +194,12 @@ var JpaPanel = (function () {
         configurable: true
     });
     Object.defineProperty(JpaPanel.prototype, "value", {
-        get: function () { return this._value; },
+        get: function () {
+            if (this.type === 'image') {
+                return '';
+            }
+            return this._value;
+        },
         set: function (v) {
             v = this._convertValueForInputType(v);
             console.debug('JpaPanel@set value(): ', v);
@@ -310,6 +318,9 @@ var JpaPanel = (function () {
                 this.value = event.target.value;
                 this.summary = this.value;
                 break;
+            case 'image':
+                this.imageFieldChanged.emit(event);
+                break;
             default:
                 this.value = event.target.value;
                 this.summary = this.value;
@@ -326,7 +337,16 @@ var JpaPanel = (function () {
         this._value = value;
         if (!this._initialValue)
             this._initialValue = value;
-        this.summary = value;
+        switch (this.type) {
+            case 'image':
+                if (value !== undefined && value !== null) {
+                    this.summary = 'New - ' + value.name;
+                    break;
+                }
+            default:
+                this.summary = value;
+                break;
+        }
     };
     JpaPanel.prototype.registerOnChange = function (fn) {
         this._onChangeCallback = fn;
@@ -596,6 +616,10 @@ var JpaPanel = (function () {
         core_1.Output('expand'), 
         __metadata('design:type', Observable_1.Observable)
     ], JpaPanel.prototype, "onExpand", null);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "imageFieldChanged", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Object)

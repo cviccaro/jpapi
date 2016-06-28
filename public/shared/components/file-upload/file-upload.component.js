@@ -49,6 +49,7 @@ var JpaFileUploadComponent = (function () {
         this.tabIndex = null;
         this.fileAdded = new core_1.EventEmitter();
         this.gridImageLoaded = new core_1.EventEmitter();
+        this.onImageRemove = new core_1.EventEmitter();
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
         this.change = new core_1.EventEmitter();
@@ -78,15 +79,10 @@ var JpaFileUploadComponent = (function () {
             var reader = new FileReader();
             var k = i;
             this_1.isLoading = true;
-            reader.addEventListener('progress', function (e) {
-                console.log('added file progress: ', e);
-            });
             reader.addEventListener('load', function (e) {
-                console.log('added file READ: ', {
-                    e: e,
-                    result: reader.result
-                });
-                var newImage = { id: 'new', image_url: reader.result, isNew: true };
+                var filename = file.name;
+                var newImage = { id: 'new', name: filename, image_url: reader.result, isNew: true };
+                console.log('Loaded new image: ', newImage);
                 _this.images.push(newImage);
                 var value = _this.value;
                 value.push(newImage);
@@ -124,8 +120,14 @@ var JpaFileUploadComponent = (function () {
         console.log('FileUploadComponent#handleBlur', event);
     };
     JpaFileUploadComponent.prototype.ngOnInit = function () {
-        this.isLoading = !!this.images.length;
-        this._count = this.images.length;
+        if (this.images === undefined) {
+            this.isLoading = false;
+            this._count = 0;
+        }
+        else {
+            this.isLoading = !!this.images.length;
+            this._count = this.images.length;
+        }
     };
     JpaFileUploadComponent.prototype.ngAfterViewInit = function () {
         console.info('FileUploadComponent#AfterViewInit ---', this);
@@ -176,6 +178,9 @@ var JpaFileUploadComponent = (function () {
     JpaFileUploadComponent.prototype.registerOnTouched = function (fn) {
         this._onTouchedCallback = fn;
     };
+    JpaFileUploadComponent.prototype._isArray = function (a) {
+        return Array.isArray(a) && a.length;
+    };
     JpaFileUploadComponent.prototype._stopEvent = function (e) {
         event.preventDefault();
         event.stopPropagation();
@@ -215,6 +220,20 @@ var JpaFileUploadComponent = (function () {
         }
         e._hasNew = this._hasNew;
         this.gridImageLoaded.emit(e);
+    };
+    JpaFileUploadComponent.prototype.imageRemoved = function (e) {
+        console.log('FileUpload # image Removed', {
+            e: e,
+            value: this.value
+        });
+        this.images.splice(e.index, 1);
+        if (this.value && this.value.length) {
+            var idx = this.value.indexOf(e.config);
+            if (idx !== -1) {
+                this.value.splice(idx, 1);
+            }
+        }
+        this.onImageRemove.emit(e);
     };
     __decorate([
         core_1.Input('aria-label'), 
@@ -277,6 +296,10 @@ var JpaFileUploadComponent = (function () {
         core_1.Output(), 
         __metadata('design:type', Object)
     ], JpaFileUploadComponent.prototype, "gridImageLoaded", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], JpaFileUploadComponent.prototype, "onImageRemove", void 0);
     __decorate([
         core_1.ViewChildren(grid_image_1.GridImage), 
         __metadata('design:type', core_1.QueryList)

@@ -128,6 +128,8 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
             case 'image': this._isImage = true; break;
             case 'images':
                 this._isGallery = true;
+                this._empty = true;
+                console.log('set it to empty');
                 this._hasContentBottom = true;
                 this.fullWidth = true;
                 break;
@@ -223,13 +225,20 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         return this._expandedEmitter.asObservable();
     }
 
+    @Output() imageFieldChanged = new EventEmitter();
+
     private _initialValue = null;
     private _valueChanged = false;
 
     set expanded(v: boolean) { this._expanded = v; }
     get expanded(): boolean { return this._expanded; }
 
-    get value(): any { return this._value; };
+    get value(): any { 
+        if (this.type === 'image') {
+            return '';
+        }
+        return this._value; 
+    };
     @Input() set value(v: any) {
         v = this._convertValueForInputType(v);
         console.debug('JpaPanel@set value(): ', v);
@@ -354,6 +363,9 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
                 this.value = (<HTMLTextAreaElement>event.target).value;
                 this.summary = this.value;
                 break;
+            case 'image':
+                this.imageFieldChanged.emit(event);
+                break;
             default:
                 this.value = (<HTMLInputElement>event.target).value;
                 this.summary = this.value;
@@ -377,7 +389,14 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         console.debug('JpaPanel.'+this.type+' ' + this.name + '#writeValue('+this.type+')', value);
         this._value = value;
         if (!this._initialValue) this._initialValue = value;
-        this.summary = value;
+        switch (this.type) {
+            case 'image':
+                if (value !== undefined && value !== null) {
+                    this.summary = 'New - ' + value.name;
+                    break;
+                }
+            default: this.summary = value; break;
+        }
     }
 
     /**

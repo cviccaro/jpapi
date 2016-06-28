@@ -1,9 +1,8 @@
 <div class="container" *ngIf="ready">
-    {{ work | json }}
-    <h2 class="form-title" *ngIf="work">{{ isNew ? 'Create' : 'Edit' }} Work {{ isNew ? '' : work.title }}</h2>
+    <h2 class="form-title">{{ isNew ? 'Create' : 'Edit' }} Work {{ isNew ? '' : work.title }}</h2>
     <form #workForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
       <jpa-panel-group>
-<!--         <jpa-panel #titlePanel label="Title" [(ngModel)]="work.title" name="title" type="text" editText="Enter a title" required>
+        <jpa-panel #titlePanel label="Title" [(ngModel)]="work.title" name="title" type="text" editText="Enter a title" required>
           <md-hint align="end">{{titlePanel.characterCount}} / 100</md-hint>
         </jpa-panel>
         <jpa-panel #clientPanel label="Client" [(ngModel)]="work.client.id" name="client" type="select" editText="Select a client" required>
@@ -12,95 +11,12 @@
         <jpa-panel #bodyPanel label="Body" [(ngModel)]="work.body" name="body" type="textarea" editText="Write some copy" required>
           <md-hint align="end">{{bodyPanel.characterCount}} / &infin;</md-hint>
         </jpa-panel>
-        <jpa-panel label="Image" type="image" name="image_new" editText="Select an image" [(ngModel)]="work.image_new" [currentImage]="work.image">
+        <jpa-panel label="Image" type="image" name="image_new" editText="Select an image" [(ngModel)]="work.image_new" [currentImage]="work.image" (imageFieldChanged)="imageFieldChanged($event)">
           <jpa-panel-content [image]="work.image" class="right"></jpa-panel-content>
-        </jpa-panel> -->
+        </jpa-panel>
         <jpa-panel label="Gallery" type="images" editText="Select images" name="gallery_new" [(ngModel)]="work.gallery_new" [gallery]="work.gallery">
         </jpa-panel>
       </jpa-panel-group>
-<!--       <div class="row form-group">
-        <div class="col-md-6">
-          <md-input name="title" [(ngModel)]="work.title" required type="text" placeholder="Title" class="full-width">
-          </md-input>
-        </div>
-        <div class="col-md-6">
-          <jpa-md-select required name="client" [(ngModel)]="work.client.id" placeholder="Client" class="full-width">
-            <option *ngFor="let client of clients" [value]="client.id">{{client.name}}</option>
-          </jpa-md-select>
-        </div>
-      </div> -->
-<!--       <div class="row form-group">
-        <div class="col-md-12">
-          <label for="body">Body</label>
-          <textarea class="form-control" name="body" [(ngModel)]="work.body" required></textarea>
-        </div>
-      </div> -->
-<!--       <div class="row form-group image">
-        <div class="col-md-12">
-          <label for="image_new">Image</label>
-          <input name="image_new" type="file" (change)="imageFieldChanged($event)" accept="image/jpg, image/jpeg, image/png, image/gif" />
-          <img *ngIf="work.image" [src]="work.image" />
-        </div>
-      </div> -->
-<!--       <div class="row form-group gallery">
-        <div class="col-md-12">
-          <label>Gallery</label>
-          <md-grid-list cols="4" *ngIf="work.gallery" rowHeight="16:9">
-             <md-grid-tile *ngFor="let image of work.gallery" flex="25"><img [src]="image.image_url" /></md-grid-tile>
-             <md-grid-tile *ngIf="work.gallery.length % 4 !== 1" flex="25">
-             </md-grid-tile>
-          </md-grid-list>
-          <label class="upload-label">Upload new files</label>
-          <div ng2FileDrop
-               [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-               (fileOver)="fileOverBase($event)"
-               [uploader]="uploader"
-               class="well file-drop-zone">
-               Drop files here
-          </div>
-          <table class="table">
-              <thead>
-              <tr>
-                  <th width="50%">Name</th>
-                  <th>Size</th>
-                  <th>Progress</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let item of uploader.queue">
-                  <td><strong>{{ item?.file?.name }}</strong></td>
-                  <td *ngIf="uploader.isHTML5" nowrap>{{ item?.file?.size/1024/1024 | number:'.2' }} MB</td>
-                  <td *ngIf="uploader.isHTML5">
-                      <div class="progress" style="margin-bottom: 0;">
-                          <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
-                      </div>
-                  </td>
-                  <td class="text-center">
-                      <span *ngIf="item.isSuccess"><md-icon>done</md-icon></span>
-                      <span *ngIf="item.isCancel"><md-icon>highlight_off</md-icon></span>
-                      <span *ngIf="item.isError"><md-icon>delete</md-icon></span>
-                  </td>
-                  <td nowrap>
-                      <button type="button" class="btn btn-success btn-xs"
-                              (click)="item.upload()" [disabled]="item.isReady || item.isUploading || item.isSuccess">
-                          <md-icon>file_upload</md-icon> Upload
-                      </button>
-                      <button type="button" class="btn btn-warning btn-xs"
-                              (click)="item.cancel()" [disabled]="!item.isUploading">
-                          <md-icon>cancel</md-icon> Cancel
-                      </button>
-                      <button type="button" class="btn btn-danger btn-xs"
-                              (click)="item.remove()">
-                          <md-icon>delete</md-icon> Remove
-                      </button>
-                  </td>
-              </tr>
-              </tbody>
-          </table>
-        </div>
-      </div> -->
       <div class="row form-actions">
         <div class="col-md-12">
           <button type="submit" md-raised-button color="secondary" [disabled]="!workForm.form.valid"><md-icon>save</md-icon> Save</button>

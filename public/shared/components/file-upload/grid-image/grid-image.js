@@ -9,21 +9,53 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var icon_1 = require('@angular2-material/icon');
 var GridImage = (function () {
     function GridImage() {
+        this.hovering = false;
+        this.imageRemoved = new core_1.EventEmitter();
         this.imageLoaded = new core_1.EventEmitter();
     }
+    GridImage.prototype.onMouseEnter = function (e) {
+        this.hovering = true;
+    };
+    GridImage.prototype.onMouseLeave = function (e) {
+        this.hovering = false;
+    };
     GridImage.prototype.ngOnInit = function () {
         var _this = this;
         this._imageEl.nativeElement.addEventListener('load', function (e) {
-            console.log('GridImage Loaded.');
+            console.log('GridImage Loaded.', _this);
             _this.imageLoaded.emit({ event: e, config: _this.imageConfig });
         });
     };
+    GridImage.prototype.remove = function () {
+        this.imageRemoved.emit({ config: this.imageConfig, index: this.index });
+    };
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], GridImage.prototype, "imageRemoved", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Object)
     ], GridImage.prototype, "imageConfig", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Number)
+    ], GridImage.prototype, "index", void 0);
+    __decorate([
+        core_1.HostListener('mouseenter', ['$event.target']), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [Object]), 
+        __metadata('design:returntype', void 0)
+    ], GridImage.prototype, "onMouseEnter", null);
+    __decorate([
+        core_1.HostListener('mouseleave', ['$event.target']), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [Object]), 
+        __metadata('design:returntype', void 0)
+    ], GridImage.prototype, "onMouseLeave", null);
     __decorate([
         core_1.Output(), 
         __metadata('design:type', Object)
@@ -36,8 +68,11 @@ var GridImage = (function () {
         core_1.Component({
             moduleId: module.id,
             selector: 'jpa-grid-image',
-            template: '<img #image class="grid-image" [src]="imageConfig.image_url" [alt]="imageConfig.alt" [title]="imageConfig.title" [class.new]="imageConfig.isNew" />',
-            styleUrls: ['./grid-image.css']
+            template: '<div class="shade"><span class="remove" [hidden]="!hovering" (click)="remove()"><md-icon>delete_forever</md-icon></span></div><img #image class="grid-image" [src]="imageConfig.image_url" [alt]="imageConfig.alt" [title]="imageConfig.title" [class.new]="imageConfig.isNew" />',
+            styleUrls: ['./grid-image.css'],
+            directives: [
+                icon_1.MdIcon
+            ]
         }), 
         __metadata('design:paramtypes', [])
     ], GridImage);

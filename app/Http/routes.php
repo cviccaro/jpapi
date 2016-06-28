@@ -83,9 +83,6 @@ Route::group(['middleware' => 'jwt.refresh'], function () {
 });
 
 Route::get('test', function() {
-    $token = 'omg';
-
-    $arr = array_merge(['expires' => 1239213], compact('token'));
-
-    dd($arr);
+    $work = \App\Work::find(18)->gallery->pluck('id');
+    dd(array_values($work->toArray()));
 });

@@ -20,7 +20,28 @@
 /**
  * Transition mixins
  */
-:host .new {
-  box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12); }
+:host {
+  position: relative;
+  position: relative; }
+  :host .shade {
+    transition: all 250ms cubic-bezier(0.75, 0.17, 0.59, 1.09);
+    display: block;
+    background: transparent;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0; }
+  :host .new {
+    box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12); }
+  :host .remove {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    cursor: pointer; }
+    :host .remove md-icon {
+      color: #fff; }
+  :host:hover .shade {
+    background: rgba(0, 0, 0, 0.5); }
 
 /*# sourceMappingURL=grid-image.css.map */

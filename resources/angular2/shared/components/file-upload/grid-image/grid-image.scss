@@ -1,7 +1,33 @@
 @import "../../../../../assets/sass/variables";
 
 :host {
+	position: relative;
+	.shade {
+		transition: all $transition_duration $transition_ease;
+		display: block;
+		background: transparent;
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
     .new {
         box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
     }
+    .remove {
+    	position: absolute;
+    	top: 10px;
+    	left: 10px;
+    	md-icon {
+    		color: $white;
+    	}
+    	cursor: pointer;
+    }
+    &:hover {
+    	.shade {
+    		background: rgba(0,0,0,0.5);
+    	}
+    }
+    position: relative;
 }

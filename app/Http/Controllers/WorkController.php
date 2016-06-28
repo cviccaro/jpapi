@@ -94,12 +94,13 @@ class WorkController extends Controller
         $m = self::MODEL;
         $this->validate($request, $m::$rules);
         $model = $m::find($id);
-
         if (is_null($model)) {
             return $this->respond('not_found');
         }
 
         $data = $request->all();
+
+        $current_gallery = \App\Work::find(18)->gallery->pluck('id')->toArray();
 
         if ($request->has('client')) {
             $client_id = intval($request->get('client')['id']);
@@ -118,19 +119,38 @@ class WorkController extends Controller
             unset($data['image']);
         }
 
-        // $gallery = [];
-        // if ($request->has('gallery')) {
-        //     $gallery = array_reduce($data['gallery'], function ($carry, $item) {
-        //         $carry[] = $item['id'];
-        //         return $carry;
-        //     }, []);
-        // }
+        $gallery = [];
+        if ($request->has('gallery')) {
+            $gallery = array_reduce($data['gallery'], function ($carry, $item) {
+                if (!isset($item['isNew']) || $item['isNew'] !== true) {
+                    $carry[] = $item['id'];
+                }
+                return $carry;
+            }, []);
+                     
+            $to_delete = array_filter($current_gallery, function ($id) use ($gallery) {
+                return !in_array($id, $gallery);
+            });
+
+            if ($to_delete) {
+                WorkImage::whereIn('id', $to_delete)->delete();
+            }
+            // $gallery = array_reduce($data['gallery'], function ($carry, $item) {
+            //     if (!isset($item['isNew']) || $item['isNew'] !== true) {
+            //         $carry[] = $item['id'];
+            //     } else if (in_array($item['id'], $current_gallery)) {
+
+            //     }
+            //     return $carry;
+            // }, []);
+            // $data['gallery'] = $gallery;
+        }
 
         if ($request->has('gallery_new')) {
             $gallery_new = $request->get('gallery_new');
             foreach ($gallery_new as $file) {
                 \Log::info('Adding gallery new item: ' . $file['name']);
-                $base64_string = $file['base64'];
+                $base64_string = $file['image_url'];
                 $filename = $file['name'];
                 if ($image = Image::createFromBase64($filename, $base64_string)) {
                     WorkImage::create(['work_id' => $id, 'image_id' => $image->id]);
