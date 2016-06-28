@@ -106,6 +106,12 @@ var AuthService = (function () {
     };
     AuthService.prototype.reset = function () {
         this.authorized = false;
+        this.token = '';
+        if (this.hasStorage)
+            localStorage.removeItem('id_token');
+        this.expires = undefined;
+        if (this.hasStorage)
+            localStorage.removeItem('id_expires');
     };
     AuthService.prototype.parseError = function (error) {
         var title = 'Error';

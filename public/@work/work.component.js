@@ -57,55 +57,10 @@ var WorkComponent = (function () {
         }
     };
     WorkComponent.prototype.onSubmit = function () {
-        var _this = this;
-        if (this.uploader.queue.length) {
-            window['_files'] = this.uploader.queue;
-            console.log('Working through gallery queue with ' + this.uploader.queue.length + ' files', {
-                queue: this.uploader.queue
-            });
-            if (this.work.gallery_new === undefined)
-                this.work.gallery_new = [];
-            var i_1 = 0;
-            var length_1 = this.uploader.queue.length;
-            this.uploader.queue.forEach(function (item) {
-                item._isLast = ++i_1 === length_1;
-                _this.readFile(item._file)
-                    .subscribe(function (file) {
-                    _this.work.gallery_new.push(file);
-                    _this.uploader.removeFromQueue(item);
-                    if (item._isLast) {
-                        _this.save();
-                    }
-                });
-            });
-            return;
-        }
-        this.save();
+        console.log(this.work);
     };
     WorkComponent.prototype.save = function () {
-        var _this = this;
-        this.submitted = true;
-        if (this.isNew) {
-            console.log('Save NEW work. ', this.work);
-            this.service.create(this.work)
-                .subscribe(function (res) {
-                _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been created.  Redirecting to its page.');
-                setTimeout(function () {
-                    _this.isNew = false;
-                    _this.work = res;
-                    _this.router.navigate(['/work', res.id]);
-                }, 6000);
-            });
-        }
-        else {
-            console.log('Save UPDATED work. ', this.work);
-            this.service.update(this.work.id, this.work)
-                .subscribe(function (res) {
-                console.log('response from update: ', res);
-                _this.work = res;
-                _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been saved.');
-            });
-        }
+        console.log(this.work);
     };
     WorkComponent.prototype.ceil = function (a) {
         return Math.ceil(a);

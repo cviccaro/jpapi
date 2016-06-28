@@ -7,6 +7,9 @@
 | Base
 |
 **/
+body {
+    background-color: $grey_50;
+}
 body, md-list, md-list-item, md-line, md-button, md-content, md-card, md-input-container,
 h1,h2,h3,h4,h5,p,div,p {
     font-family: $font-family-sans-serif;
@@ -247,8 +250,6 @@ form {
     textarea {
         min-height: 125px;
     }
-    .file-drop-zone { border: dotted 3px lightgray; }
-    .nv-file-over { border: dotted 3px material-color('light-green'); } /* Default class applied to drop zones on over */
     .upload-label {
         margin-top: 2em;
     }

@@ -71,58 +71,60 @@ export class WorkComponent implements OnInit {
     }
 
     onSubmit() {
-        if (this.uploader.queue.length) {
-            window['_files'] = this.uploader.queue;
-            console.log('Working through gallery queue with ' + this.uploader.queue.length + ' files', {
-                queue: this.uploader.queue
-            });
+        console.log(this.work);
+        // if (this.uploader.queue.length) {
+        //     window['_files'] = this.uploader.queue;
+        //     console.log('Working through gallery queue with ' + this.uploader.queue.length + ' files', {
+        //         queue: this.uploader.queue
+        //     });
 
-            if (this.work.gallery_new === undefined) this.work.gallery_new = [];
+        //     if (this.work.gallery_new === undefined) this.work.gallery_new = [];
 
-            let i = 0;
-            const length = this.uploader.queue.length;
+        //     let i = 0;
+        //     const length = this.uploader.queue.length;
 
-            this.uploader.queue.forEach(item => {
-                item._isLast = ++i === length;
+        //     this.uploader.queue.forEach(item => {
+        //         item._isLast = ++i === length;
 
-                this.readFile(item._file)
-                    .subscribe(file => {
-                        this.work.gallery_new.push(file);
-                        this.uploader.removeFromQueue(item);
-                        if (item._isLast) {
-                            this.save();
-                        }
-                    });
-            });
+        //         this.readFile(item._file)
+        //             .subscribe(file => {
+        //                 this.work.gallery_new.push(file);
+        //                 this.uploader.removeFromQueue(item);
+        //                 if (item._isLast) {
+        //                     this.save();
+        //                 }
+        //             });
+        //     });
 
-            return;
-        }
+        //     return;
+        // }
 
-        this.save();
+        // this.save();
     }
 
     save() {
-        this.submitted = true;
-        if (this.isNew) {
-            console.log('Save NEW work. ', this.work);
-            this.service.create(this.work)
-                .subscribe(res => {
-                    this.toasterService.pop('success', 'Success!', this.work.title + ' has been created.  Redirecting to its page.');
-                    setTimeout(() => {
-                        this.isNew = false;
-                        this.work = res;
-                        this.router.navigate(['/work', res.id]);
-                    }, 6000);
-                });
-        } else {
-            console.log('Save UPDATED work. ', this.work);
-            this.service.update(this.work.id, this.work)
-                .subscribe(res => {
-                    console.log('response from update: ', res);
-                    this.work = res;
-                    this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
-                });
-        }
+        console.log(this.work);
+        // this.submitted = true;
+        // if (this.isNew) {
+        //     console.log('Save NEW work. ', this.work);
+        //     this.service.create(this.work)
+        //         .subscribe(res => {
+        //             this.toasterService.pop('success', 'Success!', this.work.title + ' has been created.  Redirecting to its page.');
+        //             setTimeout(() => {
+        //                 this.isNew = false;
+        //                 this.work = res;
+        //                 this.router.navigate(['/work', res.id]);
+        //             }, 6000);
+        //         });
+        // } else {
+        //     console.log('Save UPDATED work. ', this.work);
+        //     this.service.update(this.work.id, this.work)
+        //         .subscribe(res => {
+        //             console.log('response from update: ', res);
+        //             this.work = res;
+        //             this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
+        //         });
+        // }
     }
 
     ceil(a) {

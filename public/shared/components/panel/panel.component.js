@@ -22,7 +22,7 @@ var Observable_1 = require('rxjs/Observable');
 var input_1 = require('@angular2-material/input');
 var angular2_material_1 = require('../../libs/angular2-material');
 var index_1 = require('./content/index');
-var ng2_file_upload_1 = require('ng2-file-upload');
+var index_2 = require('../file-upload/index');
 exports.JPA_PANEL_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCESSOR, {
     useExisting: core_1.forwardRef(function () { return JpaPanel; }),
     multi: true
@@ -62,27 +62,19 @@ var JpaPanel = (function () {
         this._focused = false;
         this._expanded = false;
         this._value = '';
+        this._empty = false;
         this._summary = '';
         this._underlineHidden = false;
         this._isTextfield = false;
         this._isTextarea = false;
         this._isImage = false;
-        this._isMultipleImages = false;
+        this._isGallery = false;
         this._isSelect = false;
         this._hasContent = false;
         this._hasContentRight = false;
         this._hasContentBottom = false;
-        this._newImages = [];
-        this.hasBaseDropZoneOver = false;
-        this.uploader = new ng2_file_upload_1.FileUploader({ url: 'wtf' });
         this._onTouchedCallback = noop;
-        this._onChangeCallback = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
-            console.debug('JpaPanel#onChangeCallback:', args);
-        };
+        this._onChangeCallback = noop;
         this.dividerColor = 'primary';
         this.hintLabel = '';
         this.autoFocus = false;
@@ -102,6 +94,7 @@ var JpaPanel = (function () {
         this.type = 'text';
         this.label = null;
         this.currentImage = null;
+        this.gallery = [];
         this.fullWidth = false;
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
@@ -112,7 +105,7 @@ var JpaPanel = (function () {
         this._currentImageSize = null;
     }
     JpaPanel.prototype.ngOnInit = function () {
-        console.debug('JpaPanel#onInit ', this.type);
+        console.info('JpaPanel.' + this.type + ' ' + this.name + '#onInit ', this.type);
         switch (this.type) {
             case 'text':
                 this._isTextfield = true;
@@ -127,7 +120,9 @@ var JpaPanel = (function () {
                 this._isImage = true;
                 break;
             case 'images':
-                this._isMultipleImages = true;
+                this._isGallery = true;
+                this._hasContentBottom = true;
+                this.fullWidth = true;
                 break;
         }
     };
@@ -198,17 +193,21 @@ var JpaPanel = (function () {
     Object.defineProperty(JpaPanel.prototype, "value", {
         get: function () { return this._value; },
         set: function (v) {
-            console.debug('JpaPanel#set value ', v);
             v = this._convertValueForInputType(v);
+            console.debug('JpaPanel@set value(): ', v);
             if (v !== this._value) {
                 this._value = v;
                 this._onChangeCallback(v);
             }
+            this._empty = this.isEmpty(v);
         },
         enumerable: true,
         configurable: true
     });
     ;
+    JpaPanel.prototype.isEmpty = function (v) {
+        return v === undefined || v === null || (Array.isArray(v) && v.length === 0) || Object.keys(v).length === 0;
+    };
     Object.defineProperty(JpaPanel.prototype, "summary", {
         get: function () {
             return this._summary;
@@ -217,12 +216,10 @@ var JpaPanel = (function () {
             var _this = this;
             switch (this.type) {
                 case 'select':
-                    console.log('(SELECT) SET SUMMARY FOR VALUE ' + value);
                     var interval_1 = setInterval(function () {
                         var filtered = _this._optionChildren.filter(function (opt) {
                             return opt['_element']['nativeElement']['value'] == _this._value;
                         });
-                        console.log('(SELECT) FILTERED OPTIONS: ', filtered);
                         if (filtered.length) {
                             _this._summary = filtered[0]['_element']['nativeElement']['innerHTML'];
                             clearInterval(interval_1);
@@ -232,14 +229,24 @@ var JpaPanel = (function () {
                 case 'image':
                     this._summary = value || '';
                     break;
+                case 'images':
+                    this._setGallerySummary();
+                    break;
                 default:
                     this._summary = value;
             }
-            console.debug('Setting summary to ' + this._summary);
         },
         enumerable: true,
         configurable: true
     });
+    JpaPanel.prototype._setGallerySummary = function () {
+        if (this.gallery.length) {
+            this._summary = this.gallery.length + ' pictures in gallery';
+        }
+        else {
+            this._summary = '';
+        }
+    };
     Object.defineProperty(JpaPanel.prototype, "currentImageSize", {
         get: function () {
             return this._currentImageSize;
@@ -271,29 +278,30 @@ var JpaPanel = (function () {
         }
     };
     JpaPanel.prototype.handleFocus = function (event) {
-        console.debug('JpaPanel#handleFocus ', event);
         if (this.expanded) {
             this._focused = true;
             this._focusEmitter.emit(event);
         }
         else {
-            console.debug('skipping focus for non-expanded panel');
         }
     };
     JpaPanel.prototype.handleBlur = function (event) {
-        console.debug('JpaPanel#handleBlur ', event);
         if (this.expanded) {
             this._focused = false;
             this._onTouchedCallback();
             this._blurEmitter.emit(event);
         }
         else {
-            console.debug('skipping blur for non-expanded panel');
         }
     };
     JpaPanel.prototype.handleChange = function (event) {
-        console.debug('JpaPanel#handleChange: ', event, this);
+        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#handleChange: ', event, this);
         switch (this.type) {
+            case 'images':
+                var value = this.value || [];
+                value.push(event[0]);
+                this.value = value;
+                break;
             case 'select':
                 this.value = event.target.value;
                 this.summary = this.value;
@@ -307,7 +315,6 @@ var JpaPanel = (function () {
                 this.summary = this.value;
                 break;
         }
-        console.log('JpaPanel#handleChange (' + this.type + ') set value for  to ', this.value);
         this._valueChanged = true;
         this._onTouchedCallback();
     };
@@ -315,7 +322,7 @@ var JpaPanel = (function () {
         return !!this.placeholder;
     };
     JpaPanel.prototype.writeValue = function (value) {
-        console.debug('JpaPanel#writeValue(' + this.type + ')', value);
+        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#writeValue(' + this.type + ')', value);
         this._value = value;
         if (!this._initialValue)
             this._initialValue = value;
@@ -347,7 +354,6 @@ var JpaPanel = (function () {
                 }
             });
         }
-        console.debug('JpaPanel#ngAfterContentInit', this);
     };
     JpaPanel.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -355,7 +361,6 @@ var JpaPanel = (function () {
             case 'image':
                 if (this._imagePreview && this.currentImageSize === null) {
                     this._imagePreview.nativeElement.onload = function (e) {
-                        console.log('IMAGE LOADED!');
                         _this._imageLoaded = true;
                         _this.currentImageSize = { w: _this._imagePreview.nativeElement.naturalWidth, h: _this._imagePreview.nativeElement.naturalHeight };
                         if (!_this._expanded) {
@@ -369,11 +374,11 @@ var JpaPanel = (function () {
                 if (this.nativeElement) {
                     this.value = this.nativeElement.value;
                 }
+                break;
         }
-        console.debug('JpaPanel#AfterViewInit  (' + this.type + ')', this);
     };
     JpaPanel.prototype.ngOnChanges = function (changes) {
-        console.log('Changes on Panel ' + this.id + ' (' + this.name + '): ', changes);
+        console.log('JpaPanel.' + this.type + ' ' + this.name + '#OnChanges() : ', changes);
         this._validateConstraints();
     };
     JpaPanel.prototype._convertValueForInputType = function (v) {
@@ -407,7 +412,6 @@ var JpaPanel = (function () {
         }
     };
     JpaPanel.prototype.toggle = function ($event) {
-        console.debug('toggle!');
         $event.preventDefault();
         $event.stopPropagation();
         this._expanded = !this._expanded;
@@ -422,33 +426,11 @@ var JpaPanel = (function () {
             });
         }
     };
-    JpaPanel.prototype.fileOverBase = function (e) {
-        this.hasBaseDropZoneOver = e;
-    };
-    JpaPanel.prototype.onFileDrop = function (files) {
-        var _this = this;
-        for (var i = 0; i < files.length; i++) {
-            var file = files[i];
-            this.readFile(file)
-                .subscribe(function (read) {
-                _this._newImages.push(read);
-                console.log('Added image to newImages: ', read);
-            });
+    JpaPanel.prototype.imageUploadLoaded = function (e) {
+        console.log('PanelComponent# imageUploadLoaded ', e);
+        if (e.config.isNew) {
+            this._setGallerySummary();
         }
-    };
-    JpaPanel.prototype.readFile = function (file) {
-        var filename = file.name;
-        return Observable_1.Observable.create(function (observer) {
-            var reader = new FileReader();
-            reader.onload = function (readerEvt) {
-                var base64 = btoa(readerEvt.target['result']);
-                observer.next({
-                    name: filename,
-                    base64: base64
-                });
-            };
-            reader.readAsBinaryString(file);
-        });
     };
     __decorate([
         core_1.Input('aria-label'), 
@@ -596,6 +578,10 @@ var JpaPanel = (function () {
     ], JpaPanel.prototype, "currentImage", void 0);
     __decorate([
         core_1.Input(), 
+        __metadata('design:type', Array)
+    ], JpaPanel.prototype, "gallery", void 0);
+    __decorate([
+        core_1.Input(), 
         __metadata('design:type', Boolean)
     ], JpaPanel.prototype, "fullWidth", void 0);
     __decorate([
@@ -624,7 +610,14 @@ var JpaPanel = (function () {
             selector: 'jpa-panel',
             templateUrl: './panel.component.html',
             styleUrls: ['./panel.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES, common_1.NgIf, forms_1.NgModel, forms_1.NgSelectOption, index_1.JpaPanelContent, ng2_file_upload_1.FILE_UPLOAD_DIRECTIVES],
+            directives: [
+                angular2_material_1.MATERIAL_DIRECTIVES,
+                common_1.NgIf,
+                forms_1.NgModel,
+                forms_1.NgSelectOption,
+                index_1.JpaPanelContent,
+                index_2.JpaFileUploadComponent
+            ],
             providers: [exports.JPA_PANEL_VALUE_ACCESSOR],
             pipes: [common_1.SlicePipe],
             host: {

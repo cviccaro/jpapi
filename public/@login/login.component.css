@@ -1,2 +1,6 @@
+:host {
+  max-width: 600px;
+  display: block;
+  margin: 0 auto; }
 
 /*# sourceMappingURL=login.component.css.map */

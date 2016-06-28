@@ -1,0 +1,46 @@
+<div [hidden]="!multiple" class="count">
+  <md-icon color="primary">panorama</md-icon>&nbsp;&nbsp;{{ _count }} pictures in gallery <span *ngIf="_hasNew" class="new">+ {{value.length}} new</span>
+</div>
+<div class="progress-bar-wrapper" [hidden]="!isLoading">
+  <!-- <md-progress-bar *ngIf="!_progressIndeterminate" *ngFor="let file of loading" mode="buffer" value="10" bufferValue="file.progress"></md-progress-bar> -->
+  <md-progress-bar *ngIf="_progressIndeterminate" mode="indeterminate" color="accent"></md-progress-bar>
+</div>
+<div *ngIf="multiple" class="file-upload-multiple">
+<!--   <input
+      class="hidden"
+      #input
+      type="file"
+      accept="image/jpg, image/jpeg, image/png, image/gif"
+      aria-target
+      [class.md-end]="align == 'end'"
+      [attr.aria-label]="ariaLabel"
+      [attr.aria-labelledby]="ariaLabelledBy"
+      [attr.aria-disabled]="ariaDisabled"
+      [attr.aria-required]="ariaRequired"
+      [attr.aria-invalid]="ariaInvalid"
+      [autofocus]="autoFocus"
+      [disabled]="disabled"
+      [id]="inputId"
+      [required]="required"
+      [attr.step]="step"
+      [attr.tabindex]="tabIndex"
+      [attr.name]="name"
+      (focus)="handleFocus($event)"
+      (blur)="handleBlur($event)"
+      [(ngModel)]="value"
+      (change)="handleChange($event)" /> -->
+  <div
+    #dropzone
+    class="well file-drop-zone"
+    [class.file-over]="isDragOver"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onFileDrop($event)">
+    <md-grid-list cols="4" rowHeight="16:9">
+        <md-grid-tile *ngFor="let image of images; let index = index" flex="25">
+          <jpa-grid-image [imageConfig]="image" (imageLoaded)="imageLoaded($event)"></jpa-grid-image>
+        </md-grid-tile>
+        <md-grid-tile *ngIf="images.length % 4 !== 1" flex="25"></md-grid-tile>
+    </md-grid-list>
+  </div>
+</div>

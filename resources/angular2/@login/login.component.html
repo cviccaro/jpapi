@@ -1,21 +1,18 @@
-<div class="container">
+<md-card>
+    <md-card-title>Login</md-card-title>
     <form id="loginForm" #loginForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
-        <div class="form-group clearfix">
-            <div class="col-md-6">
-                <md-input name="email" [(ngModel)]="email" placeholder="Email address" type="email" required class="full-width">
-                </md-input>
-            </div>
-            <div class="col-md-6">
-                <md-input name="password" [(ngModel)]="password" type="password" placeholder="Password" required class="full-width">
-                </md-input>
-            </div>
-        </div>
-        <div class="form-actions">
-            <button type="submit" md-button>
+        <md-card-content layout="column">
+            <md-input name="email" [(ngModel)]="email" placeholder="Email address" type="email" required class="full-width">
+            </md-input>
+            <md-input name="password" [(ngModel)]="password" type="password" placeholder="Password" required class="full-width">
+            </md-input>
+        </md-card-content>
+        <md-card-actions class="form-actions">
+            <button type="submit" md-button align="right">
                 <md-icon [hidden]="working">fingerprint</md-icon>
                 <md-icon [hidden]="!working" class="spin">update</md-icon>
                 Login
             </button>
-        </div>
+        </md-card-actions>
     </form>
-</div>
+</md-card>

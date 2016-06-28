@@ -26,10 +26,10 @@ import {BooleanFieldValue} from '@angular2-material/core/annotations/field-value
 import {MdError} from '@angular2-material/core/errors/error';
 import {Observable} from 'rxjs/Observable';
 import { MdHint } from '@angular2-material/input';
+import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-list';
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { JpaPanelContent } from './content/index';
-
-import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
+import {JpaFileUploadComponent} from '../file-upload/index';
 
 export const JPA_PANEL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     useExisting: forwardRef(() => JpaPanel),
@@ -75,49 +75,62 @@ export class JpaPanelDuplicatedHintError extends MdError {
     selector: 'jpa-panel',
     templateUrl: './panel.component.html',
     styleUrls: ['./panel.component.css'],
-    directives: [MATERIAL_DIRECTIVES, NgIf, NgModel, NgSelectOption, JpaPanelContent, FILE_UPLOAD_DIRECTIVES],
+    directives: [
+        MATERIAL_DIRECTIVES,
+        NgIf,
+        NgModel,
+        NgSelectOption,
+        JpaPanelContent,
+        JpaFileUploadComponent
+        // FILE_UPLOAD_DIRECTIVES,
+        // MD_GRID_LIST_DIRECTIVES
+    ],
     providers: [JPA_PANEL_VALUE_ACCESSOR],
     pipes: [SlicePipe],
     host: {
         '(click)': 'focus()'
     }
 })
-export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, ControlValueAccessor, OnInit {
+export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChanges, ControlValueAccessor {
     private _focused: boolean = false;
     private _expanded: boolean = false;
     private _value: any = '';
+    private _empty: boolean = false;
     private _summary: any = '';
     private _underlineHidden: boolean = false;
     private _isTextfield: boolean = false;
     private _isTextarea: boolean = false;
     private _isImage: boolean = false;
-    private _isMultipleImages: boolean = false;
+    private _isGallery: boolean = false;
     private _isSelect: boolean = false;
     private _hasContent: boolean = false;
     private _hasContentRight: boolean = false;
     private _hasContentBottom: boolean = false;
 
-    private _newImages: any[] = [];
-    private hasBaseDropZoneOver: boolean = false;
-    public uploader:FileUploader = new FileUploader({url: 'wtf'});
-
     /** Callback registered via registerOnTouched (ControlValueAccessor) */
     private _onTouchedCallback: () => void = noop;
     /** Callback registered via registerOnChange (ControlValueAccessor) */
-    private _onChangeCallback: (_: any) => void = (...args) => {
-        console.debug('JpaPanel#onChangeCallback:', args);
-    };
+    private _onChangeCallback: (_: any) => void = noop;
 
     constructor() {}
 
+
+    /**
+     * Run right after the data-bound properties have been checked for the first time,
+     * and before the children are.  Set up the panel.
+     */
     ngOnInit() {
-        console.debug('JpaPanel#onInit ', this.type);
+        console.info('JpaPanel.'+this.type+' ' + this.name + '#onInit ', this.type);
         switch(this.type) {
             case 'text': this._isTextfield = true; break;
             case 'select': this._isSelect = true; break;
             case 'textarea': this._isTextarea = true; break;
             case 'image': this._isImage = true; break;
-            case 'images': this._isMultipleImages = true; break;
+            case 'images':
+                this._isGallery = true;
+                this._hasContentBottom = true;
+                this.fullWidth = true;
+                break;
         }
     }
 
@@ -136,6 +149,8 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
     @ContentChildren(MdHint) private _hintChildren: QueryList<MdHint>;
     @ContentChildren(NgSelectOption) private _optionChildren: QueryList<NgSelectOption>;
     @ContentChildren(JpaPanelContent) private _contentChildren: QueryList<JpaPanelContent>;
+    // @ContentChild(MdGridList) private _gridList: MdGridList;
+
     /**
      * Form elements
      */
@@ -185,6 +200,7 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
     @Input() label: string = null;
 
     @Input() currentImage: string = null;
+    @Input() gallery: any[] = [];
 
     @Input() fullWidth: boolean = false;
 
@@ -215,13 +231,18 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
 
     get value(): any { return this._value; };
     @Input() set value(v: any) {
-        console.debug('JpaPanel#set value ', v);
         v = this._convertValueForInputType(v);
-
+        console.debug('JpaPanel@set value(): ', v);
         if (v !== this._value) {
             this._value = v;
             this._onChangeCallback(v);
         }
+
+        this._empty = this.isEmpty(v);
+    }
+
+    isEmpty(v:any) {
+        return v === undefined || v === null || (Array.isArray(v) && v.length === 0) || Object.keys(v).length === 0;
     }
 
     @Input() editText: string;
@@ -233,12 +254,10 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
     set summary(value: any) {
         switch(this.type) {
             case 'select':
-                console.log('(SELECT) SET SUMMARY FOR VALUE ' + value);
                 let interval = setInterval(() => {
                     let filtered = this._optionChildren.filter(opt => {
                         return opt['_element']['nativeElement']['value'] == this._value;
                     });
-                    console.log('(SELECT) FILTERED OPTIONS: ', filtered);
                     if (filtered.length) {
                         this._summary = filtered[0]['_element']['nativeElement']['innerHTML'];
                         clearInterval(interval);
@@ -248,10 +267,21 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
             case 'image':
                 this._summary = value || '';
                 break;
+            case 'images':
+                this._setGallerySummary();
+                break;
             default:
                 this._summary = value;
         }
-        console.debug('Setting summary to ' + this._summary);
+        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#set summary(): ', this._summary);
+    }
+
+    private _setGallerySummary() {
+        if (this.gallery.length) {
+            this._summary = this.gallery.length + ' pictures in gallery';
+        } else {
+            this._summary = '';
+        }
     }
 
     private _imageLoaded = false;
@@ -286,31 +316,36 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
 
     /** @internal */
     handleFocus(event: FocusEvent) {
-        console.debug('JpaPanel#handleFocus ', event);
+        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleFocus ', event);
         if (this.expanded) {
             this._focused = true;
             this._focusEmitter.emit(event);
         } else {
-            console.debug('skipping focus for non-expanded panel');
+            // console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleFocus: skipping focus for non-expanded panel');
         }
     }
 
     /** @internal */
     handleBlur(event: FocusEvent) {
-        console.debug('JpaPanel#handleBlur ', event);
+        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleBlur ', event);
         if (this.expanded) {
             this._focused = false;
             this._onTouchedCallback();
             this._blurEmitter.emit(event);
         } else {
-            console.debug('skipping blur for non-expanded panel');
+            // console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleBlur: skipping blur for non-expanded panel');
         }
     }
 
     /** @internal */
-    handleChange(event: Event) {
-        console.debug('JpaPanel#handleChange: ', event, this);
+    handleChange(event: any) {
+        console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleChange: ', event, this);
         switch (this.type) {
+            case 'images':
+                let value = this.value || [];
+                value.push(event[0]);
+                this.value = value;
+                break;
             case 'select':
                 this.value = (<HTMLSelectElement>event.target).value;
                 this.summary = this.value;
@@ -324,7 +359,7 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
                 this.summary = this.value;
                 break;
         }
-        console.log('JpaPanel#handleChange (' + this.type + ') set value for  to ', this.value);
+        // console.log('JpaPanel.'+this.type+' ' + this.name + '#handleChange (' + this.type + ') set value for  to ', this.value);
         this._valueChanged = true;
         this._onTouchedCallback();
     }
@@ -339,7 +374,7 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
        * TODO: internal
        */
     writeValue(value: any) {
-        console.debug('JpaPanel#writeValue('+this.type+')', value);
+        console.debug('JpaPanel.'+this.type+' ' + this.name + '#writeValue('+this.type+')', value);
         this._value = value;
         if (!this._initialValue) this._initialValue = value;
         this.summary = value;
@@ -386,15 +421,15 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
             })
         }
 
-        console.debug('JpaPanel#ngAfterContentInit', this);
+        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#AfterContentInit', this);
     }
 
     ngAfterViewInit() {
-        switch (this.type) {
+        switch(this.type) {
             case 'image':
                 if (this._imagePreview && this.currentImageSize === null) {
                     this._imagePreview.nativeElement.onload = (e) => {
-                        console.log('IMAGE LOADED!');
+                        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#AfterViewInit IMAGE LOADED!');
                         this._imageLoaded = true;
                         this.currentImageSize = {w: this._imagePreview.nativeElement.naturalWidth, h: this._imagePreview.nativeElement.naturalHeight};
                         if (!this._expanded) {
@@ -405,15 +440,17 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
                 this.value = this.nativeElement.value;
             break;
             default:
-                if (this.nativeElement) { this.value = this.nativeElement.value; }
+                if (this.nativeElement) {
+                    // console.log('JpaPanel.'+this.type+' ' + this.name + '#AfterViewInit : found nativeElement.',this.nativeElement);
+                    this.value = this.nativeElement.value;
+                }
+                break;
         }
-
-        console.debug('JpaPanel#AfterViewInit  (' + this.type + ')', this);
     }
 
     /** TODO: internal */
     ngOnChanges(changes: { [key: string]: SimpleChange }) {
-        console.log('Changes on Panel ' + this.id + ' (' + this.name + '): ', changes);
+        console.log('JpaPanel.'+this.type+' ' + this.name + '#OnChanges() : ', changes);
         this._validateConstraints();
     }
 
@@ -470,7 +507,6 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
      */
 
     toggle($event) {
-        console.debug('toggle!');
         $event.preventDefault();
         $event.stopPropagation();
         this._expanded = !this._expanded;
@@ -480,23 +516,6 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
 
     /** internal **/
     onToggle() {
-        // if (this._expanded) {
-        //     this.initialSummary = this._summary;
-        //     if (this.placeholder) {
-        //         this._summary = this.placeholder;
-        //     } else {
-        //         this._summary = `Edit ${this.label}`;
-        //     }
-        // } else {
-        //     if (this.type === 'select' && !this._summary) {
-        //         this._summary = this.initialSummary;
-        //     } else if (this.type === 'image' && this.currentImage && this.currentImageSize !== null) {
-        //         this._summary = this.currentImageSize.w + 'x' + this.currentImageSize.h + 'px';
-        //     } else {
-        //         this._summary = this.value;
-        //     }
-        // }
-
         this._expandedEmitter.emit(this._expanded);
         if (this._hasContent) {
             this._contentChildren.forEach(panelContent => {
@@ -505,40 +524,11 @@ export class JpaPanel implements AfterContentInit, AfterViewInit, OnChanges, Con
         }
     }
 
-    /**
-     * File Upload
-     */
-    fileOverBase(e:any):void {
-      this.hasBaseDropZoneOver = e;
-    }
 
-    onFileDrop(files: File[]) {
-        for (let i = 0; i < files.length; i++) {
-            let file = files[i];
-            this.readFile(file)
-                .subscribe(read => {
-                    this._newImages.push(read);
-                    console.log('Added image to newImages: ', read);
-                });
+    imageUploadLoaded(e: any) {
+        console.log('PanelComponent# imageUploadLoaded ', e);
+        if (e.config.isNew) {
+            this._setGallerySummary();
         }
     }
-
-    readFile(file: File) : Observable<any> {
-            const filename = file.name;
-
-            return Observable.create(observer => {
-                let reader = new FileReader();
-
-                reader.onload = readerEvt => {
-                    let base64 = btoa(readerEvt.target['result']);
-
-                    observer.next({
-                        name: filename,
-                        base64: base64
-                    });
-                };
-
-                reader.readAsBinaryString(file);
-            });
-        }
 }

@@ -5,11 +5,16 @@
         </md-card-title>
         <div class="panel-summary">
             <div class="summary-text-wrapper" [hidden]="_expanded">
-                <span class="summary-text textfield" *ngIf="!_isImage">
+                <span class="summary-text textfield" *ngIf="!_isImage && !_isGallery">
                     {{ summary | slice:0:50 }}
                     <span class="summary-ellipsis" *ngIf="summary.length > 50">...</span>
                 </span>
                 <span class="summary-text imagefield" *ngIf="_isImage" [innerHTML]="summary"></span>
+                <span class="summary-text gallery" *ngIf="_isGallery">
+                  <div class="count">
+                    <md-icon color="primary">panorama</md-icon>&nbsp;&nbsp;{{ gallery.length - value?.length }} pictures in gallery <span *ngIf="value" class="new"> + {{value.length}} new</span>
+                  </div>
+                </span>
             </div>
             <div class="summary-text-wrapper" [hidden]="!_expanded">
               <span class="summary-text edit-text">{{ editText }} <md-icon class="md-20">help_outline</md-icon></span>
@@ -136,16 +141,6 @@
                           (blur)="handleBlur($event)"
                           [(ngModel)]="value"
                           (change)="handleChange($event)" />
-
-                          <div *ngIf="_isMultipleImages" #upload
-                               ng2FileDrop
-                               [ngClass]="{'nv-file-over': hasBaseDropZoneOver}"
-                               (fileOver)="fileOverBase($event)"
-                               [uploader]="uploader"
-                               (onFileDrop)="onFileDrop($event)"
-                               class="well file-drop-zone">
-                               Drop files here
-                          </div>
                   </div>
               </div>
               <div class="panel-control-underline" [class.md-disabled]="disabled" [hidden]="_underlineHidden">
@@ -160,7 +155,22 @@
           <div class="panel-content-spacer-end" [hidden]="fullWidth"></div>
         </div>
         <div class="panel-content-bottom" *ngIf="_hasContentBottom">
-          <ng-content select="jpa-panel-content.bottom"></ng-content>
+          <ng-content *ngIf="!_isGallery" select="jpa-panel-content.bottom"></ng-content>
+          <jpa-panel-content *ngIf="_isGallery" class="bottom">
+<!--             <div
+              #filedrop
+              class="well file-drop-zone"
+              [class.nv-file-over]="hasBaseDropZoneOver"
+              (dragOver)="fileOverBase($event)"
+              (dragLeave)="fileOffBase($event)"
+              (drop)="onFileDrop($event)">
+              <md-grid-list cols="4" rowHeight="16:9">
+                 <md-grid-tile *ngFor="let image of gallery" flex="25"><img [src]="image.image_url" /></md-grid-tile>
+                 <md-grid-tile *ngIf="gallery.length % 4 !== 1" flex="25"></md-grid-tile>
+              </md-grid-list>
+            </div> -->
+            <jpa-file-upload multiple="true" [images]="gallery" [name]="name" [required]="required" [(ngModel)]="value" (change)="handleChange($event)" (gridImageLoaded)="imageUploadLoaded($event)"></jpa-file-upload>
+          </jpa-panel-content>
         </div>
     </div>
 </md-card>

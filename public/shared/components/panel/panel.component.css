@@ -168,6 +168,8 @@
       -webkit-appearance: none;
       outline: none;
       border: none; }
+    :host .panel-control .gallery-control-element {
+      display: none; }
     :host .panel-control .panel-control-infix {
       position: relative; }
     :host .panel-control .panel-control-underline {

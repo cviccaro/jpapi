@@ -1,10 +1,18 @@
 @import "../assets/sass/variables";
 
 :host {
+    display: block;
+    height: 100%;
+
     .app-content {
       //padding: 20px;
       padding: 0 0 100px 0;
-      background: $grey_100;
+      height: 100%;
+    }
+    md-sidenav-layout {
+      & > md-content {
+        height: 100%;
+      }
     }
 
     .app-sidenav {

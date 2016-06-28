@@ -1,1 +1,1 @@
-{"version":3,"sources":[],"names":[],"mappings":"","file":"@login/login.component.css","sourcesContent":[],"sourceRoot":"/source/"}
+{"version":3,"sources":["login.component.css"],"names":[],"mappings":"AAAA;EACE,iBAAiB;EACjB,eAAe;EACf,eAAe,EAAE","file":"@login/login.component.css","sourcesContent":[":host {\n  max-width: 600px;\n  display: block;\n  margin: 0 auto; }\n"],"sourceRoot":"/source/"}

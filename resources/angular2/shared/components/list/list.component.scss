@@ -1,11 +1,14 @@
+@import "../../../../assets/sass/variables";
+
 :host {
     display: flex;
     flex-direction: column;
     md-list {
       md-list-item {
           display: block;
+          background: $white;
         &.odd {
-          background: rgba(0,0,0,0.04)
+          background: $grey_200;
         }
         .md-list-item-content {
           width: 100%;

@@ -1,0 +1,33 @@
+@import "../../../../assets/sass/variables";
+
+:host {
+    display: block;
+
+    .file-drop-zone {
+        border: dotted 3px $bluegrey_100;
+        transition: all $transition_duration linear;
+    }
+
+    .file-over {
+        border: dotted 3px $accent;
+    }
+
+    .progress-bar-wrapper {
+        // position: relative;
+        // top: -10px;
+    }
+    .count {
+        font-size: 16px;
+        margin-bottom: 16px;
+        color: $black_54;
+        md-icon {
+            vertical-align: bottom;
+        }
+        .new {
+            color: $accent;
+        }
+    }
+    .hidden {
+        display: none;
+    }
+}

@@ -15,6 +15,7 @@ $grey_200: material-color('grey', '200');
 $grey_100: material-color('grey', '100');
 $grey_50: material-color('grey', '50');
 $blue_700: material-color('blue', '700');
+$bluegrey_100: material-color('blue-grey', '100');
 
 /**
  * Fonts
@@ -33,4 +34,11 @@ $transition_ease: cubic-bezier(.75,.17,.59,1.09);
 
 @mixin basic-transition {
     transition: all $transition_duration $transition_ease;
+}
+
+@mixin basic-boxshadow {
+    box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+    -webkit-transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: box-shadow;
 }

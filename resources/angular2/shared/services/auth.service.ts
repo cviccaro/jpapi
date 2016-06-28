@@ -111,11 +111,11 @@ export class AuthService implements OnInit {
     reset() {
         this.authorized = false;
 
-        // this.token = '';
-        // if (this.hasStorage) localStorage.removeItem('id_token');
+        this.token = '';
+        if (this.hasStorage) localStorage.removeItem('id_token');
 
-        // this.expires = undefined;
-        // if (this.hasStorage) localStorage.removeItem('id_expires');
+        this.expires = undefined;
+        if (this.hasStorage) localStorage.removeItem('id_expires');
     }
 
     parseError(error) : {title: string, message: string} {
