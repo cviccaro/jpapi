@@ -29,7 +29,7 @@ import { MdHint } from '@angular2-material/input';
 import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-list';
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { JpaPanelContent } from './content/index';
-import {JpaFileUploadComponent} from '../file-upload/index';
+import {ImageUploadComponent} from '../image-upload/index';
 
 export const JPA_PANEL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     useExisting: forwardRef(() => JpaPanel),
@@ -81,7 +81,7 @@ export class JpaPanelDuplicatedHintError extends MdError {
         NgModel,
         NgSelectOption,
         JpaPanelContent,
-        JpaFileUploadComponent
+        ImageUploadComponent
         // FILE_UPLOAD_DIRECTIVES,
         // MD_GRID_LIST_DIRECTIVES
     ],
@@ -233,11 +233,11 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     set expanded(v: boolean) { this._expanded = v; }
     get expanded(): boolean { return this._expanded; }
 
-    get value(): any { 
+    get value(): any {
         if (this.type === 'image') {
             return '';
         }
-        return this._value; 
+        return this._value;
     };
     @Input() set value(v: any) {
         v = this._convertValueForInputType(v);

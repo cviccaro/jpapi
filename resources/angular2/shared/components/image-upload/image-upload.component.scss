@@ -22,12 +22,27 @@
         color: $black_54;
         md-icon {
             vertical-align: bottom;
+            margin-right: 4px;
         }
         .new {
             color: $accent;
+            border-left: 1px solid $black_20;
+            margin-left: 4px;
+            padding-left: 8px;
         }
     }
     .hidden {
         display: none;
     }
+
+    .info {
+        font-size: 12px;
+        color: $black_54;
+    }
+    // .image {
+    //     margin-left: 1.5em;
+    //     img {
+    //         max-width: 350px;
+    //     }
+    // }
 }

@@ -37,5 +37,8 @@
       color: #1976d2; }
   :host .hidden {
     display: none; }
+  :host .info {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.54); }
 
 /*# sourceMappingURL=file-upload.component.css.map */

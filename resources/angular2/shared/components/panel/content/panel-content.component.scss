@@ -5,9 +5,6 @@
     h4 {
         margin-top: 0;
     }
-    .image,.info {
-        float: left;
-    }
     .info {
         font-size: 12px;
         color: rgba(0,0,0,.54);
@@ -17,5 +14,8 @@
         img {
             max-width: 350px;
         }
+    }
+    .image,.info {
+        float: left;
     }
 }

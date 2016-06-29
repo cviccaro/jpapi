@@ -49,9 +49,6 @@ Route::get('work/{id}', 'WorkController@get');
 Route::get('images/{path}', 'ImageController@get');
 Route::get('images/clients/{path}', 'ImageController@getClientImage');
 
-Route::post('work', 'WorkController@create');
-Route::put('work/{id}', 'WorkController@put');
-
 /*
 |--------------------------------------------------------------------------
 | Authorized routes
@@ -77,12 +74,9 @@ Route::group(['middleware' => 'jwt.refresh'], function () {
     Route::put('staff/{id}', 'StaffController@put');
     Route::delete('staff/{id}', 'StaffController@remove');
 
-    // Route::post('work', 'WorkController@create');
-    // Route::put('work/{id}', 'WorkController@put');
+    Route::post('work', 'WorkController@create');
+    Route::put('work/{id}', 'WorkController@put');
     Route::delete('work/{id}', 'WorkController@remove');
-});
 
-Route::get('test', function() {
-    $work = \App\Work::find(18)->gallery->pluck('id');
-    dd(array_values($work->toArray()));
+    Route::post('upload/image', 'ImageController@uploadTemp');
 });

@@ -22,7 +22,7 @@ var Observable_1 = require('rxjs/Observable');
 var input_1 = require('@angular2-material/input');
 var angular2_material_1 = require('../../libs/angular2-material');
 var index_1 = require('./content/index');
-var index_2 = require('../file-upload/index');
+var index_2 = require('../image-upload/index');
 exports.JPA_PANEL_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCESSOR, {
     useExisting: core_1.forwardRef(function () { return JpaPanel; }),
     multi: true
@@ -635,7 +635,7 @@ var JpaPanel = (function () {
                 forms_1.NgModel,
                 forms_1.NgSelectOption,
                 index_1.JpaPanelContent,
-                index_2.JpaFileUploadComponent
+                index_2.ImageUploadComponent
             ],
             providers: [exports.JPA_PANEL_VALUE_ACCESSOR],
             pipes: [common_1.SlicePipe],

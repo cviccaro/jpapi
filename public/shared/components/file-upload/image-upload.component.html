@@ -13,11 +13,6 @@
       accept="image/jpg, image/jpeg, image/png, image/gif"
       aria-target
       [class.md-end]="align == 'end'"
-      [attr.aria-label]="ariaLabel"
-      [attr.aria-labelledby]="ariaLabelledBy"
-      [attr.aria-disabled]="ariaDisabled"
-      [attr.aria-required]="ariaRequired"
-      [attr.aria-invalid]="ariaInvalid"
       [autofocus]="autoFocus"
       [disabled]="disabled"
       [id]="inputId"
@@ -36,9 +31,9 @@
     (dragover)="onDragOver($event)"
     (dragleave)="onDragLeave($event)"
     (drop)="onFileDrop($event)">
-    <md-grid-list cols="4" rowHeight="16:9" *ngIf="_isArray(images)">
+    <md-grid-list [cols]="cols" [rowHeight]="rowHeight" [gutterSize]="gutterSize" *ngIf="multiple">
         <md-grid-tile *ngFor="let image of images; let index = index" flex="25">
-          <jpa-grid-image [imageConfig]="image" (imageLoaded)="imageLoaded($event)" (imageRemoved)="imageRemoved($event)" [index]="index"></jpa-grid-image>
+          <jpa-grid-image [imageConfig]="image" (imageLoaded)="gridImageOnLoad($event)" (imageRemoved)="imageRemoved($event)" [index]="index"></jpa-grid-image>
         </md-grid-tile>
         <md-grid-tile *ngIf="images.length % 4 !== 1" flex="25"></md-grid-tile>
     </md-grid-list>

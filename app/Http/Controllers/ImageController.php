@@ -48,4 +48,52 @@ class ImageController extends Controller
             'error' => 'no_file',
         ]);
     }
+
+    public function uploadTemp(Request $request) {
+        if ($request->hasFile('_file')) {
+            \Log::info('Received request to upload temporary file.  Checking if it is valid.');
+
+            if ($request->file('_file')->isValid()) {
+                $input = $request->all();
+
+                $file = $request->file('_file');
+
+                \Log::info("File is valid.  Here's the request: ------- REQUEST START --------\r\n" . print_r($request->toArray(), true) . " ------ REQUEST END");
+
+                $mimetype = $file->getMimeType();
+                $size = $file->getSize();
+                $tempName = basename($file->__toString());
+                $original_name = $file->getClientOriginalName();
+                $extension = $file->guessExtension();
+
+                // $file->move(storage_path('temp'), $tempName);
+
+                // DB::table('uploads')->insert([
+                //     'location' => $tempName,
+                //     'user_id' => $user->id,
+                //     'extension' => $extension,
+                //     'mimetype' => $mimetype,
+                //     'size' => $size,
+                //     'filename' => $original_name,
+                //     'alias' => '',
+                // ]);
+                $token = \JWTAuth::getToken();
+
+                \Log::info(print_r([
+                    'location' => storage_path('temp', $tempName),
+                    'extension' => $extension,
+                    'mimetype' => $mimetype,
+                    'size' => $size,
+                    'filename' => $original_name,
+                    'alias' => '',
+                    'TOKEN' => $token
+                ], true));
+
+            } else {
+                \Log::warn('File is invalid!');
+            }
+        }
+
+        return response('No file to upload.', 400);
+    }
 }

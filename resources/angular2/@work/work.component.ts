@@ -1,6 +1,5 @@
 import {Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentChecked, AfterContentInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {NgForm} from '@angular/common';
 import { Observable } from 'rxjs/Rx';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';

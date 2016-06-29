@@ -10,6 +10,7 @@ $accent: material-color('blue', '700');
 $danger: material-color('red', '900');
 $white: #fff;
 $black: #000;
+$black_20: rgba(0,0,0,0.20);
 $black_54: rgba(0,0,0,0.54);
 $grey_200: material-color('grey', '200');
 $grey_100: material-color('grey', '100');
@@ -36,9 +37,13 @@ $transition_ease: cubic-bezier(.75,.17,.59,1.09);
     transition: all $transition_duration $transition_ease;
 }
 
-@mixin basic-boxshadow {
+@mixin basic-boxshadow($depth: 3) {
     box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
     -webkit-transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
     will-change: box-shadow;
+
+    @if ($depth == 3) {
+        box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+    }
 }

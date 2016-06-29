@@ -10,14 +10,38 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var angular2_material_1 = require('../shared/libs/angular2-material');
+var forms_1 = require('@angular/forms');
+var index_1 = require('../shared/index');
 var HomeComponent = (function () {
     function HomeComponent() {
-        var _this = this;
-        this.progress = 0;
-        setInterval(function () {
-            _this.progress = (_this.progress + Math.floor(Math.random() * 4) + 1) % 100;
-        }, 200);
     }
+    HomeComponent.prototype.ngAfterViewInit = function () {
+        console.log('HomeComponent view initialized.', this);
+    };
+    HomeComponent.prototype.handleChange = function (e) {
+        console.log('HOME --- handleChange', e);
+    };
+    HomeComponent.prototype.fileAdded = function (e) {
+        console.log('HOME --- fileAdded', e);
+    };
+    HomeComponent.prototype.imageAdded = function (e) {
+        console.log('HOME --- IMAGE ADDED TO GRID ', e);
+    };
+    HomeComponent.prototype.imageLoaded = function (e) {
+        console.log('HOME --- IMAGE LOADED ON GRID', e);
+    };
+    HomeComponent.prototype.submit = function () {
+        console.log('this.model = ', this.model);
+        console.log(this._uploadCmp.uploader.queue);
+        this._uploadCmp.uploader.uploadAll()
+            .subscribe(function (e) {
+            console.log('upload all response: ', e);
+        });
+    };
+    __decorate([
+        core_1.ViewChild(index_1.ImageUploadComponent), 
+        __metadata('design:type', index_1.ImageUploadComponent)
+    ], HomeComponent.prototype, "_uploadCmp", void 0);
     HomeComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
@@ -25,8 +49,11 @@ var HomeComponent = (function () {
             templateUrl: './home.component.html',
             styleUrls: ['./home.component.css'],
             directives: [
-                angular2_material_1.MATERIAL_DIRECTIVES
-            ]
+                angular2_material_1.MATERIAL_DIRECTIVES,
+                index_1.ImageUploadComponent,
+                forms_1.NgForm
+            ],
+            providers: [index_1.FileUploader]
         }), 
         __metadata('design:paramtypes', [])
     ], HomeComponent);

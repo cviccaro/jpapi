@@ -35,29 +35,68 @@ var JpaFileUploadComponent = (function () {
         this._galleryImagesLoaded = 0;
         this._value = [];
         this._onTouchedCallback = noop;
-        this._onChangeCallback = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i - 0] = arguments[_i];
-            }
-            console.debug('JpaFileUploadComponent#onChangeCallback:', args);
-        };
+        this._onChangeCallback = noop;
         this.multiple = false;
         this.images = [];
+        this.gutterSize = "8px";
+        this.cols = 4;
+        this.rowHeight = '16:9';
         this.name = null;
-        this.id = "jpa-panel-" + nextUniqueId++;
         this.required = false;
+        this.id = "jpa-panel-" + nextUniqueId++;
         this.step = null;
         this.tabIndex = null;
         this.fileAdded = new core_1.EventEmitter();
         this.gridImageLoaded = new core_1.EventEmitter();
         this.onImageUploaded = new core_1.EventEmitter();
         this.onImageRemove = new core_1.EventEmitter();
+        this.change = new core_1.EventEmitter();
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
-        this.change = new core_1.EventEmitter();
         console.debug('FileUploadComponent created! ', this);
     }
+    Object.defineProperty(JpaFileUploadComponent.prototype, "onBlur", {
+        get: function () {
+            return this._blurEmitter.asObservable();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaFileUploadComponent.prototype, "onFocus", {
+        get: function () {
+            return this._focusEmitter.asObservable();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    JpaFileUploadComponent.prototype.handleFocus = function (event) {
+        console.log('FileUploadComponent#handleFocus', event);
+    };
+    JpaFileUploadComponent.prototype.handleBlur = function (event) {
+        console.log('FileUploadComponent#handleBlur', event);
+    };
+    JpaFileUploadComponent.prototype.ngOnInit = function () {
+        if (this.images === undefined) {
+            this.isLoading = false;
+            this._count = 0;
+        }
+        else {
+            this.isLoading = !!this.images.length;
+            this._count = this.images.length;
+        }
+    };
+    JpaFileUploadComponent.prototype.ngAfterViewInit = function () {
+        console.info('FileUploadComponent#AfterViewInit ---', this);
+        if (this._gridImages) {
+            console.log('got grid images: ', this._gridImages);
+            this._gridImages.changes.subscribe(function (changes) {
+                console.log('Changes to grid images: ', changes);
+            });
+        }
+    };
+    JpaFileUploadComponent.prototype.ngOnChanges = function (changes) {
+        console.debug('FileUploadComponent#OnChanges ---', changes);
+    };
     JpaFileUploadComponent.prototype.onDragOver = function (e) {
         var transfer = this._getTransfer(e);
         if (!this._haveFiles(transfer.types)) {
@@ -103,61 +142,6 @@ var JpaFileUploadComponent = (function () {
             this: this
         });
     };
-    Object.defineProperty(JpaFileUploadComponent.prototype, "onBlur", {
-        get: function () {
-            return this._blurEmitter.asObservable();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(JpaFileUploadComponent.prototype, "onFocus", {
-        get: function () {
-            return this._focusEmitter.asObservable();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    JpaFileUploadComponent.prototype.handleFocus = function (event) {
-        console.log('FileUploadComponent#handleFocus', event);
-    };
-    JpaFileUploadComponent.prototype.handleBlur = function (event) {
-        console.log('FileUploadComponent#handleBlur', event);
-    };
-    JpaFileUploadComponent.prototype.ngOnInit = function () {
-        if (this.images === undefined) {
-            this.isLoading = false;
-            this._count = 0;
-        }
-        else {
-            this.isLoading = !!this.images.length;
-            this._count = this.images.length;
-        }
-    };
-    JpaFileUploadComponent.prototype.ngAfterViewInit = function () {
-        console.info('FileUploadComponent#AfterViewInit ---', this);
-        if (this._gridImages) {
-            console.log('got grid images: ', this._gridImages);
-            this._gridImages.changes.subscribe(function (changes) {
-                console.log('Changes to grid images: ', changes);
-            });
-        }
-    };
-    JpaFileUploadComponent.prototype.ngOnChanges = function (changes) {
-        console.debug('FileUploadComponent#OnChanges ---', changes);
-    };
-    JpaFileUploadComponent.prototype.writeValue = function (value) {
-        console.log('FileUploadComponent#writeValue?');
-        if (value !== undefined) {
-            this._value = value;
-            console.log('FileUploadComponent#writeValue COMMIT TO ', value);
-        }
-        else {
-            this._value = [];
-            console.log('just set value to ...', {
-                value: this._value
-            });
-        }
-    };
     Object.defineProperty(JpaFileUploadComponent.prototype, "value", {
         get: function () { return this._value; },
         set: function (v) {
@@ -176,14 +160,14 @@ var JpaFileUploadComponent = (function () {
         configurable: true
     });
     ;
+    JpaFileUploadComponent.prototype.writeValue = function (value) {
+        this._value = value || [];
+    };
     JpaFileUploadComponent.prototype.registerOnChange = function (fn) {
         this._onChangeCallback = fn;
     };
     JpaFileUploadComponent.prototype.registerOnTouched = function (fn) {
         this._onTouchedCallback = fn;
-    };
-    JpaFileUploadComponent.prototype._isArray = function (a) {
-        return Array.isArray(a) && a.length;
     };
     JpaFileUploadComponent.prototype._stopEvent = function (e) {
         event.preventDefault();
@@ -206,9 +190,9 @@ var JpaFileUploadComponent = (function () {
             return false;
         }
     };
-    JpaFileUploadComponent.prototype.imageLoaded = function (e) {
+    JpaFileUploadComponent.prototype.gridImageOnLoad = function (e) {
         if (e.config.id === 'new') {
-            console.log('FileUpload# new Image loaded. ', {
+            console.debug('FileUpload#gridImageOnLoad NEW', {
                 e: e,
                 value: this.value
             });
@@ -219,7 +203,6 @@ var JpaFileUploadComponent = (function () {
         }
         else {
             var id = e.config.id;
-            console.log('FileUpload# gallery Image (id ' + id + ') loaded. ', e);
             if (++this._galleryImagesLoaded === this.images.length) {
                 this.isLoading = false;
             }
@@ -228,7 +211,7 @@ var JpaFileUploadComponent = (function () {
         this.gridImageLoaded.emit(e);
     };
     JpaFileUploadComponent.prototype.imageRemoved = function (e) {
-        console.log('FileUpload # image Removed', {
+        console.debug('FileUpload.imageRemoved', {
             e: e,
             value: this.value
         });
@@ -242,28 +225,9 @@ var JpaFileUploadComponent = (function () {
         this.onImageRemove.emit(e);
     };
     __decorate([
-        core_1.Input('aria-label'), 
-        __metadata('design:type', String)
-    ], JpaFileUploadComponent.prototype, "ariaLabel", void 0);
-    __decorate([
-        core_1.Input('aria-labelledby'), 
-        __metadata('design:type', String)
-    ], JpaFileUploadComponent.prototype, "ariaLabelledBy", void 0);
-    __decorate([
-        core_1.Input('aria-disabled'),
-        field_value_1.BooleanFieldValue(), 
-        __metadata('design:type', Boolean)
-    ], JpaFileUploadComponent.prototype, "ariaDisabled", void 0);
-    __decorate([
-        core_1.Input('aria-required'),
-        field_value_1.BooleanFieldValue(), 
-        __metadata('design:type', Boolean)
-    ], JpaFileUploadComponent.prototype, "ariaRequired", void 0);
-    __decorate([
-        core_1.Input('aria-invalid'),
-        field_value_1.BooleanFieldValue(), 
-        __metadata('design:type', Boolean)
-    ], JpaFileUploadComponent.prototype, "ariaInvalid", void 0);
+        core_1.ViewChildren(grid_image_1.GridImage), 
+        __metadata('design:type', core_1.QueryList)
+    ], JpaFileUploadComponent.prototype, "_gridImages", void 0);
     __decorate([
         core_1.Input(),
         field_value_1.BooleanFieldValue(), 
@@ -276,16 +240,28 @@ var JpaFileUploadComponent = (function () {
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
-    ], JpaFileUploadComponent.prototype, "name", void 0);
+    ], JpaFileUploadComponent.prototype, "gutterSize", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Number)
+    ], JpaFileUploadComponent.prototype, "cols", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Object)
+    ], JpaFileUploadComponent.prototype, "rowHeight", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
-    ], JpaFileUploadComponent.prototype, "id", void 0);
+    ], JpaFileUploadComponent.prototype, "name", void 0);
     __decorate([
         core_1.Input(),
         field_value_1.BooleanFieldValue(), 
         __metadata('design:type', Boolean)
     ], JpaFileUploadComponent.prototype, "required", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], JpaFileUploadComponent.prototype, "id", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Number)
@@ -311,9 +287,9 @@ var JpaFileUploadComponent = (function () {
         __metadata('design:type', Object)
     ], JpaFileUploadComponent.prototype, "onImageRemove", void 0);
     __decorate([
-        core_1.ViewChildren(grid_image_1.GridImage), 
-        __metadata('design:type', core_1.QueryList)
-    ], JpaFileUploadComponent.prototype, "_gridImages", void 0);
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], JpaFileUploadComponent.prototype, "change", void 0);
     __decorate([
         core_1.Output('blur'), 
         __metadata('design:type', Rx_1.Observable)
@@ -322,10 +298,6 @@ var JpaFileUploadComponent = (function () {
         core_1.Output('focus'), 
         __metadata('design:type', Rx_1.Observable)
     ], JpaFileUploadComponent.prototype, "onFocus", null);
-    __decorate([
-        core_1.Output(), 
-        __metadata('design:type', Object)
-    ], JpaFileUploadComponent.prototype, "change", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Object)

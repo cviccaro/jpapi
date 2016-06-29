@@ -1,1 +1,14 @@
-<div></div>
+<form #form="ngForm" (ngSubmit)="submit()">
+    <jpa-image-upload
+        url="/upload/image"
+        multiple="true"
+        name="model"
+        [(ngModel)]="model"
+        (change)="handleChange($event)"
+        (fileAdded)="fileAdded($event)"
+        (imageAdded)="imageAdded($event)"
+        (imageLoaded)="imageLoaded($event)">
+    </jpa-image-upload>
+
+    <button md-button type="submit" color="accent">FUCK!</button>
+</form>
