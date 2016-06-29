@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class Image extends Model {
 
-    protected $fillable = ["path", "name", "alias", "last_modified", "size"];
+    protected $fillable = ["path", "name", "alias", "mimetype", "extension", "size", "last_modified"];
 
     protected $dates = [];
 
@@ -69,4 +69,31 @@ class Image extends Model {
     //     }
     //     return $filename;
     // }
+    //
+    public static function availableFilename($filename, $directory = null)
+    {
+        if (!$directory) {
+            $directory = resource_path('assets/images');
+        }
+
+        $candidate = null;
+        $try_filename = $filename;
+        $parts = explode('.', $filename);
+        
+        $extension = array_pop($parts);
+        $filename_noext = implode('.', $parts);
+
+        $i = -1;
+        while ($candidate === null) {
+            if ($i >= 0) {
+                $try_filename = sprintf('%s_%d.%s', $filename_noext, $i, $extension);
+            }
+            if (!file_exists($directory . '/' . $try_filename)) {
+                $candidate = $try_filename;
+            }
+            $i++;
+        }
+
+        return $candidate;
+    }
 }

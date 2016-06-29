@@ -33,6 +33,7 @@ var ImageUploadComponent = (function () {
         this._added = 0;
         this._imagesLoaded = 0;
         this._value = [];
+        this._nextWeight = 0;
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
         this.multiple = false;
@@ -76,9 +77,15 @@ var ImageUploadComponent = (function () {
         console.log('ImageUploadComponent#handleBlur', event);
     };
     ImageUploadComponent.prototype.ngOnInit = function () {
+        var _this = this;
         this.uploader.setUrl(this.url);
         this.isLoading = this._empty = !!this.images.length;
         this._count = this.images.length;
+        this.images.forEach(function (image) {
+            if (image.weight >= _this._nextWeight) {
+                _this._nextWeight = image.weight + 5;
+            }
+        });
         console.log('ImageUploadComponent.OnInit', this);
     };
     ImageUploadComponent.prototype.ngAfterViewInit = function () {
@@ -113,15 +120,28 @@ var ImageUploadComponent = (function () {
         this.isDragOver = false;
         this.fileAdded.emit(files);
         this.isLoading = true;
+        var count = this.value.length;
         var _loop_1 = function(i) {
             var file = files[i];
+            var value = this_1.value;
+            value.push(file);
+            this_1.value = value;
             var image = new index_1.ImageItem(file);
             this_1.uploader.addToQueue([image]);
             var reader = new FileReader();
             var k = i;
             this_1.isLoading = true;
             reader.addEventListener('load', function (e) {
-                var newImage = { id: 'new', name: file.name, image_url: reader.result, isNew: true };
+                file._weight = _this._nextWeight;
+                _this._nextWeight = _this._nextWeight + 5;
+                var newImage = {
+                    id: 'upload_' + i,
+                    name: file.name,
+                    image_url: reader.result,
+                    isNew: true,
+                    _file: file,
+                    weight: file._weight
+                };
                 _this.addImageToGrid(newImage);
             });
             setTimeout(function () { reader.readAsDataURL(file); });
@@ -139,9 +159,6 @@ var ImageUploadComponent = (function () {
         console.log('Loaded new image: ', image);
         this.images.push(image);
         this.imageAdded.emit(image);
-        var value = this.value;
-        value.push(image);
-        this.value = value;
     };
     Object.defineProperty(ImageUploadComponent.prototype, "value", {
         get: function () { return this._value; },
@@ -195,7 +212,7 @@ var ImageUploadComponent = (function () {
     };
     ImageUploadComponent.prototype.handleImageLoaded = function (e) {
         e._hasNew = false;
-        if (e.config.id === 'new') {
+        if (e.config.isNew) {
             console.debug('ImageUpload.handleImageLoaded NEW', {
                 e: e,
                 value: this.value
@@ -218,9 +235,11 @@ var ImageUploadComponent = (function () {
         });
         this.images.splice(e.index, 1);
         if (this.value && this.value.length) {
-            var idx = this.value.indexOf(e.config);
+            console.log('Searching through value to remove', this.value);
+            var idx = this.value.indexOf(e.config._file);
+            console.log('indexOf result', { idx: idx });
             if (idx !== -1) {
-                this.value.splice(idx, 1);
+                this.value = this._value.splice(idx, 1);
             }
         }
         this.imageRemoved.emit(e);

@@ -10,11 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
+var Rx_1 = require('rxjs/Rx');
 require('rxjs/add/operator/map');
+var auth_service_1 = require('./auth.service');
+var angular2_jwt_1 = require('angular2-jwt');
 var WorkService = (function () {
-    function WorkService(http) {
+    function WorkService(http, authHttp, authService) {
         this.http = http;
+        this.authHttp = authHttp;
         this.http = http;
+        this.authToken = authService.getToken();
     }
     WorkService.prototype.all = function (params) {
         if (params === void 0) { params = {}; }
@@ -45,9 +50,65 @@ var WorkService = (function () {
         return this;
     };
     WorkService.prototype.update = function (id, attributes) {
-        var url = window.location.protocol + '//' + window.location.hostname + '/work/' + id;
-        return this.http.put(url, attributes)
-            .map(function (res) { return res.json(); });
+        var _this = this;
+        return Rx_1.Observable.create(function (observer) {
+            var url = window.location.protocol + '//' + window.location.hostname + '/work/update/' + id;
+            console.debug('WorkService.update called with arguments: ', { id: id, attributes: attributes });
+            var xhr = new XMLHttpRequest();
+            var form = new FormData();
+            var xsrf = _this.getCookie('XSRF-TOKEN');
+            if (xsrf) {
+                console.log('appending xsrf', xsrf);
+                form.append('_token', xsrf);
+            }
+            var _form = {};
+            Object.keys(attributes).forEach(function (key) {
+                var val = attributes[key];
+                switch (key) {
+                    case 'gallery':
+                        val.forEach(function (item) {
+                            form.append(key + '[]', item.id);
+                            form.append('gallery_weights[]', item.weight);
+                        });
+                        break;
+                    case 'client':
+                        form.append(key, val.id);
+                        break;
+                    case 'gallery_new':
+                        val.forEach(function (file) {
+                            form.append(key + '[]', file);
+                        });
+                        break;
+                    default:
+                        console.log('appending to form ', { key: key, val: val });
+                        form.append(key, val);
+                        _form[key] = val;
+                }
+            });
+            console.log("Created a form to upload to work update", _form);
+            xhr.upload.onprogress = function (event) {
+                var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
+                console.log('progress!!!!!!', { event: event, progress: progress });
+            };
+            xhr.onerror = function (e) { console.log('xhr on error', { e: e, xhr: xhr }); observer.error(e); };
+            xhr.onload = function (e) { console.log('xhr on load ', { e: e, xhr: xhr }); };
+            xhr.onabort = function (e) { console.log('xhr on abort', { e: e, xhr: xhr }); };
+            xhr.open('POST', '/work/update/' + id, true);
+            if (_this.authToken) {
+                console.log('Setting Request Header "Authorization" to ', 'Bearer ' + _this.authToken);
+                xhr.setRequestHeader('Authorization', 'Bearer ' + _this.authToken);
+            }
+            xhr.send(form);
+            console.log('just sent xhr to url: ' + url, xhr);
+        });
+    };
+    WorkService.prototype.getCookie = function (name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) {
+            return parts.pop().split(";").shift();
+        }
+        return false;
     };
     WorkService.prototype.create = function (attributes) {
         var url = window.location.protocol + '//' + window.location.hostname + '/work';
@@ -56,7 +117,7 @@ var WorkService = (function () {
     };
     WorkService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
+        __metadata('design:paramtypes', [http_1.Http, angular2_jwt_1.AuthHttp, auth_service_1.AuthService])
     ], WorkService);
     return WorkService;
 }());

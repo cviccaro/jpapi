@@ -443,8 +443,14 @@ var JpaPanel = (function () {
             });
         }
     };
-    JpaPanel.prototype.onGalleryImageUpload = function (e) {
-        console.log('PanelComponent# onGalleryImageUpload ', e);
+    JpaPanel.prototype.fileAdded = function (e) {
+        console.log('PanelComponent -- ImageUpload -- fileAdded', e);
+    };
+    JpaPanel.prototype.imageAdded = function (e) {
+        console.log('PanelComponent -- ImageUpload -- imageAdded', e);
+    };
+    JpaPanel.prototype.imageLoaded = function (e) {
+        console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
         this._setGallerySummary();
     };
     __decorate([
@@ -637,7 +643,7 @@ var JpaPanel = (function () {
                 index_1.JpaPanelContent,
                 index_2.ImageUploadComponent
             ],
-            providers: [exports.JPA_PANEL_VALUE_ACCESSOR],
+            providers: [exports.JPA_PANEL_VALUE_ACCESSOR, index_2.FileUploader],
             pipes: [common_1.SlicePipe],
             host: {
                 '(click)': 'focus()'

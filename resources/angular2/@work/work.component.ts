@@ -2,7 +2,6 @@ import {Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentChecked,
 import {ActivatedRoute, Router} from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
 import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2-toaster';
 
 import {WorkService, Work, ClientService, JpaMdSelectComponent, JpaPanel, JpaPanelGroup, JpaPanelContent} from '../shared/index';
@@ -12,12 +11,11 @@ import {WorkService, Work, ClientService, JpaMdSelectComponent, JpaPanel, JpaPan
     moduleId: module.id,
     templateUrl: './work.component.html',
     styleUrls: ['./work.component.css'],
-    directives: [FILE_UPLOAD_DIRECTIVES, MATERIAL_DIRECTIVES, JpaMdSelectComponent, JpaPanel, JpaPanelGroup, JpaPanelContent]
+    directives: [MATERIAL_DIRECTIVES, JpaMdSelectComponent, JpaPanel, JpaPanelGroup, JpaPanelContent]
 })
 export class WorkComponent implements OnInit {
     public work: Work;
     public clients: string[];
-    public uploader:FileUploader = new FileUploader({url: 'wtf'});
     public hasBaseDropZoneOver: boolean = false;
     public submitted = false;
 
@@ -120,8 +118,8 @@ export class WorkComponent implements OnInit {
             this.service.update(this.work.id, this.work)
                 .subscribe(res => {
                     console.log('response from update: ', res);
-                    this.work = res;
-                    this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
+                    // this.work = res;
+                    // this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
                 });
         }
     }

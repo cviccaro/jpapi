@@ -169,7 +169,18 @@
                  <md-grid-tile *ngIf="gallery.length % 4 !== 1" flex="25"></md-grid-tile>
               </md-grid-list>
             </div> -->
-            <jpa-file-upload multiple="true" [images]="gallery" [name]="name" [required]="required" [(ngModel)]="value" (change)="handleChange($event)" (onImageUpload)="onGalleryImageUpload($event)"></jpa-file-upload>
+            <jpa-image-upload
+                url="/upload/image"
+                multiple="true"
+                [images]="gallery" 
+                [name]="name"
+                [required]="required"
+                [(ngModel)]="value"
+                (change)="handleChange($event)"
+                (fileAdded)="fileAdded($event)"
+                (imageAdded)="imageAdded($event)"
+                (imageLoaded)="imageLoaded($event)">
+            </jpa-image-upload>
           </jpa-panel-content>
         </div>
     </div>

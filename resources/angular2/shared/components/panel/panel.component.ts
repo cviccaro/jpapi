@@ -29,7 +29,7 @@ import { MdHint } from '@angular2-material/input';
 import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-list';
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { JpaPanelContent } from './content/index';
-import {ImageUploadComponent} from '../image-upload/index';
+import {ImageUploadComponent, FileUploader} from '../image-upload/index';
 
 export const JPA_PANEL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     useExisting: forwardRef(() => JpaPanel),
@@ -85,7 +85,7 @@ export class JpaPanelDuplicatedHintError extends MdError {
         // FILE_UPLOAD_DIRECTIVES,
         // MD_GRID_LIST_DIRECTIVES
     ],
-    providers: [JPA_PANEL_VALUE_ACCESSOR],
+    providers: [JPA_PANEL_VALUE_ACCESSOR, FileUploader],
     pipes: [SlicePipe],
     host: {
         '(click)': 'focus()'
@@ -541,9 +541,17 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         }
     }
 
-
-    onGalleryImageUpload(e: any) {
-        console.log('PanelComponent# onGalleryImageUpload ', e);
+    /**
+     * ImageUpload events
+     */
+    fileAdded(e: any) {
+        console.log('PanelComponent -- ImageUpload -- fileAdded', e);
+    }
+    imageAdded(e: any) {
+        console.log('PanelComponent -- ImageUpload -- imageAdded', e);
+    }
+    imageLoaded(e: any) {
+        console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
         this._setGallerySummary();
     }
 }

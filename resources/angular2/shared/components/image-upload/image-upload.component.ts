@@ -59,6 +59,8 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
     private _imagesLoaded:number = 0;
     private _value: File[] = [];
 
+    private _nextWeight = 0;
+
     private _onTouchedCallback: () => void = noop;
     private _onChangeCallback: (_: any) => void = noop;
 
@@ -135,6 +137,12 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
         this.isLoading = this._empty = !!this.images.length;
         this._count = this.images.length;
 
+        this.images.forEach(image => {
+            if (image.weight >= this._nextWeight) {
+                this._nextWeight = image.weight + 5;
+            }
+        });
+
         console.log('ImageUploadComponent.OnInit', this);
     }
 
@@ -178,8 +186,15 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
         this.fileAdded.emit(files);
         this.isLoading = true;
 
+        let count = this.value.length;
+
         for (let i = 0; i < files.length; i++) {
             let file = files[i];
+
+            let value = this.value;
+            value.push(file);
+
+            this.value = value;
 
             let image = new ImageItem(file);
 
@@ -190,7 +205,16 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
 
             this.isLoading = true;
             reader.addEventListener('load', e => {
-                let newImage = {id: 'new', name: file.name, image_url: reader.result, isNew: true};
+                file._weight = this._nextWeight;
+                this._nextWeight = this._nextWeight + 5;
+                let newImage = {
+                    id: 'upload_' + i,
+                    name: file.name,
+                    image_url: reader.result,
+                    isNew: true,
+                    _file: file,
+                    weight: file._weight
+                };
                 this.addImageToGrid(newImage);
             });
 
@@ -209,11 +233,6 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
         this.images.push(image);
 
         this.imageAdded.emit(image);
-
-        let value = this.value;
-        value.push(image);
-
-        this.value = value;
     }
 
     /**
@@ -278,7 +297,7 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
     handleImageLoaded(e: any) {
         e._hasNew = false;
 
-        if (e.config.id === 'new') {
+        if (e.config.isNew) {
             console.debug('ImageUpload.handleImageLoaded NEW', {
                 e: e,
                 value: this.value
@@ -305,11 +324,20 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
         this.images.splice(e.index, 1);
 
         if (this.value && this.value.length) {
-            let idx = this.value.indexOf(e.config);
+            console.log('Searching through value to remove', this.value);
+            let idx = this.value.indexOf(e.config._file);
+            console.log('indexOf result', {idx: idx});
             if (idx !== -1) {
-                this.value.splice(idx, 1);
+                this.value = this._value.splice(idx, 1);
             }
         }
         this.imageRemoved.emit(e);
     }
+
+    // handleFileRemove(e: any) {
+    //     console.debug('ImageUpload.handleFileRemove', {
+    //         e: e,
+    //         value: this.value
+    //     });
+    // }
 }

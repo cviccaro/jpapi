@@ -12,7 +12,6 @@ var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
 var Rx_1 = require('rxjs/Rx');
 var angular2_material_1 = require('../shared/libs/angular2-material');
-var ng2_file_upload_1 = require('ng2-file-upload');
 var angular2_toaster_1 = require('angular2-toaster');
 var index_1 = require('../shared/index');
 var WorkComponent = (function () {
@@ -22,7 +21,6 @@ var WorkComponent = (function () {
         this.clientService = clientService;
         this.toasterService = toasterService;
         this.router = router;
-        this.uploader = new ng2_file_upload_1.FileUploader({ url: 'wtf' });
         this.hasBaseDropZoneOver = false;
         this.submitted = false;
         this.isNew = false;
@@ -80,8 +78,6 @@ var WorkComponent = (function () {
             this.service.update(this.work.id, this.work)
                 .subscribe(function (res) {
                 console.log('response from update: ', res);
-                _this.work = res;
-                _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been saved.');
             });
         }
     };
@@ -133,7 +129,7 @@ var WorkComponent = (function () {
             moduleId: module.id,
             templateUrl: './work.component.html',
             styleUrls: ['./work.component.css'],
-            directives: [ng2_file_upload_1.FILE_UPLOAD_DIRECTIVES, angular2_material_1.MATERIAL_DIRECTIVES, index_1.JpaMdSelectComponent, index_1.JpaPanel, index_1.JpaPanelGroup, index_1.JpaPanelContent]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.JpaMdSelectComponent, index_1.JpaPanel, index_1.JpaPanelGroup, index_1.JpaPanelContent]
         }), 
         __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.WorkService, index_1.ClientService, angular2_toaster_1.ToasterService, router_1.Router])
     ], WorkComponent);

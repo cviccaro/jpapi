@@ -75,8 +75,13 @@ Route::group(['middleware' => 'jwt.refresh'], function () {
     Route::delete('staff/{id}', 'StaffController@remove');
 
     Route::post('work', 'WorkController@create');
-    Route::put('work/{id}', 'WorkController@put');
+    Route::put('work/{id}', 'WorkController@update');
+    Route::post('work/update/{id}', 'WorkController@update');
     Route::delete('work/{id}', 'WorkController@remove');
 
     Route::post('upload/image', 'ImageController@uploadTemp');
+});
+
+Route::get('test', function() {
+    dd(resource_path('assets/images/work'));
 });

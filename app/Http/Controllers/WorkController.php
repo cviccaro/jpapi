@@ -89,8 +89,9 @@ class WorkController extends Controller
         return $this->respond('done', $json);
     }
 
-    public function put(Request $request, $id)
+    public function update(Request $request, $id)
     {
+
         $m = self::MODEL;
         $this->validate($request, $m::$rules);
         $model = $m::find($id);
@@ -100,12 +101,12 @@ class WorkController extends Controller
 
         $data = $request->all();
 
-        $current_gallery_ids = \App\Work::find(18)->gallery->pluck('id')->toArray();
-
         if ($request->has('client')) {
-            $client_id = intval($request->get('client')['id']);
-            $data['client'] = $client_id;
+            $data['client'] = intval($request->get('client'));
         }
+
+        \Log::info('Received request to update work : ' . print_r($request->toArray(), true));
+//        return $this->respond('not_found');
 
         if ($request->has('image_new')) {
             $imageNew = $request->input('image_new');
@@ -118,54 +119,119 @@ class WorkController extends Controller
         } else {
             unset($data['image']);
         }
+
+        $current_gallery_ids = $model->gallery->pluck('id')->toArray();
+        \log::info('Current gallery ids ' . implode(', ', $current_gallery_ids));
+
+        $gallery_weights = [];
+        if ($request->has('gallery_weights')) {
+            $gallery_weights = $request->get('gallery_weights');
+        }
+        \Log::info('Gallery weights ' . print_r($gallery_weights, true));
+        \Log::info('Gallery ' . print_r($request->get('gallery'), true));
+
         $should_delete = 0;
         $deleted = 0;
-
+        $upload_weights = [];
         if ($request->has('gallery')) {
-            // Reduce gallery in request to list of ids
-            $gallery = array_reduce($data['gallery'], function ($carry, $item) {
-                if ($item['id'] !== 'new') {
-                    $carry[] = $item['id'];
+            $request_gallery = $request->get('gallery');
+
+            foreach ($request_gallery as $idx => $item) {
+                $is_upload = preg_match('/upload_\d+/', $item);
+
+                if ($is_upload) {
+                    $upload_weights[] = $gallery_weights[$idx];
                 }
-                return $carry;
-            }, []);
-                     
-            $to_delete = array_filter($current_gallery_ids, function ($id) use ($gallery) {
-                return !in_array($id, $gallery);
+            }
+            $uploads = array_filter($request_gallery, function ($id) {
+                return preg_match('/upload_\d+/', $id);
+            });
+            if ($gallery_weights) {
+                $i = 0;
+                // $upload_weights = array_reduce($uploads, function ($carry, $upload) use ($gallery_weights, $i) {
+                //     $carry[] = $gallery_weights[$i++]
+                //     return $carry;
+                // }, []);
+            }
+
+            $to_delete = array_filter($current_gallery_ids, function ($id) use ($request_gallery) {
+                return !in_array($id, $request_gallery);
             });
 
             $should_delete = count($to_delete);
 
             if ($to_delete) {
-                $deleted = WorkImage::whereIn('id', $to_delete)->delete();
+                // $deleted = WorkImage::whereIn('id', $to_delete)->delete();
+                $deleted++;
             }
-            // $gallery = array_reduce($data['gallery'], function ($carry, $item) {
-            //     if (!isset($item['isNew']) || $item['isNew'] !== true) {
-            //         $carry[] = $item['id'];
-            //     } else if (in_array($item['id'], $current_gallery_ids)) {
 
-            //     }
-            //     return $carry;
-            // }, []);
-            // $data['gallery'] = $gallery;
+            \Log::info('REQUEST --- SHOULD DELETE ' . $should_delete . ': ' . print_r($to_delete, true));
         }
 
+        \Log::info('Upload weights: ' . print_r($upload_weights, true));
         $added = 0;
 
-        if ($request->has('gallery_new')) {
-            $gallery_new = $request->get('gallery_new');
-            foreach ($gallery_new as $file) {
-                \Log::info('Adding gallery new item: ' . $file['name']);
-                $base64_string = $file['image_url'];
-                $filename = $file['name'];
-                if ($image = Image::createFromBase64($filename, $base64_string)) {
-                    WorkImage::create(['work_id' => $id, 'image_id' => $image->id]);
-                    \Log::info('Created new image at ID ' . $image->id . ' and added to gallery.');
-                    $added++;
-                } else {
-                    \Log::info('Image creation failed.');
-                }
+        if ($request->hasFile('gallery_new')) {
+            $files = $request->file('gallery_new');
+            \Log::info('REQUEST --- GALLERY_NEW: ' . print_r($files, true));
+
+            $dest_folder = 'assets/images/work';
+            $destination = resource_path($dest_folder);
+            $i = 0;
+            foreach ($files as $file) {
+                $mimetype = $file->getMimeType();
+                $size = $file->getSize();
+                $tempName = basename($file->__toString());
+                $original_name = $file->getClientOriginalName();
+                $extension = $file->guessExtension();
+
+                $candidate_filename = Image::availableFilename($original_name, $destination);
+
+                $file->move($destination, $candidate_filename);
+
+                $image = Image::create([
+                    'path' => 'assets/images/work',
+                    'name' => $candidate_filename,
+                    'alias' => $original_name,
+                    'extension' => $extension,
+                    'mimetype' => $mimetype,
+                    'size' => $size,
+                ]);
+                $weight = $upload_weights[$i++];
+
+                \Log::info('Image created at ' . $destination . '/' . $candidate_filename . ' with data : ' . print_r([
+                    'path' => 'assets/images/work',
+                    'name' => $candidate_filename,
+                    'alias' => $original_name,
+                    'extension' => $extension,
+                    'mimetype' => $mimetype,
+                    'size' => $size,
+                    'weight' => $weight
+                ], true));
+
+                $workimage = WorkImage::create([
+                    'image_id' => $image->id,
+                    'work_id' => $id,
+                    'weight' => $weight
+                ]);
+
+                \Log::info('Added WorkImage as ID ' . $workimage->id . ' on Work ' . $id . ' with Image ' . $image->id);
+                $added++;
+             //   $file->move()
             }
+            // $gallery_new = $request->get('gallery_new');
+            // foreach ($gallery_new as $file) {
+            //     \Log::info('Adding gallery new item: ' . $file['name']);
+            //     $base64_string = $file['image_url'];
+            //     $filename = $file['name'];
+            //     if ($image = Image::createFromBase64($filename, $base64_string)) {
+            //         WorkImage::create(['work_id' => $id, 'image_id' => $image->id]);
+            //         \Log::info('Created new image at ID ' . $image->id . ' and added to gallery.');
+            //         $added++;
+            //     } else {
+            //         \Log::info('Image creation failed.');
+            //     }
+            // }
         }
 
         $model->update($data);
