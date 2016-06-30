@@ -70,11 +70,15 @@ class WorkTableSeeder extends Seeder {
 				'image' => $thumb->id,
 			]);
 
+			$weight = 0;
 			foreach ($image_ids as $image_id) {
 				WorkImage::create([
 					'image_id' => $image_id,
 					'work_id' => $work->id,
+					'weight' => $weight
 				]);
+
+				$weight = $weight + 5;
 			}
 		}
 	}

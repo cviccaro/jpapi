@@ -14,7 +14,7 @@ import {WorkService, Work, ClientService, JpaMdSelectComponent, JpaPanel, JpaPan
     directives: [MATERIAL_DIRECTIVES, JpaMdSelectComponent, JpaPanel, JpaPanelGroup, JpaPanelContent]
 })
 export class WorkComponent implements OnInit {
-    public work: Work;
+    public work: Work = new Work();
     public clients: string[];
     public hasBaseDropZoneOver: boolean = false;
     public submitted = false;
@@ -42,30 +42,18 @@ export class WorkComponent implements OnInit {
             this.clients = res;
         });
 
-        this.isNew = this.route.snapshot.params['id'] === 'new';
-
-        if (this.isNew) {
-            this.work = {
-                title: '',
-                body: '',
-                image: '',
-                client: {
-                    id: ''
-                }
-            };
+        if (this.route.snapshot.params['id'] === 'new') {
+            this.isNew = true;
             this.ready = true;
-            console.debug('WorkComponent#Create initialized.', this);
         } else {
-            let id = +this.route.snapshot.params['id'];
-
-            this.service.find(id).subscribe(res => {
+            this.service.find(+this.route.snapshot.params['id']).subscribe(res => {
                 this.work = res;
                 console.debug('setting work model to ', res);
                 this.ready = true;
             });
-
-            console.debug('WorkComponent#Edit initialized.', this);
         }
+
+        console.debug('WorkComponent#Edit initialized.', this);
     }
 
     onSubmit() {
@@ -111,15 +99,15 @@ export class WorkComponent implements OnInit {
                         this.isNew = false;
                         this.work = res;
                         this.router.navigate(['/work', res.id]);
-                    }, 6000);
+                    }, 4000);
                 });
         } else {
             console.log('Save UPDATED work. ', this.work);
             this.service.update(this.work.id, this.work)
                 .subscribe(res => {
                     console.log('response from update: ', res);
-                    // this.work = res;
-                    // this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
+                    this.work = res;
+                    this.toasterService.pop('success', 'Success!', this.work.title + ' has been saved.');
                 });
         }
     }
@@ -129,23 +117,23 @@ export class WorkComponent implements OnInit {
     }
 
     imageFieldChanged(e) {
-        let file = e.target.files[0];
-        const filename = file.name;
+        // let file = e.target.files[0];
+        // const filename = file.name;
 
-        console.log('imageFieldChanged to ' + filename);
+        // console.log('imageFieldChanged to ' + filename);
 
-        let reader = new FileReader();
+        // let reader = new FileReader();
 
-        reader.onload = readerEvt => {
-            let base64 = btoa(readerEvt.target['result']);
+        // reader.onload = readerEvt => {
+        //     let base64 = btoa(readerEvt.target['result']);
 
-            this.work.image_new = {
-                name: filename,
-                base64: base64
-            };
-        };
+        //     this.work.image_new = {
+        //         name: filename,
+        //         base64: base64
+        //     };
+        // };
 
-        reader.readAsBinaryString(file);
+        // reader.readAsBinaryString(file);
     }
 
     readFile(file) : Observable<any> {

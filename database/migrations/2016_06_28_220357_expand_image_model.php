@@ -34,7 +34,7 @@ class ExpandImageModel extends Migration
     public function down()
     {
         Schema::table('images', function (Blueprint $table) {
-            $table->dropColumn(['name', 'alias', 'type', 'size', 'last_modified']);
+            $table->dropColumn(['name', 'alias', 'mimetype', 'extension', 'size', 'last_modified']);
         });
 
         Schema::table('work_images', function (Blueprint $table) {

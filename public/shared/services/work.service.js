@@ -67,39 +67,28 @@ var WorkService = (function () {
                 switch (key) {
                     case 'gallery':
                         val.forEach(function (item) {
-                            form.append(key + '[]', item.id);
-                            form.append('gallery_weights[]', item.weight);
+                            form.append(key + '[][id]', item.id);
+                            form.append(key + '[][weight]', item.weight);
+                            _form[key + '[][id]'] = item.id;
+                            _form[key + '[][weight]'] = item.weight;
                         });
                         break;
                     case 'client':
                         form.append(key, val.id);
+                        _form[key] = val.id;
                         break;
                     case 'gallery_new':
                         val.forEach(function (file) {
                             form.append(key + '[]', file);
+                            _form[key + '[]'] = file;
                         });
                         break;
                     default:
-                        console.log('appending to form ', { key: key, val: val });
                         form.append(key, val);
                         _form[key] = val;
                 }
             });
             console.log("Created a form to upload to work update", _form);
-            xhr.upload.onprogress = function (event) {
-                var progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
-                console.log('progress!!!!!!', { event: event, progress: progress });
-            };
-            xhr.onerror = function (e) { console.log('xhr on error', { e: e, xhr: xhr }); observer.error(e); };
-            xhr.onload = function (e) { console.log('xhr on load ', { e: e, xhr: xhr }); };
-            xhr.onabort = function (e) { console.log('xhr on abort', { e: e, xhr: xhr }); };
-            xhr.open('POST', '/work/update/' + id, true);
-            if (_this.authToken) {
-                console.log('Setting Request Header "Authorization" to ', 'Bearer ' + _this.authToken);
-                xhr.setRequestHeader('Authorization', 'Bearer ' + _this.authToken);
-            }
-            xhr.send(form);
-            console.log('just sent xhr to url: ' + url, xhr);
         });
     };
     WorkService.prototype.getCookie = function (name) {
@@ -112,7 +101,45 @@ var WorkService = (function () {
     };
     WorkService.prototype.create = function (attributes) {
         var url = window.location.protocol + '//' + window.location.hostname + '/work';
-        return this.http.post(url, attributes)
+        var form = new FormData();
+        var _form = {};
+        Object.keys(attributes).forEach(function (key) {
+            var val = attributes[key];
+            switch (key) {
+                case 'gallery':
+                    val.forEach(function (item, i) {
+                        form.append(key + "[" + i + "][id]", item.id);
+                        form.append(key + "[" + i + "][weight]", item.weight);
+                        _form[(key + "[" + i + "][id]")] = item.id;
+                        _form[(key + "[" + i + "][weight]")] = item.weight;
+                    });
+                    break;
+                case 'client':
+                    form.append(key, val.id);
+                    _form[key] = val.id;
+                    break;
+                case 'image_new':
+                    form.append(key + '[]', val);
+                    _form[key] = val;
+                    break;
+                case 'gallery_new':
+                    val.forEach(function (file) {
+                        form.append(key + '[]', file);
+                        _form[key + '[]'] = file;
+                    });
+                    break;
+                default:
+                    if (val !== undefined && val !== null) {
+                        form.append(key, val);
+                        _form[key] = val;
+                    }
+                    else {
+                        console.log('skipping appending ' + key + ' to form because its undefined/null: ', val);
+                    }
+            }
+        });
+        console.log("Created a form to upload to work update", _form);
+        return this.http.post(url, form)
             .map(function (res) { return res.json(); });
     };
     WorkService = __decorate([

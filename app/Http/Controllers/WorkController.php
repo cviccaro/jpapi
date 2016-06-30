@@ -75,17 +75,12 @@ class WorkController extends Controller
         $json = $paginator->toArray();
         $json['current_page'] = $current_page + 1;
         $json['from'] = $current_page * $length;
-        $json['to'] = ($json['from']) + $length;
+        $json['to'] = $length > $count ? $count : ($json['from'] + $length);
 
         if ($count !== 0 && $json['from'] === 0) {
             $json['from'] = 1;
         }
-        $data = [];
-        foreach ($json['data'] as $datum) {
-            $data[] = $datum;
-        }
-        $json['data'] = $data;
-
+        $json['data'] = array_values($json['data']);
         return $this->respond('done', $json);
     }
 
@@ -242,27 +237,56 @@ class WorkController extends Controller
 
     public function create(Request $request)
     {
-        
+        \Log::info('Received request to create work : ' . print_r($request->toArray(), true));
         $m = self::MODEL;
+
+        $uploads_destination = 'app/public/images/work';
+        $destination =storage_path($uploads_destination);
         // $this->validate($request, $m::$rules);
 
         $data = $request->all();
 
         if ($request->has('client')) {
-            $client_id = intval($request->get('client')['id']);
-            $data['client'] = $client_id;
+            $data['client'] = intval($request->get('client'));
         }
 
-        if ($request->has('image_new')) {
-            $imageNew = $request->input('image_new');
-            $base64_string = $imageNew['base64'];
-            $filename = $imageNew['name'];
-            if ($image = Image::createFromBase64($filename, $base64_string)) {
+        if ($request->hasFile('image_new')) {
+            $files = $request->file('image_new');
+            \Log::info('REQUEST --- IMAGE_NEW: ' . print_r($files, true));
+
+            $destination = storage_path($uploads_destination);
+            $i = 0;
+            foreach ($files as $file) {
+                $mimetype = $file->getMimeType();
+                $size = $file->getSize();
+                $tempName = basename($file->__toString());
+                $original_name = $file->getClientOriginalName();
+                $extension = $file->guessExtension();
+
+                $candidate_filename = Image::availableFilename($original_name, $destination);
+
+                $file->move($destination, $candidate_filename);
+
+                $image = Image::create([
+                    'path' => $uploads_destination,
+                    'name' => $candidate_filename,
+                    'alias' => $original_name,
+                    'extension' => $extension,
+                    'mimetype' => $mimetype,
+                    'size' => $size,
+                ]);
+
                 $data['image'] = $image->id;
-                unset($data['image_new']);
+
+                \Log::info('COVER Image created at ' . $destination . '/' . $candidate_filename . ' with data : ' . print_r([
+                    'path' => $uploads_destination,
+                    'name' => $candidate_filename,
+                    'alias' => $original_name,
+                    'extension' => $extension,
+                    'mimetype' => $mimetype,
+                    'size' => $size,
+                ], true));
             }
-        } else {
-            unset($data['image']);
         }
 
         // $gallery = [];
@@ -272,23 +296,67 @@ class WorkController extends Controller
         //         return $carry;
         //     }, []);
         // }
-
+        \Log::info('Committing new work item with form data: ' . print_r($data, true));
         $model = $m::create($data);
 
-        if ($request->has('gallery_new')) {
-            $gallery_new = $request->get('gallery_new');
-            foreach ($gallery_new as $file) {
-                \Log::info('Adding gallery new item: ' . $file['name']);
-                $base64_string = $file['base64'];
-                $filename = $file['name'];
-                if ($image = Image::createFromBase64($filename, $base64_string)) {
-                    WorkImage::create(['work_id' => $id, 'image_id' => $image->id]);
-                    \Log::info('Created new image at ID ' . $image->id . ' and added to gallery.');
-                } else {
-                    \Log::info('Image creation failed.');
-                }
+        $added = 0;
+        if ($request->hasFile('gallery_new')) {
+            $files = $request->file('gallery_new');
+            \Log::info('REQUEST --- GALLERY_NEW: ' . print_r($files, true));
+
+            $i = 0;
+
+            $gallery = $request->get('gallery');
+
+            foreach ($files as $k => $file) {
+
+                // @todo: autogenerate waight from order of filelist?
+                //
+                $weight = $gallery[$i]['weight'];
+                \Log::info('File ' . $k . ' Weight ' . $weight);
+
+                $mimetype = $file->getMimeType();
+                $size = $file->getSize();
+                $tempName = basename($file->__toString());
+                $original_name = $file->getClientOriginalName();
+                $extension = $file->guessExtension();
+
+                $candidate_filename = Image::availableFilename($original_name, $destination);
+
+                $file->move($destination, $candidate_filename);
+
+                $image = Image::create([
+                    'path' => $uploads_destination,
+                    'name' => $candidate_filename,
+                    'alias' => $original_name,
+                    'extension' => $extension,
+                    'mimetype' => $mimetype,
+                    'size' => $size,
+                ]);
+
+                \Log::info('GALLERY Image created at ' . $destination . '/' . $candidate_filename . ' with data : ' . print_r([
+                    'path' => $uploads_destination,
+                    'name' => $candidate_filename,
+                    'alias' => $original_name,
+                    'extension' => $extension,
+                    'mimetype' => $mimetype,
+                    'size' => $size,
+                ], true));
+
+                $workimage = WorkImage::create([
+                    'image_id' => $image->id,
+                    'work_id' => $model->id,
+                    'weight' => $weight
+                ]);
+
+                \Log::info('Added WorkImage with weight ' . $weight .' as ID ' . $workimage->id . ' on Work ' . $model->id . ' with Image ' . $image->id);
+                $added++;
+
+                $i++;
             }
         }
+
+        \Log::info('Created work model with ID ' . $model->id . '.  Added ' . $added . ' images to gallery.');
 
         return $this->respond('done', $model);
     }

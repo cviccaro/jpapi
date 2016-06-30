@@ -67,8 +67,8 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
     public uploader: FileUploader;
 
     constructor(uploader: FileUploader, authService: AuthService) {
-        this.uploader = uploader;
-        this.uploader.setAuthToken(authService.getToken());
+        // this.uploader = uploader;
+        // this.uploader.setAuthToken(authService.getToken());
     }
 
     /**
@@ -133,7 +133,11 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
      */
 
     ngOnInit() {
-        this.uploader.setUrl(this.url);
+        if (this.images === undefined) {
+            this.images = [];
+        }
+
+        // this.uploader.setUrl(this.url);
         this.isLoading = this._empty = !!this.images.length;
         this._count = this.images.length;
 
@@ -198,7 +202,7 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
 
             let image = new ImageItem(file);
 
-            this.uploader.addToQueue([image]);
+            //this.uploader.addToQueue([image]);
 
             let reader = new FileReader();
             let k = i;

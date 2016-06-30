@@ -19,6 +19,11 @@ class Image extends Model {
         return $query->where('path', 'LIKE', '%'.$name.'%')->get();
     }
 
+    public function getUrl()
+    {
+        return url('images/' . $this->path . '/' . $this->name);
+    }
+
     // public static function createFromUploaded(UploadedFile $file) {
     //     $image_dir = 'resources/assets/images';
     //     $destination = base_path() . '/' . $image_dir;
@@ -79,7 +84,7 @@ class Image extends Model {
         $candidate = null;
         $try_filename = $filename;
         $parts = explode('.', $filename);
-        
+
         $extension = array_pop($parts);
         $filename_noext = implode('.', $parts);
 

@@ -1,1 +1,1 @@
-{"version":3,"sources":["shared/components/list/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,kBAAkB,CAAC,EAAA;AACH","file":"shared/components/list/index.js","sourcesContent":["export * from './list.component';\nexport * from './list-config';\n"],"sourceRoot":"/source/"}
+{"version":3,"sources":["shared/components/list/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,kBAAkB,CAAC,EAAA;AACH","file":"shared/components/list/index.js","sourcesContent":["export * from './list.component';\r\nexport * from './list-config';\r\n"],"sourceRoot":"/source/"}

@@ -26,6 +26,21 @@ class ImageController extends Controller
         return $this->get($request, 'clients/' . $path);
     }
 
+    public function getPublic(Request $request, $path, $name)
+    {
+        $filepath = storage_path('app/public/images/' . $path . '/' . $name);
+
+        if ( !\File::exists($filepath) ) abort(404);
+
+        $file = \File::get($filepath);
+        $type = \File::mimeType($filepath);
+
+        $response = \Response::make($file, 200);
+        $response->header('Content-Type', $type);
+
+        return $response;
+    }
+
     public function upload(Request $request)
     {
         $image_dir = 'resources/assets/images';

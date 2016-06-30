@@ -21,6 +21,7 @@ var WorkComponent = (function () {
         this.clientService = clientService;
         this.toasterService = toasterService;
         this.router = router;
+        this.work = new index_1.Work();
         this.hasBaseDropZoneOver = false;
         this.submitted = false;
         this.isNew = false;
@@ -32,28 +33,18 @@ var WorkComponent = (function () {
         this.clientService.options().subscribe(function (res) {
             _this.clients = res;
         });
-        this.isNew = this.route.snapshot.params['id'] === 'new';
-        if (this.isNew) {
-            this.work = {
-                title: '',
-                body: '',
-                image: '',
-                client: {
-                    id: ''
-                }
-            };
+        if (this.route.snapshot.params['id'] === 'new') {
+            this.isNew = true;
             this.ready = true;
-            console.debug('WorkComponent#Create initialized.', this);
         }
         else {
-            var id = +this.route.snapshot.params['id'];
-            this.service.find(id).subscribe(function (res) {
+            this.service.find(+this.route.snapshot.params['id']).subscribe(function (res) {
                 _this.work = res;
                 console.debug('setting work model to ', res);
                 _this.ready = true;
             });
-            console.debug('WorkComponent#Edit initialized.', this);
         }
+        console.debug('WorkComponent#Edit initialized.', this);
     };
     WorkComponent.prototype.onSubmit = function () {
         this.save();
@@ -78,6 +69,8 @@ var WorkComponent = (function () {
             this.service.update(this.work.id, this.work)
                 .subscribe(function (res) {
                 console.log('response from update: ', res);
+                _this.work = res;
+                _this.toasterService.pop('success', 'Success!', _this.work.title + ' has been saved.');
             });
         }
     };
@@ -85,19 +78,6 @@ var WorkComponent = (function () {
         return Math.ceil(a);
     };
     WorkComponent.prototype.imageFieldChanged = function (e) {
-        var _this = this;
-        var file = e.target.files[0];
-        var filename = file.name;
-        console.log('imageFieldChanged to ' + filename);
-        var reader = new FileReader();
-        reader.onload = function (readerEvt) {
-            var base64 = btoa(readerEvt.target['result']);
-            _this.work.image_new = {
-                name: filename,
-                base64: base64
-            };
-        };
-        reader.readAsBinaryString(file);
     };
     WorkComponent.prototype.readFile = function (file) {
         var filename = file.name;

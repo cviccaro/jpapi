@@ -8,7 +8,7 @@
       </button>
     </div>
   </div>
-  <div layout="row" layout-align="end center" flex="50" class="sorts">
+  <div layout="row" layout-align="end center" flex="50" class="sorts" [hidden]="!listData.length">
     <md-input-container>
       <label>Per Page</label>
       <select [(ngModel)]="listConfig.page.perPage" (ngModelChange)="fetch()">
@@ -30,7 +30,7 @@
     </md-input-container>
   </div>
 </md-toolbar>
-<md-list layout="column">
+<md-list layout="column" *ngIf="listData.length">
     <md-list-item *ngFor="let line of listData; let index = index; let isOdd = odd; let isEven = even" [class.md-3-line]="true" [class.odd]="isOdd" [class.even]="isEven">
         <div class="md-list-item-content md-no-style" layout="row" layout-align="center center" layout-padding>
             <div class="item-text" layout="column" flex="70">
@@ -50,3 +50,4 @@
         <md-divider></md-divider>
     </md-list-item>
 </md-list>
+<div class="empty" [hidden]="listData.length">{{ listConfig.emptyText }}</div>

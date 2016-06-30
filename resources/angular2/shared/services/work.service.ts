@@ -74,20 +74,24 @@ export class WorkService {
 				switch(key) {
 					case 'gallery':
 						val.forEach(item => {
-							form.append(key + '[]', item.id);
-							form.append('gallery_weights[]', item.weight);
+							form.append(key + '[][id]', item.id);
+							form.append(key + '[][weight]', item.weight);
+							_form[key + '[][id]'] = item.id;
+							_form[key + '[][weight]'] = item.weight;
 						})
 						break;
 					case 'client':
 						form.append(key, val.id);
+						_form[key] = val.id;
 						break;
 					case 'gallery_new':
 						val.forEach(file => {
 							form.append(key + '[]', file);
+							_form[key + '[]'] = file;
 						})
 						break;
 					default:
-						console.log('appending to form ', { key: key, val: val });
+						//console.log('appending to form ', { key: key, val: val });
 						form.append(key, val);
 						_form[key] = val;
 				}
@@ -97,32 +101,32 @@ export class WorkService {
 
 			// image.isUploading = true;
 
-			xhr.upload.onprogress = (event: any) => {
-			    let progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
+			// xhr.upload.onprogress = (event: any) => {
+			//     let progress = Math.round(event.lengthComputable ? event.loaded * 100 / event.total : 0);
 
-			    console.log('progress!!!!!!', {event: event, progress: progress});
-			    // this.onProgressItem(item, progress);
-			    // this.onProgressAll(total);
-			};
-			xhr.onerror = e => { console.log('xhr on error', { e: e, xhr: xhr }); observer.error(e); }
-			xhr.onload = e => { console.log('xhr on load ', { e: e, xhr: xhr }); }
-			xhr.onabort = e => { console.log('xhr on abort', {e: e, xhr: xhr}); }
-			xhr.open('POST', '/work/update/' + id, true);
+			//     console.log('progress!!!!!!', {event: event, progress: progress});
+			//     // this.onProgressItem(item, progress);
+			//     // this.onProgressAll(total);
+			// };
+			// xhr.onerror = e => { console.log('xhr on error', { e: e, xhr: xhr }); observer.error(e); }
+			// xhr.onload = e => { console.log('xhr on load ', { e: e, xhr: xhr }); }
+			// xhr.onabort = e => { console.log('xhr on abort', {e: e, xhr: xhr}); }
+			// xhr.open('POST', '/work/update/' + id, true);
 
-			// //xhr.withCredentials = true;
+			// // //xhr.withCredentials = true;
 
-			// if (xsrf) {
-			//   console.log('Setting Request Header "X-XSRF-TOKEN" to ', xsrf);
-			//   xhr.setRequestHeader('X-XSRF-TOKEN', xsrf);
+			// // if (xsrf) {
+			// //   console.log('Setting Request Header "X-XSRF-TOKEN" to ', xsrf);
+			// //   xhr.setRequestHeader('X-XSRF-TOKEN', xsrf);
+			// // }
+			// if (this.authToken) {
+			//   console.log('Setting Request Header "Authorization" to ', 'Bearer ' + this.authToken);
+			//   xhr.setRequestHeader('Authorization', 'Bearer ' + this.authToken);
 			// }
-			if (this.authToken) {
-			  console.log('Setting Request Header "Authorization" to ', 'Bearer ' + this.authToken);
-			  xhr.setRequestHeader('Authorization', 'Bearer ' + this.authToken);
-			}
 
-			xhr.send(form);
+			// xhr.send(form);
 
-			console.log('just sent xhr to url: ' + url, xhr);
+			// console.log('just sent xhr to url: ' + url, xhr);
 
 			// return this.authHttp.put(url, attributes)
 			// 	.map(res => res.json());
@@ -141,8 +145,48 @@ export class WorkService {
 
 	create(attributes) {
 		let url = window.location.protocol + '//' + window.location.hostname + '/work';
-		
-		return this.http.post(url, attributes)
+
+		let form = new FormData();
+		let _form = {};
+		Object.keys(attributes).forEach(key => {
+			let val = attributes[key];
+			switch(key) {
+				case 'gallery':
+					val.forEach((item,i) => {
+						form.append(`${key}[${i}][id]`, item.id);
+						form.append(`${key}[${i}][weight]`, item.weight);
+						_form[`${key}[${i}][id]`] = item.id;
+						_form[`${key}[${i}][weight]`] = item.weight;
+					})
+					break;
+				case 'client':
+					form.append(key, val.id);
+					_form[key] = val.id;
+					break;
+				case 'image_new':
+					form.append(key + '[]', val);
+					_form[key] = val;
+					break;
+				case 'gallery_new':
+					val.forEach(file => {
+						form.append(key + '[]', file);
+						_form[key + '[]'] = file;
+					})
+					break;
+				default:
+					if (val !== undefined && val !== null) {
+						//console.log('appending to form ', { key: key, val: val });
+						form.append(key, val);
+						_form[key] = val;
+					} else {
+						console.log('skipping appending ' + key + ' to form because its undefined/null: ', val);
+					}
+			}
+		});
+
+		console.log("Created a form to upload to work update", _form);
+
+		return this.http.post(url, form)
 			.map(res => res.json());
 	}
 }

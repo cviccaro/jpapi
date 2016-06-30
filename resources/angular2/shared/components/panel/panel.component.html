@@ -16,7 +16,7 @@
                   </div>
                 </span>
             </div>
-            <div class="summary-text-wrapper" [hidden]="!_expanded">
+            <div class="summary-text-wrapper" [hidden]="!(_expanded || empty)">
               <span class="summary-text edit-text">{{ editText }} <md-icon class="md-20">help_outline</md-icon></span>
             </div>
             <div class="summary-image" *ngIf="_isImage && currentImage && !_valueChanged" [hidden]="_expanded">
@@ -38,14 +38,8 @@
                   <div class="panel-control-infix">
                       <input *ngIf="_isTextfield"
                          #input
-                         aria-target
                          class="panel-control-element text"
                          [class.md-end]="align == 'end'"
-                         [attr.aria-label]="ariaLabel"
-                         [attr.aria-labelledby]="ariaLabelledBy"
-                         [attr.aria-disabled]="ariaDisabled"
-                         [attr.aria-required]="ariaRequired"
-                         [attr.aria-invalid]="ariaInvalid"
                          [attr.autocomplete]="autoComplete"
                          [autofocus]="autoFocus"
                          [disabled]="disabled"
@@ -67,14 +61,8 @@
 
                       <select *ngIf="_isSelect"
                              #select
-                             aria-target
                              class="panel-control-element select"
                              [class.md-end]="align == 'end'"
-                             [attr.aria-label]="ariaLabel"
-                             [attr.aria-labelledby]="ariaLabelledBy"
-                             [attr.aria-disabled]="ariaDisabled"
-                             [attr.aria-required]="ariaRequired"
-                             [attr.aria-invalid]="ariaInvalid"
                              [autofocus]="autoFocus"
                              [disabled]="disabled"
                              [id]="inputId"
@@ -87,19 +75,13 @@
                              (blur)="handleBlur($event)"
                              [(ngModel)]="value"
                              (change)="handleChange($event)">
+                          <option value="" selected></option>
                           <ng-content select="option"></ng-content>
                       </select>
                       <textarea *ngIf="_isTextarea"
                           #textarea
-                          aria-target
                           class="panel-control-element form-control textarea"
                           [class.md-end]="align == 'end'"
-                          [attr.aria-label]="ariaLabel"
-                          [attr.aria-labelledby]="ariaLabelledBy"
-                          [attr.aria-disabled]="ariaDisabled"
-                          [attr.aria-required]="ariaRequired"
-                          [attr.aria-invalid]="ariaInvalid"
-                          [attr.autocomplete]="autoComplete"
                           [autofocus]="autoFocus"
                           [disabled]="disabled"
                           [id]="inputId"
@@ -122,14 +104,8 @@
                           #input
                           type="file"
                           accept="image/jpg, image/jpeg, image/png, image/gif"
-                          aria-target
                           class="panel-control-element image"
                           [class.md-end]="align == 'end'"
-                          [attr.aria-label]="ariaLabel"
-                          [attr.aria-labelledby]="ariaLabelledBy"
-                          [attr.aria-disabled]="ariaDisabled"
-                          [attr.aria-required]="ariaRequired"
-                          [attr.aria-invalid]="ariaInvalid"
                           [autofocus]="autoFocus"
                           [disabled]="disabled"
                           [id]="inputId"
@@ -172,7 +148,7 @@
             <jpa-image-upload
                 url="/upload/image"
                 multiple="true"
-                [images]="gallery" 
+                [images]="gallery"
                 [name]="name"
                 [required]="required"
                 [(ngModel)]="value"

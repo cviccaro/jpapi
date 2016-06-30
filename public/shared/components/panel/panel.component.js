@@ -316,6 +316,7 @@ var JpaPanel = (function () {
                 this.summary = this.value;
                 break;
             case 'image':
+                this.value = event.target.files[0];
                 this.imageFieldChanged.emit(event);
                 break;
             default:

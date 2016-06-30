@@ -53,8 +53,6 @@ var ImageUploadComponent = (function () {
         this.change = new core_1.EventEmitter();
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
-        this.uploader = uploader;
-        this.uploader.setAuthToken(authService.getToken());
     }
     Object.defineProperty(ImageUploadComponent.prototype, "onBlur", {
         get: function () {
@@ -78,7 +76,9 @@ var ImageUploadComponent = (function () {
     };
     ImageUploadComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.uploader.setUrl(this.url);
+        if (this.images === undefined) {
+            this.images = [];
+        }
         this.isLoading = this._empty = !!this.images.length;
         this._count = this.images.length;
         this.images.forEach(function (image) {
@@ -127,7 +127,6 @@ var ImageUploadComponent = (function () {
             value.push(file);
             this_1.value = value;
             var image = new index_1.ImageItem(file);
-            this_1.uploader.addToQueue([image]);
             var reader = new FileReader();
             var k = i;
             this_1.isLoading = true;

@@ -25,7 +25,7 @@ class Work extends Model {
 
 	public function getImageAttribute() {
 		if ($this->attributes['image'] !== NULL) {
-			return URL::to('images/' . basename(Image::where('id', $this->attributes['image'])->first()->path));
+			return Image::find($this->attributes['image'])->getUrl();
 		}
 		return $this->attributes['image'];
 	}

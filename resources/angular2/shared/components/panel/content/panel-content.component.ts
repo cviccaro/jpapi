@@ -26,13 +26,13 @@ export class JpaPanelContent implements OnInit, AfterViewInit {
         if (this._hasImage) {
             this.imageExtension = 'image/' + this.image.split('.').pop();
         }
-        
+
         if (this.el.nativeElement.classList.contains('bottom')) {
             this.align = 'bottom';
         }
     }
     ngAfterViewInit() {
-        //console.debug('PanelContent view initialized.', this);
+        console.debug('PanelContent view initialized.', this);
 
         // if (this._gridList) {
         //     console.log('CHECK OUT OUR SWEET LAYOUT TILES FUNCTION: ' , this._gridList['_layoutTiles']);

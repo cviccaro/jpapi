@@ -66,7 +66,8 @@
       -ms-flex-direction: row;
       flex-direction: row;
       -ms-flex-pack: justify;
-      justify-content: space-between; }
+      justify-content: space-between;
+      cursor: default; }
       :host md-card md-card-title-group .panel-summary .image-preview {
         background-size: contain;
         max-width: 60px;

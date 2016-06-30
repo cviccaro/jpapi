@@ -9,5 +9,6 @@ export interface ListConfig {
         total: number,
         lastPage: number,
         perPage: number
-    }
+    },
+    emptyText?: string
 };

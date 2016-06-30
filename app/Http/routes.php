@@ -49,6 +49,8 @@ Route::get('work/{id}', 'WorkController@get');
 Route::get('images/{path}', 'ImageController@get');
 Route::get('images/clients/{path}', 'ImageController@getClientImage');
 
+Route::get('images/app/public/images/{model}/{name}', 'ImageController@getPublic');
+
 /*
 |--------------------------------------------------------------------------
 | Authorized routes
@@ -65,7 +67,8 @@ Route::group(['namespace' => 'Auth'], function () {
     Route::get('authenticate/check', 'AuthController@check');
 });
 
-Route::group(['middleware' => 'jwt.refresh'], function () {
+// Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
+Route::group([], function() {
     Route::post('blog', 'BlogsController@add');
     Route::put('blog/{id}', 'BlogsController@put');
     Route::delete('blog/{id}', 'BlogsController@remove');
@@ -83,5 +86,6 @@ Route::group(['middleware' => 'jwt.refresh'], function () {
 });
 
 Route::get('test', function() {
-    dd(resource_path('assets/images/work'));
+dd();
+    return response(['image' => $image]);
 });

@@ -40,8 +40,10 @@ export class WorkListComponent implements OnInit {
                 total: 0,
                 lastPage: 0,
                 perPage: 15
-            }
+            },
+            emptyText: 'Looks like no work items have been created yet.'
         };
+        console.log('WorkListComponent', this);
 	}
 
 	ngOnInit() {

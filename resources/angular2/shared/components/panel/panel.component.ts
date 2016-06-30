@@ -362,6 +362,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
                 this.summary = this.value;
                 break;
             case 'image':
+                this.value = event.target.files[0];
                 this.imageFieldChanged.emit(event);
                 break;
             default:
