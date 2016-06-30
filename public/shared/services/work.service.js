@@ -10,7 +10,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
-var Rx_1 = require('rxjs/Rx');
 require('rxjs/add/operator/map');
 var auth_service_1 = require('./auth.service');
 var angular2_jwt_1 = require('angular2-jwt');
@@ -50,46 +49,48 @@ var WorkService = (function () {
         return this;
     };
     WorkService.prototype.update = function (id, attributes) {
-        var _this = this;
-        return Rx_1.Observable.create(function (observer) {
-            var url = window.location.protocol + '//' + window.location.hostname + '/work/update/' + id;
-            console.debug('WorkService.update called with arguments: ', { id: id, attributes: attributes });
-            var xhr = new XMLHttpRequest();
-            var form = new FormData();
-            var xsrf = _this.getCookie('XSRF-TOKEN');
-            if (xsrf) {
-                console.log('appending xsrf', xsrf);
-                form.append('_token', xsrf);
-            }
-            var _form = {};
-            Object.keys(attributes).forEach(function (key) {
-                var val = attributes[key];
-                switch (key) {
-                    case 'gallery':
-                        val.forEach(function (item) {
-                            form.append(key + '[][id]', item.id);
-                            form.append(key + '[][weight]', item.weight);
-                            _form[key + '[][id]'] = item.id;
-                            _form[key + '[][weight]'] = item.weight;
-                        });
-                        break;
-                    case 'client':
-                        form.append(key, val.id);
-                        _form[key] = val.id;
-                        break;
-                    case 'gallery_new':
-                        val.forEach(function (file) {
-                            form.append(key + '[]', file);
-                            _form[key + '[]'] = file;
-                        });
-                        break;
-                    default:
+        var url = window.location.protocol + '//' + window.location.hostname + '/work/update/' + id;
+        var form = new FormData();
+        var _form = {};
+        Object.keys(attributes).forEach(function (key) {
+            var val = attributes[key];
+            switch (key) {
+                case 'gallery':
+                    val.forEach(function (item, i) {
+                        form.append(key + "[" + i + "][id]", item.id);
+                        form.append(key + "[" + i + "][weight]", item.weight);
+                        _form[(key + "[" + i + "][id]")] = item.id;
+                        _form[(key + "[" + i + "][weight]")] = item.weight;
+                    });
+                    break;
+                case 'client':
+                    form.append(key, val.id);
+                    _form[key] = val.id;
+                    break;
+                case 'image_new':
+                    form.append(key + '[]', val);
+                    _form[key] = val;
+                    break;
+                case 'gallery_new':
+                    val.forEach(function (file) {
+                        form.append(key + '[]', file);
+                        _form[key + '[]'] = file;
+                    });
+                    break;
+                default:
+                    if (val !== undefined && val !== null) {
+                        console.log('appending to form ', { key: key, val: val });
                         form.append(key, val);
                         _form[key] = val;
-                }
-            });
-            console.log("Created a form to upload to work update", _form);
+                    }
+                    else {
+                        console.log('skipping appending ' + key + ' to form because its undefined/null: ', val);
+                    }
+            }
         });
+        console.debug('WorkService is sending POST request to ' + url + ' with form ', _form);
+        return this.http.post(url, form)
+            .map(function (res) { return res.json(); });
     };
     WorkService.prototype.getCookie = function (name) {
         var value = "; " + document.cookie;

@@ -25,7 +25,6 @@ var GridImage = (function () {
     GridImage.prototype.ngOnInit = function () {
         var _this = this;
         this._imageEl.nativeElement.addEventListener('load', function (e) {
-            console.log('GridImage Loaded.', _this);
             _this.imageLoaded.emit({ event: e, config: _this.imageConfig });
         });
     };

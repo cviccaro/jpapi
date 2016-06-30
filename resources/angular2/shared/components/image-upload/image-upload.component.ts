@@ -23,7 +23,7 @@ import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 import { Observable } from 'rxjs/Rx';
 
 import { GridImage } from './grid-image/grid-image';
-import { FileUploader, ImageItem } from './uploader/index';
+import { ImageItem } from './uploader/index';
 
 import { AuthService } from '../../services/auth.service';
 
@@ -64,9 +64,12 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
     private _onTouchedCallback: () => void = noop;
     private _onChangeCallback: (_: any) => void = noop;
 
-    public uploader: FileUploader;
+    //public uploader: FileUploader;
 
-    constructor(uploader: FileUploader, authService: AuthService) {
+    constructor(
+    //    uploader: FileUploader,
+        authService: AuthService
+    ) {
         // this.uploader = uploader;
         // this.uploader.setAuthToken(authService.getToken());
     }
@@ -147,22 +150,21 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
             }
         });
 
-        console.log('ImageUploadComponent.OnInit', this);
+        //console.log('ImageUploadComponent.OnInit', this);
     }
 
     ngAfterViewInit() {
-        console.info('ImageUploadComponent#AfterViewInit ---', this);
-
         if (this._gridImages) {
-            console.log('got grid images: ', this._gridImages);
+           // console.log('got grid images: ', this._gridImages);
             this._gridImages.changes.subscribe( (changes: QueryList<GridImage>) => {
                 console.log('Changes to grid images: ', changes);
             });
         }
+        console.info('ImageUploadComponent#AfterViewInit ---', this);
     }
 
     ngOnChanges(changes: { [key: string]: SimpleChange }) {
-        console.debug('ImageUploadComponent#OnChanges ---', changes);
+        //console.debug('ImageUploadComponent#OnChanges ---', changes);
     }
 
     /**

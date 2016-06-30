@@ -3,27 +3,30 @@
         <md-card-title>
             {{ label }} <span *ngIf="required" class="md-placeholder-required">*</span>
         </md-card-title>
-        <div class="panel-summary">
+        <jpa-panel-summary [summary]="summary" [expanded]="_expanded" [type]="type" [gallery]="gallery" [value]="value" [currentImage]="currentImage" [empty]="empty" [valueChanged]="_valueChanged" [emptyText]="emptyText">
+        </jpa-panel-summary>
+<!--         <div class="panel-summary">
             <div class="summary-text-wrapper" [hidden]="_expanded">
                 <span class="summary-text textfield" *ngIf="!_isImage && !_isGallery">
                     {{ summary | slice:0:50 }}
                     <span class="summary-ellipsis" *ngIf="summary.length > 50">...</span>
                 </span>
                 <span class="summary-text imagefield" *ngIf="_isImage" [innerHTML]="summary"></span>
+                <span class="summary-text imagefield" *ngIf="_isImage"></span>
                 <span class="summary-text gallery" *ngIf="_isGallery">
                   <div class="count">
                     <md-icon color="primary">panorama</md-icon>&nbsp;&nbsp;{{ gallery?.length - value?.length }} pictures in gallery <span *ngIf="value" class="new"> + {{value.length}} new</span>
                   </div>
                 </span>
             </div>
-            <div class="summary-text-wrapper" [hidden]="!(_expanded || empty)">
+            <div class="summary-text-wrapper" [hidden]="!(_expanded || (empty && !_isGallery && !_isImage) || (_isGallery && gallery.length === 0) || (_isImage && !currentImage))">
               <span class="summary-text edit-text">{{ editText }} <md-icon class="md-20">help_outline</md-icon></span>
             </div>
             <div class="summary-image" *ngIf="_isImage && currentImage && !_valueChanged" [hidden]="_expanded">
                 <span [hidden]="_imageLoaded">Loading...<md-icon class="spin">update</md-icon></span>
                 <img [src]="currentImage" class="image-preview" #imagePreview />
             </div>
-        </div>
+        </div> -->
         <button class="toggle" md-icon-button (click)="toggle($event)">
             <md-icon>keyboard_arrow_down</md-icon>
         </button>

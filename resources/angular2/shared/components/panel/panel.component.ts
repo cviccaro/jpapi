@@ -29,6 +29,7 @@ import { MdHint } from '@angular2-material/input';
 import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-list';
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { JpaPanelContent } from './content/index';
+import { PanelSummaryComponent } from './summary/index';
 import {ImageUploadComponent, FileUploader} from '../image-upload/index';
 
 export const JPA_PANEL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
@@ -81,7 +82,8 @@ export class JpaPanelDuplicatedHintError extends MdError {
         NgModel,
         NgSelectOption,
         JpaPanelContent,
-        ImageUploadComponent
+        ImageUploadComponent,
+        PanelSummaryComponent
         // FILE_UPLOAD_DIRECTIVES,
         // MD_GRID_LIST_DIRECTIVES
     ],
@@ -129,7 +131,6 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
             case 'images':
                 this._isGallery = true;
                 this._empty = true;
-                console.log('set it to empty');
                 this._hasContentBottom = true;
                 this.fullWidth = true;
                 break;
@@ -445,16 +446,16 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     ngAfterViewInit() {
         switch(this.type) {
             case 'image':
-                if (this._imagePreview && this.currentImageSize === null) {
-                    this._imagePreview.nativeElement.onload = (e) => {
-                        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#AfterViewInit IMAGE LOADED!');
-                        this._imageLoaded = true;
-                        this.currentImageSize = {w: this._imagePreview.nativeElement.naturalWidth, h: this._imagePreview.nativeElement.naturalHeight};
-                        if (!this._expanded) {
-                            this._summary = this.currentImageSize.w + 'x' + this.currentImageSize.h + 'px';
-                        }
-                    };
-                }
+                // if (this._imagePreview && this.currentImageSize === null) {
+                //     this._imagePreview.nativeElement.onload = (e) => {
+                //         // console.debug('JpaPanel.'+this.type+' ' + this.name + '#AfterViewInit IMAGE LOADED!');
+                //         this._imageLoaded = true;
+                //         this.currentImageSize = {w: this._imagePreview.nativeElement.naturalWidth, h: this._imagePreview.nativeElement.naturalHeight};
+                //         if (!this._expanded) {
+                //             this._summary = this.currentImageSize.w + 'x' + this.currentImageSize.h + 'px';
+                //         }
+                //     };
+                // }
                 this.value = this.nativeElement.value;
             break;
             default:
@@ -468,7 +469,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
 
     /** TODO: internal */
     ngOnChanges(changes: { [key: string]: SimpleChange }) {
-        console.log('JpaPanel.'+this.type+' ' + this.name + '#OnChanges() : ', changes);
+        //console.log('JpaPanel.'+this.type+' ' + this.name + '#OnChanges() : ', changes);
         this._validateConstraints();
     }
 
@@ -552,7 +553,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         console.log('PanelComponent -- ImageUpload -- imageAdded', e);
     }
     imageLoaded(e: any) {
-        console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
+     //   console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
         this._setGallerySummary();
     }
 }

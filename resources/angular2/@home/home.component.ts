@@ -23,34 +23,34 @@ export class HomeComponent {
 
     @ViewChild(ImageUploadComponent) _uploadCmp: ImageUploadComponent;
 
-    ngAfterViewInit() {
-        console.log('HomeComponent view initialized.', this);
-    }
+    // ngAfterViewInit() {
+    //     console.log('HomeComponent view initialized.', this);
+    // }
 
-    handleChange(e) {
-        console.log('HOME --- handleChange', e);
-    }
+    // handleChange(e) {
+    //     console.log('HOME --- handleChange', e);
+    // }
 
-    fileAdded(e) {
-        console.log('HOME --- fileAdded', e);
-    }
+    // fileAdded(e) {
+    //     console.log('HOME --- fileAdded', e);
+    // }
 
-    imageAdded(e) {
-        console.log('HOME --- IMAGE ADDED TO GRID ', e);
-    }
+    // imageAdded(e) {
+    //     console.log('HOME --- IMAGE ADDED TO GRID ', e);
+    // }
 
-    imageLoaded(e) {
-        console.log('HOME --- IMAGE LOADED ON GRID', e);
-    }
+    // imageLoaded(e) {
+    //     console.log('HOME --- IMAGE LOADED ON GRID', e);
+    // }
 
-    submit() {
-        console.log('this.model = ', this.model);
+    // submit() {
+    //     console.log('this.model = ', this.model);
 
-        console.log(this._uploadCmp.uploader.queue);
+    //     console.log(this._uploadCmp.uploader.queue);
 
-        this._uploadCmp.uploader.uploadAll()
-            .subscribe(e => {
-                console.log('upload all response: ', e);
-            });
-    }
+    //     this._uploadCmp.uploader.uploadAll()
+    //         .subscribe(e => {
+    //             console.log('upload all response: ', e);
+    //         });
+    // }
 }

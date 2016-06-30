@@ -22,7 +22,8 @@ var Observable_1 = require('rxjs/Observable');
 var input_1 = require('@angular2-material/input');
 var angular2_material_1 = require('../../libs/angular2-material');
 var index_1 = require('./content/index');
-var index_2 = require('../image-upload/index');
+var index_2 = require('./summary/index');
+var index_3 = require('../image-upload/index');
 exports.JPA_PANEL_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCESSOR, {
     useExisting: core_1.forwardRef(function () { return JpaPanel; }),
     multi: true
@@ -122,7 +123,6 @@ var JpaPanel = (function () {
             case 'images':
                 this._isGallery = true;
                 this._empty = true;
-                console.log('set it to empty');
                 this._hasContentBottom = true;
                 this.fullWidth = true;
                 break;
@@ -374,18 +374,8 @@ var JpaPanel = (function () {
         }
     };
     JpaPanel.prototype.ngAfterViewInit = function () {
-        var _this = this;
         switch (this.type) {
             case 'image':
-                if (this._imagePreview && this.currentImageSize === null) {
-                    this._imagePreview.nativeElement.onload = function (e) {
-                        _this._imageLoaded = true;
-                        _this.currentImageSize = { w: _this._imagePreview.nativeElement.naturalWidth, h: _this._imagePreview.nativeElement.naturalHeight };
-                        if (!_this._expanded) {
-                            _this._summary = _this.currentImageSize.w + 'x' + _this.currentImageSize.h + 'px';
-                        }
-                    };
-                }
                 this.value = this.nativeElement.value;
                 break;
             default:
@@ -396,7 +386,6 @@ var JpaPanel = (function () {
         }
     };
     JpaPanel.prototype.ngOnChanges = function (changes) {
-        console.log('JpaPanel.' + this.type + ' ' + this.name + '#OnChanges() : ', changes);
         this._validateConstraints();
     };
     JpaPanel.prototype._convertValueForInputType = function (v) {
@@ -451,7 +440,6 @@ var JpaPanel = (function () {
         console.log('PanelComponent -- ImageUpload -- imageAdded', e);
     };
     JpaPanel.prototype.imageLoaded = function (e) {
-        console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
         this._setGallerySummary();
     };
     __decorate([
@@ -642,9 +630,10 @@ var JpaPanel = (function () {
                 forms_1.NgModel,
                 forms_1.NgSelectOption,
                 index_1.JpaPanelContent,
-                index_2.ImageUploadComponent
+                index_3.ImageUploadComponent,
+                index_2.PanelSummaryComponent
             ],
-            providers: [exports.JPA_PANEL_VALUE_ACCESSOR, index_2.FileUploader],
+            providers: [exports.JPA_PANEL_VALUE_ACCESSOR, index_3.FileUploader],
             pipes: [common_1.SlicePipe],
             host: {
                 '(click)': 'focus()'

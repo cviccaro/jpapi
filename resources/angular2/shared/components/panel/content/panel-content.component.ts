@@ -32,7 +32,7 @@ export class JpaPanelContent implements OnInit, AfterViewInit {
         }
     }
     ngAfterViewInit() {
-        console.debug('PanelContent view initialized.', this);
+        //console.debug('PanelContent view initialized.', this);
 
         // if (this._gridList) {
         //     console.log('CHECK OUT OUR SWEET LAYOUT TILES FUNCTION: ' , this._gridList['_layoutTiles']);

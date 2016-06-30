@@ -25,7 +25,7 @@ exports.IMAGE_UPLOAD_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCES
     multi: true
 });
 var ImageUploadComponent = (function () {
-    function ImageUploadComponent(uploader, authService) {
+    function ImageUploadComponent(authService) {
         this.isDragOver = false;
         this.isLoading = false;
         this._count = 0;
@@ -86,19 +86,16 @@ var ImageUploadComponent = (function () {
                 _this._nextWeight = image.weight + 5;
             }
         });
-        console.log('ImageUploadComponent.OnInit', this);
     };
     ImageUploadComponent.prototype.ngAfterViewInit = function () {
-        console.info('ImageUploadComponent#AfterViewInit ---', this);
         if (this._gridImages) {
-            console.log('got grid images: ', this._gridImages);
             this._gridImages.changes.subscribe(function (changes) {
                 console.log('Changes to grid images: ', changes);
             });
         }
+        console.info('ImageUploadComponent#AfterViewInit ---', this);
     };
     ImageUploadComponent.prototype.ngOnChanges = function (changes) {
-        console.debug('ImageUploadComponent#OnChanges ---', changes);
     };
     ImageUploadComponent.prototype.onDragOver = function (e) {
         var transfer = this._getTransfer(e);
@@ -340,7 +337,7 @@ var ImageUploadComponent = (function () {
             ],
             providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR]
         }), 
-        __metadata('design:paramtypes', [index_1.FileUploader, auth_service_1.AuthService])
+        __metadata('design:paramtypes', [auth_service_1.AuthService])
     ], ImageUploadComponent);
     return ImageUploadComponent;
 }());

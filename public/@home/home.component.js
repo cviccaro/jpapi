@@ -15,29 +15,6 @@ var index_1 = require('../shared/index');
 var HomeComponent = (function () {
     function HomeComponent() {
     }
-    HomeComponent.prototype.ngAfterViewInit = function () {
-        console.log('HomeComponent view initialized.', this);
-    };
-    HomeComponent.prototype.handleChange = function (e) {
-        console.log('HOME --- handleChange', e);
-    };
-    HomeComponent.prototype.fileAdded = function (e) {
-        console.log('HOME --- fileAdded', e);
-    };
-    HomeComponent.prototype.imageAdded = function (e) {
-        console.log('HOME --- IMAGE ADDED TO GRID ', e);
-    };
-    HomeComponent.prototype.imageLoaded = function (e) {
-        console.log('HOME --- IMAGE LOADED ON GRID', e);
-    };
-    HomeComponent.prototype.submit = function () {
-        console.log('this.model = ', this.model);
-        console.log(this._uploadCmp.uploader.queue);
-        this._uploadCmp.uploader.uploadAll()
-            .subscribe(function (e) {
-            console.log('upload all response: ', e);
-        });
-    };
     __decorate([
         core_1.ViewChild(index_1.ImageUploadComponent), 
         __metadata('design:type', index_1.ImageUploadComponent)

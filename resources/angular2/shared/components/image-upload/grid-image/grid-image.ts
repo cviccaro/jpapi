@@ -39,7 +39,7 @@ export class GridImage {
 
     ngOnInit() {
         (<HTMLImageElement>this._imageEl.nativeElement).addEventListener('load', e => {
-            console.log('GridImage Loaded.', this);
+            //console.log('GridImage Loaded.', this);
             this.imageLoaded.emit({event: e, config: this.imageConfig});
         });
     }

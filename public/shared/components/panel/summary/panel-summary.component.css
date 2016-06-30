@@ -1,0 +1,8 @@
+:host .summary-image-meta span {
+  float: left;
+  clear: both;
+  font-size: 13px; }
+  :host .summary-image-meta span.summary-image-size {
+    font-size: 11px; }
+
+/*# sourceMappingURL=panel-summary.component.css.map */

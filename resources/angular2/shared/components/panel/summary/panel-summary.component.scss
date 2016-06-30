@@ -1,0 +1,13 @@
+:host {
+	.summary-image-meta {
+		span {
+			float: left;
+			clear: both;
+			font-size: 13px;
+			&.summary-image-size {
+				font-size: 11px;
+				color: #000;
+			}
+		}
+	}
+}

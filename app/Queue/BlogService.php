@@ -32,9 +32,9 @@ class BlogService {
         // Process image from field
         $image = null;
         if (isset($data['image']['url'])) {
-            $image = $this->makeImage($data['image']['url'])->id;
+            $image = $this->makeImage($data['image']['url']);
         } else {
-            $image = $this->makeImage()->id;
+            $image = $this->makeImage();
         }
 
         // Process body for images to fetch
@@ -52,7 +52,7 @@ class BlogService {
                         }
 
                         $url = str_replace('jpecatalogs', 'jpenterprises', $url);
-                        $image = $this->makeImage($url)->id;
+                        $image = $this->makeImage($url);
                     }
                 }
                 $body = preg_replace_callback($pattern, function ($m) {
@@ -81,7 +81,8 @@ class BlogService {
     }
 
     public function makeImage($url = false) {
-        $destination = 'resources/assets/images/blogs';
+        $uploads_destination = 'app/public/images/blogs';
+        $destination = storage_path($uploads_destination);
         if (!File::exists($destination)) {
         	File::makeDirectory($destination);
         }
@@ -101,7 +102,7 @@ class BlogService {
         } else {
         	$faker = \Faker\Factory::create();
 
-        	$filepath = $faker->image('resources/assets/images/blogs', 340, 206);
+        	$filepath = $faker->image($destination, 340, 206);
 
             $filepath = str_replace("\\", "/", $filepath);
             $filename = $original_name = basename($filepath);
@@ -112,7 +113,7 @@ class BlogService {
         }
 
         $image = Image::create([
-            'path' => $destination,
+            'path' => $uploads_destination,
             'name' => $filename,
             'alias' => $original_name,
             'extension' => $extension,
