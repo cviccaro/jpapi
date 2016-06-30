@@ -24,6 +24,10 @@ var AppComponent = (function () {
         });
         this.loggedIn = this.authService.authorized;
     }
+    AppComponent.prototype.ngOnInit = function () {
+        var _this = this;
+        this.subscription = this.authService.whenAuthorized.subscribe(function (authorized) { return _this.loggedIn = authorized; });
+    };
     AppComponent.prototype.navigateTo = function (link) {
         console.log('navigate to: ', link);
         this.router.navigate(link);
@@ -31,6 +35,9 @@ var AppComponent = (function () {
     AppComponent.prototype.logout = function () {
         this.authService.reset();
         this.router.navigate(['/login']);
+    };
+    AppComponent.prototype.ngOnDestroy = function () {
+        this.subscription.unsubscribe();
     };
     AppComponent = __decorate([
         core_1.Component({

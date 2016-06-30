@@ -1,20 +1,40 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable, OnInit, EventEmitter } from '@angular/core';
 import { Http, URLSearchParams, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { AuthHttp, JwtHelper } from 'angular2-jwt';
+
+import { ReplaySubject } from 'rxjs/ReplaySubject';
+
 // import {LocalStorageService} from "angular2-localstorage/LocalStorageEmitter";
 // import {LocalStorage, SessionStorage} from "angular2-localstorage/WebStorage";
 
 @Injectable()
 export class AuthService implements OnInit {
-    authorized = false;
+    private _authorized = false;
     hasStorage = !(localStorage === undefined);
    // @LocalStorage() public token: string = '';
     private token = '';
     private expires: number;
 
+    // Observable source
+    private _authTokenSource = new ReplaySubject<string>(1);
+    // Observable stream
+    public authToken$ = this._authTokenSource.asObservable();
+
+    // source
+    private _authorizedSource = new ReplaySubject<boolean>(1);
+
+    // stream
+    public whenAuthorized = this._authorizedSource.asObservable();
+
     constructor(private http: Http, private authHttp: AuthHttp, private helper: JwtHelper) {
         this.ngOnInit();
+    }
+
+    get authorized() { return this._authorized; }
+    set authorized(v: boolean) {
+        this._authorized = v;
+        this._authorizedSource.next(v);
     }
 
     ngOnInit() {
@@ -54,11 +74,18 @@ export class AuthService implements OnInit {
     setToken(token) {
         if (this.hasStorage) localStorage.setItem('id_token', token);
         this.token = token;
+        this.informObservers(token);
         return this;
     }
 
     getToken() {
         return this.token;
+    }
+
+    informObservers(token?:string) {
+        if (token === undefined) token = this.token;
+
+        this._authTokenSource.next(token);
     }
 
     setExpires(expires) {

@@ -12,16 +12,30 @@ var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 var Rx_1 = require('rxjs/Rx');
 var angular2_jwt_1 = require('angular2-jwt');
+var ReplaySubject_1 = require('rxjs/ReplaySubject');
 var AuthService = (function () {
     function AuthService(http, authHttp, helper) {
         this.http = http;
         this.authHttp = authHttp;
         this.helper = helper;
-        this.authorized = false;
+        this._authorized = false;
         this.hasStorage = !(localStorage === undefined);
         this.token = '';
+        this._authTokenSource = new ReplaySubject_1.ReplaySubject(1);
+        this.authToken$ = this._authTokenSource.asObservable();
+        this._authorizedSource = new ReplaySubject_1.ReplaySubject(1);
+        this.whenAuthorized = this._authorizedSource.asObservable();
         this.ngOnInit();
     }
+    Object.defineProperty(AuthService.prototype, "authorized", {
+        get: function () { return this._authorized; },
+        set: function (v) {
+            this._authorized = v;
+            this._authorizedSource.next(v);
+        },
+        enumerable: true,
+        configurable: true
+    });
     AuthService.prototype.ngOnInit = function () {
         var _this = this;
         if (this.hasStorage) {
@@ -60,10 +74,16 @@ var AuthService = (function () {
         if (this.hasStorage)
             localStorage.setItem('id_token', token);
         this.token = token;
+        this.informObservers(token);
         return this;
     };
     AuthService.prototype.getToken = function () {
         return this.token;
+    };
+    AuthService.prototype.informObservers = function (token) {
+        if (token === undefined)
+            token = this.token;
+        this._authTokenSource.next(token);
     };
     AuthService.prototype.setExpires = function (expires) {
         if (this.hasStorage)

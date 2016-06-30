@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import { HTTP_PROVIDERS } from '@angular/http';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 
@@ -7,6 +7,8 @@ import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2
 import { MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS } from './shared/libs/angular2-material';
 
 import { AuthService } from './shared/index';
+
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     selector: 'jpa-app',
@@ -20,9 +22,11 @@ import { AuthService } from './shared/index';
         ToasterContainerComponent
     ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
 	toasterConfig: ToasterConfig;
     loggedIn = false;
+
+    private subscription: Subscription;
 
 	constructor(public router: Router, private authService: AuthService) {
 		this.toasterConfig = new ToasterConfig({
@@ -31,6 +35,10 @@ export class AppComponent {
 
         this.loggedIn = this.authService.authorized;
 	}
+
+    ngOnInit() {
+        this.subscription = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
+    }
 
     navigateTo(link) {
         console.log('navigate to: ', link);
@@ -41,4 +49,9 @@ export class AppComponent {
         this.authService.reset();
         this.router.navigate(['/login']);
     }
+
+    ngOnDestroy() {
+       // prevent memory leak when component is destroyed
+       this.subscription.unsubscribe();
+     }
 }

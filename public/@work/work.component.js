@@ -61,7 +61,7 @@ var WorkComponent = (function () {
                     _this.isNew = false;
                     _this.work = res;
                     _this.router.navigate(['/work', res.id]);
-                }, 6000);
+                }, 4000);
             });
         }
         else {
