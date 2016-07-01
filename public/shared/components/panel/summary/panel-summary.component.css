@@ -1,8 +1,16 @@
-:host .summary-image-meta span {
-  float: left;
-  clear: both;
-  font-size: 13px; }
-  :host .summary-image-meta span.summary-image-size {
-    font-size: 11px; }
+:host {
+  max-width: 75%;
+  display: block; }
+  :host [hidden] {
+    display: none; }
+  :host .summary-text-wrapper.textarea {
+    width: 90%; }
+    :host .summary-text-wrapper.textarea .summary-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      position: relative;
+      display: inline-block;
+      width: 100%; }
 
 /*# sourceMappingURL=panel-summary.component.css.map */

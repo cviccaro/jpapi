@@ -1,23 +1,21 @@
-<pre>
-{{ work| json }}
-</pre>
-
+<pre>{{ work | json }}</pre>
 <div class="container" *ngIf="ready">
     <h2 class="form-title">{{ isNew ? 'Create' : 'Edit' }} Work {{ isNew ? '' : work.title }}</h2>
     <form #workForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
       <jpa-panel-group>
-        <jpa-panel #titlePanel label="Title" [(ngModel)]="work.title" name="title" type="text" editText="Enter a title" required>
+<!--         <jpa-panel #titlePanel label="Title" [(ngModel)]="work.title" name="title" type="text" editText="Enter a title" required>
           <md-hint align="end">{{titlePanel.characterCount}} / 100</md-hint>
         </jpa-panel>
         <jpa-panel #clientPanel label="Client" [(ngModel)]="work.client.id" name="client" type="select" editText="Select a client" required>
           <option *ngFor="let client of clients" [value]="client.id">{{client.name}}</option>
-        </jpa-panel>
-        <jpa-panel #bodyPanel label="Body" [(ngModel)]="work.body" name="body" type="textarea" editText="Write some copy" required>
+        </jpa-panel> -->
+<!--         <jpa-panel #bodyPanel label="Body" [(ngModel)]="work.body" name="body" type="textarea" editText="Write some copy" required>
           <md-hint align="end">{{bodyPanel.characterCount}} / &infin;</md-hint>
-        </jpa-panel>
-        <jpa-panel label="Cover Image" type="image" name="image_new" editText="Pick a picture" [(ngModel)]="work.image_new" [currentImage]="work.image" (imageFieldChanged)="imageFieldChanged($event)">
-          <jpa-panel-content [image]="work.image" class="right"></jpa-panel-content>
-        </jpa-panel>
+        </jpa-panel> -->
+<!--         <jpa-panel label="Cover Image" type="image" name="image_new" editText="Pick a picture" [(ngModel)]="work.image_new" [currentImage]="work.image">
+          <jpa-panel-content [file]="work.image_new" align="left"></jpa-panel-content>
+          <jpa-panel-content [image]="work.image" align="right"></jpa-panel-content>
+        </jpa-panel> -->
         <jpa-panel label="Gallery" type="images" editText="Select images" name="gallery_new" [(ngModel)]="work.gallery_new" [gallery]="work.gallery">
         </jpa-panel>
       </jpa-panel-group>

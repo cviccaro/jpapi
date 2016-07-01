@@ -1,4 +1,4 @@
-<div class="panel-summary">
+<!-- <div class="panel-summary">
     <div class="summary-text-wrapper" [hidden]="expanded">
         <span class="summary-text textfield" *ngIf="type !== 'image' && type !== 'gallery'">
             {{ summary | slice:0:50 }}
@@ -21,5 +21,42 @@
         </div>
         <span class="summary-image-loading" [hidden]="imageLoaded">Loading...<md-icon class="spin">update</md-icon></span>
         <img [src]="currentImage" class="image-preview" #imagePreview />
+    </div>
+</div> -->
+<button (click)="report($event)">report</button>
+<div class="panel-summary-wrapper" [ngSwitch]="empty">
+    <div class="panel-summary" *ngSwitchCase="true">
+        <div [hidden]="currentImage && !expanded">
+            <span class="summary-text edit-text">{{ editText }} <md-icon class="md-20">help_outline</md-icon></span>
+        </div>
+        <jpa-panel-summary-image *ngIf="type === 'image'" [image]="currentImage" [hidden]="expanded"></jpa-panel-summary-image>
+    </div>
+    <div class="panel-summary" *ngSwitchDefault>
+        <div class="panel-summary-inner" [ngSwitch]="expanded">
+            <div *ngSwitchCase="true">
+                <span class="summary-text edit-text">{{ editText }} <md-icon class="md-20">help_outline</md-icon></span>
+            </div>
+            <div *ngSwitchDefault>
+                <div class="summary-text-wrapper {{type}}" [ngSwitch]="type">
+                    <span *ngSwitchCase="image" class="summary-text">
+                        {{ summary }}
+                    </span>
+                    <span *ngSwitchCase="gallery" class="summary-text">
+                        <div class="count" *ngSwitch="gallery.length">
+                            <md-icon color="primary">panorama</md-icon>
+                            <span *ngSwitchCase="0">
+                                Drag some pictures in
+                            </span>
+                            <span *ngSwitchDefault>
+                                {{ gallery.length }} pictures in gallery
+                            </span>
+
+                        </div>
+                    </span>
+                    <span *ngSwitchDefault class="summary-text">{{ summary }}</span>
+                </div>
+            </div>
+            <!-- <jpa-panel-summary-image *ngIf="type === 'image'" [image]="currentImage" [hidden]="!empty"></jpa-panel-summary-image> -->
+        </div>
     </div>
 </div>

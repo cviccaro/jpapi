@@ -37,20 +37,6 @@ $label_width: 25%;
                 margin-right: 0;
                 width: $label_width;
             }
-            .panel-summary {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                cursor: default;
-                .summary-image {
-
-                }
-                .image-preview {
-                    background-size: contain;
-                    max-width: 60px;
-                    overflow: hidden;
-                }
-            }
 
             .toggle {
                 align-self: center;
@@ -73,25 +59,6 @@ $label_width: 25%;
             // -webkit-box-shadow: none;
             // -moz-box-shadow: none;
             // -ms-box-shadow: none;
-        }
-    }
-
-    /**
-     * Panel Summary
-     */
-
-    .panel-summary {
-        margin-left: 0;
-        margin-right: auto;
-        min-width: 25%;
-        color: $black_54;
-        font-size: 16px;
-
-        @include basic-transition;
-
-        md-icon {
-            margin-left: 5px;
-            vertical-align: top;
         }
     }
 

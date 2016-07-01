@@ -1,0 +1,1 @@
+{"version":3,"sources":["shared/components/panel/summary-image/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,2BAA2B,CAAC,EAAA","file":"shared/components/panel/summary-image/index.js","sourcesContent":["export * from './summary-image.component';\r\n"],"sourceRoot":"/source/"}

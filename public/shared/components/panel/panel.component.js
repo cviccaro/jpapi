@@ -64,7 +64,6 @@ var JpaPanel = (function () {
         this._expanded = false;
         this._value = '';
         this._empty = false;
-        this._summary = '';
         this._underlineHidden = false;
         this._isTextfield = false;
         this._isTextarea = false;
@@ -74,6 +73,7 @@ var JpaPanel = (function () {
         this._hasContent = false;
         this._hasContentRight = false;
         this._hasContentBottom = false;
+        this._hasContentLeft = false;
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
         this.dividerColor = 'primary';
@@ -215,45 +215,6 @@ var JpaPanel = (function () {
     JpaPanel.prototype.isEmpty = function (v) {
         return v === undefined || v === null || (Array.isArray(v) && v.length === 0) || Object.keys(v).length === 0;
     };
-    Object.defineProperty(JpaPanel.prototype, "summary", {
-        get: function () {
-            return this._summary;
-        },
-        set: function (value) {
-            var _this = this;
-            switch (this.type) {
-                case 'select':
-                    var interval_1 = setInterval(function () {
-                        var filtered = _this._optionChildren.filter(function (opt) {
-                            return opt['_element']['nativeElement']['value'] == _this._value;
-                        });
-                        if (filtered.length) {
-                            _this._summary = filtered[0]['_element']['nativeElement']['innerHTML'];
-                            clearInterval(interval_1);
-                        }
-                    }, 250);
-                    break;
-                case 'image':
-                    this._summary = value || '';
-                    break;
-                case 'images':
-                    this._setGallerySummary();
-                    break;
-                default:
-                    this._summary = value;
-            }
-        },
-        enumerable: true,
-        configurable: true
-    });
-    JpaPanel.prototype._setGallerySummary = function () {
-        if (this.gallery.length) {
-            this._summary = this.gallery.length + ' pictures in gallery';
-        }
-        else {
-            this._summary = '';
-        }
-    };
     Object.defineProperty(JpaPanel.prototype, "currentImageSize", {
         get: function () {
             return this._currentImageSize;
@@ -309,11 +270,9 @@ var JpaPanel = (function () {
                 break;
             case 'select':
                 this.value = event.target.value;
-                this.summary = this.value;
                 break;
             case 'textarea':
                 this.value = event.target.value;
-                this.summary = this.value;
                 break;
             case 'image':
                 this.value = event.target.files[0];
@@ -321,30 +280,16 @@ var JpaPanel = (function () {
                 break;
             default:
                 this.value = event.target.value;
-                this.summary = this.value;
                 break;
         }
         this._valueChanged = true;
         this._onTouchedCallback();
-    };
-    JpaPanel.prototype.hasPlaceholder = function () {
-        return !!this.placeholder;
     };
     JpaPanel.prototype.writeValue = function (value) {
         console.debug('JpaPanel.' + this.type + ' ' + this.name + '#writeValue(' + this.type + ')', value);
         this._value = value;
         if (!this._initialValue)
             this._initialValue = value;
-        switch (this.type) {
-            case 'image':
-                if (value !== undefined && value !== null) {
-                    this.summary = 'New - ' + value.name;
-                    break;
-                }
-            default:
-                this.summary = value;
-                break;
-        }
     };
     JpaPanel.prototype.registerOnChange = function (fn) {
         this._onChangeCallback = fn;
@@ -364,14 +309,28 @@ var JpaPanel = (function () {
         this._hasContent = !!this._contentChildren.length;
         if (this._hasContent) {
             this._contentChildren.forEach(function (panel) {
-                if (panel.align === 'bottom') {
-                    _this._hasContentBottom = true;
-                }
-                else if (panel.align === 'right') {
-                    _this._hasContentRight = true;
+                console.log('CONTENT CHILDREN PANEL CONTENT OMGGGGGGGGGGG ', panel);
+                switch (panel.align) {
+                    case 'right':
+                        _this._hasContentRight = true;
+                        break;
+                    case 'left':
+                        _this._hasContentLeft = true;
+                        break;
+                    case 'bottom':
+                        _this._hasContentBottom = true;
+                        break;
                 }
             });
         }
+        if (this._summaryChild) {
+            switch (this.type) {
+                case 'select':
+                    this._summaryChild.setOptions(this._optionChildren);
+                    break;
+            }
+        }
+        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#AfterContentInit', this);
     };
     JpaPanel.prototype.ngAfterViewInit = function () {
         switch (this.type) {
@@ -384,8 +343,16 @@ var JpaPanel = (function () {
                 }
                 break;
         }
+        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#ngAfterViewInit', this);
     };
     JpaPanel.prototype.ngOnChanges = function (changes) {
+        console.log('PANEL changed something: ', changes);
+        for (var prop in changes) {
+            var previousValue = changes[prop].previousValue;
+            var currentValue = changes[prop].currentValue;
+            var isFirstChange = changes[prop].isFirstChange;
+            console.log('PanelComponent.' + prop + ' changed: ', { from: previousValue, to: currentValue, isFirstChange: isFirstChange });
+        }
         this._validateConstraints();
     };
     JpaPanel.prototype._convertValueForInputType = function (v) {
@@ -440,7 +407,6 @@ var JpaPanel = (function () {
         console.log('PanelComponent -- ImageUpload -- imageAdded', e);
     };
     JpaPanel.prototype.imageLoaded = function (e) {
-        this._setGallerySummary();
     };
     __decorate([
         core_1.Input('aria-label'), 
@@ -477,6 +443,10 @@ var JpaPanel = (function () {
         core_1.ContentChildren(index_1.JpaPanelContent), 
         __metadata('design:type', core_1.QueryList)
     ], JpaPanel.prototype, "_contentChildren", void 0);
+    __decorate([
+        core_1.ViewChild(index_2.PanelSummaryComponent), 
+        __metadata('design:type', index_2.PanelSummaryComponent)
+    ], JpaPanel.prototype, "_summaryChild", void 0);
     __decorate([
         core_1.ViewChild('input'), 
         __metadata('design:type', core_1.ElementRef)
@@ -631,7 +601,7 @@ var JpaPanel = (function () {
                 forms_1.NgSelectOption,
                 index_1.JpaPanelContent,
                 index_3.ImageUploadComponent,
-                index_2.PanelSummaryComponent
+                index_2.PanelSummaryComponent,
             ],
             providers: [exports.JPA_PANEL_VALUE_ACCESSOR, index_3.FileUploader],
             pipes: [common_1.SlicePipe],

@@ -15,25 +15,43 @@ var JpaPanelContent = (function () {
         this.el = el;
         this._hasImage = false;
         this.imageExtension = '';
+        this.file = null;
         this.image = null;
         this.align = 'right';
     }
-    JpaPanelContent.prototype.ngOnInit = function () {
-        if (this.image !== null && this.image !== undefined)
-            this._hasImage = true;
-    };
+    Object.defineProperty(JpaPanelContent.prototype, "ifLeftClass", {
+        get: function () { return this.align === 'left'; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanelContent.prototype, "ifRightClass", {
+        get: function () { return this.align === 'right'; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanelContent.prototype, "ifBottomClass", {
+        get: function () { return this.align === 'bottom'; },
+        enumerable: true,
+        configurable: true
+    });
     JpaPanelContent.prototype.ngAfterContentInit = function () {
-        if (this._hasImage) {
+        if (this.image) {
+            this._hasImage = true;
             this.imageExtension = 'image/' + this.image.split('.').pop();
         }
-        if (this.el.nativeElement.classList.contains('bottom')) {
-            this.align = 'bottom';
-        }
+        console.log('PanelContent (' + this.align + ') Content Initialized: ', { this: this });
     };
     JpaPanelContent.prototype.ngAfterViewInit = function () {
     };
     JpaPanelContent.prototype.onToggle = function (expanded) {
     };
+    JpaPanelContent.prototype.ngOnChanges = function (changes) {
+        console.log('PanelContent (' + this.align + ') changed: ', { changes: changes });
+    };
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', File)
+    ], JpaPanelContent.prototype, "file", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
@@ -42,6 +60,18 @@ var JpaPanelContent = (function () {
         core_1.Input(), 
         __metadata('design:type', String)
     ], JpaPanelContent.prototype, "align", void 0);
+    __decorate([
+        core_1.HostBinding('class.left'), 
+        __metadata('design:type', Object)
+    ], JpaPanelContent.prototype, "ifLeftClass", null);
+    __decorate([
+        core_1.HostBinding('class.right'), 
+        __metadata('design:type', Object)
+    ], JpaPanelContent.prototype, "ifRightClass", null);
+    __decorate([
+        core_1.HostBinding('class.bottom'), 
+        __metadata('design:type', Object)
+    ], JpaPanelContent.prototype, "ifBottomClass", null);
     __decorate([
         core_1.ContentChild(grid_list_1.MdGridList), 
         __metadata('design:type', grid_list_1.MdGridList)

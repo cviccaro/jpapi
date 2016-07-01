@@ -20,7 +20,7 @@ import {
     EventEmitter,
     Output,
 } from '@angular/core';
-import { SlicePipe, NgIf } from '@angular/common';
+import { SlicePipe, NgIf, NgSwitch } from '@angular/common';
 import {NgModel, NgSelectOption, ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {BooleanFieldValue} from '@angular2-material/core/annotations/field-value';
 import {MdError} from '@angular2-material/core/errors/error';
@@ -83,7 +83,7 @@ export class JpaPanelDuplicatedHintError extends MdError {
         NgSelectOption,
         JpaPanelContent,
         ImageUploadComponent,
-        PanelSummaryComponent
+        PanelSummaryComponent,
         // FILE_UPLOAD_DIRECTIVES,
         // MD_GRID_LIST_DIRECTIVES
     ],
@@ -98,7 +98,6 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     private _expanded: boolean = false;
     private _value: any = '';
     private _empty: boolean = false;
-    private _summary: any = '';
     private _underlineHidden: boolean = false;
     private _isTextfield: boolean = false;
     private _isTextarea: boolean = false;
@@ -108,6 +107,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     private _hasContent: boolean = false;
     private _hasContentRight: boolean = false;
     private _hasContentBottom: boolean = false;
+    private _hasContentLeft: boolean = false;
 
     /** Callback registered via registerOnTouched (ControlValueAccessor) */
     private _onTouchedCallback: () => void = noop;
@@ -152,7 +152,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     @ContentChildren(MdHint) private _hintChildren: QueryList<MdHint>;
     @ContentChildren(NgSelectOption) private _optionChildren: QueryList<NgSelectOption>;
     @ContentChildren(JpaPanelContent) private _contentChildren: QueryList<JpaPanelContent>;
-    // @ContentChild(MdGridList) private _gridList: MdGridList;
+    @ViewChild(PanelSummaryComponent) private _summaryChild: PanelSummaryComponent;
 
     /**
      * Form elements
@@ -257,43 +257,6 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
 
     @Input() editText: string;
 
-    get summary(): any {
-        return this._summary;
-    }
-
-    set summary(value: any) {
-        switch(this.type) {
-            case 'select':
-                let interval = setInterval(() => {
-                    let filtered = this._optionChildren.filter(opt => {
-                        return opt['_element']['nativeElement']['value'] == this._value;
-                    });
-                    if (filtered.length) {
-                        this._summary = filtered[0]['_element']['nativeElement']['innerHTML'];
-                        clearInterval(interval);
-                    }
-                }, 250);
-                break;
-            case 'image':
-                this._summary = value || '';
-                break;
-            case 'images':
-                this._setGallerySummary();
-                break;
-            default:
-                this._summary = value;
-        }
-        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#set summary(): ', this._summary);
-    }
-
-    private _setGallerySummary() {
-        if (this.gallery.length) {
-            this._summary = this.gallery.length + ' pictures in gallery';
-        } else {
-            this._summary = '';
-        }
-    }
-
     private _imageLoaded = false;
     private _currentImageSize = null;
 
@@ -356,11 +319,9 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
                 break;
             case 'select':
                 this.value = (<HTMLSelectElement>event.target).value;
-                this.summary = this.value;
                 break;
             case 'textarea':
                 this.value = (<HTMLTextAreaElement>event.target).value;
-                this.summary = this.value;
                 break;
             case 'image':
                 this.value = event.target.files[0];
@@ -368,17 +329,11 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
                 break;
             default:
                 this.value = (<HTMLInputElement>event.target).value;
-                this.summary = this.value;
                 break;
         }
-        // console.log('JpaPanel.'+this.type+' ' + this.name + '#handleChange (' + this.type + ') set value for  to ', this.value);
+
         this._valueChanged = true;
         this._onTouchedCallback();
-    }
-
-    /** @internal */
-    hasPlaceholder(): boolean {
-        return !!this.placeholder;
     }
 
     /**
@@ -389,31 +344,14 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         console.debug('JpaPanel.'+this.type+' ' + this.name + '#writeValue('+this.type+')', value);
         this._value = value;
         if (!this._initialValue) this._initialValue = value;
-        switch (this.type) {
-            case 'image':
-                if (value !== undefined && value !== null) {
-                    this.summary = 'New - ' + value.name;
-                    break;
-                }
-            default: this.summary = value; break;
-        }
     }
-
-    /**
-     * Implemented as part of ControlValueAccessor.
-     * TODO: internal
-     */
     registerOnChange(fn: any) {
         this._onChangeCallback = fn;
     }
-
-    /**
-     * Implemented as part of ControlValueAccessor.
-     * TODO: internal
-     */
     registerOnTouched(fn: any) {
         this._onTouchedCallback = fn;
     }
+
 
     /** TODO: internal */
     ngAfterContentInit() {
@@ -432,30 +370,29 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
 
         if (this._hasContent) {
             this._contentChildren.forEach(panel => {
-                if (panel.align === 'bottom') {
-                    this._hasContentBottom = true;
-                } else if (panel.align === 'right') {
-                    this._hasContentRight = true;
+                console.log('CONTENT CHILDREN PANEL CONTENT OMGGGGGGGGGGG ', panel);
+                switch(panel.align) {
+                    case 'right': this._hasContentRight = true; break;
+                    case 'left': this._hasContentLeft = true; break;
+                    case 'bottom': this._hasContentBottom = true; break;
                 }
             })
         }
 
-        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#AfterContentInit', this);
+        if (this._summaryChild) {
+            switch(this.type) {
+                case 'select':
+                    this._summaryChild.setOptions(this._optionChildren);
+                    break;
+            }
+        }
+
+        console.debug('JpaPanel.'+this.type+' ' + this.name + '#AfterContentInit', this);
     }
 
     ngAfterViewInit() {
         switch(this.type) {
             case 'image':
-                // if (this._imagePreview && this.currentImageSize === null) {
-                //     this._imagePreview.nativeElement.onload = (e) => {
-                //         // console.debug('JpaPanel.'+this.type+' ' + this.name + '#AfterViewInit IMAGE LOADED!');
-                //         this._imageLoaded = true;
-                //         this.currentImageSize = {w: this._imagePreview.nativeElement.naturalWidth, h: this._imagePreview.nativeElement.naturalHeight};
-                //         if (!this._expanded) {
-                //             this._summary = this.currentImageSize.w + 'x' + this.currentImageSize.h + 'px';
-                //         }
-                //     };
-                // }
                 this.value = this.nativeElement.value;
             break;
             default:
@@ -465,11 +402,18 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
                 }
                 break;
         }
+        console.debug('JpaPanel.'+this.type+' ' + this.name + '#ngAfterViewInit', this);
     }
 
     /** TODO: internal */
     ngOnChanges(changes: { [key: string]: SimpleChange }) {
-        //console.log('JpaPanel.'+this.type+' ' + this.name + '#OnChanges() : ', changes);
+        console.log('PANEL changed something: ', changes);
+        for (let prop in changes) {
+            let previousValue = changes[prop].previousValue;
+            let currentValue = changes[prop].currentValue;
+            let isFirstChange = changes[prop].isFirstChange;
+            console.log('PanelComponent.'+ prop + ' changed: ', {from: previousValue, to: currentValue, isFirstChange: isFirstChange});
+        }
         this._validateConstraints();
     }
 
@@ -554,6 +498,5 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     }
     imageLoaded(e: any) {
      //   console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
-        this._setGallerySummary();
     }
 }

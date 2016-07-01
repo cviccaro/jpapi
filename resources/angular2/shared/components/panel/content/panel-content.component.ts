@@ -1,4 +1,15 @@
-import { Component, Input, OnInit, AfterContentInit, AfterViewInit, ElementRef, ContentChild } from '@angular/core';
+import {
+    Component,
+    Input,
+    OnInit,
+    AfterContentInit,
+    AfterViewInit,
+    ElementRef,
+    ContentChild,
+    HostBinding,
+    SimpleChanges,
+    SimpleChange
+} from '@angular/core';
 import { MdGridList } from '@angular2-material/grid-list';
 
 @Component({
@@ -8,32 +19,31 @@ import { MdGridList } from '@angular2-material/grid-list';
     styleUrls: ['./panel-content.component.css'],
     directives: [MdGridList]
 })
-export class JpaPanelContent implements OnInit, AfterViewInit {
+export class JpaPanelContent implements AfterContentInit, AfterViewInit {
     private _hasImage: boolean = false;
     private imageExtension: string = '';
 
-    constructor(public el: ElementRef) {}
+    constructor(public el: ElementRef) { }
 
+    @Input() file: File = null;
     @Input() image: string = null;
     @Input() align: string = 'right';
 
+    @HostBinding('class.left') get ifLeftClass() { return this.align === 'left'; }
+    @HostBinding('class.right') get ifRightClass() { return this.align === 'right'; }
+    @HostBinding('class.bottom') get ifBottomClass() { return this.align === 'bottom'; }
+
     @ContentChild(MdGridList) private _gridList: MdGridList;
 
-    ngOnInit() {
-        if (this.image !== null && this.image !== undefined) this._hasImage = true;
-    }
     ngAfterContentInit() {
-        if (this._hasImage) {
+        if (this.image) {
+            this._hasImage = true;
             this.imageExtension = 'image/' + this.image.split('.').pop();
         }
-
-        if (this.el.nativeElement.classList.contains('bottom')) {
-            this.align = 'bottom';
-        }
+        console.log('PanelContent (' + this.align + ') Content Initialized: ', { this: this });
     }
-    ngAfterViewInit() {
-        //console.debug('PanelContent view initialized.', this);
 
+    ngAfterViewInit() {
         // if (this._gridList) {
         //     console.log('CHECK OUT OUR SWEET LAYOUT TILES FUNCTION: ' , this._gridList['_layoutTiles']);
         //     this._gridList['_layoutTiles']();
@@ -48,5 +58,9 @@ export class JpaPanelContent implements OnInit, AfterViewInit {
         //         setTimeout(() => { this._gridList['_layoutTiles']() }, 1000);
         //     }
         // }
+    }
+
+    ngOnChanges(changes: SimpleChanges) {
+        console.log('PanelContent (' + this.align + ') changed: ', { changes: changes });
     }
 }

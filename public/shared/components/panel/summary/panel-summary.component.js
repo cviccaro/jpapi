@@ -9,13 +9,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var common_1 = require('@angular/common');
 var angular2_material_1 = require('../../../../shared/libs/angular2-material');
+var summary_image_component_1 = require('../summary-image/summary-image.component');
 var PanelSummaryComponent = (function () {
     function PanelSummaryComponent() {
         this.imageLoaded = false;
         this._currentImageSize = null;
         this._currentImageName = false;
-        this.summary = '';
+        this._summary = '';
         this.expanded = false;
         this.empty = true;
         this.valueChanged = false;
@@ -31,26 +33,60 @@ var PanelSummaryComponent = (function () {
         configurable: true
     });
     PanelSummaryComponent.prototype.ngAfterViewInit = function () {
-        var _this = this;
-        console.log('PanelSummary# AfterViewInit', this);
-        if (this._imagePreview) {
-            console.log('Binding to image preview to check its loaded status ', this._imagePreview);
-            this._imagePreview.nativeElement.addEventListener('load', function (e) {
-                _this.imageLoaded = true;
-                _this.currentImageSize = { w: _this._imagePreview.nativeElement.naturalWidth, h: _this._imagePreview.nativeElement.naturalHeight };
-                var parts = _this._imagePreview.nativeElement.currentSrc.split('/');
-                _this._currentImageName = parts[parts.length - 1];
-                console.log(_this);
+        this.summary = this.value;
+    };
+    PanelSummaryComponent.prototype.report = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log(this);
+    };
+    PanelSummaryComponent.prototype.setOptions = function (options) {
+        if (options.length) {
+            this._selectOptions = options.map(function (item) {
+                return {
+                    value: item['_element']['nativeElement']['value'],
+                    label: item['_element']['nativeElement'].innerHTML
+                };
             });
         }
-        else {
-            console.log('Skipping image preview check because it is does not exist. ', this);
+    };
+    Object.defineProperty(PanelSummaryComponent.prototype, "summary", {
+        get: function () {
+            return this._summary;
+        },
+        set: function (v) {
+            this._summary = v;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    PanelSummaryComponent.prototype.ngOnChanges = function (changes) {
+        for (var prop in changes) {
+            var previousValue = changes[prop].previousValue;
+            var currentValue = changes[prop].currentValue;
+            var isFirstChange = changes[prop].isFirstChange;
+            console.log('PanelSummary.' + prop + ' changed: ', { from: previousValue, to: currentValue, isFirstChange: isFirstChange });
+            switch (prop) {
+                case 'value':
+                    this.setSummaryOf(currentValue);
+                    break;
+            }
         }
     };
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
-    ], PanelSummaryComponent.prototype, "summary", void 0);
+    PanelSummaryComponent.prototype.setSummaryOf = function (value) {
+        switch (this.type) {
+            case 'select':
+                var filtered = this._selectOptions.filter(function (opt) {
+                    return opt['value'] == value;
+                });
+                if (filtered.length) {
+                    this.summary = filtered[0]['label'];
+                }
+                break;
+            default:
+                this.summary = value;
+        }
+    };
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Boolean)
@@ -93,7 +129,8 @@ var PanelSummaryComponent = (function () {
             selector: 'jpa-panel-summary',
             templateUrl: './panel-summary.component.html',
             styleUrls: ['./panel-summary.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, summary_image_component_1.PanelSummaryImage],
+            viewProviders: [common_1.NgSwitch, common_1.NgSwitchCase, common_1.NgSwitchDefault]
         }), 
         __metadata('design:paramtypes', [])
     ], PanelSummaryComponent);

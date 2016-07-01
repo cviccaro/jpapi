@@ -3,7 +3,14 @@
         <md-card-title>
             {{ label }} <span *ngIf="required" class="md-placeholder-required">*</span>
         </md-card-title>
-        <jpa-panel-summary [summary]="summary" [expanded]="_expanded" [type]="type" [gallery]="gallery" [value]="value" [currentImage]="currentImage" [empty]="empty" [valueChanged]="_valueChanged" [emptyText]="emptyText">
+        <jpa-panel-summary
+          [expanded]="_expanded"
+          [type]="type" [gallery]="gallery"
+          [value]="value"
+          [currentImage]="currentImage"
+          [empty]="empty"
+          [valueChanged]="_valueChanged"
+          [editText]="editText">
         </jpa-panel-summary>
 <!--         <div class="panel-summary">
             <div class="summary-text-wrapper" [hidden]="_expanded">
@@ -35,7 +42,10 @@
         [class.panel-content-input]="_isTextfield" [class.panel-content-select]="_isSelect"
         [class.panel-content-textarea]="_isTextarea" [class.panel-content-image]="_isImage">
         <div class="panel-content-top">
-          <div class="panel-content-spacer" [hidden]="fullWidth"></div>
+          <div class="panel-content-spacer" [hidden]="fullWidth || _hasContentLeft"></div>
+          <div class="panel-content-left" *ngIf="_hasContentLeft">
+            <ng-content select="jpa-panel-content[align=left]"></ng-content>
+          </div>
           <div class="panel-control" [class.full-width]="fullWidth">
               <div class="panel-control-table">
                   <div class="panel-control-infix">
@@ -129,25 +139,13 @@
               <ng-content select="md-hint"></ng-content>
           </div>
           <div class="panel-content-right" *ngIf="_hasContentRight">
-              <ng-content select="jpa-panel-content.right"></ng-content>
+              <ng-content select="jpa-panel-content[align=right]"></ng-content>
           </div>
           <div class="panel-content-spacer-end" [hidden]="fullWidth"></div>
         </div>
         <div class="panel-content-bottom" *ngIf="_hasContentBottom">
-          <ng-content *ngIf="!_isGallery" select="jpa-panel-content.bottom"></ng-content>
-          <jpa-panel-content *ngIf="_isGallery" class="bottom">
-<!--             <div
-              #filedrop
-              class="well file-drop-zone"
-              [class.nv-file-over]="hasBaseDropZoneOver"
-              (dragOver)="fileOverBase($event)"
-              (dragLeave)="fileOffBase($event)"
-              (drop)="onFileDrop($event)">
-              <md-grid-list cols="4" rowHeight="16:9">
-                 <md-grid-tile *ngFor="let image of gallery" flex="25"><img [src]="image.image_url" /></md-grid-tile>
-                 <md-grid-tile *ngIf="gallery.length % 4 !== 1" flex="25"></md-grid-tile>
-              </md-grid-list>
-            </div> -->
+          <ng-content *ngIf="!_isGallery" select="jpa-panel-content[align=bottom]"></ng-content>
+          <jpa-panel-content *ngIf="_isGallery" align="bottom">
             <jpa-image-upload
                 url="/upload/image"
                 multiple="true"

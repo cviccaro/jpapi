@@ -1,13 +1,48 @@
 :host {
-	.summary-image-meta {
-		span {
-			float: left;
-			clear: both;
-			font-size: 13px;
-			&.summary-image-size {
-				font-size: 11px;
-				color: #000;
-			}
+	max-width: 75%;
+	display: block;
+	[hidden] {
+		display: none;
+	}
+	.summary-text-wrapper.textarea {
+		width: 90%;
+		.summary-text {
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			position: relative;
+			display: inline-block;
+			width: 100%;
 		}
 	}
+
+	// .panel-summary {
+	//     margin-left: 0;
+	//     margin-right: auto;
+	//     min-width: 25%;
+	//     color: $black_54;
+	//     font-size: 16px;
+
+	//     @include basic-transition;
+
+	//     md-icon {
+	//         margin-left: 5px;
+	//         vertical-align: top;
+	//     }
+	// }
+	// .panel-summary {
+	//     display: flex;
+	//     flex-direction: row;
+	//     justify-content: space-between;
+	//     cursor: default;
+	//     .summary-image {
+
+	//     }
+	//     .image-preview {
+	//         background-size: contain;
+	//         max-width: 60px;
+	//         overflow: hidden;
+	//     }
+	// }
+
 }
