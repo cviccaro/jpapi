@@ -9,18 +9,19 @@
     "typings": "typings"
   },
   "devDependencies": {
-    "gulp": "^3.9.1",
-    "laravel-elixir": "^5.0.0",
     "bootstrap-sass": "^3.3.0",
     "concurrently": "^2.0.0",
-    "lite-server": "^2.2.0",
-    "typescript": "^1.8.10",
-    "typings": "^1.0.4",
     "file-exists": "^1.0.0",
+    "gulp": "^3.9.1",
     "gulp-concat": "^2.5.2",
     "gulp-typescript": "^2.4.2",
     "gulp-util": "^3.0.4",
+    "laravel-elixir": "^5.0.0",
+    "lite-server": "^2.2.0",
     "node-notifier": "^4.1.2",
+    "systemjs-builder": "^0.15.23",
+    "typescript": "^1.8.10",
+    "typings": "^1.0.4",
     "underscore": "^1.7.0"
   },
   "dependencies": {

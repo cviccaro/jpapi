@@ -24,7 +24,8 @@
   display: block; }
   :host .file-drop-zone {
     border: dotted 3px #cfd8dc;
-    transition: all 250ms linear; }
+    transition: all 250ms linear;
+    position: relative; }
   :host .file-over {
     border: dotted 3px #1976d2; }
   :host .count {
@@ -44,5 +45,7 @@
   :host .info {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
+  :host md-grid-list {
+    z-index: 5; }
 
 /*# sourceMappingURL=image-upload.component.css.map */

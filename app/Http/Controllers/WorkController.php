@@ -144,10 +144,30 @@ class WorkController extends Controller
             }
         }
 
-        unset($data['gallery']);
-
         $should_delete = 0;
         $deleted = 0;
+
+        if ($request->has('gallery')) {
+            $gallery = $request->get('gallery');
+            $ids = $model->gallery->pluck('id');
+
+            $request_gallery_ids = array_map(function ($item) {
+                return $item['id'];
+            }, $gallery);
+
+            $orphaned_ids = $ids->filter(function ($id) use ($request_gallery_ids) {
+                return !in_array($id, $request_gallery_ids);
+            });
+            $should_delete = $orphaned_ids->count();
+
+            \Log::info('Should delete these gallery items ' . print_r($orphaned_ids, true));
+
+            if ($should_delete) {
+                $deleted = WorkImage::whereIn('id', $orphaned_ids)->delete($orphaned_ids);
+            }
+        }
+
+        unset($data['gallery']);
 
         $added = 0;
         if ($request->hasFile('gallery_new')) {

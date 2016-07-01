@@ -1,4 +1,5 @@
 var Elixir = require('laravel-elixir');
+var Task = Elixir.Task;
 var $ = Elixir.Plugins;
 var config = Elixir.config;
 
@@ -6,24 +7,160 @@ var concat = require('gulp-concat');
 var ts = require('gulp-typescript');
 var sass = require('gulp-sass');
 var gulp   = require('gulp');
+var shell = require('gulp-shell');
 var fileExists = require('file-exists');
 var path = require('path');
+var join = path.join;
 var promise = require('es6-promise');
 var _ = require('underscore');
+
+var Builder = require('systemjs-builder');
+
+var PROJECT_ROOT = __dirname;
+var TMP_DIR = join(PROJECT_ROOT, 'tmp');
+var ANGULAR_ROOT = join(__dirname, 'resources', 'angular2');
+
+var BUNDLER_OPTIONS = {
+  format: 'cjs',
+  minify: true,
+  mangle: false
+};
+
+// packages tells the System loader how to load when no filename and/or no extension
+var packages = {
+    'app': { main: 'main.js', defaultExtension: 'js' },
+    'rxjs': { defaultExtension: 'js' },
+    'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
+    'moment': { main: 'moment.js', defaultExtension: 'js' },
+    'angular2-moment': { main: 'index.js', defaultExtension: 'js' },
+    // 'ng2-material': { main: 'index.js', defaultExtension: 'js' },
+    'hammerjs': { main: 'hammer.js', defaultExtension: 'js' },
+    'ng2-file-upload': { main: 'ng2-file-upload.js', defaultExtension: 'js' },
+    'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' },
+    // 'angular2-localstorage': { main: 'index.js', defaultExtension: 'js' },
+    'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' }
+};
+
+var ngPackageNames = [
+    'common',
+    'compiler',
+    'core',
+    'forms',
+    'http',
+    'platform-browser',
+    'platform-browser-dynamic',
+    'router',
+    'router-deprecated',
+    'upgrade',
+];
+
+var materialPkgs = [
+  'core',
+  'button',
+  'card',
+  'checkbox',
+  'grid-list',
+  'icon',
+  'input',
+  'list',
+  'progress-bar',
+  'progress-circle',
+  'radio',
+  'sidenav',
+  'slide-toggle',
+  'tabs',
+  'toolbar'
+];
+
+// Add package entries for angular packages
+ngPackageNames.forEach(function(pkgName) {
+  packages['@angular/' + pkgName] = { main: 'index.js', defaultExtension: 'js' };
+});
+materialPkgs.forEach(function(pkgName) {
+  packages['@angular2-material/' + pkgName] = {main: pkgName + '.js'};
+});
+
+var SYSTEM_BUILDER_CONFIG = {
+    defaultJSExtensions: true,
+    packageConfigPaths: [
+      path.join(PROJECT_ROOT, 'node_modules', '*', 'package.json'),
+      path.join(PROJECT_ROOT, 'node_modules', '@angular', '*', 'package.json')
+    ],
+    paths: {
+      'tmp/*': join(TMP_DIR, '*'),
+      '*': 'node_modules/*'
+    },
+    packages: {
+      '@angular/common': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      '@angular/compiler': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      '@angular/core': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      '@angular/forms': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      '@angular/http': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      '@angular/platform-browser': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      '@angular/platform-browser-dynamic': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      '@angular/router': {
+        main: 'index.js',
+        defaultExtension: 'js'
+      },
+      'rxjs': {
+        defaultExtension: 'js'
+      }
+    }
+  };
 
 /**
  * Typescript elixir task
  *
  * @return
  */
+
+ Elixir.extend('bundle', function(message) {
+     new Task('bundle', function() {
+        var builder = new Builder(SYSTEM_BUILDER_CONFIG);
+
+        builder.buildStatic('main', join('public', 'app.js'), BUNDLER_OPTIONS)
+        .then(function() {
+            console.log('build static promise resolved : ', {args: arguments});
+        })
+        .catch(function() {
+            console.log('build static promise rejected', {args: arguments});
+        });
+     });
+ });
+
+
 Elixir.extend('typescript', function(src, output, options) {
     var paths = new Elixir.GulpPaths()
         .src(src)
         .output(output, 'app.js');
 
-    new Elixir.Task('typescript', function() {
+    new Task('typescript', function() {
 
         this.log(paths.src, paths.output);
+
+        var shouldConcat = options.concat ? true : false;
+        delete options['concat'];
 
         // check if there is an tsconfig.json file --> initialize ts project
         var tsProject = null;
@@ -48,7 +185,7 @@ Elixir.extend('typescript', function(src, output, options) {
 
                     this.emit('end');
                 }))
-           //.pipe($.concat(paths.output.name))
+            .pipe($.if(shouldConcat, concat(paths.output.name)))
             .pipe($.if(config.production, $.uglify()))
             .pipe($.if(config.sourcemaps, $.sourcemaps.write('.')))
             .pipe(gulp.dest(paths.output.baseDir))
@@ -67,11 +204,11 @@ Elixir.extend('typescript', function(src, output, options) {
 Elixir.extend('angular2Sass', function(src, output, options) {
     var paths = new Elixir.GulpPaths()
         .src(src)
-        .output(output);
+        .output(output, 'app.css');
 
     var baseDir = path.dirname(paths.src.baseDir);
 
-    new Elixir.Task('angular2Sass', function() {
+    new Task('angular2Sass', function() {
         var name = 'angular2Sass';
 
         if (options === undefined) {
@@ -81,8 +218,9 @@ Elixir.extend('angular2Sass', function(src, output, options) {
             };
         }
 
-        this.log(paths.src, paths.output);
-
+        var shouldConcat = options.concat ? true : false;
+        delete options['concat'];
+        
         return (
             gulp
             .src(paths.src.path)
@@ -94,7 +232,7 @@ Elixir.extend('angular2Sass', function(src, output, options) {
                 this.emit('end');
             })
             .pipe($.if(config.css.autoprefix.enabled, $.autoprefixer(config.css.autoprefix.options)))
-            // .pipe($.concat(paths.output.name))
+            .pipe($.if(shouldConcat, concat(paths.output.name)))
             .pipe($.if(config.production, $.cssnano(config.css.cssnano.pluginOptions)))
             .pipe($.if(config.sourcemaps, $.sourcemaps.write('.')))
             .pipe(gulp.dest(paths.output.baseDir))
@@ -139,12 +277,12 @@ Elixir(function(mix) {
     // mix.copy('node_modules/@angular2-material', 'public/node_modules/@angular2-material');
     //mix.copy('node_modules/ng2-material', 'public/node_modules/ng2-material');
 
-    //mix.typescript('node_modules/angular2-localstorage/**/*.ts', 'public/node_modules/angular2-localstorage/angular2-localstorage.js');
-
     mix.copy('resources/angular2/systemjs.config.js', 'public/systemjs.config.js');
 
-    mix.typescript('resources/angular2/**/*.ts', 'public/app.js');
+    mix.typescript('resources/angular2/**/*.ts', 'public/app.js', {concat: false});
 
-    mix.angular2Sass('resources/angular2/**/*.scss', 'public/');
+    mix.angular2Sass('resources/angular2/**/*.scss', 'public/', {concat: false});
     mix.copy('resources/angular2/**/*.html', 'public/');
+
+    //mix.bundle();
 });

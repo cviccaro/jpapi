@@ -6,6 +6,7 @@
     .file-drop-zone {
         border: dotted 3px $bluegrey_100;
         transition: all $transition_duration linear;
+        position: relative;
     }
 
     .file-over {
@@ -39,10 +40,7 @@
         font-size: 12px;
         color: $black_54;
     }
-    // .image {
-    //     margin-left: 1.5em;
-    //     img {
-    //         max-width: 350px;
-    //     }
-    // }
+    md-grid-list {
+        z-index: 5;
+    }
 }

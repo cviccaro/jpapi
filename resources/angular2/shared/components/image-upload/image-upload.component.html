@@ -13,7 +13,7 @@
   (dragleave)="onDragLeave($event)"
   (drop)="onFileDrop($event)">
   <md-grid-list [cols]="cols" [rowHeight]="rowHeight" [gutterSize]="gutterSize" *ngIf="multiple">
-      <md-grid-tile *ngFor="let image of images; let index = index" flex="25">
+      <md-grid-tile *ngFor="let image of images; let index = index" flex="25" jpa-draggable>
         <jpa-grid-image
           [imageConfig]="image"
           [index]="index"
@@ -23,4 +23,6 @@
       </md-grid-tile>
       <md-grid-tile *ngIf="images.length % 4 !== 1" flex="25"></md-grid-tile>
   </md-grid-list>
+  <jpa-image-upload-drop-zones [cols]="cols" [rows]="images.length / cols">
+  </jpa-image-upload-drop-zones>
 </div>

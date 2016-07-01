@@ -17,6 +17,7 @@ var icon_1 = require('@angular2-material/icon');
 var Rx_1 = require('rxjs/Rx');
 var grid_image_1 = require('./grid-image/grid-image');
 var index_1 = require('./uploader/index');
+var index_2 = require('../dragdrop/index');
 var auth_service_1 = require('../../services/auth.service');
 var noop = function () { };
 var nextUniqueId = 0;
@@ -88,14 +89,102 @@ var ImageUploadComponent = (function () {
         });
     };
     ImageUploadComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
         if (this._gridImages) {
             this._gridImages.changes.subscribe(function (changes) {
                 console.log('Changes to grid images: ', changes);
             });
         }
+        if (this._gridList) {
+            this._gridList['_tiles'].forEach(function (tile, i) { _this.registerTileDrag(_this, tile, i); });
+        }
         console.info('ImageUploadComponent#AfterViewInit ---', this);
     };
     ImageUploadComponent.prototype.ngOnChanges = function (changes) {
+        console.debug('ImageUploadComponent#OnChanges ---', changes);
+    };
+    ImageUploadComponent.prototype.registerTileDrag = function (thisArg, tile, i) {
+        console.log('MdGridtile register Tile drag on tile ' + i + ' ', tile);
+        tile.dragging = false;
+        var cols = thisArg['cols'] - 1;
+        var el = tile['_element']['nativeElement'];
+        el.addEventListener('mousedown', function (e) {
+            tile.dragging = true;
+            tile.cursor_default = el.style.cursor;
+            tile.start = {
+                mouse: { x: e.clientX, y: e.clientY },
+                size: { w: el.clientWidth, h: el.clientHeight },
+                zIndex: el.style.zIndex
+            };
+            el.style.cursor = 'move';
+            el.style.zIndex = '9999';
+            console.log('Grid Tile on mouse down ', e);
+        });
+        el.addEventListener('mouseup', function (e) {
+            tile.dragging = false;
+            el.style.transform = '';
+            el.style.cursor = tile.cursor_default;
+            console.log('Grid Tile on mouse up ', e);
+        });
+        el.addEventListener('mousemove', function (e) {
+            if (tile.dragging) {
+                var posX = e.clientX;
+                var posY = e.clientY;
+                var diffX = tile.start.mouse.x - e.clientX;
+                var diffY = tile.start.mouse.y - e.clientY;
+                var thresholdX = tile.start.size.w * 0.9;
+                var thresholdY = tile.start.size.h * 0.9;
+                if (Math.abs(diffX) > thresholdX) {
+                    var direction = diffX > 0 ? 'left' : 'right';
+                    console.log({
+                        i: i,
+                        'cols-1': cols
+                    });
+                    if (direction === 'right' && (i % cols === 0)) {
+                        console.log('ignoring right-hand swap because we are on the last column');
+                    }
+                    else if (direction === 'left' && (i % cols === 0)) {
+                        console.log('ignoring right-hand swap because we are on the first column');
+                    }
+                    else {
+                        console.log('passed horizontal threshold', { diff: { x: diffX, y: diffY }, threshold: { x: thresholdX, y: thresholdY }, direction: direction });
+                        var nextIndex = direction === 'right' ? i + 1 : i - 1;
+                        var nextWeight = thisArg['images'][nextIndex]['weight'];
+                        var oldWeight = thisArg['images'][i]['weight'];
+                        thisArg['images'][i]['weight'] = nextWeight;
+                        thisArg['images'][nextIndex]['weight'] = oldWeight;
+                        setTimeout(function () { thisArg['sortImages'](); }, 0);
+                    }
+                }
+                if (Math.abs(diffY) > thresholdY) {
+                    console.log('Passed vertical threshold ', { diffX: diffY, threshold: thresholdY });
+                }
+                console.log('tile ' + i + ' moved ', {
+                    diffX: diffX,
+                    diffY: diffY,
+                    el: el,
+                    threshold: {
+                        w: thresholdX,
+                        h: thresholdY
+                    }
+                });
+                el.style.transform = "translate3d(" + -diffX + "px, " + -diffY + "px, 0)";
+            }
+        });
+    };
+    ImageUploadComponent.prototype.sortImages = function () {
+        console.log('sorting images', this.images);
+        this.images.sort(function (a, b) {
+            return a.weight > b.weight ? 1 : 0;
+        });
+        this._gridList['_tiles'].forEach(function (tile, i) {
+            var el = tile['_element']['nativeElement'];
+            el.style.transform = 'translate3d(0,0,0)';
+        });
+        console.log('sorted images', this.images);
+    };
+    ImageUploadComponent.prototype.weightChanged = function (e) {
+        console.warn('weight cahnged', e);
     };
     ImageUploadComponent.prototype.onDragOver = function (e) {
         var transfer = this._getTransfer(e);
@@ -245,6 +334,10 @@ var ImageUploadComponent = (function () {
         __metadata('design:type', core_1.QueryList)
     ], ImageUploadComponent.prototype, "_gridImages", void 0);
     __decorate([
+        core_1.ViewChild(grid_list_1.MdGridList), 
+        __metadata('design:type', grid_list_1.MdGridList)
+    ], ImageUploadComponent.prototype, "_gridList", void 0);
+    __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
     ], ImageUploadComponent.prototype, "url", void 0);
@@ -333,9 +426,12 @@ var ImageUploadComponent = (function () {
                 progress_bar_1.MD_PROGRESS_BAR_DIRECTIVES,
                 icon_1.MD_ICON_DIRECTIVES,
                 forms_1.NgModel,
-                grid_image_1.GridImage
+                grid_image_1.GridImage,
+                index_2.Draggable,
+                index_2.Droppable,
+                index_2.ImageUploadDropZones
             ],
-            providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR]
+            providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR, index_2.DragDropService]
         }), 
         __metadata('design:paramtypes', [auth_service_1.AuthService])
     ], ImageUploadComponent);

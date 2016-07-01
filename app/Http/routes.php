@@ -86,6 +86,6 @@ Route::group([], function() {
 });
 
 Route::get('test', function() {
-dd();
-    return response(['image' => $image]);
+    $work = App\Work::whereIn('id', [0,1,2,3,4,5])->get();
+    dd($work);
 });

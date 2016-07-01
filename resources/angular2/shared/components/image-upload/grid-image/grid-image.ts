@@ -38,6 +38,7 @@ export class GridImage {
     }
 
     ngOnInit() {
+        this._imageEl.nativeElement.src = this.imageConfig.image_url;
         (<HTMLImageElement>this._imageEl.nativeElement).addEventListener('load', e => {
             //console.log('GridImage Loaded.', this);
             this.imageLoaded.emit({event: e, config: this.imageConfig});

@@ -9,6 +9,7 @@ import {
     Output,
     HostListener,
     EventEmitter,
+    ViewChild,
     ViewChildren,
     ContentChildren,
     Provider,
@@ -18,12 +19,14 @@ import {
 import { NgModel, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-list';
+
 import { MD_PROGRESS_BAR_DIRECTIVES } from '@angular2-material/progress-bar';
 import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 import { Observable } from 'rxjs/Rx';
 
 import { GridImage } from './grid-image/grid-image';
 import { ImageItem } from './uploader/index';
+import { DragDropAbstractComponent, ImageUploadDropZones, Droppable, Draggable, DragDropService} from '../dragdrop/index';
 
 import { AuthService } from '../../services/auth.service';
 
@@ -45,9 +48,12 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
         MD_PROGRESS_BAR_DIRECTIVES,
         MD_ICON_DIRECTIVES,
         NgModel,
-        GridImage
+        GridImage,
+        Draggable,
+        Droppable,
+        ImageUploadDropZones
     ],
-    providers: [IMAGE_UPLOAD_VALUE_ACCESSOR]
+    providers: [IMAGE_UPLOAD_VALUE_ACCESSOR, DragDropService]
 })
 export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlValueAccessor {
     public isDragOver: boolean = false;
@@ -78,6 +84,7 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
      * Content directives
      */
     @ViewChildren(GridImage) private _gridImages: QueryList<GridImage>;
+    @ViewChild(MdGridList) private _gridList: MdGridList;
 
     /**
      * Inputs
@@ -160,11 +167,118 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
                 console.log('Changes to grid images: ', changes);
             });
         }
+
+        if (this._gridList) {
+            this._gridList['_tiles'].forEach((tile, i) => { this.registerTileDrag(this, tile, i)  });
+        }
+
         console.info('ImageUploadComponent#AfterViewInit ---', this);
     }
 
     ngOnChanges(changes: { [key: string]: SimpleChange }) {
-        //console.debug('ImageUploadComponent#OnChanges ---', changes);
+        console.debug('ImageUploadComponent#OnChanges ---', changes);
+    }
+
+
+    registerTileDrag(thisArg, tile, i) {
+        console.log('MdGridtile register Tile drag on tile ' + i + ' ', tile);
+
+        tile.dragging = false;
+        let cols = thisArg['cols']-1;
+
+        let el = (<HTMLElement>tile['_element']['nativeElement']);
+        el.addEventListener('mousedown', e => {
+            tile.dragging = true;
+            tile.cursor_default = el.style.cursor;
+            tile.start = {
+                mouse: {x: e.clientX, y: e.clientY},
+                size: {w: el.clientWidth, h: el.clientHeight},
+                zIndex: el.style.zIndex
+            };
+            el.style.cursor = 'move';
+            el.style.zIndex = '9999';
+            console.log('Grid Tile on mouse down ', e);
+        });
+        el.addEventListener('mouseup', e => {
+            tile.dragging = false;
+            el.style.transform = '';
+            el.style.cursor = tile.cursor_default;
+            console.log('Grid Tile on mouse up ', e);
+        });
+        el.addEventListener('mousemove', e => {
+            if (tile.dragging) {
+                
+                let posX = e.clientX;
+                let posY = e.clientY;
+
+                let diffX = tile.start.mouse.x - e.clientX;
+                let diffY = tile.start.mouse.y - e.clientY;
+
+                let thresholdX = tile.start.size.w * 0.9;
+                let thresholdY = tile.start.size.h * 0.9;
+
+                if (Math.abs(diffX) > thresholdX) {
+                    let direction = diffX > 0 ? 'left' : 'right';
+                    console.log({
+                        i: i,
+                        'cols-1': cols
+                    })
+                    if (direction === 'right' && (i % cols === 0)) {
+                        console.log('ignoring right-hand swap because we are on the last column');
+                    } else if (direction === 'left' && (i % cols === 0)) {
+                        console.log('ignoring right-hand swap because we are on the first column');
+                    } else {
+                        // tile.dragging = false;
+                        // el.dispatchEvent(new Event('mouseup'));
+                        // el.style.transform = 'translate3d(0,0,0)';
+                        // console.log('TRANFORM: ', el.style.transform);
+                        // el.style.cursor = tile.cursor_default;
+                        // el.style.zIndex = tile.start.zIndex;
+                        console.log('passed horizontal threshold', {diff: {x: diffX, y: diffY}, threshold: {x: thresholdX, y: thresholdY}, direction: direction})
+
+                        let nextIndex = direction === 'right' ? i + 1 : i - 1;
+                        let nextWeight = thisArg['images'][nextIndex]['weight'];
+                        let oldWeight = thisArg['images'][i]['weight'];
+
+                        thisArg['images'][i]['weight'] = nextWeight;
+                        thisArg['images'][nextIndex]['weight'] = oldWeight;
+
+                        setTimeout(() => { thisArg['sortImages']() },0);
+                    }
+                }
+                if (Math.abs(diffY) > thresholdY) {
+                    console.log('Passed vertical threshold ', {diffX: diffY, threshold: thresholdY});
+                }
+
+                console.log('tile ' + i + ' moved ', {
+                    diffX: diffX,
+                    diffY: diffY,
+                    el: el,
+                    threshold: {
+                        w: thresholdX,
+                        h: thresholdY
+                    }
+                });
+
+                el.style.transform = `translate3d(${-diffX}px, ${-diffY}px, 0)`;
+
+            }
+        });
+    }
+
+    sortImages() {
+        console.log('sorting images', this.images);
+        this.images.sort((a:any,b: any) => {
+            return a.weight > b.weight ? 1 : 0;
+        });
+        this._gridList['_tiles'].forEach((tile, i) => {
+            let el = (<HTMLElement>tile['_element']['nativeElement']);
+            el.style.transform = 'translate3d(0,0,0)';
+        });
+        console.log('sorted images', this.images);
+    }
+    weightChanged(e) {
+        console.warn('weight cahnged', e);
     }
 
     /**
