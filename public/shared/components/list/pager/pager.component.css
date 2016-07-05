@@ -1,0 +1,59 @@
+/**
+ * Retrieves a color value from the $material-colors Sass map
+ * Inspired by https://github.com/nilskaspersson/Google-Material-UI-Color-Palette/
+ *
+ * @function
+ * @param {string} color-name             - quoted, lower-case, dasherized color
+ *                                          name (e.g. 'pink', 'amber')
+ * @param {string} [color-variant='500']  - quoted, lowercase color variant (e.g.
+ *                                          '200', 'a100')
+ */
+/**
+ * Palette
+ */
+/**
+ * Colors
+ */
+/**
+ * Fonts
+ */
+/**
+ * Animations & Transitions
+ */
+/**
+ * Transition mixins
+ */
+:host {
+  padding: 60px 0 40px;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -ms-flex-pack: justify;
+  justify-content: space-between; }
+  :host .previous {
+    -ms-flex-item-align: start;
+    align-self: flex-start; }
+    :host .previous[hidden] {
+      display: none; }
+  :host .next {
+    -ms-flex-item-align: end;
+    align-self: flex-end; }
+    :host .next[hidden] {
+      display: none; }
+  :host ul {
+    margin: 0 auto;
+    -ms-flex-item-align: center;
+    align-self: center; }
+    :host ul li a {
+      cursor: pointer;
+      color: #212121; }
+    :host ul .active > a, :host ul .active > a:hover, :host ul .active > a:focus,
+    :host ul .active > a > span,
+    :host ul .active > a > span:hover,
+    :host ul .active > a > span:focus {
+      background-color: #546e7a;
+      border-color: #546e7a;
+      color: #fff; }
+
+/*# sourceMappingURL=pager.component.css.map */

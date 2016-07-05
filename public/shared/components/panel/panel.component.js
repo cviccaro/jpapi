@@ -63,8 +63,11 @@ var JpaPanel = (function () {
         this._focused = false;
         this._expanded = false;
         this._value = '';
+        this._secureValue = '';
         this._empty = false;
         this._underlineHidden = false;
+        this._initialValue = null;
+        this._valueChanged = false;
         this._isTextfield = false;
         this._isTextarea = false;
         this._isImage = false;
@@ -76,72 +79,47 @@ var JpaPanel = (function () {
         this._hasContentLeft = false;
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
-        this.dividerColor = 'primary';
-        this.hintLabel = '';
         this.autoFocus = false;
+        this.currentImage = null;
         this.disabled = false;
+        this.dividerColor = 'primary';
+        this.fullWidth = false;
+        this.hintLabel = '';
         this.id = "jpa-panel-" + nextUniqueId++;
+        this.label = null;
         this.max = null;
         this.maxLength = null;
         this.min = null;
         this.minLength = null;
+        this.name = null;
         this.placeholder = null;
         this.readOnly = false;
         this.required = false;
         this.spellCheck = false;
         this.step = null;
         this.tabIndex = null;
-        this.name = null;
         this.type = 'text';
-        this.label = null;
-        this.currentImage = null;
-        this.gallery = [];
-        this.fullWidth = false;
+        this.imageFieldChanged = new core_1.EventEmitter();
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
-        this._expandedEmitter = new core_1.EventEmitter();
-        this.imageFieldChanged = new core_1.EventEmitter();
-        this._initialValue = null;
-        this._valueChanged = false;
-        this._imageLoaded = false;
-        this._currentImageSize = null;
+        this._toggleEmitter = new core_1.EventEmitter();
     }
-    JpaPanel.prototype.ngOnInit = function () {
-        switch (this.type) {
-            case 'text':
-                this._isTextfield = true;
-                break;
-            case 'select':
-                this._isSelect = true;
-                break;
-            case 'textarea':
-                this._isTextarea = true;
-                break;
-            case 'image':
-                this._isImage = true;
-                break;
-            case 'images':
-                this._isGallery = true;
-                this._empty = true;
-                this._hasContentBottom = true;
-                this.fullWidth = true;
-                break;
-        }
-    };
     Object.defineProperty(JpaPanel.prototype, "focused", {
         get: function () { return this._focused; },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(JpaPanel.prototype, "empty", {
-        get: function () { return this._value == null || this._value === ''; },
+        get: function () {
+            var v = this.value;
+            var x = !v || v === undefined || v === null || (Array.isArray(v) && v.length);
+            return x;
+        },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(JpaPanel.prototype, "characterCount", {
-        get: function () {
-            return this.empty ? 0 : ('' + this._value).length;
-        },
+        get: function () { return this.empty ? 0 : ('' + this._value).length; },
         enumerable: true,
         configurable: true
     });
@@ -150,77 +128,23 @@ var JpaPanel = (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(JpaPanel.prototype, "focusedClass", {
-        get: function () { return this._focused; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(JpaPanel.prototype, "expandedClass", {
-        get: function () { return this._expanded; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(JpaPanel.prototype, "changedClass", {
-        get: function () { return this._valueChanged; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(JpaPanel.prototype, "onBlur", {
-        get: function () {
-            return this._blurEmitter.asObservable();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(JpaPanel.prototype, "onFocus", {
-        get: function () {
-            return this._focusEmitter.asObservable();
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(JpaPanel.prototype, "onExpand", {
-        get: function () {
-            return this._expandedEmitter.asObservable();
+    Object.defineProperty(JpaPanel.prototype, "value", {
+        get: function () { return this._value; },
+        set: function (v) {
+            console.debug('JpaPanel' + this.type + '.' + this.name + '# set value(): ', v);
+            if (v !== this._value) {
+                this._value = v;
+                this._onChangeCallback(v);
+            }
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(JpaPanel.prototype, "expanded", {
         get: function () { return this._expanded; },
-        set: function (v) { this._expanded = v; },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(JpaPanel.prototype, "value", {
-        get: function () {
-            if (this.type === 'image') {
-                return '';
-            }
-            return this._value;
-        },
         set: function (v) {
-            v = this._convertValueForInputType(v);
-            console.debug('JpaPanel' + this.type + '.' + this.name + '# set value(): ', v);
-            if (v !== this._value) {
-                this._value = v;
-                this._onChangeCallback(v);
-            }
-            this._empty = this.isEmpty(v);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    ;
-    JpaPanel.prototype.isEmpty = function (v) {
-        return v === undefined || v === null || (Array.isArray(v) && v.length === 0) || Object.keys(v).length === 0;
-    };
-    Object.defineProperty(JpaPanel.prototype, "currentImageSize", {
-        get: function () {
-            return this._currentImageSize;
-        },
-        set: function (v) {
-            this._currentImageSize = v;
+            this._expanded = v;
+            this._toggleEmitter.emit(this._expanded);
         },
         enumerable: true,
         configurable: true
@@ -240,27 +164,104 @@ var JpaPanel = (function () {
         enumerable: true,
         configurable: true
     });
-    JpaPanel.prototype.focus = function () {
-        if (this.nativeElement) {
-            this.nativeElement.focus();
-        }
-    };
-    JpaPanel.prototype.handleFocus = function (event) {
-        if (this.expanded) {
-            this._focused = true;
-            this._focusEmitter.emit(event);
-        }
-        else {
-        }
-    };
+    Object.defineProperty(JpaPanel.prototype, "focusedClass", {
+        get: function () { return this._focused; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "expandedClass", {
+        get: function () { return this._expanded; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "changedClass", {
+        get: function () { return this._valueChanged; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "emptyClass", {
+        get: function () { return this.empty; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "textClass", {
+        get: function () { return this.type === 'text'; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "selectClass", {
+        get: function () { return this.type === 'select'; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "textareaClass", {
+        get: function () { return this.type === 'textarea'; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "imageClass", {
+        get: function () { return this.type === 'image'; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "imagesClass", {
+        get: function () { return this.type === 'images'; },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(JpaPanel.prototype, "onBlur", {
+        get: function () { return this._blurEmitter.asObservable(); },
+        enumerable: true,
+        configurable: true
+    });
     JpaPanel.prototype.handleBlur = function (event) {
         if (this.expanded) {
             this._focused = false;
             this._onTouchedCallback();
             this._blurEmitter.emit(event);
         }
-        else {
+    };
+    Object.defineProperty(JpaPanel.prototype, "onFocus", {
+        get: function () { return this._focusEmitter.asObservable(); },
+        enumerable: true,
+        configurable: true
+    });
+    JpaPanel.prototype.handleFocus = function (event) {
+        if (this.expanded) {
+            this._focused = true;
+            this._focusEmitter.emit(event);
         }
+    };
+    JpaPanel.prototype.focus = function () {
+        var _this = this;
+        if (!this.expanded) {
+            this.toggle();
+            if (this.nativeElement) {
+                setTimeout(function () { _this.nativeElement.focus(); });
+            }
+        }
+        else if (this.nativeElement) {
+            this.nativeElement.focus();
+        }
+    };
+    Object.defineProperty(JpaPanel.prototype, "onToggle", {
+        get: function () {
+            return this._toggleEmitter.asObservable();
+        },
+        enumerable: true,
+        configurable: true
+    });
+    JpaPanel.prototype.writeValue = function (value) {
+        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#writeValue(' + this.type + ')', value);
+        this._value = value;
+        if (!this._initialValue)
+            this._initialValue = value;
+    };
+    JpaPanel.prototype.registerOnChange = function (fn) {
+        this._onChangeCallback = fn;
+    };
+    JpaPanel.prototype.registerOnTouched = function (fn) {
+        this._onTouchedCallback = fn;
     };
     JpaPanel.prototype.handleChange = function (event) {
         console.debug('JpaPanel.' + this.type + ' ' + this.name + '#handleChange: ', event, this);
@@ -276,7 +277,7 @@ var JpaPanel = (function () {
                 break;
             case 'image':
                 this.value = event.target.files[0];
-                this.imageFieldChanged.emit(event);
+                this.imageFieldChanged.emit(event.target.files[0]);
                 break;
             default:
                 this.value = event.target.value;
@@ -285,17 +286,26 @@ var JpaPanel = (function () {
         this._valueChanged = true;
         this._onTouchedCallback();
     };
-    JpaPanel.prototype.writeValue = function (value) {
-        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#writeValue(' + this.type + ')', value);
-        this._value = value;
-        if (!this._initialValue)
-            this._initialValue = value;
-    };
-    JpaPanel.prototype.registerOnChange = function (fn) {
-        this._onChangeCallback = fn;
-    };
-    JpaPanel.prototype.registerOnTouched = function (fn) {
-        this._onTouchedCallback = fn;
+    JpaPanel.prototype.ngOnInit = function () {
+        switch (this.type) {
+            case 'text':
+                this._isTextfield = true;
+                break;
+            case 'select':
+                this._isSelect = true;
+                break;
+            case 'textarea':
+                this._isTextarea = true;
+                break;
+            case 'image':
+                this._isImage = true;
+                break;
+            case 'images':
+                this._isGallery = true;
+                this._hasContentBottom = true;
+                this.fullWidth = true;
+                break;
+        }
     };
     JpaPanel.prototype.ngAfterContentInit = function () {
         var _this = this;
@@ -309,7 +319,6 @@ var JpaPanel = (function () {
         this._hasContent = !!this._contentChildren.length;
         if (this._hasContent) {
             this._contentChildren.forEach(function (panel) {
-                console.log('CONTENT CHILDREN PANEL CONTENT OMGGGGGGGGGGG ', panel);
                 switch (panel.align) {
                     case 'right':
                         _this._hasContentRight = true;
@@ -326,40 +335,31 @@ var JpaPanel = (function () {
         if (this._summaryChild) {
             switch (this.type) {
                 case 'select':
+                    console.log('setting select options on children to ', this._optionChildren);
                     this._summaryChild.setOptions(this._optionChildren);
                     break;
             }
         }
-        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#AfterContentInit', this);
+        console.info('JpaPanel.' + this.type + ' ' + this.name + '#AfterContentInit', this);
     };
     JpaPanel.prototype.ngAfterViewInit = function () {
         switch (this.type) {
             case 'image':
+                console.log('Panel(image) setting value to ', {
+                    from: this.value,
+                    to: this.nativeElement.value
+                });
                 this.value = this.nativeElement.value;
                 break;
             default:
                 if (this.nativeElement) {
                     this.value = this.nativeElement.value;
                 }
-                break;
         }
-        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#ngAfterViewInit', this);
+        console.info('PanelComponent.' + this.type + ' # AfterViewInit: ', this._optionChildren);
     };
     JpaPanel.prototype.ngOnChanges = function (changes) {
-        console.log('PANEL changed something: ', changes);
-        for (var prop in changes) {
-            var previousValue = changes[prop].previousValue;
-            var currentValue = changes[prop].currentValue;
-            var isFirstChange = changes[prop].isFirstChange;
-            console.log('PanelComponent.' + prop + ' changed: ', { from: previousValue, to: currentValue, isFirstChange: isFirstChange });
-        }
         this._validateConstraints();
-    };
-    JpaPanel.prototype._convertValueForInputType = function (v) {
-        switch (this.type) {
-            case 'number': return parseFloat(v);
-            default: return v;
-        }
     };
     JpaPanel.prototype._validateConstraints = function () {
         var _this = this;
@@ -386,17 +386,15 @@ var JpaPanel = (function () {
         }
     };
     JpaPanel.prototype.toggle = function ($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        this._expanded = !this._expanded;
-        this.onToggle();
-    };
-    JpaPanel.prototype.onToggle = function () {
         var _this = this;
-        this._expandedEmitter.emit(this._expanded);
+        if ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+        }
+        this.expanded = !this.expanded;
         if (this._hasContent) {
             this._contentChildren.forEach(function (panelContent) {
-                panelContent.onToggle(_this._expanded);
+                panelContent.onToggle(_this.expanded);
             });
         }
     };
@@ -408,86 +406,23 @@ var JpaPanel = (function () {
     };
     JpaPanel.prototype.imageLoaded = function (e) {
     };
-    __decorate([
-        core_1.Input('aria-label'), 
-        __metadata('design:type', String)
-    ], JpaPanel.prototype, "ariaLabel", void 0);
-    __decorate([
-        core_1.Input('aria-labelledby'), 
-        __metadata('design:type', String)
-    ], JpaPanel.prototype, "ariaLabelledBy", void 0);
-    __decorate([
-        core_1.Input('aria-disabled'),
-        field_value_1.BooleanFieldValue(), 
-        __metadata('design:type', Boolean)
-    ], JpaPanel.prototype, "ariaDisabled", void 0);
-    __decorate([
-        core_1.Input('aria-required'),
-        field_value_1.BooleanFieldValue(), 
-        __metadata('design:type', Boolean)
-    ], JpaPanel.prototype, "ariaRequired", void 0);
-    __decorate([
-        core_1.Input('aria-invalid'),
-        field_value_1.BooleanFieldValue(), 
-        __metadata('design:type', Boolean)
-    ], JpaPanel.prototype, "ariaInvalid", void 0);
-    __decorate([
-        core_1.ContentChildren(input_1.MdHint), 
-        __metadata('design:type', core_1.QueryList)
-    ], JpaPanel.prototype, "_hintChildren", void 0);
-    __decorate([
-        core_1.ContentChildren(forms_1.NgSelectOption), 
-        __metadata('design:type', core_1.QueryList)
-    ], JpaPanel.prototype, "_optionChildren", void 0);
-    __decorate([
-        core_1.ContentChildren(index_1.JpaPanelContent), 
-        __metadata('design:type', core_1.QueryList)
-    ], JpaPanel.prototype, "_contentChildren", void 0);
-    __decorate([
-        core_1.ViewChild(index_2.PanelSummaryComponent), 
-        __metadata('design:type', index_2.PanelSummaryComponent)
-    ], JpaPanel.prototype, "_summaryChild", void 0);
-    __decorate([
-        core_1.ViewChild('input'), 
-        __metadata('design:type', core_1.ElementRef)
-    ], JpaPanel.prototype, "_inputElement", void 0);
-    __decorate([
-        core_1.ViewChild('select'), 
-        __metadata('design:type', core_1.ElementRef)
-    ], JpaPanel.prototype, "_selectElement", void 0);
-    __decorate([
-        core_1.ViewChild('textarea'), 
-        __metadata('design:type', core_1.ElementRef)
-    ], JpaPanel.prototype, "_textareaElement", void 0);
-    __decorate([
-        core_1.ViewChild('imagePreview'), 
-        __metadata('design:type', core_1.ElementRef)
-    ], JpaPanel.prototype, "_imagePreview", void 0);
-    __decorate([
-        core_1.HostBinding('class.focused'), 
-        __metadata('design:type', Object)
-    ], JpaPanel.prototype, "focusedClass", null);
-    __decorate([
-        core_1.HostBinding('class.expanded'), 
-        __metadata('design:type', Object)
-    ], JpaPanel.prototype, "expandedClass", null);
-    __decorate([
-        core_1.HostBinding('class.changed'), 
-        __metadata('design:type', Object)
-    ], JpaPanel.prototype, "changedClass", null);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', Object)
-    ], JpaPanel.prototype, "dividerColor", void 0);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
-    ], JpaPanel.prototype, "hintLabel", void 0);
+    JpaPanel.prototype.reset = function () {
+        this._valueChanged = false;
+        this._secureValue = '';
+        if (this.type === 'image') {
+            this._inputElement.nativeElement.value = '';
+        }
+        this.expanded = false;
+    };
     __decorate([
         core_1.Input(),
         field_value_1.BooleanFieldValue(), 
         __metadata('design:type', Boolean)
     ], JpaPanel.prototype, "autoFocus", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], JpaPanel.prototype, "currentImage", void 0);
     __decorate([
         core_1.Input(),
         field_value_1.BooleanFieldValue(), 
@@ -495,8 +430,28 @@ var JpaPanel = (function () {
     ], JpaPanel.prototype, "disabled", void 0);
     __decorate([
         core_1.Input(), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "dividerColor", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], JpaPanel.prototype, "editText", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Boolean)
+    ], JpaPanel.prototype, "fullWidth", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], JpaPanel.prototype, "hintLabel", void 0);
+    __decorate([
+        core_1.Input(), 
         __metadata('design:type', String)
     ], JpaPanel.prototype, "id", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], JpaPanel.prototype, "label", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
@@ -513,6 +468,10 @@ var JpaPanel = (function () {
         core_1.Input(), 
         __metadata('design:type', Number)
     ], JpaPanel.prototype, "minLength", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], JpaPanel.prototype, "name", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
@@ -543,27 +502,83 @@ var JpaPanel = (function () {
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
-    ], JpaPanel.prototype, "name", void 0);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
     ], JpaPanel.prototype, "type", void 0);
     __decorate([
         core_1.Input(), 
-        __metadata('design:type', String)
-    ], JpaPanel.prototype, "label", void 0);
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "value", null);
     __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
-    ], JpaPanel.prototype, "currentImage", void 0);
+        core_1.ContentChildren(input_1.MdHint), 
+        __metadata('design:type', core_1.QueryList)
+    ], JpaPanel.prototype, "_hintChildren", void 0);
     __decorate([
-        core_1.Input(), 
-        __metadata('design:type', Array)
-    ], JpaPanel.prototype, "gallery", void 0);
+        core_1.ContentChildren(forms_1.NgSelectOption), 
+        __metadata('design:type', core_1.QueryList)
+    ], JpaPanel.prototype, "_optionChildren", void 0);
     __decorate([
-        core_1.Input(), 
-        __metadata('design:type', Boolean)
-    ], JpaPanel.prototype, "fullWidth", void 0);
+        core_1.ContentChildren(index_1.JpaPanelContent), 
+        __metadata('design:type', core_1.QueryList)
+    ], JpaPanel.prototype, "_contentChildren", void 0);
+    __decorate([
+        core_1.ViewChild(index_3.ImageUploadComponent), 
+        __metadata('design:type', index_3.ImageUploadComponent)
+    ], JpaPanel.prototype, "_imageUploadCmp", void 0);
+    __decorate([
+        core_1.ViewChild(index_2.PanelSummaryComponent), 
+        __metadata('design:type', index_2.PanelSummaryComponent)
+    ], JpaPanel.prototype, "_summaryChild", void 0);
+    __decorate([
+        core_1.ViewChild('input'), 
+        __metadata('design:type', core_1.ElementRef)
+    ], JpaPanel.prototype, "_inputElement", void 0);
+    __decorate([
+        core_1.ViewChild('select'), 
+        __metadata('design:type', core_1.ElementRef)
+    ], JpaPanel.prototype, "_selectElement", void 0);
+    __decorate([
+        core_1.ViewChild('textarea'), 
+        __metadata('design:type', core_1.ElementRef)
+    ], JpaPanel.prototype, "_textareaElement", void 0);
+    __decorate([
+        core_1.HostBinding('class.focused'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "focusedClass", null);
+    __decorate([
+        core_1.HostBinding('class.expanded'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "expandedClass", null);
+    __decorate([
+        core_1.HostBinding('class.changed'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "changedClass", null);
+    __decorate([
+        core_1.HostBinding('class.empty'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "emptyClass", null);
+    __decorate([
+        core_1.HostBinding('class.text'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "textClass", null);
+    __decorate([
+        core_1.HostBinding('class.select'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "selectClass", null);
+    __decorate([
+        core_1.HostBinding('class.textarea'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "textareaClass", null);
+    __decorate([
+        core_1.HostBinding('class.image'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "imageClass", null);
+    __decorate([
+        core_1.HostBinding('class.images'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "imagesClass", null);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "imageFieldChanged", void 0);
     __decorate([
         core_1.Output('blur'), 
         __metadata('design:type', Observable_1.Observable)
@@ -573,21 +588,9 @@ var JpaPanel = (function () {
         __metadata('design:type', Observable_1.Observable)
     ], JpaPanel.prototype, "onFocus", null);
     __decorate([
-        core_1.Output('expand'), 
+        core_1.Output('toggle'), 
         __metadata('design:type', Observable_1.Observable)
-    ], JpaPanel.prototype, "onExpand", null);
-    __decorate([
-        core_1.Output(), 
-        __metadata('design:type', Object)
-    ], JpaPanel.prototype, "imageFieldChanged", void 0);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', Object)
-    ], JpaPanel.prototype, "value", null);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
-    ], JpaPanel.prototype, "editText", void 0);
+    ], JpaPanel.prototype, "onToggle", null);
     JpaPanel = __decorate([
         core_1.Component({
             moduleId: module.id,
@@ -603,7 +606,7 @@ var JpaPanel = (function () {
                 index_3.ImageUploadComponent,
                 index_2.PanelSummaryComponent,
             ],
-            providers: [exports.JPA_PANEL_VALUE_ACCESSOR, index_3.FileUploader],
+            providers: [exports.JPA_PANEL_VALUE_ACCESSOR],
             pipes: [common_1.SlicePipe],
             host: {
                 '(click)': 'focus()'

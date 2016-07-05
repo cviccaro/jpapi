@@ -2,23 +2,24 @@ import { provideRouter, RouterConfig } from '@angular/router';
 
 import { LoginRoutes } from './@login/index';
 import { HomeRoutes } from './@home/index';
-import { BlogsRoutes } from './@blogs/index';
-import { WorkRoutes } from './@work/index';
+import { BlogRoutes } from './@blogs/index';
+import { ProjectRoutes } from './@projects/index';
 
-import { AuthGuard, BlogsGuard, BlogGuard, LoginGuard, WorkListGuard } from './shared/index';
+import { AuthGuard, LoginGuard, BlogListGuard, BlogGuard, ProjectGuard, ProjectListGuard } from './shared/index';
 
 const routes: RouterConfig = [
     ...LoginRoutes,
     ...HomeRoutes,
-    ...BlogsRoutes,
-    ...WorkRoutes
+    ...BlogRoutes,
+    ...ProjectRoutes
 ];
 
 export const APP_ROUTER_PROVIDERS = [
     provideRouter(routes),
     AuthGuard,
     LoginGuard,
-    BlogsGuard,
+    BlogListGuard,
     BlogGuard,
-    WorkListGuard
+    ProjectListGuard,
+    ProjectGuard
 ];

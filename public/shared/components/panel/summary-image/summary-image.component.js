@@ -15,7 +15,7 @@ var PanelSummaryImage = (function () {
         this.loaded = false;
     }
     PanelSummaryImage.prototype.ngOnInit = function () {
-        this.url = this.image;
+        this.url = this.image.url;
     };
     PanelSummaryImage.prototype.ngAfterViewInit = function () {
         var _this = this;

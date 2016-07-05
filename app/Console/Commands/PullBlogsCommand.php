@@ -28,33 +28,16 @@ class PullBlogsCommand extends Command {
      * @return void
      */
     public function fire()
-    {   
-        $truncate = $this->option('truncate') || FALSE;
-        
-        DB::table('blogs')->truncate();
-        $this->info('Emptying the blogs table');
-
-        if ($truncate) {
-            DB::table('jobs')->truncate();
-            $this->info('Emptying the jobs table');
-            DB::table('images')->truncate();
-            $this->info('Emptying the images table');
-        }
-
+    {
         $blogs = (array)json_decode(file_get_contents('http://www.jpenterprises.com/jp_export/blog'));
-        $this->info('Just downloaded ' . count($blogs) . ' blogs');
+        $this->info('Retrieved ' . count($blogs) . ' blogs');
 
-        $this->info('Pushing to BlogService Queue');
+        $this->info('Pushing to BlogQueue');
         foreach($blogs as $blog) {
-            Queue::push('App\Queue\BlogService', $blog);
+            Queue::push('App\Queue\BlogQueue', $blog);
         }
-        $this->info(count($blogs) . ' jobs created in BlogService Queue.  Run php artisan queue:work --daemon to import all blogs.');
-    }
 
-    public function getOptions() {
-        return [
-            ['truncate', 'truncate', InputOption::VALUE_NONE, 'Truncate the jobs and images table?']
-        ];
+        $this->info(count($blogs) . ' jobs created.  Run php artisan queue:work.');
     }
 
 }

@@ -20,6 +20,12 @@ var ClientService = (function () {
         return this.http.get('/options/clients')
             .map(function (res) { return res.json(); });
     };
+    ClientService.prototype.cache = function (v) {
+        this._cached = v;
+    };
+    ClientService.prototype.cached = function () {
+        return this._cached;
+    };
     ClientService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [http_1.Http])

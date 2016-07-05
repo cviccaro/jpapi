@@ -11,6 +11,7 @@ import {
     AfterViewChecked,
     ContentChild,
     SimpleChange,
+    SimpleChanges,
     ContentChildren,
     ViewChild,
     ViewChildren,
@@ -30,7 +31,7 @@ import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-lis
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { JpaPanelContent } from './content/index';
 import { PanelSummaryComponent } from './summary/index';
-import {ImageUploadComponent, FileUploader} from '../image-upload/index';
+import {ImageUploadComponent} from '../image-upload/index';
 
 export const JPA_PANEL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     useExisting: forwardRef(() => JpaPanel),
@@ -87,7 +88,7 @@ export class JpaPanelDuplicatedHintError extends MdError {
         // FILE_UPLOAD_DIRECTIVES,
         // MD_GRID_LIST_DIRECTIVES
     ],
-    providers: [JPA_PANEL_VALUE_ACCESSOR, FileUploader],
+    providers: [JPA_PANEL_VALUE_ACCESSOR],
     pipes: [SlicePipe],
     host: {
         '(click)': 'focus()'
@@ -97,8 +98,11 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     private _focused: boolean = false;
     private _expanded: boolean = false;
     private _value: any = '';
+    private _secureValue: any = '';
     private _empty: boolean = false;
     private _underlineHidden: boolean = false;
+    private _initialValue = null;
+    private _valueChanged = false;
     private _isTextfield: boolean = false;
     private _isTextarea: boolean = false;
     private _isImage: boolean = false;
@@ -108,164 +112,64 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     private _hasContentRight: boolean = false;
     private _hasContentBottom: boolean = false;
     private _hasContentLeft: boolean = false;
-
-    /** Callback registered via registerOnTouched (ControlValueAccessor) */
     private _onTouchedCallback: () => void = noop;
-    /** Callback registered via registerOnChange (ControlValueAccessor) */
     private _onChangeCallback: (_: any) => void = noop;
-
-    constructor() {}
-
-
-    /**
-     * Run right after the data-bound properties have been checked for the first time,
-     * and before the children are.  Set up the panel.
-     */
-    ngOnInit() {
-        //console.info('JpaPanel.'+this.type+' ' + this.name + '#onInit ', this.type);
-        switch(this.type) {
-            case 'text': this._isTextfield = true; break;
-            case 'select': this._isSelect = true; break;
-            case 'textarea': this._isTextarea = true; break;
-            case 'image': this._isImage = true; break;
-            case 'images':
-                this._isGallery = true;
-                this._empty = true;
-                this._hasContentBottom = true;
-                this.fullWidth = true;
-                break;
-        }
-    }
-
-    /**
-     * Aria related inputs.
-     */
-    @Input('aria-label') ariaLabel: string;
-    @Input('aria-labelledby') ariaLabelledBy: string;
-    @Input('aria-disabled') @BooleanFieldValue() ariaDisabled: boolean;
-    @Input('aria-required') @BooleanFieldValue() ariaRequired: boolean;
-    @Input('aria-invalid') @BooleanFieldValue() ariaInvalid: boolean;
-
-    /**
-     * Content directives.
-     */
-    @ContentChildren(MdHint) private _hintChildren: QueryList<MdHint>;
-    @ContentChildren(NgSelectOption) private _optionChildren: QueryList<NgSelectOption>;
-    @ContentChildren(JpaPanelContent) private _contentChildren: QueryList<JpaPanelContent>;
-    @ViewChild(PanelSummaryComponent) private _summaryChild: PanelSummaryComponent;
-
-    /**
-     * Form elements
-     */
-
-    @ViewChild('input') private _inputElement: ElementRef;
-    @ViewChild('select') private _selectElement: ElementRef;
-    @ViewChild('textarea') private _textareaElement: ElementRef;
-    @ViewChild('imagePreview') private _imagePreview: ElementRef;
-
-    /** Readonly properties. */
-    get focused() { return this._focused; }
-    get empty() { return this._value == null || this._value === ''; }
-    get characterCount(): number {
-        return this.empty ? 0 : ('' + this._value).length;
-    }
-    get inputId(): string { return `${this.id}-panel`; }
-
-    /**
-     * Classes
-     */
-
-    @HostBinding('class.focused') get focusedClass () { return this._focused; }
-    @HostBinding('class.expanded') get expandedClass () { return this._expanded; }
-    @HostBinding('class.changed') get changedClass () { return this._valueChanged; }
 
     /**
      * Bindings.
      */
-    @Input() dividerColor: 'primary' | 'accent' | 'warn' = 'primary';
-    @Input() hintLabel: string = '';
-
     @Input() @BooleanFieldValue() autoFocus: boolean = false;
+    @Input() currentImage: string = null;
     @Input() @BooleanFieldValue() disabled: boolean = false;
+    @Input() dividerColor: 'primary' | 'accent' | 'warn' = 'primary';
+    @Input() editText: string;
+    @Input() fullWidth: boolean = false;
+    @Input() hintLabel: string = '';
     @Input() id: string = `jpa-panel-${nextUniqueId++}`;
+    @Input() label: string = null;
     @Input() max: string = null;
     @Input() maxLength: number = null;
     @Input() min: string = null;
     @Input() minLength: number = null;
+    @Input() name: string = null;
     @Input() placeholder: string = null;
     @Input() @BooleanFieldValue() readOnly: boolean = false;
     @Input() @BooleanFieldValue() required: boolean = false;
     @Input() @BooleanFieldValue() spellCheck: boolean = false;
     @Input() step: number = null;
     @Input() tabIndex: number = null;
-    @Input() name: string = null;
     @Input() type: string = 'text';
-    @Input() label: string = null;
 
-    @Input() currentImage: string = null;
-    @Input() gallery: any[] = [];
-
-    @Input() fullWidth: boolean = false;
-
-    private _blurEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
-    private _focusEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
-    private _expandedEmitter: EventEmitter<any> = new EventEmitter<any>();
-
-    @Output('blur')
-    get onBlur(): Observable<FocusEvent> {
-        return this._blurEmitter.asObservable();
+    /** Readonly properties. */
+    get focused() { return this._focused; }
+    get empty() {
+        let v = this.value;
+        let x = !v || v === undefined || v === null || (Array.isArray(v) && v.length)
+        // console.warn('Panel'+this.type+' is checking empty of value: ', {
+        //     v: v,
+        //     x: x,
+        //     falsyCheck: (!v ? true : false)
+        // });
+        return x;
     }
+    get characterCount(): number { return this.empty ? 0 : ('' + this._value).length; }
+    get inputId(): string { return `${this.id}-panel`; }
 
-    @Output('focus')
-    get onFocus(): Observable<FocusEvent> {
-        return this._focusEmitter.asObservable();
-    }
-
-    @Output('expand')
-    get onExpand(): Observable<any> {
-        return this._expandedEmitter.asObservable();
-    }
-
-    @Output() imageFieldChanged = new EventEmitter();
-
-    private _initialValue = null;
-    private _valueChanged = false;
-
-    set expanded(v: boolean) { this._expanded = v; }
-    get expanded(): boolean { return this._expanded; }
-
-    get value(): any {
-        if (this.type === 'image') {
-            return '';
-        }
-        return this._value;
-    };
+    get value(): any { return this._value; }
     @Input() set value(v: any) {
-        v = this._convertValueForInputType(v);
         console.debug('JpaPanel'+this.type+'.'+this.name+'# set value(): ', v);
+
         if (v !== this._value) {
             this._value = v;
             this._onChangeCallback(v);
         }
-
-        this._empty = this.isEmpty(v);
     }
 
-    isEmpty(v:any) {
-        return v === undefined || v === null || (Array.isArray(v) && v.length === 0) || Object.keys(v).length === 0;
+    set expanded(v: boolean) {
+        this._expanded = v;
+        this._toggleEmitter.emit(this._expanded);
     }
-
-    @Input() editText: string;
-
-    private _imageLoaded = false;
-    private _currentImageSize = null;
-
-    set currentImageSize(v: {w: number, h: number}) {
-        this._currentImageSize = v;
-    }
-    get currentImageSize() {
-        return this._currentImageSize;
-    }
+    get expanded(): boolean { return this._expanded; }
 
     get nativeElement() {
         switch(this.type) {
@@ -280,37 +184,88 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         return false;
     }
 
-    /** Set focus on input */
-    focus() {
-        if (this.nativeElement) {
-            this.nativeElement.focus();
-        }
-    }
+    /**
+     * Content directives.
+     */
+    @ContentChildren(MdHint) private _hintChildren: QueryList<MdHint>;
+    @ContentChildren(NgSelectOption) private _optionChildren: QueryList<NgSelectOption>;
+    @ContentChildren(JpaPanelContent) private _contentChildren: QueryList<JpaPanelContent>;
+    @ViewChild(ImageUploadComponent) private _imageUploadCmp: ImageUploadComponent;
+    @ViewChild(PanelSummaryComponent) private _summaryChild: PanelSummaryComponent;
+    @ViewChild('input') private _inputElement: ElementRef;
+    @ViewChild('select') private _selectElement: ElementRef;
+    @ViewChild('textarea') private _textareaElement: ElementRef;
 
-    /** @internal */
-    handleFocus(event: FocusEvent) {
-        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleFocus ', event);
-        if (this.expanded) {
-            this._focused = true;
-            this._focusEmitter.emit(event);
-        } else {
-            // console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleFocus: skipping focus for non-expanded panel');
-        }
-    }
+    /**
+     * Classes
+     */
+    @HostBinding('class.focused') get focusedClass () { return this._focused; }
+    @HostBinding('class.expanded') get expandedClass () { return this._expanded; }
+    @HostBinding('class.changed') get changedClass () { return this._valueChanged; }
+    @HostBinding('class.empty') get emptyClass () { return this.empty; }
+    @HostBinding('class.text') get textClass() { return this.type === 'text'; }
+    @HostBinding('class.select') get selectClass() { return this.type === 'select'; }
+    @HostBinding('class.textarea') get textareaClass() { return this.type === 'textarea'; }
+    @HostBinding('class.image') get imageClass() { return this.type === 'image'; }
+    @HostBinding('class.images') get imagesClass() { return this.type === 'images'; }
+    /**
+     * Outputs
+     */
+    @Output() imageFieldChanged = new EventEmitter();
 
-    /** @internal */
+    private _blurEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    private _focusEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+    private _toggleEmitter: EventEmitter<any> = new EventEmitter<any>();
+
+    @Output('blur') get onBlur(): Observable<FocusEvent> { return this._blurEmitter.asObservable(); }
     handleBlur(event: FocusEvent) {
-        // console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleBlur ', event);
         if (this.expanded) {
             this._focused = false;
             this._onTouchedCallback();
             this._blurEmitter.emit(event);
-        } else {
-            // console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleBlur: skipping blur for non-expanded panel');
         }
     }
 
-    /** @internal */
+    @Output('focus') get onFocus(): Observable<FocusEvent> { return this._focusEmitter.asObservable(); }
+    handleFocus(event: FocusEvent) {
+        if (this.expanded) {
+            this._focused = true;
+            this._focusEmitter.emit(event);
+        }
+    }
+    focus() {
+        if (!this.expanded) {
+            this.toggle();
+            if (this.nativeElement) {
+                setTimeout(() => { this.nativeElement.focus() });
+            }
+        } else if (this.nativeElement) {
+            this.nativeElement.focus();
+        }
+    }
+
+    @Output('toggle') get onToggle(): Observable<any> {
+        return this._toggleEmitter.asObservable();
+    }
+
+    /**
+     * Implemented as part of ControlValueAccessor.
+     */
+    writeValue(value: any) {
+        console.debug('JpaPanel.'+this.type+' ' + this.name + '#writeValue('+this.type+')', value);
+        this._value = value;
+        if (!this._initialValue) this._initialValue = value;
+    }
+    registerOnChange(fn: any) {
+        this._onChangeCallback = fn;
+    }
+    registerOnTouched(fn: any) {
+        this._onTouchedCallback = fn;
+    }
+
+    /**
+     * Handle child content change events
+     */
     handleChange(event: any) {
         console.debug('JpaPanel.'+this.type+' ' + this.name + '#handleChange: ', event, this);
         switch (this.type) {
@@ -325,7 +280,12 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
                 break;
             case 'image':
                 this.value = event.target.files[0];
-                this.imageFieldChanged.emit(event);
+                // console.log('bypassing setting value using ngmodel for image... ', {
+                //     'value': this.value,
+                //     '_value': this._value,
+                //     elValue: (<HTMLInputElement>event.target).value
+                // });
+                this.imageFieldChanged.emit(event.target.files[0]);
                 break;
             default:
                 this.value = (<HTMLInputElement>event.target).value;
@@ -337,24 +297,28 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     }
 
     /**
-       * Implemented as part of ControlValueAccessor.
-       * TODO: internal
-       */
-    writeValue(value: any) {
-        console.debug('JpaPanel.'+this.type+' ' + this.name + '#writeValue('+this.type+')', value);
-        this._value = value;
-        if (!this._initialValue) this._initialValue = value;
-    }
-    registerOnChange(fn: any) {
-        this._onChangeCallback = fn;
-    }
-    registerOnTouched(fn: any) {
-        this._onTouchedCallback = fn;
+     * Run right after the data-bound properties have been checked for the first time,
+     * and before the children are.
+     */
+    ngOnInit() {
+        //console.info('JpaPanel.'+this.type+' ' + this.name + '#onInit ', this.type);
+        switch(this.type) {
+            case 'text': this._isTextfield = true; break;
+            case 'select': this._isSelect = true; break;
+            case 'textarea': this._isTextarea = true; break;
+            case 'image': this._isImage = true; break;
+            case 'images':
+                this._isGallery = true;
+                this._hasContentBottom = true;
+                this.fullWidth = true;
+                break;
+        }
     }
 
-
-    /** TODO: internal */
-    ngAfterContentInit() {
+    /**
+     * After content init
+     */
+    ngAfterContentInit(): void {
         this._validateConstraints();
 
         // Trigger validation when the hint children change.
@@ -370,7 +334,6 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
 
         if (this._hasContent) {
             this._contentChildren.forEach(panel => {
-                console.log('CONTENT CHILDREN PANEL CONTENT OMGGGGGGGGGGG ', panel);
                 switch(panel.align) {
                     case 'right': this._hasContentRight = true; break;
                     case 'left': this._hasContentLeft = true; break;
@@ -382,52 +345,41 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         if (this._summaryChild) {
             switch(this.type) {
                 case 'select':
+                console.log('setting select options on children to ', this._optionChildren);
                     this._summaryChild.setOptions(this._optionChildren);
                     break;
             }
         }
 
-        console.debug('JpaPanel.'+this.type+' ' + this.name + '#AfterContentInit', this);
+        console.info('JpaPanel.'+this.type+' ' + this.name + '#AfterContentInit', this);
     }
 
-    ngAfterViewInit() {
+    /**
+     * After View Init
+     */
+    ngAfterViewInit(): void {
         switch(this.type) {
             case 'image':
+            console.log('Panel(image) setting value to ', {
+                from: this.value,
+                to: this.nativeElement.value
+            });
                 this.value = this.nativeElement.value;
             break;
             default:
                 if (this.nativeElement) {
-                    // console.log('JpaPanel.'+this.type+' ' + this.name + '#AfterViewInit : found nativeElement.',this.nativeElement);
                     this.value = this.nativeElement.value;
                 }
-                break;
         }
-        console.debug('JpaPanel.'+this.type+' ' + this.name + '#ngAfterViewInit', this);
-    }
-
-    /** TODO: internal */
-    ngOnChanges(changes: { [key: string]: SimpleChange }) {
-        console.log('PANEL changed something: ', changes);
-        for (let prop in changes) {
-            let previousValue = changes[prop].previousValue;
-            let currentValue = changes[prop].currentValue;
-            let isFirstChange = changes[prop].isFirstChange;
-            console.log('PanelComponent.'+ prop + ' changed: ', {from: previousValue, to: currentValue, isFirstChange: isFirstChange});
-        }
-        this._validateConstraints();
+        console.info('PanelComponent.' + this.type + ' # AfterViewInit: ' , this._optionChildren);
     }
 
     /**
-     * Convert the value passed in to a value that is expected from the type of the md-input.
-     * This is normally performed by the *_VALUE_ACCESSOR in forms, but since the type is bound
-     * on our internal input it won't work locally.
-     * @private
+     * Handle changes on
+     * @param {SimpleChanges} changes
      */
-    private _convertValueForInputType(v: any): any {
-        switch (this.type) {
-            case 'number': return parseFloat(v);
-            default: return v;
-        }
+    ngOnChanges(changes: SimpleChanges): void {
+        this._validateConstraints();
     }
 
     /**
@@ -469,20 +421,17 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
      * Internal
      */
 
-    toggle($event) {
-        $event.preventDefault();
-        $event.stopPropagation();
-        this._expanded = !this._expanded;
+    toggle($event?: Event) {
+        if ($event) {
+            $event.preventDefault();
+            $event.stopPropagation();
+        }
 
-        this.onToggle();
-    }
+        this.expanded = !this.expanded;
 
-    /** internal **/
-    onToggle() {
-        this._expandedEmitter.emit(this._expanded);
         if (this._hasContent) {
             this._contentChildren.forEach(panelContent => {
-                panelContent.onToggle(this._expanded);
+                panelContent.onToggle(this.expanded);
             });
         }
     }
@@ -498,5 +447,18 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     }
     imageLoaded(e: any) {
      //   console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
+    }
+
+    /**
+     * Form reset
+     */
+
+    public reset() {
+        this._valueChanged = false;
+        this._secureValue = '';
+        if (this.type === 'image') {
+            this._inputElement.nativeElement.value = '';
+        }
+        this.expanded = false;
     }
 }

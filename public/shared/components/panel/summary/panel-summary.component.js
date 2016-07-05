@@ -11,13 +11,17 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var common_1 = require('@angular/common');
 var angular2_material_1 = require('../../../../shared/libs/angular2-material');
-var summary_image_component_1 = require('../summary-image/summary-image.component');
+var index_1 = require('./summary-image/index');
+var index_2 = require('./summary-images/index');
 var PanelSummaryComponent = (function () {
     function PanelSummaryComponent() {
         this.imageLoaded = false;
         this._currentImageSize = null;
         this._currentImageName = false;
         this._summary = '';
+        this._hasImage = false;
+        this._imagesCount = 0;
+        this._imagesQueueCount = 0;
         this.expanded = false;
         this.empty = true;
         this.valueChanged = false;
@@ -48,6 +52,7 @@ var PanelSummaryComponent = (function () {
                     label: item['_element']['nativeElement'].innerHTML
                 };
             });
+            this.setSummaryOf(this.value);
         }
     };
     Object.defineProperty(PanelSummaryComponent.prototype, "summary", {
@@ -55,6 +60,7 @@ var PanelSummaryComponent = (function () {
             return this._summary;
         },
         set: function (v) {
+            console.debug('PanelSummary' + this.type + ' setting summary to ', { value: v });
             this._summary = v;
         },
         enumerable: true,
@@ -64,23 +70,52 @@ var PanelSummaryComponent = (function () {
         for (var prop in changes) {
             var previousValue = changes[prop].previousValue;
             var currentValue = changes[prop].currentValue;
-            var isFirstChange = changes[prop].isFirstChange;
-            console.log('PanelSummary.' + prop + ' changed: ', { from: previousValue, to: currentValue, isFirstChange: isFirstChange });
+            var isFirstChange = changes[prop].isFirstChange();
+            console.debug('PanelSummary.' + this.type + '.' + prop + ' changed: ', { from: previousValue, to: currentValue, isFirstChange: isFirstChange });
             switch (prop) {
                 case 'value':
                     this.setSummaryOf(currentValue);
+                    this._hasImage = this.type === 'image' && this.currentImage;
+                    break;
+                case 'empty':
+                    this.setSummaryOf(this.value);
+                    this._hasImage = this.type === 'image' && this.currentImage;
                     break;
             }
         }
     };
     PanelSummaryComponent.prototype.setSummaryOf = function (value) {
+        console.log('PanelSummary<' + this.type + '>.setSummaryOf() called with value ', { value: value });
         switch (this.type) {
             case 'select':
+                console.log('set usmmary of select ', {
+                    options: this._selectOptions,
+                    value: value
+                });
+                if (!this._selectOptions)
+                    return;
                 var filtered = this._selectOptions.filter(function (opt) {
                     return opt['value'] == value;
                 });
                 if (filtered.length) {
                     this.summary = filtered[0]['label'];
+                }
+                break;
+            case 'images':
+                if (Array.isArray(this.value)) {
+                    var _new_1 = 0;
+                    var _old_1 = 0;
+                    this.value.forEach(function (val) {
+                        if (val.hasOwnProperty('id')) {
+                            _old_1++;
+                        }
+                        else {
+                            _new_1++;
+                        }
+                    });
+                    this._imagesCount = _old_1;
+                    this._imagesQueueCount = _new_1;
+                    console.debug('set count to ' + this._imagesCount + ' old and ' + this._imagesQueueCount + ' new');
                 }
                 break;
             default:
@@ -99,10 +134,6 @@ var PanelSummaryComponent = (function () {
         core_1.Input(), 
         __metadata('design:type', String)
     ], PanelSummaryComponent.prototype, "type", void 0);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', Object)
-    ], PanelSummaryComponent.prototype, "gallery", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Object)
@@ -129,7 +160,7 @@ var PanelSummaryComponent = (function () {
             selector: 'jpa-panel-summary',
             templateUrl: './panel-summary.component.html',
             styleUrls: ['./panel-summary.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES, summary_image_component_1.PanelSummaryImage],
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.PanelSummaryImage, index_2.PanelSummaryImages],
             viewProviders: [common_1.NgSwitch, common_1.NgSwitchCase, common_1.NgSwitchDefault]
         }), 
         __metadata('design:paramtypes', [])

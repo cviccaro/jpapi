@@ -11,30 +11,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var angular2_moment_1 = require('angular2-moment');
 var angular2_material_1 = require('../../libs/angular2-material');
+var index_1 = require('./pager/index');
 var ListComponent = (function () {
     function ListComponent() {
         this.listUpdate = new core_1.EventEmitter();
         this.listItemEdit = new core_1.EventEmitter();
         this.listItemDelete = new core_1.EventEmitter();
         this.listItemAdd = new core_1.EventEmitter();
+        this.onPageChange = new core_1.EventEmitter();
     }
     ListComponent.prototype.ngOnInit = function () {
         console.log('ListComponent initialized.', this);
     };
-    ListComponent.prototype.fetch = function () {
-        this.listUpdate.emit({
-            config: this.listConfig,
-            data: this.listData
-        });
-    };
     ListComponent.prototype.add = function () {
-        this.listItemAdd.emit('');
+        this.listItemAdd.emit({});
+    };
+    ListComponent.prototype.fetch = function () {
+        this.listUpdate.emit({});
     };
     ListComponent.prototype.edit = function (item, $event) {
         this.listItemEdit.emit(item);
     };
     ListComponent.prototype.delete = function (item, $event) {
         this.listItemDelete.emit(item);
+    };
+    ListComponent.prototype.pageChanged = function (num) {
+        this.onPageChange.emit(num);
     };
     __decorate([
         core_1.Input(), 
@@ -64,6 +66,10 @@ var ListComponent = (function () {
         core_1.Output(), 
         __metadata('design:type', Object)
     ], ListComponent.prototype, "listItemAdd", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], ListComponent.prototype, "onPageChange", void 0);
     ListComponent = __decorate([
         core_1.Component({
             selector: 'jpa-list',
@@ -71,7 +77,8 @@ var ListComponent = (function () {
             templateUrl: './list.component.html',
             styleUrls: ['./list.component.css'],
             directives: [
-                angular2_material_1.MATERIAL_DIRECTIVES
+                angular2_material_1.MATERIAL_DIRECTIVES,
+                index_1.PagerComponent
             ],
             pipes: [angular2_moment_1.TimeAgoPipe, angular2_moment_1.CalendarPipe]
         }), 

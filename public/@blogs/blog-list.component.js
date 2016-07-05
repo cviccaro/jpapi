@@ -46,7 +46,7 @@ var BlogListComponent = (function () {
         return {
             id: blog.id,
             title: blog.title,
-            subtitle: blog.category.name,
+            subtitle: blog.tags.length ? blog.tags[0].name : '',
             dates: {
                 updated_at: blog.updated_at,
                 created_at: blog.created_at
@@ -77,12 +77,18 @@ var BlogListComponent = (function () {
         })
             .subscribe(function (json) { return _this.parseList(json); });
     };
+    BlogListComponent.prototype.add = function () {
+        this.router.navigate(['/blogs', 'new']);
+    };
     BlogListComponent.prototype.edit = function (blog) {
-        console.log('ROUTE TO:', ['/blogs', blog.id]);
         this.router.navigate(['/blogs', blog.id]);
     };
-    BlogListComponent.prototype._delete = function (blog) {
+    BlogListComponent.prototype.destroy = function (blog) {
         console.log('delete this item: ', blog);
+    };
+    BlogListComponent.prototype.onPageChange = function (num) {
+        this.listConfig.page.currentPage = num;
+        this.fetch();
     };
     BlogListComponent.prototype.ngOnDestroy = function () {
         if (this.sub)

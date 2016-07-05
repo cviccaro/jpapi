@@ -28,10 +28,8 @@ export class JpaPanelGroup implements AfterViewInit, AfterContentInit {
         //     console.log('panel change! ', panel);
         // });
         this._panelChildren.forEach(panel => {
-            //console.log('Subscribing to onExpand for this panel', panel);
-            panel.onExpand.subscribe(e => {
-                //console.log('expand event: ', e);
-                this.childExpanded = e;
+            panel.onToggle.subscribe(e => {
+                this.childExpanded = !!this._panelChildren.filter(panel => panel.expanded).length
             });
         })
     }

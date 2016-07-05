@@ -5,6 +5,6 @@ function __export(m) {
 __export(require('./blog'));
 __export(require('./client'));
 __export(require('./form-submission'));
-__export(require('./work'));
+__export(require('./project'));
 
 //# sourceMappingURL=index.js.map

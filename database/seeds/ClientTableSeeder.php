@@ -1,99 +1,101 @@
 <?php
 
-use App\Client;
-use App\Image;
 use Illuminate\Database\Seeder;
 
+use App\Client;
+use App\Image;
+
 class ClientTableSeeder extends Seeder {
-	/**
-	 * Run the database seeds.
-	 *
-	 * @return void
-	 */
-	public function run() {
-		DB::table('clients')->truncate();
 
-		$clients = array(
-			array(
-				'name' => 'Adobe',
-				'short_name' => 'Adobe',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'Cicci Dance Studio',
-				'short_name' => 'Cicci',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'Cisco Systems',
-				'short_name' => 'Cisco',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'Fisher Scientific',
-				'short_name' => 'Fisher Scientific',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'Galls',
-				'short_name' => 'Galls',
-				'featured' => FALSE,
-			),
-			array(
-				'name' => 'Henry Schein',
-				'short_name' => 'Henry Schein',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'Kennametal',
-				'short_name' => 'Kennametal',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'Kobold',
-				'short_name' => 'Kobold',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'LA Turbine',
-				'short_name' => 'LA Turbine',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'NetworkKing',
-				'short_name' => 'NetworkKing',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'Thomas and Betts',
-				'short_name' => 'Thomas and Betts',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'Quantum',
-				'short_name' => 'Quantum',
-				'featured' => TRUE,
-			),
-			array(
-				'name' => 'WESCO',
-				'short_name' => 'WESCO',
-				'featured' => TRUE,
-			),
-		);
+    public function run()
+    {
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('clients')->truncate();
+        DB::table('images')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-		foreach ($clients as $client) {
-			$image_path = app()->basePath() . '/resources/assets/images/clients/' . $client['short_name'] . '.png';
+        $image_current_location = resource_path(path_join(['assets', 'images', 'clients']));
+        $image_destination = path_join(['app', 'public', 'images', 'clients']);
 
-			if (file_exists($image_path)) {
-				$image = Image::create([
-					'path' => $image_path,
-				]);
-				$client['image'] = $image->id;
+        $clients = [
+            [
+                'name' => 'Adobe',
+                'alias' => 'Adobe',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'Cicci Dance Studio',
+                'alias' => 'Cicci',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'Cisco Systems',
+                'alias' => 'Cisco',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'Fisher Scientific',
+                'alias' => 'Fisher Scientific',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'Galls',
+                'alias' => 'Galls',
+                'featured' => FALSE,
+            ],
+            [
+                'name' => 'Henry Schein',
+                'alias' => 'Henry Schein',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'Kennametal',
+                'alias' => 'Kennametal',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'Kobold',
+                'alias' => 'Kobold',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'LA Turbine',
+                'alias' => 'LA Turbine',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'NetworkKing',
+                'alias' => 'NetworkKing',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'Thomas and Betts',
+                'alias' => 'Thomas and Betts',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'Quantum',
+                'alias' => 'Quantum',
+                'featured' => TRUE,
+            ],
+            [
+                'name' => 'WESCO',
+                'alias' => 'WESCO',
+                'featured' => TRUE,
+            ],
+        ];
 
-			}
+        foreach ($clients as $data) {
+            $client = Client::create($data);
 
-			Client::create($client);
-		}
+            $image_path = path_join([$image_current_location, $data['alias'] . '.png']);
 
-	}
+            if (file_exists($image_path)) {
+                $image = Image::createFromUrl($image_path, $image_destination);
+
+                $client->image()->associate($image)->save();
+            }
+        }
+    }
+
 }

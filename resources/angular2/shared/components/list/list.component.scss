@@ -3,12 +3,16 @@
 :host {
     display: flex;
     flex-direction: column;
+
+    /**
+     * Actual MD List
+     */
     md-list {
       md-list-item {
-          display: block;
-          background: $white;
+        display: block;
+        background: $white;
         &.odd {
-          background: $grey_200;
+          background: $grey_50;
         }
         .md-list-item-content {
           width: 100%;
@@ -38,7 +42,13 @@
         }
       }
     }
+
+    /**
+     * Toolbar
+     */
     md-toolbar {
+        background: none;
+        padding: 0;
         button[md-button],
         button[md-raised-button] {
             height: 36px;

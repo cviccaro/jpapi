@@ -26,11 +26,16 @@ var DragDropAbstractComponent = (function () {
         });
         this._elem.addEventListener('drop', function (e) { return _this._onDrop(e); });
         this._elem.addEventListener('dragstart', function (event) {
+            console.log('drag start', event);
             if (event.dataTransfer != null) {
                 event.dataTransfer.setData('text', '');
                 event.dataTransfer.effectAllowed = 'copy';
                 _this._elem.style.cursor = 'move';
             }
+        });
+        this._elem.addEventListener('dragend', function (event) {
+            console.log('drag end', eval);
+            _this._elem.style.cursor = _this._defaultCursor;
         });
     }
     DragDropAbstractComponent.prototype._onDragOver = function (event) {

@@ -5,44 +5,23 @@
         </md-card-title>
         <jpa-panel-summary
           [expanded]="_expanded"
-          [type]="type" [gallery]="gallery"
+          [type]="type"
           [value]="value"
           [currentImage]="currentImage"
           [empty]="empty"
           [valueChanged]="_valueChanged"
           [editText]="editText">
         </jpa-panel-summary>
-<!--         <div class="panel-summary">
-            <div class="summary-text-wrapper" [hidden]="_expanded">
-                <span class="summary-text textfield" *ngIf="!_isImage && !_isGallery">
-                    {{ summary | slice:0:50 }}
-                    <span class="summary-ellipsis" *ngIf="summary.length > 50">...</span>
-                </span>
-                <span class="summary-text imagefield" *ngIf="_isImage" [innerHTML]="summary"></span>
-                <span class="summary-text imagefield" *ngIf="_isImage"></span>
-                <span class="summary-text gallery" *ngIf="_isGallery">
-                  <div class="count">
-                    <md-icon color="primary">panorama</md-icon>&nbsp;&nbsp;{{ gallery?.length - value?.length }} pictures in gallery <span *ngIf="value" class="new"> + {{value.length}} new</span>
-                  </div>
-                </span>
-            </div>
-            <div class="summary-text-wrapper" [hidden]="!(_expanded || (empty && !_isGallery && !_isImage) || (_isGallery && gallery.length === 0) || (_isImage && !currentImage))">
-              <span class="summary-text edit-text">{{ editText }} <md-icon class="md-20">help_outline</md-icon></span>
-            </div>
-            <div class="summary-image" *ngIf="_isImage && currentImage && !_valueChanged" [hidden]="_expanded">
-                <span [hidden]="_imageLoaded">Loading...<md-icon class="spin">update</md-icon></span>
-                <img [src]="currentImage" class="image-preview" #imagePreview />
-            </div>
-        </div> -->
         <button class="toggle" md-icon-button (click)="toggle($event)">
             <md-icon>keyboard_arrow_down</md-icon>
         </button>
     </md-card-title-group>
     <div class="panel-content"
+        [hidden]="!expanded"
         [class.panel-content-input]="_isTextfield" [class.panel-content-select]="_isSelect"
         [class.panel-content-textarea]="_isTextarea" [class.panel-content-image]="_isImage">
-        <div class="panel-content-top">
-          <div class="panel-content-spacer" [hidden]="fullWidth || _hasContentLeft"></div>
+        <div class="panel-content-top" *ngIf="!_isGallery">
+          <div class="panel-content-spacer" [hidden]="(fullWidth || _hasContentLeft) && !(_isImage && empty)"></div>
           <div class="panel-content-left" *ngIf="_hasContentLeft">
             <ng-content select="jpa-panel-content[align=left]"></ng-content>
           </div>
@@ -128,7 +107,7 @@
                           [attr.name]="name"
                           (focus)="handleFocus($event)"
                           (blur)="handleBlur($event)"
-                          [(ngModel)]="value"
+                          [(ngModel)]="_secureValue"
                           (change)="handleChange($event)" />
                   </div>
               </div>
@@ -141,7 +120,7 @@
           <div class="panel-content-right" *ngIf="_hasContentRight">
               <ng-content select="jpa-panel-content[align=right]"></ng-content>
           </div>
-          <div class="panel-content-spacer-end" [hidden]="fullWidth"></div>
+          <div class="panel-content-spacer right" [hidden]="fullWidth"></div>
         </div>
         <div class="panel-content-bottom" *ngIf="_hasContentBottom">
           <ng-content *ngIf="!_isGallery" select="jpa-panel-content[align=bottom]"></ng-content>

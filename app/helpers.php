@@ -113,3 +113,9 @@ if (!function_exists('slow_equals')) {
         return $diff === 0;
     }
 }
+
+if (!function_exists('path_join')) {
+  function path_join($parts) {
+    return implode(DIRECTORY_SEPARATOR, $parts);
+  }
+}

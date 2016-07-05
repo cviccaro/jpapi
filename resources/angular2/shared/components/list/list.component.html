@@ -39,10 +39,10 @@
               <p md-line>Last updated {{ line.dates.updated_at | amTimeAgo }} | Created {{ line.dates.created_at | amCalendar }}</p>
             </div>
             <div class="actions" layout="row" flex="30" layout-align="end center">
-              <button md-fab color="primary" (click)="edit(line, $event)">
+              <button md-icon-button (click)="edit(line, $event)">
                   <md-icon class="md-24">edit</md-icon>
               </button>
-              <button md-fab color="accent" (click)="delete(line, $event)">
+              <button md-fab color="danger" (click)="delete(line, $event)">
                   <md-icon class="md-24">delete</md-icon>
               </button>
             </div>
@@ -51,3 +51,8 @@
     </md-list-item>
 </md-list>
 <div class="empty" [hidden]="listData.length">{{ listConfig.emptyText }}</div>
+<jpa-pager
+  *ngIf="listConfig.page"
+  [pagerData]="listConfig.page"
+  (pageChanged)="pageChanged($event)">
+</jpa-pager>

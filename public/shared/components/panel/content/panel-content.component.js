@@ -10,14 +10,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var grid_list_1 = require('@angular2-material/grid-list');
+var icon_1 = require('@angular2-material/icon');
+var index_1 = require('../../../index');
 var JpaPanelContent = (function () {
     function JpaPanelContent(el) {
         this.el = el;
         this._hasImage = false;
-        this.imageExtension = '';
+        this._imageUrl = '';
+        this.loading = false;
         this.file = null;
         this.image = null;
         this.align = 'right';
+        this.label = '';
     }
     Object.defineProperty(JpaPanelContent.prototype, "ifLeftClass", {
         get: function () { return this.align === 'left'; },
@@ -35,18 +39,64 @@ var JpaPanelContent = (function () {
         configurable: true
     });
     JpaPanelContent.prototype.ngAfterContentInit = function () {
-        if (this.image) {
-            this._hasImage = true;
-            this.imageExtension = 'image/' + this.image.split('.').pop();
+        this._hasImage = !!this.image;
+        if (this._hasImage) {
+            this._imageUrl = this.image.url;
+            this.loading = true;
         }
-        console.log('PanelContent (' + this.align + ') Content Initialized: ', { this: this });
+        console.info('PanelContent (' + this.align + ') Content Initialized: ', { this: this });
     };
     JpaPanelContent.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        this.imageEl = this._imageEl.nativeElement;
+        this.imageEl.addEventListener('load', function () { return _this.onImgLoad(); });
+        console.info('PanelContent (' + this.align + ') View Initialized: ', { this: this });
     };
     JpaPanelContent.prototype.onToggle = function (expanded) {
     };
+    JpaPanelContent.prototype.onImgLoad = function () {
+        console.debug(this.align + ' image loaded!', { image: this.image });
+        this.loading = false;
+        this.imageWidth = this.imageEl.naturalWidth;
+        this.imageHeight = this.imageEl.naturalHeight;
+        this.imageEl.removeEventListener('load', this.onImgLoad);
+    };
     JpaPanelContent.prototype.ngOnChanges = function (changes) {
-        console.log('PanelContent (' + this.align + ') changed: ', { changes: changes });
+        var _this = this;
+        console.debug('PanelContent (' + this.align + ') changed: ', { changes: changes });
+        for (var prop in changes) {
+            var previousValue = changes[prop].previousValue;
+            var currentValue = changes[prop].currentValue;
+            var isFirstChange = changes[prop].isFirstChange();
+            switch (prop) {
+                case 'image':
+                    if (currentValue) {
+                        this._imageUrl = this.image.url;
+                        this._hasImage = true;
+                    }
+                    else {
+                        this._imageUrl = '';
+                        this._hasImage = false;
+                    }
+                    break;
+                case 'file':
+                    if (currentValue) {
+                        var file = currentValue;
+                        this.image = new index_1.ImageUpload(file);
+                        this.loading = true;
+                        this.image.load()
+                            .subscribe(function (dataUrl) {
+                            _this._imageUrl = dataUrl;
+                            _this._hasImage = true;
+                        });
+                    }
+                    else {
+                        this._imageUrl = '';
+                        this._hasImage = false;
+                    }
+                    break;
+            }
+        }
     };
     __decorate([
         core_1.Input(), 
@@ -54,12 +104,16 @@ var JpaPanelContent = (function () {
     ], JpaPanelContent.prototype, "file", void 0);
     __decorate([
         core_1.Input(), 
-        __metadata('design:type', String)
+        __metadata('design:type', Object)
     ], JpaPanelContent.prototype, "image", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
     ], JpaPanelContent.prototype, "align", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], JpaPanelContent.prototype, "label", void 0);
     __decorate([
         core_1.HostBinding('class.left'), 
         __metadata('design:type', Object)
@@ -76,13 +130,17 @@ var JpaPanelContent = (function () {
         core_1.ContentChild(grid_list_1.MdGridList), 
         __metadata('design:type', grid_list_1.MdGridList)
     ], JpaPanelContent.prototype, "_gridList", void 0);
+    __decorate([
+        core_1.ViewChild('img'), 
+        __metadata('design:type', core_1.ElementRef)
+    ], JpaPanelContent.prototype, "_imageEl", void 0);
     JpaPanelContent = __decorate([
         core_1.Component({
             moduleId: module.id,
             selector: 'jpa-panel-content',
             templateUrl: './panel-content.component.html',
             styleUrls: ['./panel-content.component.css'],
-            directives: [grid_list_1.MdGridList]
+            directives: [grid_list_1.MdGridList, icon_1.MD_ICON_DIRECTIVES]
         }), 
         __metadata('design:paramtypes', [core_1.ElementRef])
     ], JpaPanelContent);

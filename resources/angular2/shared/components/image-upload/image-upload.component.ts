@@ -24,9 +24,10 @@ import { MD_PROGRESS_BAR_DIRECTIVES } from '@angular2-material/progress-bar';
 import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 import { Observable } from 'rxjs/Rx';
 
-import { GridImage } from './grid-image/grid-image';
-import { ImageItem } from './uploader/index';
-import { DragDropAbstractComponent, ImageUploadDropZones, Droppable, Draggable, DragDropService} from '../dragdrop/index';
+import { GridImage, ImageUpload } from './grid-image/index';
+import { JpImage } from '../../models/jp-image';
+
+import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
 import { AuthService } from '../../services/auth.service';
 
@@ -49,36 +50,27 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
         MD_ICON_DIRECTIVES,
         NgModel,
         GridImage,
-        Draggable,
-        Droppable,
-        ImageUploadDropZones
+        DND_DIRECTIVES
     ],
-    providers: [IMAGE_UPLOAD_VALUE_ACCESSOR, DragDropService]
+    providers: [IMAGE_UPLOAD_VALUE_ACCESSOR]
 })
-export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlValueAccessor {
+export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
     public isDragOver: boolean = false;
     public isLoading: boolean = false;
 
-    private _count: number = 0;
-    private _empty: boolean = false;
-    private _added: number = 0;
     private _imagesLoaded:number = 0;
     private _value: File[] = [];
 
-    private _nextWeight = 0;
+    private _rows: any[] = [];
+    private _cols: any[] = [];
+    private _draggingImage: boolean = false;
+    private _dragImage: any;
+    private _dropZoneStart: number;
+    private _droppedImage: any;
 
     private _onTouchedCallback: () => void = noop;
     private _onChangeCallback: (_: any) => void = noop;
 
-    //public uploader: FileUploader;
-
-    constructor(
-    //    uploader: FileUploader,
-        authService: AuthService
-    ) {
-        // this.uploader = uploader;
-        // this.uploader.setAuthToken(authService.getToken());
-    }
 
     /**
      * Content directives
@@ -89,7 +81,6 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
     /**
      * Inputs
      */
-    @Input() url: string;
     @Input() @BooleanFieldValue() multiple: boolean = false;
     @Input() images: any[] = [];
 
@@ -141,150 +132,20 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
     /**
      * Lifecycle
      */
-
-    ngOnInit() {
-        if (this.images === undefined) {
-            this.images = [];
-        }
-
-        // this.uploader.setUrl(this.url);
-        this.isLoading = this._empty = !!this.images.length;
-        this._count = this.images.length;
-
-        this.images.forEach(image => {
-            if (image.weight >= this._nextWeight) {
-                this._nextWeight = image.weight + 5;
-            }
-        });
-
-        //console.log('ImageUploadComponent.OnInit', this);
-    }
-
-    ngAfterViewInit() {
-        if (this._gridImages) {
-           // console.log('got grid images: ', this._gridImages);
-            this._gridImages.changes.subscribe( (changes: QueryList<GridImage>) => {
-                console.log('Changes to grid images: ', changes);
-            });
-        }
-
-        if (this._gridList) {
-            this._gridList['_tiles'].forEach((tile, i) => { this.registerTileDrag(this, tile, i)  });
-        }
-
-        console.info('ImageUploadComponent#AfterViewInit ---', this);
-    }
+    constructor(authService: AuthService) { }
 
     ngOnChanges(changes: { [key: string]: SimpleChange }) {
         console.debug('ImageUploadComponent#OnChanges ---', changes);
-    }
-
-
-    registerTileDrag(thisArg, tile, i) {
-        console.log('MdGridtile register Tile drag on tile ' + i + ' ', tile);
-
-        tile.dragging = false;
-        let cols = thisArg['cols']-1;
-
-        let el = (<HTMLElement>tile['_element']['nativeElement']);
-        el.addEventListener('mousedown', e => {
-            tile.dragging = true;
-            tile.cursor_default = el.style.cursor;
-            tile.start = {
-                mouse: {x: e.clientX, y: e.clientY},
-                size: {w: el.clientWidth, h: el.clientHeight},
-                zIndex: el.style.zIndex
-            };
-            el.style.cursor = 'move';
-            el.style.zIndex = '9999';
-            console.log('Grid Tile on mouse down ', e);
-        });
-        el.addEventListener('mouseup', e => {
-            tile.dragging = false;
-            el.style.transform = '';
-            el.style.cursor = tile.cursor_default;
-            console.log('Grid Tile on mouse up ', e);
-        });
-        el.addEventListener('mousemove', e => {
-            if (tile.dragging) {
-                
-                let posX = e.clientX;
-                let posY = e.clientY;
-
-                let diffX = tile.start.mouse.x - e.clientX;
-                let diffY = tile.start.mouse.y - e.clientY;
-
-                let thresholdX = tile.start.size.w * 0.9;
-                let thresholdY = tile.start.size.h * 0.9;
-
-                if (Math.abs(diffX) > thresholdX) {
-                    let direction = diffX > 0 ? 'left' : 'right';
-                    console.log({
-                        i: i,
-                        'cols-1': cols
-                    })
-                    if (direction === 'right' && (i % cols === 0)) {
-                        console.log('ignoring right-hand swap because we are on the last column');
-                    } else if (direction === 'left' && (i % cols === 0)) {
-                        console.log('ignoring right-hand swap because we are on the first column');
-                    } else {
-                        // tile.dragging = false;
-                        // el.dispatchEvent(new Event('mouseup'));
-                        // el.style.transform = 'translate3d(0,0,0)';
-                        // console.log('TRANFORM: ', el.style.transform);
-                        // el.style.cursor = tile.cursor_default;
-                        // el.style.zIndex = tile.start.zIndex;
-                        console.log('passed horizontal threshold', {diff: {x: diffX, y: diffY}, threshold: {x: thresholdX, y: thresholdY}, direction: direction})
-
-                        let nextIndex = direction === 'right' ? i + 1 : i - 1;
-                        let nextWeight = thisArg['images'][nextIndex]['weight'];
-                        let oldWeight = thisArg['images'][i]['weight'];
-
-                        thisArg['images'][i]['weight'] = nextWeight;
-                        thisArg['images'][nextIndex]['weight'] = oldWeight;
-
-                        setTimeout(() => { thisArg['sortImages']() },0);
-                    }
-                }
-                if (Math.abs(diffY) > thresholdY) {
-                    console.log('Passed vertical threshold ', {diffX: diffY, threshold: thresholdY});
-                }
-
-                console.log('tile ' + i + ' moved ', {
-                    diffX: diffX,
-                    diffY: diffY,
-                    el: el,
-                    threshold: {
-                        w: thresholdX,
-                        h: thresholdY
-                    }
-                });
-
-                el.style.transform = `translate3d(${-diffX}px, ${-diffY}px, 0)`;
-
-            }
-        });
-    }
-
-    sortImages() {
-        console.log('sorting images', this.images);
-        this.images.sort((a:any,b: any) => {
-            return a.weight > b.weight ? 1 : 0;
-        });
-        this._gridList['_tiles'].forEach((tile, i) => {
-            let el = (<HTMLElement>tile['_element']['nativeElement']);
-            el.style.transform = 'translate3d(0,0,0)';
-        });
-        console.log('sorted images', this.images);
-    }
-    weightChanged(e) {
-        console.warn('weight cahnged', e);
     }
 
     /**
      * Grid interaction events
      */
     onDragOver(e: any) {
+        if (this._draggingImage) {
+            return;
+        }
+
         let transfer = this._getTransfer(e);
         if (!this._haveFiles(transfer.types)) {
             return;
@@ -295,62 +156,65 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
     }
 
     onDragLeave(e: any) {
+        if (this._draggingImage) {
+            return;
+        }
+
         this._stopEvent(e);
         this.isDragOver = false;
     }
 
     onFileDrop(e: any) {
-        let files = e.target.files || e.dataTransfer.files;
-        this._stopEvent(e);
-        this.isDragOver = false;
-        this.fileAdded.emit(files);
-        this.isLoading = true;
+        if (this._draggingImage) {
+            console.log('onFileDrop cancelling because we are dragging image.');
+            this._draggingImage = false;
+            return;
+        } else {
+            console.log('onFileDrop ', e);
+            let files = e.target.files || e.dataTransfer.files;
 
-        let count = this.value.length;
+            this._stopEvent(e);
+            this.fileAdded.emit(files);
 
-        for (let i = 0; i < files.length; i++) {
-            let file = files[i];
-
-            let value = this.value;
-            value.push(file);
-
-            this.value = value;
-
-            let image = new ImageItem(file);
-
-            //this.uploader.addToQueue([image]);
-
-            let reader = new FileReader();
-            let k = i;
-
+            this.isDragOver = false;
             this.isLoading = true;
-            reader.addEventListener('load', e => {
-                file._weight = this._nextWeight;
-                this._nextWeight = this._nextWeight + 5;
-                let newImage = {
-                    id: 'upload_' + i,
-                    name: file.name,
-                    image_url: reader.result,
-                    isNew: true,
-                    _file: file,
-                    weight: file._weight
-                };
-                this.addImageToGrid(newImage);
-            });
 
-            setTimeout(() => { reader.readAsDataURL(file); });
+            this.readFiles(files);
         }
-
         console.log('ImageUploadComponent#FileDrop', {
             e: e,
             this: this
         });
     }
 
-    public addImageToGrid(image) {
+    readFiles(files) {
+        let count = this.value.length;
+
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+
+            let image = new ImageUpload(file);
+            let reader = new FileReader();
+            let k = i;
+
+            this.isLoading = true;
+
+            reader.addEventListener('load', e => {
+                image.url = reader.result;
+                this.addImageToGrid(image);
+                this.isLoading = false;
+            });
+
+            setTimeout(() => { reader.readAsDataURL(file); });
+        }
+    }
+
+    addImageToGrid(image) {
         console.log('Loaded new image: ', image);
 
-        this.images.push(image);
+        let value = this.value;
+        value.push(image);
+        this.value = value;
 
         this.imageAdded.emit(image);
     }
@@ -365,12 +229,12 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
              v: v,
              _value: this._value
          });
-         if (v.length !== this._added) {
-             this._added++;
+         if (v !== this._value) {
              this._value = v;
              console.warn('emitting change', v);
-             this.change.emit(v);
+             //this.change.emit(v);
              this._onChangeCallback(v);
+             //this.setCounts();
          }
      }
 
@@ -417,18 +281,14 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
     handleImageLoaded(e: any) {
         e._hasNew = false;
 
-        if (e.config.isNew) {
-            console.debug('ImageUpload.handleImageLoaded NEW', {
-                e: e,
-                value: this.value
-            });
+        if (!e.config.hasOwnProperty('id')) {
             this.isLoading = false;
 
             e._hasNew = true;
         } else {
             let id = e.config.id;
 
-            if (++this._imagesLoaded === this.images.length) {
+            if (++this._imagesLoaded === this.value.length) {
                 this.isLoading = false;
             }
         }
@@ -441,23 +301,70 @@ export class ImageUploadComponent implements AfterViewInit, OnChanges, ControlVa
             e: e,
             value: this.value
         });
-        this.images.splice(e.index, 1);
 
-        if (this.value && this.value.length) {
-            console.log('Searching through value to remove', this.value);
-            let idx = this.value.indexOf(e.config._file);
-            console.log('indexOf result', {idx: idx});
-            if (idx !== -1) {
-                this.value = this._value.splice(idx, 1);
-            }
-        }
+        let value = this.value;
+        value.splice(e.index, 1);
+        this.value = value;
+
         this.imageRemoved.emit(e);
     }
 
-    // handleFileRemove(e: any) {
-    //     console.debug('ImageUpload.handleFileRemove', {
-    //         e: e,
-    //         value: this.value
-    //     });
-    // }
+    /**
+     * Drag and drop grid images to reorder
+     */
+
+    private _dragData(image: JpImage, idx: number): JpImage {
+        return Object.assign(image, {idx: idx})
+    }
+
+    imageDragStart(e: any): void {
+        this._dropZoneStart = e.dragData.idx;
+        this._draggingImage = true;
+        this._dragImage = e.dragData;
+        console.debug('ImageUpload imageDragStart  from zone ' + this._dropZoneStart + ': ', e);
+    }
+
+    imageDropped(event: any, image: JpImage, zone: number): void {
+        console.info('ImageUpload image dropped', {
+            event: event,
+            image: image,
+            zone: zone
+        });
+        this._draggingImage = false;
+        this._dragImage = null;
+
+        let data = event.dragData;
+
+        if (this._dropZoneStart !== zone) {
+            this.moveImage(this._dropZoneStart, zone);
+        }
+    }
+
+    onDragEnd(e: any) {
+        console.debug('onDragEnd');
+        this._draggingImage = false;
+    }
+
+    moveImage(old_index, new_index): void {
+        let images = this.value;
+
+        const source = images[old_index];
+        const target = images[new_index];
+
+        images[new_index] = source;
+        images[old_index] = target;
+
+        this.value = images;
+
+        this.change.emit(this.value);
+
+        console.log('Just dropped image from drop zone ' + this._dropZoneStart + ' to drop zone ' + new_index);
+    };
+
+    /**
+     * Form reset
+     */
+    reset() {
+
+    }
 }

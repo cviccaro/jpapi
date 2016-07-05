@@ -1,16 +1,13 @@
 "use strict";
 var Blog = (function () {
     function Blog() {
-        this.id = -1;
-        this.animateIn = true;
         this.title = '';
-        this.image = '';
-        this.text = '';
-        this.body = '';
-        this.created_at = '';
-        this.tag = '';
         this.author = '';
-        this.identifier = '';
+        this.body = '';
+        this.summary = '';
+        this.images = [];
+        this.created_at = null;
+        this.updated_at = null;
     }
     return Blog;
 }());

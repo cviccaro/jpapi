@@ -1,104 +1,156 @@
 <?php
+
 namespace App;
 
+use \File;
+use \Storage;
+
 use Illuminate\Database\Eloquent\Model;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-class Image extends Model {
+class Image extends Model
+{
+    protected $fillable = ['path', 'filename', 'alias', 'mimetype', 'extension', 'size', 'last_modified'];
 
-    protected $fillable = ["path", "name", "alias", "mimetype", "extension", "size", "last_modified"];
+    protected $appends = ['url'];
 
-    protected $dates = [];
-
-    public static $rules = [
-        // "path" => "required",
-        "name" => "required"
-    ];
-
-    public function scopeNamed($query, $name) {
-        return $query->where('path', 'LIKE', '%'.$name.'%')->get();
-    }
-
-    public function getUrl()
+    public static function defaultDirectory()
     {
-        return url('images/' . $this->path . '/' . $this->name);
+        return path_join(['app', 'public', 'images']);
     }
 
-    // public static function createFromUploaded(UploadedFile $file) {
-    //     $image_dir = 'resources/assets/images';
-    //     $destination = base_path() . '/' . $image_dir;
+    /**
+     * Get the blog associated with this image
+     */
+    public function blog()
+    {
+        return $this->hasOne('App\Blog');
+    }
 
-    //     $filename = $file->getClientOriginalName();
-    //     if (static::named($filename)->first() !== NULL) {
-    //         $filename = static::findCandidateFilename($filename);
-    //     }
+    /**
+     * Get all of the blogs that are assigned this image
+     */
+    public function blogs()
+    {
+        return $this->morphedByMany('App\Blog', 'imageable');
+    }
 
-    //     if ($moved = $file->move($destination, $filename)) {
-    //         return static::create([
-    //             'path' => $image_dir . '/' . $filename
-    //         ]);
-    //     }
+    /**
+     * Get the client associated with this image
+     */
+    public function client()
+    {
+        return $this->hasOne('App\Client');
+    }
 
-    //     return FALSE;
-    // }
+    /**
+     * Get the project associated with this image
+     */
+    public function project()
+    {
+        return $this->hasOne('App\Project');
+    }
 
-    // public static function createFromBase64($filename, $base64_string) {
-    //     $filename = static::findCandidateFilename($filename);
+    /**
+     * Get all of the projects that are assigned this image
+     */
+    public function projects()
+    {
+        return $this->morphedByMany('App\Project', 'imageable');
+    }
 
-    //     $img_data = explode(',', $base64_string);
-    //     $dir = 'resources/assets/images';
-    //     $realpath = realpath(base_path() . '/' . $dir) . '/' . $filename;
-    //     $path = $dir . '/' . $filename;
+    /**
+     * Get the staff associated with this image
+     */
+    public function staff()
+    {
+        return $this->hasOne('App\Staff');
+    }
 
-    //     $base64 = count($img_data) > 1 ? $img_data[1] : $base64_string;
+    public static function createFromPath($path, $destination = false)
+    {
+        if (!$destination) {
+            $destination = self::defaultDirectory();
+        }
 
-    //     if (file_put_contents($realpath, base64_decode($base64))) {
-    //         return static::create([
-    //             'path' => $path
-    //         ]);
-    //     }
-    //     return FALSE;
-    // }
+        return self::create([
+            'path' => $destination,
+            'filename' => File::basename($path),
+            'alias' => File::basename($path),
+            'mimetype' => File::mimeType($path),
+            'extension' => File::extension($path),
+            'size' => File::size($path),
+            'last_modified' => File::lastModified($path)
+        ]);
+    }
 
-    // public static function findCandidateFilename($filename) {
-    //     $name_parts = explode('.',$filename);
-    //     $extension = array_pop($name_parts);
-    //     $continue = true;
-    //     $i = 0;
-    //     while ($continue) {
-    //         $candidate_name = implode('.', $name_parts) . '_' . $i++ . '.' . $extension;
-    //         if (static::named($candidate_name)->first() === NULL) {
-    //             $continue = false;
-    //             $filename = $candidate_name;
-    //         }
-    //     }
-    //     return $filename;
-    // }
-    //
+    public static function createFromUrl($url, $destination)
+    {
+        $directory = storage_path($destination);
+
+        $original_name = File::basename($url);
+        $filename = self::availableFilename($original_name, $directory);
+        $filepath = path_join([$directory, $filename]);
+
+        $data = file_get_contents($url);
+        File::put($filepath, $data);
+
+        return self::createFromPath($filepath, $destination);
+    }
+
+    public static function createFromUpload($file, $destination, $target_name)
+    {
+        \Log::info('Image::createFromUpload ' . print_r(['file' => $file, 'destination' => $destination, 'target_name' => $target_name], true));
+        $directory = storage_path($destination);
+
+        $filename = self::availableFilename($target_name, $destination);
+        $file->move($directory, $filename);
+
+        return self::createFromPath(path_join([$directory, $filename]), $destination);
+    }
+
     public static function availableFilename($filename, $directory = null)
     {
         if (!$directory) {
-            $directory = resource_path('assets/images');
+            $directory = self::defaultDirectory();
         }
 
-        $candidate = null;
-        $try_filename = $filename;
+        $directory = storage_path($directory);
+
+        if ( !File::exists($directory) ) {
+            File::makeDirectory($directory);
+        }
+
         $parts = explode('.', $filename);
-
         $extension = array_pop($parts);
-        $filename_noext = implode('.', $parts);
+        $name = implode('.', $parts);
 
+        $available = null;
         $i = -1;
-        while ($candidate === null) {
+
+        $candidate = $filename;
+
+        while ($available === null) {
             if ($i >= 0) {
-                $try_filename = sprintf('%s_%d.%s', $filename_noext, $i, $extension);
+                $candidate = sprintf('%s_%d.%s', $name, $i, $extension);
             }
-            if (!file_exists($directory . '/' . $try_filename)) {
-                $candidate = $try_filename;
+
+            if ( !File::exists(path_join([$directory, $candidate])) ) {
+                $available = $candidate;
             }
+
             $i++;
         }
 
-        return $candidate;
+        return $available;
+    }
+
+    public function url() {
+        $path = str_replace([self::defaultDirectory(), '\\'],['', '/'],$this->path) . '/' . $this->filename;
+
+        return url('img' . $path);
+    }
+
+    public function getUrlAttribute() {
+        return $this->url();
     }
 }

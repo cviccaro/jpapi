@@ -33,10 +33,13 @@
     }
     &:hover {
     	.shade {
-    		background: rgba(0,0,0,0.5);
+    		background: $black_54;
     	}
     }
     img {
         max-width: 100%;
+    }
+    &.dnd-drag-start {
+        border: 2px dashed $black;
     }
 }

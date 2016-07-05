@@ -23,7 +23,12 @@ var Draggable = (function (_super) {
         this.onDragStart = new core_1.EventEmitter();
         this.onDragEnd = new core_1.EventEmitter();
         console.log('Draggable constructed', this);
+        this._defaultCursor = this._elem.style.cursor;
     }
+    Draggable.prototype._onDragStartCallback = function (event) {
+    };
+    Draggable.prototype._onDragEndCallback = function (event) {
+    };
     __decorate([
         core_1.Output(), 
         __metadata('design:type', core_1.EventEmitter)
@@ -32,6 +37,10 @@ var Draggable = (function (_super) {
         core_1.Output(), 
         __metadata('design:type', core_1.EventEmitter)
     ], Draggable.prototype, "onDragEnd", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Object)
+    ], Draggable.prototype, "dragData", void 0);
     Draggable = __decorate([
         core_1.Directive({ selector: '[jpa-draggable]' }), 
         __metadata('design:paramtypes', [core_1.ElementRef, dragdrop_service_1.DragDropService, core_1.ChangeDetectorRef])

@@ -1,4 +1,4 @@
-<!-- <pre>{{ work.gallery | json }}</pre> -->
+<pre>{{ work.gallery | json }}</pre>
 <div class="container" *ngIf="ready">
     <h2 class="form-title">{{ isNew ? 'Create' : 'Edit' }} Work {{ isNew ? '' : work.title }}</h2>
     <form #workForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">

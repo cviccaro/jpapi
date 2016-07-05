@@ -9,6 +9,9 @@
  *                                          '200', 'a100')
  */
 /**
+ * Palette
+ */
+/**
  * Colors
  */
 /**
@@ -23,41 +26,105 @@
 :host {
   display: block;
   height: 100%; }
-  :host .app-content {
-    padding: 0 0 100px 0;
-    height: 100%; }
+  :host md-sidenav-layout.opened {
+    z-index: 2; }
   :host md-sidenav-layout > md-content {
     height: 100%; }
+  :host md-nav-list {
+    padding-top: 0; }
   :host .app-sidenav {
     padding: 0;
-    min-width: 100px; }
-  :host .app-content md-checkbox {
-    margin: 10px; }
+    width: 280px;
+    z-index: 2; }
+    :host .app-sidenav .title .md-list-item {
+      height: 65px;
+      margin-bottom: 24px; }
+      :host .app-sidenav .title .md-list-item:hover {
+        cursor: default;
+        background: initial; }
+      :host .app-sidenav .title .md-list-item span {
+        line-height: 64px;
+        font-size: 20px; }
+    :host .app-sidenav a:hover {
+      color: initial; }
+    :host .app-sidenav a.active {
+      color: #1976d2; }
+    :host .app-sidenav a:active .md-list-item {
+      background-color: rgba(0, 0, 0, 0.0992157); }
+    :host .app-sidenav a md-icon {
+      box-sizing: content-box; }
+    :host .app-sidenav a .md-list-item {
+      padding: 12px 0 12px 26px; }
+  :host .app-sidebar {
+    position: fixed;
+    top: 64px;
+    left: 0px;
+    bottom: 0;
+    width: 80px;
+    height: 100%;
+    padding-top: 24px;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    z-index: 1; }
+    :host .app-sidebar[hidden] {
+      display: none; }
+    :host .app-sidebar .sidebar-button {
+      width: 48px;
+      height: 48px;
+      text-align: center;
+      margin: 0 auto; }
+      :host .app-sidebar .sidebar-button [md-icon-button] {
+        width: 100%;
+        height: 100%;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-direction: row;
+        flex-direction: row;
+        -ms-flex-pack: center;
+        justify-content: center;
+        text-align: center; }
+        :host .app-sidebar .sidebar-button [md-icon-button] .md-button-wrapper {
+          display: -ms-flexbox;
+          display: flex;
+          -ms-flex-direction: column;
+          flex-direction: column;
+          -ms-flex-pack: center;
+          justify-content: center; }
+        :host .app-sidebar .sidebar-button [md-icon-button] md-icon {
+          position: relative; }
+      :host .app-sidebar .sidebar-button.active, :host .app-sidebar .sidebar-button:hover {
+        color: #1976d2; }
+  :host .app-progress {
+    height: 2px;
+    margin-left: 0; }
+    :host .app-progress[hidden] {
+      display: none; }
+  :host .app-content {
+    padding: 0 104px 100px 80px;
+    height: 100%; }
+    :host .app-content .container-fluid {
+      padding: 0; }
+    :host .app-content md-checkbox {
+      margin: 10px; }
+  :host .app-toolbar {
+    padding: 0 10px 0 14px;
+    background: #fff; }
   :host .app-toolbar-filler {
     -ms-flex: 1 1 auto;
     flex: 1 1 auto; }
-  :host .app-toolbar-menu {
-    padding: 0 14px 0 14px;
-    color: white; }
   :host .app-icon-button {
-    box-shadow: none;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    -webkit-filter: none;
-    filter: none;
-    font-weight: normal;
-    height: auto;
-    line-height: inherit;
-    margin: 0;
-    min-width: 0;
-    padding: 0;
-    text-align: left;
-    text-decoration: none; }
+    margin: 8px 18px 8px 0;
+    color: rgba(0, 0, 0, 0.54);
+    width: 48px;
+    height: 48px;
+    text-align: center; }
+    :host .app-icon-button[hidden] {
+      display: none; }
+    :host .app-icon-button .app-toolbar-menu {
+      top: 50%;
+      position: relative; }
   :host .app-action {
     display: inline-block;
     position: fixed;
@@ -72,8 +139,6 @@
   :host .app-list {
     border: 1px solid rgba(0, 0, 0, 0.12);
     width: 350px;
-    margin: 20px; }
-  :host .app-progress {
     margin: 20px; }
 
 /*# sourceMappingURL=app.component.css.map */

@@ -8,7 +8,8 @@
 |
 **/
 body {
-    background-color: $grey_50;
+    background-color: $background_color;
+    color: $text-color;
 }
 body, md-list, md-list-item, md-line, md-button, md-content, md-card, md-input-container,
 h1,h2,h3,h4,h5,p,div,p {
@@ -16,15 +17,15 @@ h1,h2,h3,h4,h5,p,div,p {
     letter-spacing: -0.25px;
 }
 
+a:hover, a:focus {
+    color: $accent;
+    text-decoration: none;
+}
+
 /**
 | Colors
 |
 **/
-$primary: material-color('blue-grey', '600');
-$secondary: material-color('light-green', '600');
-$accent: material-color('red', '500');
-$danger: material-color('red', '900');
-
 .md-primary {
     background-color: $primary!important;
 }
@@ -77,6 +78,12 @@ md-input.ng-invalid.ng-touched {
     color: $danger!important;
 }
 
+md-icon-button {
+  &:active,&:focus {
+    background-color: rgba(0,0,0,0.12);
+  }
+}
+
 /**
 | Titles
 |
@@ -86,6 +93,11 @@ h1,h2,h3,h4,h5 {
 }
 h3 {
     font-size: 20px;
+}
+
+.page-title {
+    font-size: 48px;
+    font-family: $font-family-roboto;
 }
 
 /**
@@ -106,6 +118,13 @@ md-icon.spin {
 md-icon {
     &.md-20 {
         font-size: 20px;
+        width: 20px;
+        height: 20px;
+    }
+    &.md-18 {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
     }
 }
 
@@ -220,7 +239,6 @@ md-icon {
 .form-title {
     margin-bottom: 25px;
     padding-bottom: 7px;
-    border-bottom: 1px solid #eee;
 }
 form {
     .row.form-group {

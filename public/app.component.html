@@ -1,44 +1,61 @@
-<md-sidenav-layout fullscreen>
+<md-sidenav-layout fullscreen [class.opened]="sidenav.opened">
     <md-sidenav #sidenav mode="side" class="app-sidenav">
       <md-nav-list>
-        <a md-list-item [routerLink]="['/']">
+        <md-list-item class="title">
+          <span md-line>JP API</span>
+        </md-list-item>
+        <a md-list-item [routerLink]="['/']" [class.active]="routeIs('/', true)">
           <md-icon md-list-icon>home</md-icon>
           <span md-line>Home</span>
-          <span md-line class="secondary">Go home</span>
+          <!-- <span md-line class="secondary">Go home</span> -->
         </a>
-        <a md-list-item [routerLink]="['/blogs']">
-          <md-icon md-list-icon>view_headline</md-icon>
+        <a md-list-item [routerLink]="['/blogs']" [class.active]="routeIs('/blogs')">
+          <md-icon md-list-icon>speaker_notes</md-icon>
           <span md-line>Blogs</span>
-          <span md-line class="secondary">Edit the blog content</span>
+          <!-- <span md-line class="secondary">Edit the blog content</span> -->
         </a>
         </md-nav-list>
         <md-nav-list>
-        <a md-list-item [routerLink]="['/work']">
+        <a md-list-item [routerLink]="['/projects']" [class.active]="routeIs('/projects')">
           <md-icon md-list-icon>work</md-icon>
-          <span md-line>Work</span>
-          <span md-line class="secondary">Edit the work content</span>
+          <span md-line>Projects</span>
+          <!-- <span md-line class="secondary">Edit the project content</span> -->
         </a>
         <a *ngIf="loggedIn" md-list-item (click)="logout()">
           <md-icon md-list-icon>power_settings_new</md-icon>
           <span md-line>Logout</span>
-          <span md-line class="secondary">Logout of the app</span>
+          <!-- <span md-line class="secondary">Logout of the app</span> -->
         </a>
       </md-nav-list>
     </md-sidenav>
 
-    <md-toolbar color="primary">
-        <button class="app-icon-button" (click)="sidenav.toggle()">
-            <i class="material-icons app-toolbar-menu">menu</i>
-          </button>
+    <md-toolbar class="app-toolbar">
+        <button md-icon-button class="app-icon-button" [hidden]="_routeDepth === 2" (click)="sidenav.toggle()">
+            <md-icon class="material-icons app-toolbar-menu">menu</md-icon>
+        </button>
+        <button md-icon-button class="app-icon-button" [hidden]="!(_routeDepth === 2)" (click)="back()">
+            <md-icon class="material-icons app-toolbar-back">arrow_back</md-icon>
+        </button>
 
-          JP API Administration
+          <span class="app-title">Administration</span>
 
           <span class="app-toolbar-filler"></span>
     </md-toolbar>
-
-    <div class="app-content">
+    <md-progress-bar [hidden]="!loading" mode="indeterminate" class="app-progress" color="primary"></md-progress-bar>
+    <div class="app-content" (click)="closeSidebarIfOpen()">
         <router-outlet></router-outlet>
     </div>
 </md-sidenav-layout>
+<div class="app-sidebar" [hidden]="_routeDepth === 2">
+  <div class="sidebar-button" [class.active]="routeIs('/blogs')">
+    <a md-icon-button [routerLink]="['/blogs']"><md-icon>speaker_notes</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/projects')">
+    <a md-icon-button [routerLink]="['/projects']"><md-icon>work</md-icon></a>
+  </div>
+  <div class="sidebar-button">
+    <button md-icon-button (click)="sidenav.toggle()"><md-icon>more_horiz</md-icon></button>
+  </div>
+</div>
 <toaster-container [toasterconfig]="toasterConfig">
 </toaster-container>

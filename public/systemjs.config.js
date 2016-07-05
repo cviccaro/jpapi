@@ -15,7 +15,8 @@
       'ng2-file-upload',
       'angular2-toaster',
       //'angular2-localstorage',
-      'angular2-jwt'
+      'angular2-jwt',
+      'ng2-dnd'
     ];
 
     var map = modules.reduce(function(carry, module) {
@@ -41,7 +42,8 @@
         'ng2-file-upload': { main: 'ng2-file-upload.js', defaultExtension: 'js' },
         'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' },
         // 'angular2-localstorage': { main: 'index.js', defaultExtension: 'js' },
-        'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' }
+        'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' },
+        'ng2-dnd': { main: 'bundles/ng2-dnd.js', defaultExtension: 'js'}
     };
 
     var ngPackageNames = [

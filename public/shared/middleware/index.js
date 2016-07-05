@@ -4,8 +4,9 @@ function __export(m) {
 }
 __export(require('./auth.guard'));
 __export(require('./blog.guard'));
-__export(require('./blogs.guard'));
+__export(require('./blog-list.guard'));
 __export(require('./login.guard'));
-__export(require('./work-list.guard'));
+__export(require('./project.guard'));
+__export(require('./project-list.guard'));
 
 //# sourceMappingURL=index.js.map

@@ -1,15 +1,20 @@
-import {BlogCategory} from './blog-category';
+import {JpImage} from './jp-image';
+import {Tag} from './tag';
 
 export class Blog {
-	id: number = -1;
-	animateIn: boolean = true;
+	id: any;
 	title: string = '';
-	image: string = '';
-	text: string = '';
-	body: string = '';
-	created_at: string = '';
-	tag: string = '';
+
 	author: string = '';
-	identifier: string = '';
-	category: BlogCategory;
+	body: string = '';
+	summary: string = '';
+
+	image: JpImage;
+	image_id: number;
+	images: JpImage[] = [];
+
+	tags: Tag[];
+
+	created_at: any = null;
+	updated_at: any = null;
 }

@@ -22,8 +22,8 @@ var JpaPanelGroup = (function () {
     JpaPanelGroup.prototype.ngAfterContentInit = function () {
         var _this = this;
         this._panelChildren.forEach(function (panel) {
-            panel.onExpand.subscribe(function (e) {
-                _this.childExpanded = e;
+            panel.onToggle.subscribe(function (e) {
+                _this.childExpanded = !!_this._panelChildren.filter(function (panel) { return panel.expanded; }).length;
             });
         });
     };

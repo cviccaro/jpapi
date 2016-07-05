@@ -3,13 +3,16 @@ import {TimeAgoPipe, CalendarPipe} from 'angular2-moment';
 
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 
+import { PagerComponent, PagerData } from './pager/index';
+
 @Component({
     selector: 'jpa-list',
     moduleId: module.id,
     templateUrl: './list.component.html',
     styleUrls: ['./list.component.css'],
     directives: [
-        MATERIAL_DIRECTIVES
+        MATERIAL_DIRECTIVES,
+        PagerComponent
     ],
     pipes: [TimeAgoPipe, CalendarPipe]
 })
@@ -24,19 +27,18 @@ export class ListComponent implements OnInit {
     @Output() listItemDelete = new EventEmitter();
     @Output() listItemAdd = new EventEmitter();
 
+    @Output() onPageChange = new EventEmitter();
+
     ngOnInit() {
         console.log('ListComponent initialized.', this);
     }
 
-    fetch() {
-        this.listUpdate.emit({
-            config: this.listConfig,
-            data: this.listData
-        });
+    add() {
+        this.listItemAdd.emit({});
     }
 
-    add() {
-        this.listItemAdd.emit('');
+    fetch() {
+        this.listUpdate.emit({});
     }
 
     edit(item, $event) {
@@ -45,5 +47,9 @@ export class ListComponent implements OnInit {
 
     delete(item, $event) {
         this.listItemDelete.emit(item);
+    }
+
+    pageChanged(num: number) {
+        this.onPageChange.emit(num);
     }
 }

@@ -1,0 +1,43 @@
+/**
+ * Retrieves a color value from the $material-colors Sass map
+ * Inspired by https://github.com/nilskaspersson/Google-Material-UI-Color-Palette/
+ *
+ * @function
+ * @param {string} color-name             - quoted, lower-case, dasherized color
+ *                                          name (e.g. 'pink', 'amber')
+ * @param {string} [color-variant='500']  - quoted, lowercase color variant (e.g.
+ *                                          '200', 'a100')
+ */
+/**
+ * Palette
+ */
+/**
+ * Colors
+ */
+/**
+ * Fonts
+ */
+/**
+ * Animations & Transitions
+ */
+/**
+ * Transition mixins
+ */
+:host {
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: rgba(0, 0, 0, 0.54); }
+  :host md-icon {
+    margin-right: 0px; }
+  :host span {
+    transition: all 250ms cubic-bezier(0.75, 0.17, 0.59, 1.09); }
+  :host .new {
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
+    margin-left: 4px;
+    padding-left: 8px; }
+
+.changed :host md-icon,
+.changed :host span {
+  color: #1976d2; }
+
+/*# sourceMappingURL=summary-images.component.css.map */

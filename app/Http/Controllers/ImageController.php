@@ -1,114 +1,141 @@
-<?php
+<?php namespace App\Http\Controllers;
 
-namespace App\Http\Controllers;
+use App\Http\Requests;
+use App\Http\Controllers\Controller;
 
 use App\Image;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
-use Symfony\Component\HttpFoundation\File\File;
 
-class ImageController extends Controller
-{
-    public function get(Request $request, $path)
-    {
-        $image_path = '/resources/assets/images/';
-        $file_path = base_path() . $image_path . urldecode($path);
+class ImageController extends Controller {
 
-        try {
-            $file = new File($file_path);
-            return response(file_get_contents($file_path), 200, ['Content-Type' => $file->getMimeType()]);
-        } catch (Exception $e) {
-            abort(404);
-        }
-    }
+	use RESTActions;
 
-    public function getClientImage(Request $request, $path) {
-        return $this->get($request, 'clients/' . $path);
-    }
+	public function getClientImage(Request $request, $path) {
+	    return $this->get($request, 'clients/' . $path);
+	}
 
-    public function getPublic(Request $request, $path, $name)
-    {
-        $filepath = storage_path('app/public/images/' . $path . '/' . $name);
+	public function getPublic(Request $request, $model, $name)
+	{
+	    $filepath = storage_path('app/public/images/' . $model . '/' . $name);
 
-        if ( !\File::exists($filepath) ) abort(404);
+	    if ( !\File::exists($filepath) ) abort(404);
 
-        $file = \File::get($filepath);
-        $type = \File::mimeType($filepath);
+	    $file = \File::get($filepath);
+	    $type = \File::mimeType($filepath);
 
-        $response = \Response::make($file, 200);
-        $response->header('Content-Type', $type);
+	    $response = \Response::make($file, 200);
+	    $response->header('Content-Type', $type);
 
-        return $response;
-    }
+	    return $response;
+	}
 
-    public function upload(Request $request)
-    {
-        $image_dir = 'resources/assets/images';
-        $destination = base_path() . '/' . $image_dir;
+	/**
+	 * Display a listing of the resource.
+	 *
+	 * @return Response
+	 */
+	public function index()
+	{
+		$images = Image::orderBy('id', 'desc')->paginate(10);
 
-        if ($request->hasFile('file')) {
-            $file = $request->file('file');
-            if ($image = Image::createFromUploaded($file)) {
-                return response([
-                    'filename' => basename($image['path']),
-                    'url' => URL::to('images/' . basename($image['path'])),
-                ]);
-            } else {
-                return response([
-                    'error' => 'file_move_failed',
-                ]);
-            }
-        }
-        return response([
-            'error' => 'no_file',
-        ]);
-    }
+		return view('images.index', compact('images'));
+	}
 
-    public function uploadTemp(Request $request) {
-        if ($request->hasFile('_file')) {
-            \Log::info('Received request to upload temporary file.  Checking if it is valid.');
+	/**
+	 * Show the form for creating a new resource.
+	 *
+	 * @return Response
+	 */
+	public function create()
+	{
+		return view('images.create');
+	}
 
-            if ($request->file('_file')->isValid()) {
-                $input = $request->all();
+	/**
+	 * Store a newly created resource in storage.
+	 *
+	 * @param Request $request
+	 * @return Response
+	 */
+	public function store(Request $request)
+	{
+		$image = new Image();
 
-                $file = $request->file('_file');
+		$image->path = $request->input("path");
+        $image->filename = $request->input("filename");
+        $image->alias = $request->input("alias");
+        $image->mimetype = $request->input("mimetype");
+        $image->extension = $request->input("extension");
+        $image->size = $request->input("size");
+        $image->last_modified = $request->input("last_modified");
 
-                \Log::info("File is valid.  Here's the request: ------- REQUEST START --------\r\n" . print_r($request->toArray(), true) . " ------ REQUEST END");
+		$image->save();
 
-                $mimetype = $file->getMimeType();
-                $size = $file->getSize();
-                $tempName = basename($file->__toString());
-                $original_name = $file->getClientOriginalName();
-                $extension = $file->guessExtension();
+		return redirect()->route('images.index')->with('message', 'Item created successfully.');
+	}
 
-                // $file->move(storage_path('temp'), $tempName);
+	/**
+	 * Display the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function show($id)
+	{
+		$image = Image::findOrFail($id);
 
-                // DB::table('uploads')->insert([
-                //     'location' => $tempName,
-                //     'user_id' => $user->id,
-                //     'extension' => $extension,
-                //     'mimetype' => $mimetype,
-                //     'size' => $size,
-                //     'filename' => $original_name,
-                //     'alias' => '',
-                // ]);
-                $token = \JWTAuth::getToken();
+		return view('images.show', compact('image'));
+	}
 
-                \Log::info(print_r([
-                    'location' => storage_path('temp', $tempName),
-                    'extension' => $extension,
-                    'mimetype' => $mimetype,
-                    'size' => $size,
-                    'filename' => $original_name,
-                    'alias' => '',
-                    'TOKEN' => $token
-                ], true));
+	/**
+	 * Show the form for editing the specified resource.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function edit($id)
+	{
+		$image = Image::findOrFail($id);
 
-            } else {
-                \Log::warn('File is invalid!');
-            }
-        }
+		return view('images.edit', compact('image'));
+	}
 
-        return response('No file to upload.', 400);
-    }
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  int  $id
+	 * @param Request $request
+	 * @return Response
+	 */
+	public function update(Request $request, $id)
+	{
+		$image = Image::findOrFail($id);
+
+		$image->path = $request->input("path");
+        $image->filename = $request->input("filename");
+        $image->alias = $request->input("alias");
+        $image->mimetype = $request->input("mimetype");
+        $image->extension = $request->input("extension");
+        $image->size = $request->input("size");
+        $image->last_modified = $request->input("last_modified");
+
+		$image->save();
+
+		return redirect()->route('images.index')->with('message', 'Item updated successfully.');
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 *
+	 * @param  int  $id
+	 * @return Response
+	 */
+	public function destroy($id)
+	{
+		$image = Image::findOrFail($id);
+		$image->delete();
+
+		return redirect()->route('images.index')->with('message', 'Item deleted successfully.');
+	}
+
 }

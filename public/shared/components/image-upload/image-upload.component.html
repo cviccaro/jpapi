@@ -1,28 +1,29 @@
-<div class="count">
-  <md-icon color="primary">panorama</md-icon>
-  <span>{{ _count }} pictures in gallery</span>
-  <span class="new">{{value.length}} in queue</span>
-</div>
 <div class="progress-bar-wrapper" [hidden]="!isLoading">
   <md-progress-bar mode="indeterminate" color="accent"></md-progress-bar>
 </div>
-<div #dropzone
-  class="well file-drop-zone"
-  [class.file-over]="isDragOver"
-  (dragover)="onDragOver($event)"
-  (dragleave)="onDragLeave($event)"
-  (drop)="onFileDrop($event)">
-  <md-grid-list [cols]="cols" [rowHeight]="rowHeight" [gutterSize]="gutterSize" *ngIf="multiple">
-      <md-grid-tile *ngFor="let image of images; let index = index" flex="25" jpa-draggable>
+<div class="well file-drop-zone-wrapper" [class.file-over]="isDragOver">
+  <div class="file-drop-zone"
+    (dragover)="onDragOver($event)"
+    (dragend)="onDragEnd($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onFileDrop($event)">
+  </div>
+  <md-grid-list [cols]="cols" [rowHeight]="rowHeight" [gutterSize]="gutterSize" *ngIf="multiple" (dragend)="onDragEnd($event)">
+      <md-grid-tile *ngFor="let image of value; let index = index"
+        dnd-droppable
+        [dropEnabled]="true"
+        (onDropSuccess)="imageDropped($event, image, index)">
         <jpa-grid-image
+          dnd-draggable
+          [dragEnabled]="true"
+          [dragData]="_dragData(image, index)"
+          (onDragStart)="imageDragStart($event)"
           [imageConfig]="image"
           [index]="index"
           (imageLoaded)="handleImageLoaded($event)"
           (clickedRemove)="handleClickedRemove($event)">
         </jpa-grid-image>
       </md-grid-tile>
-      <md-grid-tile *ngIf="images.length % 4 !== 1" flex="25"></md-grid-tile>
+      <!-- <md-grid-tile *ngIf="value.length % 4 !== 1" flex="25"></md-grid-tile> -->
   </md-grid-list>
-  <jpa-image-upload-drop-zones [cols]="cols" [rows]="images.length / cols">
-  </jpa-image-upload-drop-zones>
 </div>

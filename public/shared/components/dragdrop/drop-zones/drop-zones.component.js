@@ -11,34 +11,38 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var drop_zone_cell_1 = require('./drop-zone-cell');
 var droppable_1 = require('../droppable');
-var ImageUploadDropZones = (function () {
-    function ImageUploadDropZones() {
+var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
+var DropZones = (function () {
+    function DropZones() {
     }
-    ImageUploadDropZones.prototype.ngOnInit = function () {
+    DropZones.prototype.ngOnInit = function () {
         this._rows = new Array(this.rows);
         this._cols = new Array(this.cols);
         console.log('DropZones Component initialized', this);
     };
+    DropZones.prototype.onDropSuccess = function (event) {
+        console.log('OnDropSuccess', event);
+    };
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Object)
-    ], ImageUploadDropZones.prototype, "cols", void 0);
+    ], DropZones.prototype, "cols", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Object)
-    ], ImageUploadDropZones.prototype, "rows", void 0);
-    ImageUploadDropZones = __decorate([
+    ], DropZones.prototype, "rows", void 0);
+    DropZones = __decorate([
         core_1.Component({
             moduleId: module.id,
-            selector: 'jpa-image-upload-drop-zones',
+            selector: 'jpa-drop-zones',
             templateUrl: './drop-zones.component.html',
             styleUrls: ['./drop-zones.component.css'],
-            directives: [drop_zone_cell_1.DropZoneCell, droppable_1.Droppable]
+            directives: [drop_zone_cell_1.DropZoneCell, droppable_1.Droppable, ng2_dnd_1.DND_DIRECTIVES]
         }), 
         __metadata('design:paramtypes', [])
-    ], ImageUploadDropZones);
-    return ImageUploadDropZones;
+    ], DropZones);
+    return DropZones;
 }());
-exports.ImageUploadDropZones = ImageUploadDropZones;
+exports.DropZones = DropZones;
 
 //# sourceMappingURL=drop-zones.component.js.map

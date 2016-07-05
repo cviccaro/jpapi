@@ -1,0 +1,11 @@
+:host {
+  display: block; }
+  :host md-grid-list {
+    -ms-flex-pack: justify;
+    justify-content: space-between; }
+    :host md-grid-list md-grid-tile img {
+      width: 100%; }
+  :host.new .panel-content-right {
+    display: none; }
+
+/*# sourceMappingURL=blog.component.css.map */

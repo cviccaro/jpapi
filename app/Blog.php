@@ -1,54 +1,37 @@
 <?php
+
 namespace App;
 
-use App\BlogCategory;
-use App\Image;
-use App\Site;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\URL;
 
-class Blog extends Model {
+class Blog extends Model
+{
+    public $fillable = ['title', 'summary', 'body', 'author'];
 
-	protected $fillable = ["title", "uri", "description", "body", "category", "author", "image", "site", "created_at", "updated_at"];
+    public function divisions()
+    {
+        return $this->belongsToMany('App\Division');
+    }
 
-	protected $dates = [];
+    public function image()
+    {
+        return $this->belongsTo('App\Image');
+    }
 
-	public static $rules = [
-		"title" => "required",
-	];
+    public function images()
+    {
+        return $this->morphToMany('App\Image', 'imageable');
+    }
 
-	public function getCategoryAttribute() {
-		return BlogCategory::where('id', $this->attributes['category'])->first();
-	}
-	public function getImageAttribute() {
-		if ($this->attributes['image'] !== NULL) {
-			return Image::find($this->attributes['image'])->getUrl();
-		}
-		return $this->attributes['image'];
-	}
+    public function tags()
+    {
+        return $this->morphToMany('App\Tag', 'taggable');
+    }
 
-	public function getBodyAttribute() {
-		$body = $this->attributes['body'];
-		$body = preg_replace_callback('/{{[^}]*}}/', function ($matches) {
-			$path = 'resources/assets/images/' . str_replace(['{{', '}}'], ['', ''], $matches[0]);
-			$img = Image::where('path', $path)->first();
-			return URL::to('images/' . basename($img['path']));
-		}, $body);
-		return $body;
-	}
-
-	public function getSiteAttribute() {
-		return Site::where('id', $this->attributes['site'])->first()->name;
-	}
-
-	public static function createUri($string) {
-		$stripped = str_replace('_', '-', preg_replace("/[^a-z0-9\_\-\s]+/i", "", $string));
-		$hypenated = strtolower(implode('-', explode(' ', $stripped)));
-		return $hypenated;
-	}
-
-	public function scopeCategorized($query, $name) {
-		$category = BlogCategory::where('name', $name)->first();
-		return $query->where('category', $category->id)->get();
-	}
+    public function sortImages()
+    {
+        return $this->images->sort(function($a, $b) {
+            return $a->pivot->weight > $b->pivot->weight;
+        });
+    }
 }

@@ -6,6 +6,5 @@ __export(require('./components/index'));
 __export(require('./models/index'));
 __export(require('./middleware/index'));
 __export(require('./services/index'));
-__export(require('./AuthRequestOptions'));
 
 //# sourceMappingURL=index.js.map

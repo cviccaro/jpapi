@@ -9,6 +9,9 @@
  *                                          '200', 'a100')
  */
 /**
+ * Palette
+ */
+/**
  * Colors
  */
 /**
@@ -24,12 +27,18 @@
   display: -ms-flexbox;
   display: flex;
   -ms-flex-direction: column;
-  flex-direction: column; }
+  flex-direction: column;
+  /**
+     * Actual MD List
+     */
+  /**
+     * Toolbar
+     */ }
   :host md-list md-list-item {
     display: block;
     background: #fff; }
     :host md-list md-list-item.odd {
-      background: #eeeeee; }
+      background: #fafafa; }
     :host md-list md-list-item .md-list-item-content {
       width: 100%;
       display: -ms-flexbox;
@@ -45,27 +54,30 @@
         margin: auto 15px; }
     :host md-list md-list-item:last-child md-divider {
       display: none; }
-  :host md-toolbar button[md-button],
-  :host md-toolbar button[md-raised-button] {
-    height: 36px; }
-  :host md-toolbar .list-info {
-    padding-left: 0.5em;
-    border-left: 1px solid #ccc;
-    line-height: normal; }
-  :host md-toolbar .list-title {
-    padding-right: 0.5em;
-    margin: auto 0;
-    line-height: normal; }
-  :host md-toolbar .list-toolbar-actions {
-    margin-left: 1em; }
-  :host md-toolbar .sorts {
-    -ms-flex-pack: justify;
-    justify-content: space-between; }
-    :host md-toolbar .sorts md-input-container label {
-      font-size: 14px; }
-    :host md-toolbar .sorts md-input-container select {
-      font-size: 14px;
-      min-width: 120px; }
+  :host md-toolbar {
+    background: none;
+    padding: 0; }
+    :host md-toolbar button[md-button],
+    :host md-toolbar button[md-raised-button] {
+      height: 36px; }
+    :host md-toolbar .list-info {
+      padding-left: 0.5em;
+      border-left: 1px solid #ccc;
+      line-height: normal; }
+    :host md-toolbar .list-title {
+      padding-right: 0.5em;
+      margin: auto 0;
+      line-height: normal; }
+    :host md-toolbar .list-toolbar-actions {
+      margin-left: 1em; }
+    :host md-toolbar .sorts {
+      -ms-flex-pack: justify;
+      justify-content: space-between; }
+      :host md-toolbar .sorts md-input-container label {
+        font-size: 14px; }
+      :host md-toolbar .sorts md-input-container select {
+        font-size: 14px;
+        min-width: 120px; }
   :host .empty {
     padding: 24px;
     font-size: 24px;

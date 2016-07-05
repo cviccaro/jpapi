@@ -1,13 +1,8 @@
 @import 'node_modules/sass-material-colors/sass/sass-material-colors';
 
 /**
- * Colors
+ * Palette
  */
-
-$primary: material-color('blue-grey', '600');
-$secondary: material-color('light-green', '600');
-$accent: material-color('blue', '700');
-$danger: material-color('red', '900');
 $white: #fff;
 $black: #000;
 $black_20: rgba(0,0,0,0.20);
@@ -16,13 +11,29 @@ $grey_200: material-color('grey', '200');
 $grey_100: material-color('grey', '100');
 $grey_50: material-color('grey', '50');
 $blue_700: material-color('blue', '700');
+$red_500: material-color('red', '500');
+$red_900: material-color('red', '900');
 $bluegrey_100: material-color('blue-grey', '100');
+$bluegrey_600: material-color('blue-grey', '600');
+$lightgreen_600: material-color('light-green', '600');
+
+/**
+ * Colors
+ */
+$primary: $bluegrey_600;
+$secondary: $lightgreen_600;
+$accent: $blue_700;
+$danger: $red_500;
+$background_color: #fff;
+$text-color: #212121;
 
 /**
  * Fonts
  */
-$font-family-sans-serif: 'Lato', sans-serif;
+$font-family-lato: Lato,Helvetica,Arial,sans-serif;
+$font-family-roboto: Roboto,RobotoDraft,Helvetica,Arial,sans-serif;
 
+$font-family-sans-serif: $font-family-roboto;
 /**
  * Animations & Transitions
  */

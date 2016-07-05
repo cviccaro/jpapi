@@ -1,0 +1,40 @@
+@import "../../../../../assets/sass/variables";
+
+:host {
+    padding: 60px 0 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    .previous {
+        align-self: flex-start;
+        &[hidden] {
+            display: none;
+        }
+    }
+    .next {
+        align-self: flex-end;
+        &[hidden] {
+            display: none;
+        }
+    }
+    ul {
+        margin: 0 auto;
+        align-self: center;
+        li {
+            a {
+                cursor: pointer;
+                color: $text-color;
+            }
+        }
+        .active > a,
+        .active > a > span {
+            &,
+            &:hover,
+            &:focus {
+                background-color: $primary;
+                border-color: $primary;
+                color: #fff;
+            }
+        }
+    }
+}

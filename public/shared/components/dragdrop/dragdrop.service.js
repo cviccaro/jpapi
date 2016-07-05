@@ -12,6 +12,13 @@ var core_1 = require('@angular/core');
 var DragDropService = (function () {
     function DragDropService() {
     }
+    Object.defineProperty(DragDropService.prototype, "elem", {
+        get: function () {
+            return this._elem;
+        },
+        enumerable: true,
+        configurable: true
+    });
     DragDropService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [])

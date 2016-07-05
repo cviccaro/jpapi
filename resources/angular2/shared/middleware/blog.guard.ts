@@ -22,7 +22,6 @@ export class BlogGuard implements CanActivate, OnDestroy {
     canActivate() {
       return Observable.create(observer => {
           this.route.params.subscribe(params => {
-              console.log('sweet ass params: ', params);
               let id = +params['id'];
               this.sub = this.blogService.find(id).subscribe(res => {
                   this.blogService.cache(res);

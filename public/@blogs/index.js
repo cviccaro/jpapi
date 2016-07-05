@@ -5,6 +5,6 @@ function __export(m) {
 __export(require('./blog-index.component'));
 __export(require('./blog-list.component'));
 __export(require('./blog.component'));
-__export(require('./blogs.routes'));
+__export(require('./blog.routes'));
 
 //# sourceMappingURL=index.js.map

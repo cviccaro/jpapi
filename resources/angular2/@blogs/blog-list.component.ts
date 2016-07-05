@@ -55,7 +55,7 @@ export class BlogListComponent implements OnInit, OnDestroy {
         return {
             id: blog.id,
             title: blog.title,
-            subtitle: blog.category.name,
+            subtitle: blog.tags.length ? blog.tags[0].name : '',
             dates: {
                 updated_at: blog.updated_at,
                 created_at: blog.created_at
@@ -89,13 +89,21 @@ export class BlogListComponent implements OnInit, OnDestroy {
         .subscribe(json => this.parseList(json));
     }
 
+    add() {
+        this.router.navigate(['/blogs', 'new']);
+    }
+
     edit(blog: Blog) {
-        console.log('ROUTE TO:', ['/blogs', blog.id]);
         this.router.navigate(['/blogs', blog.id]);
     }
 
-    _delete(blog: Blog) {
+    destroy(blog: Blog) {
         console.log('delete this item: ', blog);
+    }
+
+    onPageChange(num: number) {
+        this.listConfig.page.currentPage = num;
+        this.fetch();
     }
 
     ngOnDestroy() {

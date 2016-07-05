@@ -1,14 +1,9 @@
+import { PagerData } from './pager/pager-data';
+
 export interface ListConfig {
-    sortOptions: { name: string, value: string }[],
-    perPageOptions: number[],
-    sort: { by: string, descending: boolean },
-    page: {
-        currentPage: number,
-        from: number,
-        to: number,
-        total: number,
-        lastPage: number,
-        perPage: number
-    },
-    emptyText?: string
+    sortOptions: { name: string, value: string }[];
+    perPageOptions: number[];
+    sort: { by: string, descending: boolean };
+    page: PagerData;
+    emptyText?: string;
 };

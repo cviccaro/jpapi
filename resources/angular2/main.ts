@@ -10,6 +10,8 @@ import { AppComponent } from './app.component';
 import { APP_ROUTER_PROVIDERS } from './app.routes';
 import { APP_SERVICES } from './shared/index';
 
+import {DND_PROVIDERS} from 'ng2-dnd/ng2-dnd';
+
 var appPromise = bootstrap(AppComponent, [
 	disableDeprecatedForms(),
 	provideForms(),
@@ -18,6 +20,7 @@ var appPromise = bootstrap(AppComponent, [
     AUTH_PROVIDERS,
     APP_ROUTER_PROVIDERS,
     APP_SERVICES,
+    DND_PROVIDERS,
     JwtHelper
     //provide(RequestOptions, {useClass: AuthRequestOptions})
 ]);

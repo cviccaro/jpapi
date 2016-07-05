@@ -4,6 +4,5 @@ function __export(m) {
 }
 __export(require('./grid-image/index'));
 __export(require('./image-upload.component'));
-__export(require('./uploader/index'));
 
 //# sourceMappingURL=index.js.map

@@ -14,6 +14,10 @@ var DropZoneCell = (function () {
     function DropZoneCell(el) {
         this.el = el;
         this.id = nextUniqueId++;
+        this.zoneEntered = new core_1.EventEmitter();
+        this.zoneLeft = new core_1.EventEmitter();
+        this.onDrop = new core_1.EventEmitter();
+        this.dragEnd = new core_1.EventEmitter();
     }
     Object.defineProperty(DropZoneCell.prototype, "dropZoneCellClass", {
         get: function () { return true; },
@@ -21,10 +25,16 @@ var DropZoneCell = (function () {
         configurable: true
     });
     DropZoneCell.prototype.onDragEnter = function (event) {
-        console.log('Drop Zone Cell ' + this.id + ' Drag Enter', event);
+        this.zoneEntered.emit(this.id);
     };
     DropZoneCell.prototype.onDragLeave = function (event) {
-        console.log('Drop Zone Cell ' + this.id + ' Drag Leave', event);
+        this.zoneLeft.emit(this.id);
+    };
+    DropZoneCell.prototype.onDragEnd = function (event) {
+        this.dragEnd.emit(this.id);
+    };
+    DropZoneCell.prototype.handleOnDrop = function (e) {
+        this.onDrop.emit(this.id);
     };
     DropZoneCell.prototype.ngOnInit = function () {
         this.el.nativeElement.style.width = 'calc(100% / ' + this.cols + ')';
@@ -35,21 +45,49 @@ var DropZoneCell = (function () {
         __metadata('design:type', Number)
     ], DropZoneCell.prototype, "cols", void 0);
     __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], DropZoneCell.prototype, "zoneEntered", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], DropZoneCell.prototype, "zoneLeft", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], DropZoneCell.prototype, "onDrop", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], DropZoneCell.prototype, "dragEnd", void 0);
+    __decorate([
         core_1.HostBinding('class.drop-zone-cell'), 
         __metadata('design:type', Object)
     ], DropZoneCell.prototype, "dropZoneCellClass", null);
     __decorate([
         core_1.HostListener('dragenter'), 
         __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [MouseEvent]), 
+        __metadata('design:paramtypes', [DragEvent]), 
         __metadata('design:returntype', void 0)
     ], DropZoneCell.prototype, "onDragEnter", null);
     __decorate([
         core_1.HostListener('dragleave'), 
         __metadata('design:type', Function), 
-        __metadata('design:paramtypes', [MouseEvent]), 
+        __metadata('design:paramtypes', [DragEvent]), 
         __metadata('design:returntype', void 0)
     ], DropZoneCell.prototype, "onDragLeave", null);
+    __decorate([
+        core_1.HostListener('dragend'), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [DragEvent]), 
+        __metadata('design:returntype', void 0)
+    ], DropZoneCell.prototype, "onDragEnd", null);
+    __decorate([
+        core_1.HostListener('drop'), 
+        __metadata('design:type', Function), 
+        __metadata('design:paramtypes', [Object]), 
+        __metadata('design:returntype', void 0)
+    ], DropZoneCell.prototype, "handleOnDrop", null);
     DropZoneCell = __decorate([
         core_1.Component({
             selector: 'drop-zone-cell',

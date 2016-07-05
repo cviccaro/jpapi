@@ -9,6 +9,9 @@
  *                                          '200', 'a100')
  */
 /**
+ * Palette
+ */
+/**
  * Colors
  */
 /**
@@ -53,8 +56,10 @@
     :host .remove md-icon {
       color: #fff; }
   :host:hover .shade {
-    background: rgba(0, 0, 0, 0.5); }
+    background: rgba(0, 0, 0, 0.54); }
   :host img {
     max-width: 100%; }
+  :host.dnd-drag-start {
+    border: 2px dashed #000; }
 
 /*# sourceMappingURL=grid-image.css.map */

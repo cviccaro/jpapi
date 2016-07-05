@@ -1,10 +1,11 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import { HTTP_PROVIDERS } from '@angular/http';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 
 import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2-toaster';
 
 import { MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS } from './shared/libs/angular2-material';
+import { MdSidenav} from '@angular2-material/sidenav';
 
 import { AuthService } from './shared/index';
 
@@ -23,25 +24,47 @@ import { Subscription } from 'rxjs/Subscription';
     ]
 })
 export class AppComponent implements OnInit, OnDestroy {
-	toasterConfig: ToasterConfig;
+    toasterConfig: ToasterConfig;
     loggedIn = false;
 
-    private subscription: Subscription;
+    private _routeDepth: number = 0;
+    private _routeUrl: string = '';
+    private subscriptions: Subscription[];
 
-	constructor(public router: Router, private authService: AuthService) {
-		this.toasterConfig = new ToasterConfig({
-		    showCloseButton: true
-		});
+    private loading = true;
+
+    @ViewChild(MdSidenav) private _sidenav: MdSidenav;
+
+    constructor(public router: Router, private authService: AuthService) {
+        this.toasterConfig = new ToasterConfig({
+            showCloseButton: true
+        });
 
         this.loggedIn = this.authService.authorized;
-	}
+    }
 
     ngOnInit() {
-        this.subscription = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
+        let _sub1 = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
+        let _sub2 = this.router.events.subscribe(evt => {
+            console.warn(evt.toString());
+            if (evt.toString().match('^NavigationEnd')) {
+                this._sidenav.close();
+                this._routeDepth = evt.url.split('/').length - 1;
+                this._routeUrl = evt.url;
+                this.loading = false;
+            } else if (evt.toString().match('^NavigationStart')) {
+                this.loading = true;
+            }
+        });
+        this.subscriptions = [_sub1, _sub2];
+    }
+
+    back() {
+        let parentRoute = this._routeUrl.split('/')[1];
+        this.router.navigate(['/'+parentRoute]);
     }
 
     navigateTo(link) {
-        console.log('navigate to: ', link);
         this.router.navigate(link);
     }
 
@@ -51,7 +74,22 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
-       // prevent memory leak when component is destroyed
-       this.subscription.unsubscribe();
-     }
+        // clean up
+        this.subscriptions.forEach(s => s.unsubscribe());
+    }
+
+    routeIs(url: any, strict: boolean = false): boolean {
+        if (strict) return this._routeUrl === url;
+        return !!this._routeUrl.match(url);
+    }
+
+    routeDepthIs(num: number): boolean {
+        return this._routeDepth === num;
+    }
+
+    closeSidebarIfOpen() {
+        if (this._sidenav.opened) {
+            this._sidenav.close();
+        }
+    }
 }

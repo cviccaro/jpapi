@@ -1,0 +1,31 @@
+@import "../../../../../../assets/sass/variables";
+
+:host {
+    display: flex;
+    flex-direction: row;
+
+    .summary-image-meta {
+        span {
+            float: left;
+            clear: both;
+            font-size: 16px;
+            &.summary-image-size {
+                font-size: 13px;
+                color: #000;
+            }
+        }
+    }
+    .image {
+        margin-left: 0.75em;
+        max-width: 10%;
+        .preview {
+            width: 100%;
+        }
+    }
+    .summary-image-loading {
+        color: $accent;
+        md-icon {
+            color: $black_54;
+        }
+    }
+}

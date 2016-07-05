@@ -29,16 +29,18 @@ class PullStaffCommand extends Command {
     public function fire()
     {
         DB::table('staff')->truncate();
+//        DB::table('jobs')->truncate();
+
         $this->info('Emptying the staff table');
 
         $staff = (array)json_decode(file_get_contents('http://www.jpenterprises.com/jp_export/biography'));
         $this->info('Just downloaded ' . count($staff) . ' staff');
 
-        $this->info('Pushing to StaffService Queue');
+        $this->info('Pushing to StaffQueue');
         foreach($staff as $person) {
-            Queue::push('App\Queue\StaffService', $person);
+            Queue::push('App\Queue\StaffQueue', $person);
         }
-        $this->info(count($staff) . ' jobs created in StaffService Queue.  Run php artisan queue:work --daemon to import all staff.');
+        $this->info(count($staff) . ' jobs created in StaffQueue.  Run php artisan queue:work');
     }
 
 }

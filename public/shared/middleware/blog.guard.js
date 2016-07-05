@@ -23,7 +23,6 @@ var BlogGuard = (function () {
         var _this = this;
         return Rx_1.Observable.create(function (observer) {
             _this.route.params.subscribe(function (params) {
-                console.log('sweet ass params: ', params);
                 var id = +params['id'];
                 _this.sub = _this.blogService.find(id).subscribe(function (res) {
                     _this.blogService.cache(res);

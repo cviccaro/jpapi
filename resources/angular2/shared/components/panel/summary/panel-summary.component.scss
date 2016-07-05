@@ -1,48 +1,39 @@
+@import "../../../../../assets/sass/variables";
+
 :host {
-	max-width: 75%;
+	width: 75%;
 	display: block;
+	cursor: pointer;
+
 	[hidden] {
 		display: none;
 	}
-	.summary-text-wrapper.textarea {
-		width: 90%;
-		.summary-text {
-			white-space: nowrap;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			position: relative;
-			display: inline-block;
-			width: 100%;
-		}
+
+	.panel-summary {
+	    margin-left: 0;
+	    margin-right: auto;
+	    min-width: 25%;
+	    color: $black_54;
+	    font-size: 16px;
+	    display: flex;
+	    flex-direction: row;
+	    justify-content: space-between;
+	    cursor: default;
+
+	    @include basic-transition;
 	}
 
-	// .panel-summary {
-	//     margin-left: 0;
-	//     margin-right: auto;
-	//     min-width: 25%;
-	//     color: $black_54;
-	//     font-size: 16px;
+	md-icon {
+	    margin-left: 5px;
+	    vertical-align: text-top;
+	}
 
-	//     @include basic-transition;
+	.summary-image {
 
-	//     md-icon {
-	//         margin-left: 5px;
-	//         vertical-align: top;
-	//     }
-	// }
-	// .panel-summary {
-	//     display: flex;
-	//     flex-direction: row;
-	//     justify-content: space-between;
-	//     cursor: default;
-	//     .summary-image {
-
-	//     }
-	//     .image-preview {
-	//         background-size: contain;
-	//         max-width: 60px;
-	//         overflow: hidden;
-	//     }
-	// }
-
+	}
+	.image-preview {
+	    background-size: contain;
+	    max-width: 60px;
+	    overflow: hidden;
+	}
 }

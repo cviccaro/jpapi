@@ -1,11 +1,12 @@
-<div class="panel-content-pane-image" *ngIf="_hasImage">
-    <h4>Current Image</h4>
-    <div class="info">
-        {{ imageExtension }}<br />
-        {{ img.naturalWidth }}x{{img.naturalHeight}}px
+<span class="summary-image-loading" [hidden]="!loading">Loading...<md-icon class="spin">update</md-icon></span>
+<div class="panel-content-pane-image" [hidden]="!_hasImage">
+    <h4 [hidden]="!_hasImage">{{ label }}</h4>
+    <div class="info" *ngIf="_hasImage">
+        {{ image.filename }}<br />
+        {{ imageWidth }}x{{ imageHeight }}px
     </div>
     <div class="image">
-        <img [src]="image" #img />
+        <img #img [src]="_imageUrl" />
     </div>
 </div>
 <ng-content></ng-content>

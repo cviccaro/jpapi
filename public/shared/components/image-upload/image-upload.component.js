@@ -15,9 +15,8 @@ var grid_list_1 = require('@angular2-material/grid-list');
 var progress_bar_1 = require('@angular2-material/progress-bar');
 var icon_1 = require('@angular2-material/icon');
 var Rx_1 = require('rxjs/Rx');
-var grid_image_1 = require('./grid-image/grid-image');
-var index_1 = require('./uploader/index');
-var index_2 = require('../dragdrop/index');
+var index_1 = require('./grid-image/index');
+var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
 var auth_service_1 = require('../../services/auth.service');
 var noop = function () { };
 var nextUniqueId = 0;
@@ -29,12 +28,11 @@ var ImageUploadComponent = (function () {
     function ImageUploadComponent(authService) {
         this.isDragOver = false;
         this.isLoading = false;
-        this._count = 0;
-        this._empty = false;
-        this._added = 0;
         this._imagesLoaded = 0;
         this._value = [];
-        this._nextWeight = 0;
+        this._rows = [];
+        this._cols = [];
+        this._draggingImage = false;
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
         this.multiple = false;
@@ -75,118 +73,13 @@ var ImageUploadComponent = (function () {
     ImageUploadComponent.prototype.handleBlur = function (event) {
         console.log('ImageUploadComponent#handleBlur', event);
     };
-    ImageUploadComponent.prototype.ngOnInit = function () {
-        var _this = this;
-        if (this.images === undefined) {
-            this.images = [];
-        }
-        this.isLoading = this._empty = !!this.images.length;
-        this._count = this.images.length;
-        this.images.forEach(function (image) {
-            if (image.weight >= _this._nextWeight) {
-                _this._nextWeight = image.weight + 5;
-            }
-        });
-    };
-    ImageUploadComponent.prototype.ngAfterViewInit = function () {
-        var _this = this;
-        if (this._gridImages) {
-            this._gridImages.changes.subscribe(function (changes) {
-                console.log('Changes to grid images: ', changes);
-            });
-        }
-        if (this._gridList) {
-            this._gridList['_tiles'].forEach(function (tile, i) { _this.registerTileDrag(_this, tile, i); });
-        }
-        console.info('ImageUploadComponent#AfterViewInit ---', this);
-    };
     ImageUploadComponent.prototype.ngOnChanges = function (changes) {
         console.debug('ImageUploadComponent#OnChanges ---', changes);
     };
-    ImageUploadComponent.prototype.registerTileDrag = function (thisArg, tile, i) {
-        console.log('MdGridtile register Tile drag on tile ' + i + ' ', tile);
-        tile.dragging = false;
-        var cols = thisArg['cols'] - 1;
-        var el = tile['_element']['nativeElement'];
-        el.addEventListener('mousedown', function (e) {
-            tile.dragging = true;
-            tile.cursor_default = el.style.cursor;
-            tile.start = {
-                mouse: { x: e.clientX, y: e.clientY },
-                size: { w: el.clientWidth, h: el.clientHeight },
-                zIndex: el.style.zIndex
-            };
-            el.style.cursor = 'move';
-            el.style.zIndex = '9999';
-            console.log('Grid Tile on mouse down ', e);
-        });
-        el.addEventListener('mouseup', function (e) {
-            tile.dragging = false;
-            el.style.transform = '';
-            el.style.cursor = tile.cursor_default;
-            console.log('Grid Tile on mouse up ', e);
-        });
-        el.addEventListener('mousemove', function (e) {
-            if (tile.dragging) {
-                var posX = e.clientX;
-                var posY = e.clientY;
-                var diffX = tile.start.mouse.x - e.clientX;
-                var diffY = tile.start.mouse.y - e.clientY;
-                var thresholdX = tile.start.size.w * 0.9;
-                var thresholdY = tile.start.size.h * 0.9;
-                if (Math.abs(diffX) > thresholdX) {
-                    var direction = diffX > 0 ? 'left' : 'right';
-                    console.log({
-                        i: i,
-                        'cols-1': cols
-                    });
-                    if (direction === 'right' && (i % cols === 0)) {
-                        console.log('ignoring right-hand swap because we are on the last column');
-                    }
-                    else if (direction === 'left' && (i % cols === 0)) {
-                        console.log('ignoring right-hand swap because we are on the first column');
-                    }
-                    else {
-                        console.log('passed horizontal threshold', { diff: { x: diffX, y: diffY }, threshold: { x: thresholdX, y: thresholdY }, direction: direction });
-                        var nextIndex = direction === 'right' ? i + 1 : i - 1;
-                        var nextWeight = thisArg['images'][nextIndex]['weight'];
-                        var oldWeight = thisArg['images'][i]['weight'];
-                        thisArg['images'][i]['weight'] = nextWeight;
-                        thisArg['images'][nextIndex]['weight'] = oldWeight;
-                        setTimeout(function () { thisArg['sortImages'](); }, 0);
-                    }
-                }
-                if (Math.abs(diffY) > thresholdY) {
-                    console.log('Passed vertical threshold ', { diffX: diffY, threshold: thresholdY });
-                }
-                console.log('tile ' + i + ' moved ', {
-                    diffX: diffX,
-                    diffY: diffY,
-                    el: el,
-                    threshold: {
-                        w: thresholdX,
-                        h: thresholdY
-                    }
-                });
-                el.style.transform = "translate3d(" + -diffX + "px, " + -diffY + "px, 0)";
-            }
-        });
-    };
-    ImageUploadComponent.prototype.sortImages = function () {
-        console.log('sorting images', this.images);
-        this.images.sort(function (a, b) {
-            return a.weight > b.weight ? 1 : 0;
-        });
-        this._gridList['_tiles'].forEach(function (tile, i) {
-            var el = tile['_element']['nativeElement'];
-            el.style.transform = 'translate3d(0,0,0)';
-        });
-        console.log('sorted images', this.images);
-    };
-    ImageUploadComponent.prototype.weightChanged = function (e) {
-        console.warn('weight cahnged', e);
-    };
     ImageUploadComponent.prototype.onDragOver = function (e) {
+        if (this._draggingImage) {
+            return;
+        }
         var transfer = this._getTransfer(e);
         if (!this._haveFiles(transfer.types)) {
             return;
@@ -196,38 +89,45 @@ var ImageUploadComponent = (function () {
         this.isDragOver = true;
     };
     ImageUploadComponent.prototype.onDragLeave = function (e) {
+        if (this._draggingImage) {
+            return;
+        }
         this._stopEvent(e);
         this.isDragOver = false;
     };
     ImageUploadComponent.prototype.onFileDrop = function (e) {
+        if (this._draggingImage) {
+            console.log('onFileDrop cancelling because we are dragging image.');
+            this._draggingImage = false;
+            return;
+        }
+        else {
+            console.log('onFileDrop ', e);
+            var files = e.target.files || e.dataTransfer.files;
+            this._stopEvent(e);
+            this.fileAdded.emit(files);
+            this.isDragOver = false;
+            this.isLoading = true;
+            this.readFiles(files);
+        }
+        console.log('ImageUploadComponent#FileDrop', {
+            e: e,
+            this: this
+        });
+    };
+    ImageUploadComponent.prototype.readFiles = function (files) {
         var _this = this;
-        var files = e.target.files || e.dataTransfer.files;
-        this._stopEvent(e);
-        this.isDragOver = false;
-        this.fileAdded.emit(files);
-        this.isLoading = true;
         var count = this.value.length;
         var _loop_1 = function(i) {
             var file = files[i];
-            var value = this_1.value;
-            value.push(file);
-            this_1.value = value;
-            var image = new index_1.ImageItem(file);
+            var image = new index_1.ImageUpload(file);
             var reader = new FileReader();
             var k = i;
             this_1.isLoading = true;
             reader.addEventListener('load', function (e) {
-                file._weight = _this._nextWeight;
-                _this._nextWeight = _this._nextWeight + 5;
-                var newImage = {
-                    id: 'upload_' + i,
-                    name: file.name,
-                    image_url: reader.result,
-                    isNew: true,
-                    _file: file,
-                    weight: file._weight
-                };
-                _this.addImageToGrid(newImage);
+                image.url = reader.result;
+                _this.addImageToGrid(image);
+                _this.isLoading = false;
             });
             setTimeout(function () { reader.readAsDataURL(file); });
         };
@@ -235,14 +135,12 @@ var ImageUploadComponent = (function () {
         for (var i = 0; i < files.length; i++) {
             _loop_1(i);
         }
-        console.log('ImageUploadComponent#FileDrop', {
-            e: e,
-            this: this
-        });
     };
     ImageUploadComponent.prototype.addImageToGrid = function (image) {
         console.log('Loaded new image: ', image);
-        this.images.push(image);
+        var value = this.value;
+        value.push(image);
+        this.value = value;
         this.imageAdded.emit(image);
     };
     Object.defineProperty(ImageUploadComponent.prototype, "value", {
@@ -252,11 +150,9 @@ var ImageUploadComponent = (function () {
                 v: v,
                 _value: this._value
             });
-            if (v.length !== this._added) {
-                this._added++;
+            if (v !== this._value) {
                 this._value = v;
                 console.warn('emitting change', v);
-                this.change.emit(v);
                 this._onChangeCallback(v);
             }
         },
@@ -297,17 +193,13 @@ var ImageUploadComponent = (function () {
     };
     ImageUploadComponent.prototype.handleImageLoaded = function (e) {
         e._hasNew = false;
-        if (e.config.isNew) {
-            console.debug('ImageUpload.handleImageLoaded NEW', {
-                e: e,
-                value: this.value
-            });
+        if (!e.config.hasOwnProperty('id')) {
             this.isLoading = false;
             e._hasNew = true;
         }
         else {
             var id = e.config.id;
-            if (++this._imagesLoaded === this.images.length) {
+            if (++this._imagesLoaded === this.value.length) {
                 this.isLoading = false;
             }
         }
@@ -318,29 +210,58 @@ var ImageUploadComponent = (function () {
             e: e,
             value: this.value
         });
-        this.images.splice(e.index, 1);
-        if (this.value && this.value.length) {
-            console.log('Searching through value to remove', this.value);
-            var idx = this.value.indexOf(e.config._file);
-            console.log('indexOf result', { idx: idx });
-            if (idx !== -1) {
-                this.value = this._value.splice(idx, 1);
-            }
-        }
+        var value = this.value;
+        value.splice(e.index, 1);
+        this.value = value;
         this.imageRemoved.emit(e);
     };
+    ImageUploadComponent.prototype._dragData = function (image, idx) {
+        return Object.assign(image, { idx: idx });
+    };
+    ImageUploadComponent.prototype.imageDragStart = function (e) {
+        this._dropZoneStart = e.dragData.idx;
+        this._draggingImage = true;
+        this._dragImage = e.dragData;
+        console.debug('ImageUpload imageDragStart  from zone ' + this._dropZoneStart + ': ', e);
+    };
+    ImageUploadComponent.prototype.imageDropped = function (event, image, zone) {
+        console.info('ImageUpload image dropped', {
+            event: event,
+            image: image,
+            zone: zone
+        });
+        this._draggingImage = false;
+        this._dragImage = null;
+        var data = event.dragData;
+        if (this._dropZoneStart !== zone) {
+            this.moveImage(this._dropZoneStart, zone);
+        }
+    };
+    ImageUploadComponent.prototype.onDragEnd = function (e) {
+        console.debug('onDragEnd');
+        this._draggingImage = false;
+    };
+    ImageUploadComponent.prototype.moveImage = function (old_index, new_index) {
+        var images = this.value;
+        var source = images[old_index];
+        var target = images[new_index];
+        images[new_index] = source;
+        images[old_index] = target;
+        this.value = images;
+        this.change.emit(this.value);
+        console.log('Just dropped image from drop zone ' + this._dropZoneStart + ' to drop zone ' + new_index);
+    };
+    ;
+    ImageUploadComponent.prototype.reset = function () {
+    };
     __decorate([
-        core_1.ViewChildren(grid_image_1.GridImage), 
+        core_1.ViewChildren(index_1.GridImage), 
         __metadata('design:type', core_1.QueryList)
     ], ImageUploadComponent.prototype, "_gridImages", void 0);
     __decorate([
         core_1.ViewChild(grid_list_1.MdGridList), 
         __metadata('design:type', grid_list_1.MdGridList)
     ], ImageUploadComponent.prototype, "_gridList", void 0);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', String)
-    ], ImageUploadComponent.prototype, "url", void 0);
     __decorate([
         core_1.Input(),
         field_value_1.BooleanFieldValue(), 
@@ -426,12 +347,10 @@ var ImageUploadComponent = (function () {
                 progress_bar_1.MD_PROGRESS_BAR_DIRECTIVES,
                 icon_1.MD_ICON_DIRECTIVES,
                 forms_1.NgModel,
-                grid_image_1.GridImage,
-                index_2.Draggable,
-                index_2.Droppable,
-                index_2.ImageUploadDropZones
+                index_1.GridImage,
+                ng2_dnd_1.DND_DIRECTIVES
             ],
-            providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR, index_2.DragDropService]
+            providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR]
         }), 
         __metadata('design:paramtypes', [auth_service_1.AuthService])
     ], ImageUploadComponent);

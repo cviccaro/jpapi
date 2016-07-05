@@ -9,28 +9,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var angular2_material_1 = require('../shared/libs/angular2-material');
-var forms_1 = require('@angular/forms');
-var index_1 = require('../shared/index');
 var HomeComponent = (function () {
     function HomeComponent() {
     }
-    __decorate([
-        core_1.ViewChild(index_1.ImageUploadComponent), 
-        __metadata('design:type', index_1.ImageUploadComponent)
-    ], HomeComponent.prototype, "_uploadCmp", void 0);
     HomeComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
             selector: 'jpa-home',
             templateUrl: './home.component.html',
-            styleUrls: ['./home.component.css'],
-            directives: [
-                angular2_material_1.MATERIAL_DIRECTIVES,
-                index_1.ImageUploadComponent,
-                forms_1.NgForm
-            ],
-            providers: [index_1.FileUploader]
+            styleUrls: ['./home.component.css']
         }), 
         __metadata('design:paramtypes', [])
     ], HomeComponent);
