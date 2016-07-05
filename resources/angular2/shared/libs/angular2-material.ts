@@ -7,7 +7,7 @@ import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MD_LIST_DIRECTIVES} from '@angular2-material/list';
 import {MD_PROGRESS_BAR_DIRECTIVES} from '@angular2-material/progress-bar';
 import {MD_PROGRESS_CIRCLE_DIRECTIVES} from '@angular2-material/progress-circle';
-import {MD_RADIO_DIRECTIVES, MdRadioDispatcher} from '@angular2-material/radio';
+import {MD_RADIO_DIRECTIVES, MdUniqueSelectionDispatcher} from '@angular2-material/radio';
 import {MD_SLIDE_TOGGLE_DIRECTIVES} from '@angular2-material/slide-toggle';
 import {MD_SIDENAV_DIRECTIVES} from '@angular2-material/sidenav';
 import {MD_TABS_DIRECTIVES} from '@angular2-material/tabs';
@@ -32,5 +32,5 @@ export const MATERIAL_DIRECTIVES = [
 
 export const MATERIAL_PROVIDERS = [
     MdIconRegistry,
-    MdRadioDispatcher
+    MdUniqueSelectionDispatcher
 ];

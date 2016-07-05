@@ -79,7 +79,7 @@ class BlogQueue {
 
         // Attach a site randomly
         $division = Division::find(rand(1,3));
-        $blog->division()->attach($division);
+        $blog->divisions()->attach($division);
 
         $job->delete();
     }

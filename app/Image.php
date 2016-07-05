@@ -88,7 +88,7 @@ class Image extends Model
         $directory = storage_path($destination);
 
         $original_name = File::basename($url);
-        $filename = self::availableFilename($original_name, $directory);
+        $filename = self::availableFilename($original_name, $destination);
         $filepath = path_join([$directory, $filename]);
 
         $data = file_get_contents($url);
