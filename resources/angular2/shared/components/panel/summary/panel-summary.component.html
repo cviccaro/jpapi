@@ -26,6 +26,9 @@
                     <span *ngSwitchCase="'image'" class="summary-text">
                         {{ summary }}
                     </span>
+                    <span *ngSwitchCase="'multiselect'" class="summary-text comma-list">
+                        <span class="comma-list-item" *ngFor="let value of summary">{{ value.name }}</span>
+                    </span>
                     <span class="summary-text" *ngSwitchCase="'images'">
                         <jpa-panel-summary-images [old]="_imagesCount" [queue]="_imagesQueueCount"></jpa-panel-summary-images>
                     </span>

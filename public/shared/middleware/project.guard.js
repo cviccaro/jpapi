@@ -23,6 +23,7 @@ var ProjectGuard = (function () {
     };
     ProjectGuard.prototype.canActivate = function () {
         var _this = this;
+        console.log('ProjectGuard can activate called', this);
         return Rx_1.Observable.create(function (observer) {
             var gotClients = false;
             var gotProject = false;

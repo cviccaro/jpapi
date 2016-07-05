@@ -81,7 +81,7 @@ export class PanelSummaryComponent implements AfterViewInit, OnChanges {
     }
 
     set summary(v: any) {
-        console.debug('PanelSummary'+this.type+' setting summary to ', {value: v});
+        //console.debug('PanelSummary'+this.type+' setting summary to ', {value: v});
         this._summary = v;
     }
 
@@ -91,7 +91,7 @@ export class PanelSummaryComponent implements AfterViewInit, OnChanges {
             let currentValue = changes[prop].currentValue;
             let isFirstChange = changes[prop].isFirstChange();
 
-            console.debug('PanelSummary.'+this.type+'.'+prop + ' changed: ', {from: previousValue, to: currentValue, isFirstChange: isFirstChange});
+            //console.debug('PanelSummary.'+this.type+'.'+prop + ' changed: ', {from: previousValue, to: currentValue, isFirstChange: isFirstChange});
 
             switch (prop) {
                 case 'value':
@@ -107,13 +107,9 @@ export class PanelSummaryComponent implements AfterViewInit, OnChanges {
     }
 
     setSummaryOf(value: any): void {
-        console.log('PanelSummary<'+this.type+'>.setSummaryOf() called with value ', { value: value });
+        //console.log('PanelSummary<'+this.type+'>.setSummaryOf() called with value ', { value: value });
     	switch(this.type) {
     		case 'select':
-            console.log('set usmmary of select ', {
-                options: this._selectOptions,
-                value: value
-            });
                 if (!this._selectOptions) return;
 
                 let filtered = this._selectOptions.filter(opt => {
@@ -139,7 +135,7 @@ export class PanelSummaryComponent implements AfterViewInit, OnChanges {
                     this._imagesCount = _old;
                     this._imagesQueueCount = _new;
 
-                    console.debug('set count to ' + this._imagesCount + ' old and ' + this._imagesQueueCount + ' new');
+                    //console.debug('set count to ' + this._imagesCount + ' old and ' + this._imagesQueueCount + ' new');
                 }
                 break;
 			default:

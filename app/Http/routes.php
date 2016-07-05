@@ -42,6 +42,8 @@ Route::get('blogs/{id}', 'BlogController@get');
 // Route::get('clients/{id}', 'ClientController@get');
 
 Route::get('options/clients', 'ClientController@options');
+Route::get('options/divisions', 'DivisionController@options');
+Route::get('options/tags', 'TagController@options');
 
 Route::get('projects', 'ProjectController@all');
 Route::get('projects/paged', 'ProjectController@paged');
@@ -99,11 +101,8 @@ Route::resource("images","ImageController");
 
 Route::get('test', function() {
     $blog = App\Blog::with('divisions', 'image', 'images', 'tags')->find(1);
-    $attributes = $blog->attributesToArray();
-
-    foreach($attributes as $key => $val) {
-        dump(['key' => $key, 'val' => $val]);
-    }
+    $ids_clean = $blog->tags->map(function($tag) { return $tag->id; });
+    dd($ids_clean);
 
     return Response::make('');
 });

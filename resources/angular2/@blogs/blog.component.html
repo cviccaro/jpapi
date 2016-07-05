@@ -10,12 +10,13 @@
         <jpa-panel #titlePanel label="Title" [(ngModel)]="blog.title" name="title" type="text" editText="Enter a title" required>
           <md-hint align="end">{{titlePanel.characterCount}} / 100</md-hint>
         </jpa-panel>
+        <jpa-panel #tagPanel label="Tags" [(ngModel)]="blog.tags" [options]="tags" name="tags" type="multiselect" editText="Select some tags" required>
+        </jpa-panel>
+        <jpa-panel class="division" #divisionPanel label="Divisions" [(ngModel)]="blog.divisions" [options]="divisions" name="divisions" type="multiselect" editText="Assign a site or two" required>
+        </jpa-panel>
         <jpa-panel #bodyPanel label="Body" [(ngModel)]="blog.body" name="body" type="textarea" editText="Write some copy" required>
           <md-hint align="end">{{bodyPanel.characterCount}} / &infin;</md-hint>
         </jpa-panel>
-<!--         <jpa-panel #clientPanel label="Client" [(ngModel)]="blog.client_id" name="client" type="select" editText="Select a client" required>
-          <option *ngFor="let client of clients" [value]="client.id">{{client.name}}</option>
-        </jpa-panel> -->
         <jpa-panel #summaryPanel label="Summary" [(ngModel)]="blog.summary" name="summary" type="textarea" editText="Write a summary">
           <md-hint align="end">{{summaryPanel.characterCount}} / &infin;</md-hint>
         </jpa-panel>

@@ -31,7 +31,7 @@ exports.MATERIAL_DIRECTIVES = [
 ];
 exports.MATERIAL_PROVIDERS = [
     icon_1.MdIconRegistry,
-    radio_1.MdRadioDispatcher
+    radio_1.MdUniqueSelectionDispatcher
 ];
 
 //# sourceMappingURL=angular2-material.js.map

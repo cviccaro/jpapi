@@ -24,6 +24,8 @@ var angular2_material_1 = require('../../libs/angular2-material');
 var index_1 = require('./content/index');
 var index_2 = require('./summary/index');
 var index_3 = require('../image-upload/index');
+var index_4 = require('../chip/index');
+var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
 exports.JPA_PANEL_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCESSOR, {
     useExisting: core_1.forwardRef(function () { return JpaPanel; }),
     multi: true
@@ -34,7 +36,8 @@ var JPA_PANEL_VALID_INPUT_TYPE = [
     'select',
     'textarea',
     'image',
-    'images'
+    'images',
+    'multiselect'
 ];
 var JPA_PANEL_UNDERLINE_HIDDEN = [
     'textarea',
@@ -73,12 +76,14 @@ var JpaPanel = (function () {
         this._isImage = false;
         this._isGallery = false;
         this._isSelect = false;
+        this._isMultiSelect = false;
         this._hasContent = false;
         this._hasContentRight = false;
         this._hasContentBottom = false;
         this._hasContentLeft = false;
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
+        this._multiselectDropZone = -1;
         this.autoFocus = false;
         this.currentImage = null;
         this.disabled = false;
@@ -112,7 +117,7 @@ var JpaPanel = (function () {
     Object.defineProperty(JpaPanel.prototype, "empty", {
         get: function () {
             var v = this.value;
-            var x = !v || v === undefined || v === null || (Array.isArray(v) && v.length);
+            var x = !v || v === undefined || v === null || (Array.isArray(v) && v.length === 0);
             return x;
         },
         enumerable: true,
@@ -133,8 +138,17 @@ var JpaPanel = (function () {
         set: function (v) {
             console.debug('JpaPanel' + this.type + '.' + this.name + '# set value(): ', v);
             if (v !== this._value) {
+                console.log('JpaPanel.' + this.type + '.' + this.name + '# value cahnged!', { v: v, _value: this._value });
                 this._value = v;
                 this._onChangeCallback(v);
+            }
+            else {
+                if (this.type === 'multiselect' && this.empty) {
+                    this._onChangeCallback(null);
+                }
+                else {
+                    this._onChangeCallback(this._value);
+                }
             }
         },
         enumerable: true,
@@ -209,6 +223,11 @@ var JpaPanel = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(JpaPanel.prototype, "multiSelectClass", {
+        get: function () { return this.type === 'multiselect'; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(JpaPanel.prototype, "onBlur", {
         get: function () { return this._blurEmitter.asObservable(); },
         enumerable: true,
@@ -254,6 +273,8 @@ var JpaPanel = (function () {
     JpaPanel.prototype.writeValue = function (value) {
         console.debug('JpaPanel.' + this.type + ' ' + this.name + '#writeValue(' + this.type + ')', value);
         this._value = value;
+        if (this.type === 'multiselect')
+            this.setMultiOptions();
         if (!this._initialValue)
             this._initialValue = value;
     };
@@ -300,6 +321,10 @@ var JpaPanel = (function () {
             case 'image':
                 this._isImage = true;
                 break;
+            case 'multiselect':
+                this._isMultiSelect = true;
+                this._hasContentRight = true;
+                break;
             case 'images':
                 this._isGallery = true;
                 this._hasContentBottom = true;
@@ -335,28 +360,26 @@ var JpaPanel = (function () {
         if (this._summaryChild) {
             switch (this.type) {
                 case 'select':
-                    console.log('setting select options on children to ', this._optionChildren);
                     this._summaryChild.setOptions(this._optionChildren);
                     break;
             }
         }
-        console.info('JpaPanel.' + this.type + ' ' + this.name + '#AfterContentInit', this);
+        console.info('JpaPanel.' + this.type + ' ' + this.name + '#AfterContentInit', { this: this, value: this.value, _value: this._value });
     };
     JpaPanel.prototype.ngAfterViewInit = function () {
         switch (this.type) {
             case 'image':
-                console.log('Panel(image) setting value to ', {
-                    from: this.value,
-                    to: this.nativeElement.value
-                });
                 this.value = this.nativeElement.value;
+                break;
+            case 'multiselect':
+                this._originalOptions = this.options;
                 break;
             default:
                 if (this.nativeElement) {
                     this.value = this.nativeElement.value;
                 }
         }
-        console.info('PanelComponent.' + this.type + ' # AfterViewInit: ', this._optionChildren);
+        console.info('PanelComponent.' + this.type + ' # AfterViewInit: ', { this: this, value: this.value, _value: this._value });
     };
     JpaPanel.prototype.ngOnChanges = function (changes) {
         this._validateConstraints();
@@ -398,6 +421,65 @@ var JpaPanel = (function () {
             });
         }
     };
+    JpaPanel.prototype.setMultiOptions = function () {
+        console.warn('SetMultiOptions');
+        this._secureValue = this.value.length === 0 ? null : JSON.stringify(this.value);
+        if (this.options) {
+            var ids_1 = this.value.map(function (item) { return item.id; });
+            console.log('value ids: ', ids_1);
+            this.options = this._originalOptions.filter(function (option) {
+                return ids_1.indexOf(option.id) === -1;
+            });
+        }
+    };
+    JpaPanel.prototype.multiselectDrop = function (e) {
+        if (e.dragData.hasOwnProperty('preventAdd') && e.dragData.preventAdd === true) {
+            console.log('preventing add from already added chip.');
+            return;
+        }
+        console.log('Multiselect drop!!!!', e);
+        var data = e.dragData;
+        var val = this.value.slice(0);
+        val.push(data.option);
+        this.value = val;
+        this.setMultiOptions();
+        this._onTouchedCallback();
+        this._valueChanged = true;
+    };
+    JpaPanel.prototype.multiselectReorder = function (e) {
+        var new_index = this._multiselectDropZone;
+        var old_index = e.dragData.index;
+        if (new_index !== old_index) {
+            var value = this.value.slice(0);
+            var source = value[old_index];
+            var target = value[new_index];
+            value[new_index] = source;
+            value[old_index] = target;
+            this.value = value;
+            console.log('Multiselect reorder from ' + old_index + ' to ' + new_index);
+        }
+        this._onTouchedCallback();
+        this._valueChanged = true;
+    };
+    JpaPanel.prototype.multiselectOnDragEnter = function (e, index) {
+        this._multiselectDropZone = index;
+        console.log("multiselectdragenter on " + index);
+    };
+    JpaPanel.prototype.multiselectRemove = function (id) {
+        var filtered = this.value.filter(function (item) {
+            return item.id === id;
+        });
+        if (filtered && filtered.length) {
+            var index = this.value.indexOf(filtered[0]);
+            var value = this.value;
+            value.splice(index, 1);
+            this.value = value;
+            console.log('set value to ', value);
+            this.setMultiOptions();
+        }
+        this._onTouchedCallback();
+        this._valueChanged = true;
+    };
     JpaPanel.prototype.fileAdded = function (e) {
         console.log('PanelComponent -- ImageUpload -- fileAdded', e);
     };
@@ -405,6 +487,7 @@ var JpaPanel = (function () {
         console.log('PanelComponent -- ImageUpload -- imageAdded', e);
     };
     JpaPanel.prototype.imageLoaded = function (e) {
+        console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
     };
     JpaPanel.prototype.reset = function () {
         this._valueChanged = false;
@@ -472,6 +555,10 @@ var JpaPanel = (function () {
         core_1.Input(), 
         __metadata('design:type', String)
     ], JpaPanel.prototype, "name", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Array)
+    ], JpaPanel.prototype, "options", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
@@ -576,6 +663,10 @@ var JpaPanel = (function () {
         __metadata('design:type', Object)
     ], JpaPanel.prototype, "imagesClass", null);
     __decorate([
+        core_1.HostBinding('class.multiselect'), 
+        __metadata('design:type', Object)
+    ], JpaPanel.prototype, "multiSelectClass", null);
+    __decorate([
         core_1.Output(), 
         __metadata('design:type', Object)
     ], JpaPanel.prototype, "imageFieldChanged", void 0);
@@ -605,6 +696,8 @@ var JpaPanel = (function () {
                 index_1.JpaPanelContent,
                 index_3.ImageUploadComponent,
                 index_2.PanelSummaryComponent,
+                index_4.ChipComponent,
+                ng2_dnd_1.DND_DIRECTIVES
             ],
             providers: [exports.JPA_PANEL_VALUE_ACCESSOR],
             pipes: [common_1.SlicePipe],

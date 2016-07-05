@@ -63,11 +63,14 @@ class BlogQueue {
 
         // Create a tag with the blog category
         if ( isset($data['category']['name']) ) {
-            $tag = Tag::create([
-                'name' => $data['category']['name'],
-                'description' => $data['category']['description']
-            ]);
-
+            // search for tag first
+            $tag = Tag::where('name', $data['category']['name'])->first();
+            if (!$tag) {
+                $tag = Tag::create([
+                    'name' => $data['category']['name'],
+                    'description' => $data['category']['description']
+                ]);
+            }
             $blog->tags()->attach($tag);
         }
 

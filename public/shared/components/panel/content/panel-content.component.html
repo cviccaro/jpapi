@@ -9,4 +9,22 @@
         <img #img [src]="_imageUrl" />
     </div>
 </div>
+<div *ngIf="hasOptions">
+	<div class="chips">
+	  <jpa-chip 
+	  	*ngFor="let option of options; let index = index; let odd = odd; let even = even;" 
+	  	[id]="option.id" 
+	  	[removeEnabled]="false"
+	  	[name]="option.name" 
+	  	[class.even]="even" 
+	  	[class.odd]="odd"
+	  	[dragEnabled]="true"
+	  	[dragData]="{option: option, index: index}"
+	  	dnd-draggable>
+	  </jpa-chip>
+      <button md-icon-button class="add small" color="secondary" (click)="addToMultiSelect($event)">
+          <md-icon>add</md-icon>
+      </button>
+	</div>
+</div>
 <ng-content></ng-content>

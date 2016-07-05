@@ -31,7 +31,10 @@ import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-lis
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { JpaPanelContent } from './content/index';
 import { PanelSummaryComponent } from './summary/index';
-import {ImageUploadComponent} from '../image-upload/index';
+import { ImageUploadComponent } from '../image-upload/index';
+import { ChipComponent } from '../chip/index';
+
+import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
 export const JPA_PANEL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     useExisting: forwardRef(() => JpaPanel),
@@ -46,7 +49,8 @@ const JPA_PANEL_VALID_INPUT_TYPE = [
     'select',
     'textarea',
     'image',
-    'images'
+    'images',
+    'multiselect'
     // 'checkbox',
     // 'number',
     // 'date'
@@ -85,6 +89,8 @@ export class JpaPanelDuplicatedHintError extends MdError {
         JpaPanelContent,
         ImageUploadComponent,
         PanelSummaryComponent,
+        ChipComponent,
+        DND_DIRECTIVES
         // FILE_UPLOAD_DIRECTIVES,
         // MD_GRID_LIST_DIRECTIVES
     ],
@@ -108,12 +114,15 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     private _isImage: boolean = false;
     private _isGallery: boolean = false;
     private _isSelect: boolean = false;
+    private _isMultiSelect: boolean = false;
     private _hasContent: boolean = false;
     private _hasContentRight: boolean = false;
     private _hasContentBottom: boolean = false;
     private _hasContentLeft: boolean = false;
     private _onTouchedCallback: () => void = noop;
     private _onChangeCallback: (_: any) => void = noop;
+    private _originalOptions: any[];
+    private _multiselectDropZone: number = -1;
 
     /**
      * Bindings.
@@ -132,6 +141,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     @Input() min: string = null;
     @Input() minLength: number = null;
     @Input() name: string = null;
+    @Input() options: any[];
     @Input() placeholder: string = null;
     @Input() @BooleanFieldValue() readOnly: boolean = false;
     @Input() @BooleanFieldValue() required: boolean = false;
@@ -144,7 +154,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     get focused() { return this._focused; }
     get empty() {
         let v = this.value;
-        let x = !v || v === undefined || v === null || (Array.isArray(v) && v.length)
+        let x = !v || v === undefined || v === null || (Array.isArray(v) && v.length === 0)
         // console.warn('Panel'+this.type+' is checking empty of value: ', {
         //     v: v,
         //     x: x,
@@ -160,8 +170,15 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         console.debug('JpaPanel'+this.type+'.'+this.name+'# set value(): ', v);
 
         if (v !== this._value) {
+            console.log('JpaPanel.'+this.type+'.'+this.name+'# value cahnged!', { v: v, _value: this._value});
             this._value = v;
             this._onChangeCallback(v);
+        } else {
+            if (this.type === 'multiselect' && this.empty) {
+                this._onChangeCallback(null);
+            } else {
+                this._onChangeCallback(this._value);
+            }
         }
     }
 
@@ -208,6 +225,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     @HostBinding('class.textarea') get textareaClass() { return this.type === 'textarea'; }
     @HostBinding('class.image') get imageClass() { return this.type === 'image'; }
     @HostBinding('class.images') get imagesClass() { return this.type === 'images'; }
+    @HostBinding('class.multiselect') get multiSelectClass() { return this.type === 'multiselect'; }
     /**
      * Outputs
      */
@@ -254,6 +272,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     writeValue(value: any) {
         console.debug('JpaPanel.'+this.type+' ' + this.name + '#writeValue('+this.type+')', value);
         this._value = value;
+        if (this.type === 'multiselect') this.setMultiOptions();
         if (!this._initialValue) this._initialValue = value;
     }
     registerOnChange(fn: any) {
@@ -307,6 +326,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
             case 'select': this._isSelect = true; break;
             case 'textarea': this._isTextarea = true; break;
             case 'image': this._isImage = true; break;
+            case 'multiselect': this._isMultiSelect = true; this._hasContentRight = true; break;
             case 'images':
                 this._isGallery = true;
                 this._hasContentBottom = true;
@@ -345,13 +365,13 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         if (this._summaryChild) {
             switch(this.type) {
                 case 'select':
-                console.log('setting select options on children to ', this._optionChildren);
+                //console.log('setting select options on children to ', this._optionChildren);
                     this._summaryChild.setOptions(this._optionChildren);
                     break;
             }
         }
 
-        console.info('JpaPanel.'+this.type+' ' + this.name + '#AfterContentInit', this);
+        console.info('JpaPanel.'+this.type+' ' + this.name + '#AfterContentInit', {this: this, value: this.value, _value: this._value});
     }
 
     /**
@@ -360,18 +380,21 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     ngAfterViewInit(): void {
         switch(this.type) {
             case 'image':
-            console.log('Panel(image) setting value to ', {
-                from: this.value,
-                to: this.nativeElement.value
-            });
+            // console.log('Panel(image) setting value to ', {
+            //     from: this.value,
+            //     to: this.nativeElement.value
+            // });
                 this.value = this.nativeElement.value;
             break;
+            case 'multiselect':
+                this._originalOptions = this.options;
+                break;
             default:
                 if (this.nativeElement) {
                     this.value = this.nativeElement.value;
                 }
         }
-        console.info('PanelComponent.' + this.type + ' # AfterViewInit: ' , this._optionChildren);
+        console.info('PanelComponent.' + this.type + ' # AfterViewInit: ' , {this: this, value: this.value, _value: this._value});
     }
 
     /**
@@ -436,6 +459,91 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         }
     }
 
+    setMultiOptions() {
+        console.warn('SetMultiOptions');
+        this._secureValue = this.value.length === 0 ? null : JSON.stringify(this.value);
+        // this._onChangeCallback(this.value);
+        // this._onTouchedCallback();
+        // console.log('secure value!', {
+        //     secure: this._secureValue,
+        //     value: this.value,
+        //     _value: this._value
+        // });
+        if (this.options) {
+            let ids = this.value.map(item => item.id);
+            console.log('value ids: ', ids);
+            this.options = this._originalOptions.filter(option => {
+                return ids.indexOf(option.id) === -1;
+            });
+        }
+    }
+
+    multiselectDrop(e) {
+        if (e.dragData.hasOwnProperty('preventAdd') && e.dragData.preventAdd === true) {
+            console.log('preventing add from already added chip.');
+            return;
+        }
+
+        console.log('Multiselect drop!!!!', e);
+
+        let data = e.dragData;
+        let val = this.value.slice(0);
+        
+        val.push(data.option);
+        this.value = val;
+        this.setMultiOptions();
+        // this._onChangeCallback(this.value);
+        this._onTouchedCallback();
+        this._valueChanged = true;
+    }
+
+    multiselectReorder(e) {
+        let new_index = this._multiselectDropZone;
+        let old_index = e.dragData.index;
+
+        if (new_index !== old_index) {
+            let value = this.value.slice(0);
+
+            const source = value[old_index];
+            const target = value[new_index];
+
+            value[new_index] = source;
+            value[old_index] = target;
+
+            this.value = value;
+
+            console.log('Multiselect reorder from ' + old_index + ' to ' + new_index);
+        }
+
+        this._onTouchedCallback();
+        this._valueChanged = true;
+    }
+
+    multiselectOnDragEnter(e, index) {
+        this._multiselectDropZone = index;
+        console.log("multiselectdragenter on " + index);
+    }
+
+    multiselectRemove(id) {
+        let filtered = this.value.filter(item => {
+            return item.id === id
+        })
+
+        if (filtered && filtered.length) {
+            let index = this.value.indexOf(filtered[0]);
+            let value = this.value;
+            value.splice(index, 1);
+            this.value = value;
+            console.log('set value to ', value);
+            this.setMultiOptions();
+            // this._onChangeCallback(this.value);
+            // this._onTouchedCallback();
+        }
+
+        this._onTouchedCallback();
+        this._valueChanged = true;
+    }
+
     /**
      * ImageUpload events
      */
@@ -446,7 +554,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         console.log('PanelComponent -- ImageUpload -- imageAdded', e);
     }
     imageLoaded(e: any) {
-     //   console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
+        console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
     }
 
     /**

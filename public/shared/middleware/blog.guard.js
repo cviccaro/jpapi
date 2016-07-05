@@ -13,30 +13,58 @@ var router_1 = require('@angular/router');
 var index_1 = require('../services/index');
 var Rx_1 = require('rxjs/Rx');
 var BlogGuard = (function () {
-    function BlogGuard(blogService, route) {
+    function BlogGuard(blogService, tagService, divisionService, route) {
         this.blogService = blogService;
+        this.tagService = tagService;
+        this.divisionService = divisionService;
         this.route = route;
+        this.subs = [];
     }
-    BlogGuard.prototype.ngOnInit = function () {
-    };
     BlogGuard.prototype.canActivate = function () {
         var _this = this;
         return Rx_1.Observable.create(function (observer) {
-            _this.route.params.subscribe(function (params) {
-                var id = +params['id'];
-                _this.sub = _this.blogService.find(id).subscribe(function (res) {
-                    _this.blogService.cache(res);
+            var gotTags = false;
+            var gotBlog = false;
+            var gotDivisions = false;
+            var _sub = _this.tagService.options().subscribe(function (res) {
+                console.log('got tag options!', res);
+                _this.tagService.cache(res);
+                gotTags = true;
+                if (gotBlog && gotDivisions)
                     observer.complete(true);
-                });
             });
+            var _sub2 = _this.divisionService.options().subscribe(function (res) {
+                _this.divisionService.cache(res);
+                gotDivisions = true;
+                if (gotTags && gotBlog)
+                    observer.complete(true);
+            });
+            _this.subs.push(_sub2);
+            var _sub3 = _this.route.params.subscribe(function (params) {
+                var id = params['id'];
+                if (id === undefined || id === 'new') {
+                    gotBlog = true;
+                }
+                else {
+                    id = +id;
+                    var _sub3_1 = _this.blogService.find(id).subscribe(function (res) {
+                        _this.blogService.cache(res);
+                        gotBlog = true;
+                        if (gotTags && gotDivisions)
+                            observer.complete(true);
+                    });
+                    _this.subs.push(_sub3_1);
+                }
+            });
+            _this.subs.push(_sub3);
         });
     };
     BlogGuard.prototype.ngOnDestroy = function () {
-        this.sub.unsubscribe();
+        this.subs.forEach(function (sub) { return sub.unsubscribe(); });
     };
     BlogGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.BlogService, router_1.ActivatedRoute])
+        __metadata('design:paramtypes', [index_1.BlogService, index_1.TagService, index_1.DivisionService, router_1.ActivatedRoute])
     ], BlogGuard);
     return BlogGuard;
 }());

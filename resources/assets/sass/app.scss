@@ -78,12 +78,6 @@ md-input.ng-invalid.ng-touched {
     color: $danger!important;
 }
 
-md-icon-button {
-  &:active,&:focus {
-    background-color: rgba(0,0,0,0.12);
-  }
-}
-
 /**
 | Titles
 |
@@ -110,12 +104,33 @@ button[md-raised-button] {
         vertical-align: middle;
     }
 }
+
+md-icon-button,
+[md-icon-button] {
+    &:not(.small),
+    &:not(.nofocus) {
+        &:active,&:focus {
+          background-color: rgba(0,0,0,0.12);
+        }
+    }
+    &.small {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+    }
+}
+
 md-icon.spin {
     animation: fa-spin 2s infinite linear;
     -webkit-animation: fa-spin 2s infinite linear;
 }
 
 md-icon {
+    &.md-14 {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+    }
     &.md-20 {
         font-size: 20px;
         width: 20px;

@@ -13,7 +13,7 @@ class Project extends Model
 
     public function divisions()
     {
-        return $this->belongsToMany('App\Division');
+        return $this->belongsToMany('App\Division')->withPivot('weight');
     }
 
     public function image()
@@ -28,7 +28,7 @@ class Project extends Model
 
     public function tags()
     {
-        return $this->morphToMany('App\Tag', 'taggable');
+        return $this->morphToMany('App\Tag', 'taggable')->withPivot('weight');
     }
 
     public function sortImages()

@@ -20,6 +20,7 @@ export class ProjectGuard implements CanActivate, OnDestroy {
     }
 
     canActivate() {
+      console.log('ProjectGuard can activate called', this);
       return Observable.create(observer => {
         let gotClients = false;
         let gotProject = false;

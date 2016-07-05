@@ -50,5 +50,17 @@
     background-size: contain;
     max-width: 60px;
     overflow: hidden; }
+  :host .comma-list .comma-list-item {
+    position: relative;
+    padding-right: 9px; }
+    :host .comma-list .comma-list-item::after {
+      content: ", ";
+      position: absolute;
+      top: 0;
+      right: 5px;
+      width: 4px;
+      height: 4px; }
+    :host .comma-list .comma-list-item:last-child::after {
+      display: none; }
 
 /*# sourceMappingURL=panel-summary.component.css.map */

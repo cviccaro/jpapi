@@ -18,4 +18,12 @@
     .image,.info {
         float: left;
     }
+    .chips {
+        display: block!important;
+        jpa-chip {
+            float: left;
+            max-width: 33%;
+            margin-bottom: 8px;
+        }
+    }
 }

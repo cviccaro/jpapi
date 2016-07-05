@@ -12,7 +12,7 @@ export const BlogRoutes = [
         path: 'blogs',
         component: BlogIndexComponent,
         children: [
-            { path: ':id', component: BlogComponent },
+            { path: ':id', component: BlogComponent, canActivate: [BlogGuard] },
             { path: '', component: BlogListComponent, canActivate: [BlogListGuard] }
         ],
         canActivate: [AuthGuard]

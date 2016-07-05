@@ -1,6 +1,6 @@
 @import "../../../../assets/sass/variables";
 
-$label_width: 25%;
+$label_width: 21%;
 
 :host {
     @include basic-transition;
@@ -99,6 +99,7 @@ $label_width: 25%;
         .panel-content-right {
             border-left: 1px solid rgba(0,0,0,.12);
             padding-left: 24px;
+            flex: 1;
         }
 
         &[hidden] {
@@ -339,6 +340,56 @@ $label_width: 25%;
                 margin-left: 0px;
                 margin-right: 4px;
                 vertical-align: text-top;
+            }
+        }
+    }
+
+    /**
+     * Multiselect
+     */
+    &.multiselect {
+        [md-icon-button].small {
+            vertical-align: middle;
+            md-icon {
+                vertical-align: top;
+            }
+        }
+        .panel-control {
+            margin-right: 32px;
+            .panel-control-table {
+                .panel-control-infix {
+                    .chips {
+                        min-height: 28px;
+                    }
+                }
+            }
+        }
+        .panel-content-spacer {
+            width: 21%;
+        }
+        .panel-content-right {
+            max-width: 50%;
+            padding-left: 32px;
+        }
+        .chip-wrapper {
+            display: inline-block;
+            jpa-chip {
+                display: block;
+            }
+        }
+        .chips {
+            // display: flex;
+            // flex-direction: row;
+            // justify-content: space-between;
+            .add {
+                position: relative;
+                right: -20px;
+            }
+        }
+
+        &.division {
+            button.add {
+                display: none;
             }
         }
     }

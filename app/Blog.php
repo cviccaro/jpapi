@@ -10,7 +10,7 @@ class Blog extends Model
 
     public function divisions()
     {
-        return $this->belongsToMany('App\Division');
+        return $this->belongsToMany('App\Division')->withPivot('weight');
     }
 
     public function image()
@@ -20,17 +20,17 @@ class Blog extends Model
 
     public function images()
     {
-        return $this->morphToMany('App\Image', 'imageable');
+        return $this->morphToMany('App\Image', 'imageable')->withPivot('weight');
     }
 
     public function tags()
     {
-        return $this->morphToMany('App\Tag', 'taggable');
+        return $this->morphToMany('App\Tag', 'taggable')->withPivot('weight');
     }
 
-    public function sortImages()
+    public function sortPivot($field_name)
     {
-        return $this->images->sort(function($a, $b) {
+        return $this->{$field_name}->sort(function($a, $b) {
             return $a->pivot->weight > $b->pivot->weight;
         });
     }

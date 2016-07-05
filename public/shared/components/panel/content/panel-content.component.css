@@ -12,5 +12,11 @@
     width: 100%; }
   :host .image, :host .info {
     float: left; }
+  :host .chips {
+    display: block !important; }
+    :host .chips jpa-chip {
+      float: left;
+      max-width: 33%;
+      margin-bottom: 8px; }
 
 /*# sourceMappingURL=panel-content.component.css.map */

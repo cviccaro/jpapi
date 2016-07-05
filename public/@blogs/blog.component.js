@@ -15,10 +15,12 @@ var angular2_material_1 = require('../shared/libs/angular2-material');
 var angular2_toaster_1 = require('angular2-toaster');
 var index_1 = require('../shared/index');
 var BlogComponent = (function () {
-    function BlogComponent(route, service, toasterService, router) {
+    function BlogComponent(route, service, divisionService, toasterService, tagService, router) {
         this.route = route;
         this.service = service;
+        this.divisionService = divisionService;
         this.toasterService = toasterService;
+        this.tagService = tagService;
         this.router = router;
         this.ready = false;
         this.submitted = false;
@@ -37,6 +39,8 @@ var BlogComponent = (function () {
     });
     BlogComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.tags = this.tagService.cached();
+        this.divisions = this.divisionService.cached();
         var id = this.route.snapshot.params['id'];
         if (id === 'new') {
             this.ready = true;
@@ -123,7 +127,7 @@ var BlogComponent = (function () {
                 forms_1.NgForm
             ]
         }), 
-        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.BlogService, angular2_toaster_1.ToasterService, router_1.Router])
+        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.BlogService, index_1.DivisionService, angular2_toaster_1.ToasterService, index_1.TagService, router_1.Router])
     ], BlogComponent);
     return BlogComponent;
 }());

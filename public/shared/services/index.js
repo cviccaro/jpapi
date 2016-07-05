@@ -5,7 +5,9 @@ function __export(m) {
 __export(require('./auth.service'));
 __export(require('./blog.service'));
 __export(require('./client.service'));
+__export(require('./division.service'));
 __export(require('./project.service'));
+__export(require('./tag.service'));
 __export(require('./constants'));
 
 //# sourceMappingURL=index.js.map

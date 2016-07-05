@@ -1,5 +1,6 @@
 export * from './blog';
 export * from './client';
+export * from './division';
 export * from './form-submission';
 export * from './jp-image';
 export * from './project';

@@ -12,21 +12,26 @@ import {
     SimpleChange
 } from '@angular/core';
 import { MdGridList } from '@angular2-material/grid-list';
-import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
+import { MATERIAL_DIRECTIVES } from '../../../../shared/libs/angular2-material';
 
 import { JpImage, ImageUpload, JpaPanelChild }  from '../../../index';
+import { ChipComponent } from '../../chip/chip.component';
+
+import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
 @Component({
     moduleId: module.id,
     selector: 'jpa-panel-content',
     templateUrl: './panel-content.component.html',
     styleUrls: ['./panel-content.component.css'],
-    directives: [MdGridList, MD_ICON_DIRECTIVES]
+    directives: [MATERIAL_DIRECTIVES, DND_DIRECTIVES, ChipComponent]
 })
 export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPanelChild {
     private _hasImage: boolean = false;
     private _imageUrl: any = '';
     private loading: boolean = false;
+
+    hasOptions: boolean = false;
 
     imageEl: HTMLImageElement;
     imageWidth: number;
@@ -38,6 +43,7 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
     @Input() image: JpImage = null;
     @Input() align: string = 'right';
     @Input() label: string = '';
+    @Input() options: any[] = [];
 
     @HostBinding('class.left') get ifLeftClass() { return this.align === 'left'; }
     @HostBinding('class.right') get ifRightClass() { return this.align === 'right'; }
@@ -48,6 +54,8 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
 
     ngAfterContentInit(): void {
         this._hasImage = !!this.image;
+
+        this.hasOptions = !!this.options.length;
 
         if (this._hasImage) {
             this._imageUrl = this.image.url;
@@ -62,10 +70,6 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
         this.imageEl.addEventListener('load', () => this.onImgLoad());
 
         console.info('PanelContent (' + this.align + ') View Initialized: ', { this: this });
-        // if (this._gridList) {
-        //     console.log('CHECK OUT OUR SWEET LAYOUT TILES FUNCTION: ' , this._gridList['_layoutTiles']);
-        //     this._gridList['_layoutTiles']();
-        // }
     }
 
     onToggle(expanded: boolean): void {
@@ -78,8 +82,15 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
         // }
     }
 
+    addToMultiSelect(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log('AddToMultiSelect', this);
+    }
+
     onImgLoad() {
-        console.debug(this.align + ' image loaded!', {image: this.image});
+        //console.debug(this.align + ' image loaded!', {image: this.image});
         this.loading = false;
         this.imageWidth = this.imageEl.naturalWidth;
         this.imageHeight = this.imageEl.naturalHeight;
@@ -87,7 +98,7 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        console.debug('PanelContent (' + this.align + ') changed: ', { changes: changes });
+        //console.debug('PanelContent (' + this.align + ') changed: ', { changes: changes });
         for (let prop in changes) {
             let previousValue = changes[prop].previousValue;
             let currentValue = changes[prop].currentValue;

@@ -25,7 +25,10 @@ import {
     JpaPanelContent,
     JpImage,
     BlogService,
-    Blog
+    Blog,
+    DivisionService,
+    Tag,
+    TagService
 } from '../shared/index';
 
 @Component({
@@ -42,6 +45,9 @@ import {
     ]
 })
 export class BlogComponent implements OnInit, AfterViewInit {
+    public divisions: string[];
+    public tags: string[];
+
     public ready: boolean = false;
     public submitted = false;
 
@@ -50,20 +56,25 @@ export class BlogComponent implements OnInit, AfterViewInit {
     private _blog: Blog = new Blog();
     private _blogImage: JpImage = undefined;
 
-    constructor(
-        private route: ActivatedRoute,
-        private service: BlogService,
-        private toasterService: ToasterService,
-        private router: Router
-    ) { }
-
     get blog(): Blog { return this._blog; }
     set blog(v: Blog) {
         this._blog = v;
         this.setup();
     }
 
+    constructor(
+        private route: ActivatedRoute,
+        private service: BlogService,
+        private divisionService: DivisionService,
+        private toasterService: ToasterService,
+        private tagService: TagService,
+        private router: Router
+    ) { }
+
     ngOnInit() {
+        this.tags = this.tagService.cached();
+        this.divisions = this.divisionService.cached();
+
         let id = this.route.snapshot.params['id'];
 
         if (id === 'new') {

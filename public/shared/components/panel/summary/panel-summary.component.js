@@ -60,7 +60,6 @@ var PanelSummaryComponent = (function () {
             return this._summary;
         },
         set: function (v) {
-            console.debug('PanelSummary' + this.type + ' setting summary to ', { value: v });
             this._summary = v;
         },
         enumerable: true,
@@ -71,7 +70,6 @@ var PanelSummaryComponent = (function () {
             var previousValue = changes[prop].previousValue;
             var currentValue = changes[prop].currentValue;
             var isFirstChange = changes[prop].isFirstChange();
-            console.debug('PanelSummary.' + this.type + '.' + prop + ' changed: ', { from: previousValue, to: currentValue, isFirstChange: isFirstChange });
             switch (prop) {
                 case 'value':
                     this.setSummaryOf(currentValue);
@@ -85,13 +83,8 @@ var PanelSummaryComponent = (function () {
         }
     };
     PanelSummaryComponent.prototype.setSummaryOf = function (value) {
-        console.log('PanelSummary<' + this.type + '>.setSummaryOf() called with value ', { value: value });
         switch (this.type) {
             case 'select':
-                console.log('set usmmary of select ', {
-                    options: this._selectOptions,
-                    value: value
-                });
                 if (!this._selectOptions)
                     return;
                 var filtered = this._selectOptions.filter(function (opt) {
@@ -115,7 +108,6 @@ var PanelSummaryComponent = (function () {
                     });
                     this._imagesCount = _old_1;
                     this._imagesQueueCount = _new_1;
-                    console.debug('set count to ' + this._imagesCount + ' old and ' + this._imagesQueueCount + ' new');
                 }
                 break;
             default:
