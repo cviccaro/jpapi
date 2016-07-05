@@ -49,8 +49,8 @@ var LoginComponent = (function () {
             selector: 'jpa-login',
             templateUrl: './login.component.html',
             styleUrls: ['./login.component.css'],
-            directives: [forms_1.FORM_DIRECTIVES, angular2_material_1.MATERIAL_DIRECTIVES],
-            providers: [forms_1.FORM_PROVIDERS, angular2_material_1.MATERIAL_PROVIDERS]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES],
+            providers: [forms_1.NgForm]
         }), 
         __metadata('design:paramtypes', [router_1.Router, index_1.AuthService, angular2_toaster_1.ToasterService])
     ], LoginComponent);

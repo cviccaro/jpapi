@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {FORM_DIRECTIVES, FORM_PROVIDERS} from '@angular/forms';
+import {NgForm} from '@angular/forms';
 import {MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS} from '../shared/libs/angular2-material';
 import {ToasterService} from 'angular2-toaster';
 import {AuthService} from '../shared/index';
@@ -10,8 +10,8 @@ import {AuthService} from '../shared/index';
     selector: 'jpa-login',
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.css'],
-    directives: [FORM_DIRECTIVES, MATERIAL_DIRECTIVES],
-    providers: [ FORM_PROVIDERS, MATERIAL_PROVIDERS]
+    directives: [MATERIAL_DIRECTIVES],
+    providers: [ NgForm]
 })
 export class LoginComponent implements OnInit {
 
