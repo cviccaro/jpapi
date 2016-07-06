@@ -47,6 +47,9 @@
     </div>
 </md-sidenav-layout>
 <div class="app-sidebar" [hidden]="_routeDepth === 2">
+  <div class="sidebar-button" [class.active]="routeIs('/', true)">
+    <a md-icon-button [routerLink]="['/']"><md-icon>home</md-icon></a>
+  </div>
   <div class="sidebar-button" [class.active]="routeIs('/blogs')">
     <a md-icon-button [routerLink]="['/blogs']"><md-icon>speaker_notes</md-icon></a>
   </div>
@@ -59,3 +62,4 @@
 </div>
 <toaster-container [toasterconfig]="toasterConfig">
 </toaster-container>
+<jpa-modal-container></jpa-modal-container>

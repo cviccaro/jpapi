@@ -1,14 +1,15 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
-
-import {Blog, BlogService, ListComponent, ListConfig} from '../shared/index';
+import {Subscription} from 'rxjs/Rx';
+import {Blog, BlogService, ListComponent, ListConfig, JpaModal, ModalAction} from '../shared/index';
+import { ToasterService } from 'angular2-toaster';
 
 /**
  * This class represents the lazy loaded BlogsComponent.
  */
 @Component({
     moduleId: module.id,
-    // selector: 'jpa-blogs',
+    selector: 'jpa-blog-list',
     templateUrl: './blog-list.component.html',
     styleUrls: ['./blog-list.component.css'],
     directives: [
@@ -19,9 +20,15 @@ export class BlogListComponent implements OnInit, OnDestroy {
 
     listData: any[] = [];
     listConfig: ListConfig;
-    sub: any;
+    sub: Subscription;
+    modalSub: Subscription;
 
-	constructor(public blogService: BlogService, private router: Router) {
+	constructor(
+        public blogService: BlogService,
+        private router: Router,
+        private modal: JpaModal,
+        public toaster: ToasterService
+    ) {
         this.listConfig = {
             sortOptions: [
                 { name: 'Updated At', value: 'updated_at' },
@@ -99,6 +106,25 @@ export class BlogListComponent implements OnInit, OnDestroy {
 
     destroy(blog: Blog) {
         console.log('delete this item: ', blog);
+        if (this.modalSub) {
+            this.modalSub.unsubscribe();
+        }
+
+        let title = blog.title;
+
+        this.modalSub = this.modal.open({message: 'Discard blog?', okText: 'Discard'})
+            .subscribe((action:ModalAction) => {
+               if (action.type === 'ok') {
+                   console.log('lets kill this blog!', blog);
+                   this.blogService.destroy(blog.id)
+                       .subscribe(res => {
+                           this.toaster.pop('success', 'Success!', title + ' has been obliterated.');
+                           setTimeout(() => { this.fetch() },0);
+                       })
+               }
+
+               return;
+            });
     }
 
     onPageChange(num: number) {
@@ -108,5 +134,6 @@ export class BlogListComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         if (this.sub) this.sub.unsubscribe();
+        if (this.modalSub) this.modalSub.unsubscribe();
     }
 }

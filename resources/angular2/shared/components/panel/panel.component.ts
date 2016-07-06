@@ -272,7 +272,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     writeValue(value: any) {
         console.debug('JpaPanel.'+this.type+' ' + this.name + '#writeValue('+this.type+')', value);
         this._value = value;
-        if (this.type === 'multiselect') this.setMultiOptions();
+        if (this.type === 'multiselect' && value !== null) this.setMultiOptions();
         if (!this._initialValue) this._initialValue = value;
     }
     registerOnChange(fn: any) {
@@ -488,7 +488,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
 
         let data = e.dragData;
         let val = this.value.slice(0);
-        
+
         val.push(data.option);
         this.value = val;
         this.setMultiOptions();

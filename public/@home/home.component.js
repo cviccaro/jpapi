@@ -9,17 +9,26 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var angular2_material_1 = require('../shared/libs/angular2-material');
+var index_1 = require('../shared/index');
 var HomeComponent = (function () {
-    function HomeComponent() {
+    function HomeComponent(modal, viewContainer) {
+        this.modal = modal;
     }
+    HomeComponent.prototype.ngAfterViewInit = function () {
+        console.log('HomeComponent View Initialized', this);
+    };
+    HomeComponent.prototype.hello = function () {
+    };
     HomeComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
             selector: 'jpa-home',
             templateUrl: './home.component.html',
-            styleUrls: ['./home.component.css']
+            styleUrls: ['./home.component.css'],
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [index_1.JpaModal, core_1.ViewContainerRef])
     ], HomeComponent);
     return HomeComponent;
 }());

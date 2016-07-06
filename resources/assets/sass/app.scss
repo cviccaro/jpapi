@@ -7,9 +7,21 @@
 | Base
 |
 **/
+html,body {
+    height: 100%;
+    position: relative;
+    min-height: 100%;
+}
 body {
     background-color: $background_color;
     color: $text-color;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    overflow: hidden;
 }
 body, md-list, md-list-item, md-line, md-button, md-content, md-card, md-input-container,
 h1,h2,h3,h4,h5,p,div,p {

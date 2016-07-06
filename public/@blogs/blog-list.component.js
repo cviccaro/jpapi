@@ -11,10 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
 var index_1 = require('../shared/index');
+var angular2_toaster_1 = require('angular2-toaster');
 var BlogListComponent = (function () {
-    function BlogListComponent(blogService, router) {
+    function BlogListComponent(blogService, router, modal, toaster) {
         this.blogService = blogService;
         this.router = router;
+        this.modal = modal;
+        this.toaster = toaster;
         this.listData = [];
         this.listConfig = {
             sortOptions: [
@@ -84,7 +87,24 @@ var BlogListComponent = (function () {
         this.router.navigate(['/blogs', blog.id]);
     };
     BlogListComponent.prototype.destroy = function (blog) {
+        var _this = this;
         console.log('delete this item: ', blog);
+        if (this.modalSub) {
+            this.modalSub.unsubscribe();
+        }
+        var title = blog.title;
+        this.modalSub = this.modal.open({ message: 'Discard blog?', okText: 'Discard' })
+            .subscribe(function (action) {
+            if (action.type === 'ok') {
+                console.log('lets kill this blog!', blog);
+                _this.blogService.destroy(blog.id)
+                    .subscribe(function (res) {
+                    _this.toaster.pop('success', 'Success!', title + ' has been obliterated.');
+                    setTimeout(function () { _this.fetch(); }, 0);
+                });
+            }
+            return;
+        });
     };
     BlogListComponent.prototype.onPageChange = function (num) {
         this.listConfig.page.currentPage = num;
@@ -93,17 +113,20 @@ var BlogListComponent = (function () {
     BlogListComponent.prototype.ngOnDestroy = function () {
         if (this.sub)
             this.sub.unsubscribe();
+        if (this.modalSub)
+            this.modalSub.unsubscribe();
     };
     BlogListComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
+            selector: 'jpa-blog-list',
             templateUrl: './blog-list.component.html',
             styleUrls: ['./blog-list.component.css'],
             directives: [
                 index_1.ListComponent
             ]
         }), 
-        __metadata('design:paramtypes', [index_1.BlogService, router_1.Router])
+        __metadata('design:paramtypes', [index_1.BlogService, router_1.Router, index_1.JpaModal, angular2_toaster_1.ToasterService])
     ], BlogListComponent);
     return BlogListComponent;
 }());

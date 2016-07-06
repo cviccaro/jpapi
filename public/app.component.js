@@ -83,11 +83,12 @@ var AppComponent = (function () {
             templateUrl: './app.component.html',
             styleUrls: ['./app.component.css'],
             viewProviders: [http_1.HTTP_PROVIDERS],
-            providers: [angular2_material_1.MATERIAL_PROVIDERS, angular2_toaster_1.ToasterService],
+            providers: [angular2_material_1.MATERIAL_PROVIDERS, angular2_toaster_1.ToasterService, index_1.JpaModal],
             directives: [
                 router_1.ROUTER_DIRECTIVES,
                 angular2_material_1.MATERIAL_DIRECTIVES,
-                angular2_toaster_1.ToasterContainerComponent
+                angular2_toaster_1.ToasterContainerComponent,
+                index_1.MODAL_DIRECTIVES
             ]
         }), 
         __metadata('design:paramtypes', [router_1.Router, index_1.AuthService])

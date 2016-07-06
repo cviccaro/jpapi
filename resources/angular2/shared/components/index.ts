@@ -4,3 +4,5 @@ export * from './progress/index';
 export * from './md-select/index';
 export * from './panel/index';
 export * from './image-upload/index';
+
+export * from './modal/index';

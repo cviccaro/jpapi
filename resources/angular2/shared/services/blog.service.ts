@@ -45,6 +45,10 @@ export class BlogService {
         return this;
 	}
 
+    destroy(id: number) {
+        return this.http.delete('/blogs/' + id);
+    }
+
     create(attributes) {
         let url = window.location.protocol + '//' + window.location.hostname + '/blogs';
 
@@ -54,13 +58,16 @@ export class BlogService {
             let val = attributes[key];
             switch(key) {
                 case 'images':
-                    // val.forEach((item,i) => {
-                    //     Object.keys(item).forEach(k => {
-                    //         let v = item[k];
-                    //         form.append(`${key}[${i}][${k}]`, v);
-                    //         _form[`${key}[${i}][${k}]`] = v;
-                    //     });
-                    // });
+                    break;
+                case 'divisions':
+                case 'tags':
+                    val.forEach((item,i) => {
+                        Object.keys(item).forEach(k => {
+                            let v = item[k];
+                            form.append(`${key}[${i}][${k}]`, v);
+                            _form[`${key}[${i}][${k}]`] = v;
+                        });
+                    });
                     break;
                 case 'image':
                     form.append(key, val);

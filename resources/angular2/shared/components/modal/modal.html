@@ -1,0 +1,10 @@
+<div class="jpa-modal-content" *ngIf="config">
+    <h2 class="jpa-modal-title" [hidden]="config.mode == 'alert'">{{ config.title }}</h2>
+    <div class="jpa-modal-content-body">
+        <p>{{ config.message }}</p>
+    </div>
+</div>
+<div class="jpa-modal-actions" *ngIf="config">
+    <button class="cancel" md-button (click)="action('cancel', config, $event)">{{ config.cancelText }}</button>
+    <button class="ok" md-button (click)="action('ok', config, $event)">{{ config.okText }}</button>
+</div>

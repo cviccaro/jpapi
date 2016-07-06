@@ -1,9 +1,12 @@
 import {JpImage} from './jp-image';
 import {Tag} from './tag';
+import {Division} from './division';
 
 export class Blog {
 	id: any;
 	title: string = '';
+
+	divisions: Division[] = [];
 
 	author: string = '';
 	body: string = '';
@@ -13,7 +16,7 @@ export class Blog {
 	image_id: number;
 	images: JpImage[] = [];
 
-	tags: Tag[];
+	tags: Tag[] = [];
 
 	created_at: any = null;
 	updated_at: any = null;

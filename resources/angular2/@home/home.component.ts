@@ -1,6 +1,8 @@
-import { Component, ContentChild, ViewChild } from '@angular/core';
+import { Component, ContentChild, ViewChild, AfterViewInit, ViewContainerRef } from '@angular/core';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { NgForm } from '@angular/forms';
+
+import { JpaModal } from '../shared/index';
+
 /**
  * This class represents the lazy loaded HomeComponent.
  */
@@ -8,6 +10,22 @@ import { NgForm } from '@angular/forms';
     moduleId: module.id,
     selector: 'jpa-home',
     templateUrl: './home.component.html',
-    styleUrls: ['./home.component.css']
+    styleUrls: ['./home.component.css'],
+    directives: [MATERIAL_DIRECTIVES]
 })
-export class HomeComponent { }
+export class HomeComponent implements AfterViewInit {
+    constructor(public modal: JpaModal, viewContainer: ViewContainerRef) {
+        //this.modal.setContainer(viewContainer);
+    }
+
+    ngAfterViewInit() {
+        console.log('HomeComponent View Initialized', this);
+    }
+
+    hello() {
+        // this.modal.open({title: 'title!', message: 'message!', cancelText: 'cancel', okText: 'Discard'}).subscribe((...args) => {
+        //     console.log('home component opened modal subscription resolution: ', args);
+        // });
+       // return this.modal.alert().size('lg').showClose(true).title('SUP!').open();
+    }
+}

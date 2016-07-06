@@ -56,15 +56,15 @@ trait RESTActions {
 	// 	return $this->respond('done', $model);
 	// }
 
-	// public function remove($id)
-	// {
-	// 	$m = self::MODEL;
-	// 	if(is_null($m::find($id))){
-	// 		return $this->respond('not_found');
-	// 	}
-	// 	$m::destroy($id);
-	// 	return $this->respond('removed');
-	// }
+	public function remove($id)
+	{
+		$m = self::MODEL;
+		if(is_null($m::find($id))){
+			return $this->respond('not_found');
+		}
+		$m::destroy($id);
+		return $this->respond('removed');
+	}
 
 
 }

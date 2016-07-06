@@ -273,7 +273,7 @@ var JpaPanel = (function () {
     JpaPanel.prototype.writeValue = function (value) {
         console.debug('JpaPanel.' + this.type + ' ' + this.name + '#writeValue(' + this.type + ')', value);
         this._value = value;
-        if (this.type === 'multiselect')
+        if (this.type === 'multiselect' && value !== null)
             this.setMultiOptions();
         if (!this._initialValue)
             this._initialValue = value;

@@ -10,7 +10,6 @@ use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class ProjectController extends Controller
 {
-
     const MODEL = "App\Project";
 
     use RESTActions;

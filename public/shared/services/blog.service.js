@@ -44,6 +44,9 @@ var BlogService = (function () {
         this.byId[blog.id] = blog;
         return this;
     };
+    BlogService.prototype.destroy = function (id) {
+        return this.http.delete('/blogs/' + id);
+    };
     BlogService.prototype.create = function (attributes) {
         var url = window.location.protocol + '//' + window.location.hostname + '/blogs';
         var form = new FormData();
@@ -52,6 +55,16 @@ var BlogService = (function () {
             var val = attributes[key];
             switch (key) {
                 case 'images':
+                    break;
+                case 'divisions':
+                case 'tags':
+                    val.forEach(function (item, i) {
+                        Object.keys(item).forEach(function (k) {
+                            var v = item[k];
+                            form.append(key + "[" + i + "][" + k + "]", v);
+                            _form[(key + "[" + i + "][" + k + "]")] = v;
+                        });
+                    });
                     break;
                 case 'image':
                     form.append(key, val);

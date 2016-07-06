@@ -13,6 +13,8 @@ class BlogController extends Controller
 {
     use RESTActions;
 
+    const MODEL = 'App\Blog';
+
     /**
      * Create a new blog
      *
@@ -43,6 +45,32 @@ class BlogController extends Controller
         }
 
         $blog->save();
+
+        if ($request->has('tags')) {
+            \Log::info('Saving new blog tags and divisions');
+
+            $tags = $request->get('tags');
+
+            foreach ($tags as $idx => $tag) {
+                if (isset($tag['id'])) {
+                    \Log::info('Updating newblog with tag ' . $tag['id'] . ' with weight ' . ($idx * 5));
+                    $blog->tags()->save(Tag::find($tag['id']), ['weight' => $idx * 5]);
+                }
+            }
+        }
+
+        if ($request->has('divisions')) {
+            \Log::info('Saving new blog divisions');
+
+            $divisions = $request->get('divisions');
+
+            foreach ($divisions as $idx => $division) {
+                if (isset($division['id'])) {
+                    \Log::info('Saving new blog with division ' . $division['id'] . ' with weight ' . ($idx * 5));
+                    $blog->divisions()->save(Division::find($division['id']), ['weight' => $idx * 5]);
+                }
+            }
+        }
 
         // if ($request->has('images')) {
         //  $images = $request->get('images');

@@ -1,26 +1,24 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { HTTP_PROVIDERS } from '@angular/http';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
-
-import {ToasterContainerComponent, ToasterService, ToasterConfig} from 'angular2-toaster';
-
+import { ToasterContainerComponent, ToasterService, ToasterConfig } from 'angular2-toaster';
 import { MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS } from './shared/libs/angular2-material';
 import { MdSidenav} from '@angular2-material/sidenav';
-
-import { AuthService } from './shared/index';
-
 import { Subscription } from 'rxjs/Subscription';
+
+import { AuthService, MODAL_DIRECTIVES, JpaModal } from './shared/index';
 
 @Component({
     selector: 'jpa-app',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css'],
     viewProviders: [HTTP_PROVIDERS],
-    providers: [MATERIAL_PROVIDERS, ToasterService],
+    providers: [MATERIAL_PROVIDERS, ToasterService, JpaModal],
     directives: [
         ROUTER_DIRECTIVES,
         MATERIAL_DIRECTIVES,
-        ToasterContainerComponent
+        ToasterContainerComponent,
+        MODAL_DIRECTIVES
     ]
 })
 export class AppComponent implements OnInit, OnDestroy {
@@ -39,7 +37,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.toasterConfig = new ToasterConfig({
             showCloseButton: true
         });
-
         this.loggedIn = this.authService.authorized;
     }
 

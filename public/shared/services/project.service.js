@@ -48,6 +48,9 @@ var ProjectService = (function () {
         this.byId[project.id] = project;
         return this;
     };
+    ProjectService.prototype.destroy = function (id) {
+        return this.http.delete('/projects/' + id);
+    };
     ProjectService.prototype.update = function (id, attributes) {
         var url = window.location.protocol + '//' + window.location.hostname + '/projects/update/' + id;
         var form = new FormData();

@@ -11,10 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
 var index_1 = require('../shared/index');
+var angular2_toaster_1 = require('angular2-toaster');
 var ProjectListComponent = (function () {
-    function ProjectListComponent(projectService, router) {
+    function ProjectListComponent(projectService, router, modal, toaster) {
         this.projectService = projectService;
         this.router = router;
+        this.modal = modal;
+        this.toaster = toaster;
         this.listData = [];
         this.listConfig = {
             sortOptions: [
@@ -85,12 +88,35 @@ var ProjectListComponent = (function () {
     ProjectListComponent.prototype.edit = function (project) {
         this.router.navigate(['/projects', project.id]);
     };
-    ProjectListComponent.prototype.destroy = function (item) {
-        console.log('destroy this item: ', item);
+    ProjectListComponent.prototype.destroy = function (project) {
+        var _this = this;
+        console.log('delete this item: ', project);
+        if (this.modalSub) {
+            this.modalSub.unsubscribe();
+        }
+        var title = project.title;
+        this.modalSub = this.modal.open({ message: 'Discard project?', okText: 'Discard' })
+            .subscribe(function (action) {
+            if (action.type === 'ok') {
+                console.log('lets kill this project!', project);
+                _this.projectService.destroy(project.id)
+                    .subscribe(function (res) {
+                    _this.toaster.pop('success', 'Success!', title + ' has been obliterated.');
+                    setTimeout(function () { _this.fetch(); }, 0);
+                });
+            }
+            return;
+        });
     };
     ProjectListComponent.prototype.onPageChange = function (num) {
         this.listConfig.page.currentPage = num;
         this.fetch();
+    };
+    ProjectListComponent.prototype.ngOnDestroy = function () {
+        if (this.sub)
+            this.sub.unsubscribe();
+        if (this.modalSub)
+            this.modalSub.unsubscribe();
     };
     ProjectListComponent = __decorate([
         core_1.Component({
@@ -102,7 +128,7 @@ var ProjectListComponent = (function () {
                 index_1.ListComponent
             ]
         }), 
-        __metadata('design:paramtypes', [index_1.ProjectService, router_1.Router])
+        __metadata('design:paramtypes', [index_1.ProjectService, router_1.Router, index_1.JpaModal, angular2_toaster_1.ToasterService])
     ], ProjectListComponent);
     return ProjectListComponent;
 }());

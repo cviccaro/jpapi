@@ -15,7 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Observable } from 'rxjs/Rx';
 import { NgForm, FormControl, FormControlDirective } from '@angular/forms';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { ToasterContainerComponent, ToasterService, ToasterConfig } from 'angular2-toaster';
+import { ToasterService } from 'angular2-toaster';
 
 import {
     ImageUpload,

@@ -54,6 +54,10 @@ export class ProjectService {
         return this;
 	}
 
+	destroy(id: number) {
+	    return this.http.delete('/projects/' + id);
+	}
+
 	update(id, attributes) {
 		let url = window.location.protocol + '//' + window.location.hostname + '/projects/update/' + id;
 

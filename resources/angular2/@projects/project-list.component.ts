@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
-
-import {Project, ProjectService, ListComponent, ListConfig} from '../shared/index';
+import {Subscription} from 'rxjs/Rx';
+import {Project, ProjectService, ListComponent, ListConfig, JpaModal, ModalAction} from '../shared/index';
+import { ToasterService } from 'angular2-toaster';
 
 /**
- * This class represents the lazy loaded BlogsComponent.
+ * This class represents the lazy loaded ProjectListComponent.
  */
 @Component({
     moduleId: module.id,
@@ -19,8 +20,15 @@ export class ProjectListComponent implements OnInit {
 
     listData: any[] = [];
     listConfig: ListConfig;
+    sub: Subscription;
+    modalSub: Subscription;
 
-	constructor(public projectService: ProjectService, public router: Router) {
+    constructor(
+        public projectService: ProjectService,
+        private router: Router,
+        private modal: JpaModal,
+        public toaster: ToasterService
+    ) {
         this.listConfig = {
             sortOptions: [
                 { name: 'Updated At', value: 'updated_at' },
@@ -97,12 +105,36 @@ export class ProjectListComponent implements OnInit {
         this.router.navigate(['/projects', project.id]);
     }
 
-    destroy(item) {
-        console.log('destroy this item: ', item);
+    destroy(project: Project) {
+        console.log('delete this item: ', project);
+        if (this.modalSub) {
+            this.modalSub.unsubscribe();
+        }
+
+        let title = project.title;
+
+        this.modalSub = this.modal.open({message: 'Discard project?', okText: 'Discard'})
+            .subscribe((action:ModalAction) => {
+               if (action.type === 'ok') {
+                   console.log('lets kill this project!', project);
+                   this.projectService.destroy(project.id)
+                       .subscribe(res => {
+                           this.toaster.pop('success', 'Success!', title + ' has been obliterated.');
+                           setTimeout(() => { this.fetch() },0);
+                       })
+               }
+
+               return;
+            });
     }
 
     onPageChange(num: number) {
         this.listConfig.page.currentPage = num;
         this.fetch();
+    }
+
+    ngOnDestroy() {
+        if (this.sub) this.sub.unsubscribe();
+        if (this.modalSub) this.modalSub.unsubscribe();
     }
 }
