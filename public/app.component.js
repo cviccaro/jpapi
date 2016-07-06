@@ -16,13 +16,16 @@ var angular2_material_1 = require('./shared/libs/angular2-material');
 var sidenav_1 = require('@angular2-material/sidenav');
 var index_1 = require('./shared/index');
 var AppComponent = (function () {
-    function AppComponent(router, authService) {
+    function AppComponent(router, authService, contextMenu, container) {
         this.router = router;
         this.authService = authService;
+        this.contextMenu = contextMenu;
+        this.container = container;
         this.loggedIn = false;
         this._routeDepth = 0;
         this._routeUrl = '';
         this.loading = true;
+        this.contextMenu.setContainer(container);
         this.toasterConfig = new angular2_toaster_1.ToasterConfig({
             showCloseButton: true
         });
@@ -83,7 +86,7 @@ var AppComponent = (function () {
             templateUrl: './app.component.html',
             styleUrls: ['./app.component.css'],
             viewProviders: [http_1.HTTP_PROVIDERS],
-            providers: [angular2_material_1.MATERIAL_PROVIDERS, angular2_toaster_1.ToasterService, index_1.JpaModal],
+            providers: [angular2_material_1.MATERIAL_PROVIDERS, angular2_toaster_1.ToasterService, index_1.JpaModal, index_1.JpaContextMenu],
             directives: [
                 router_1.ROUTER_DIRECTIVES,
                 angular2_material_1.MATERIAL_DIRECTIVES,
@@ -91,7 +94,7 @@ var AppComponent = (function () {
                 index_1.MODAL_DIRECTIVES
             ]
         }), 
-        __metadata('design:paramtypes', [router_1.Router, index_1.AuthService])
+        __metadata('design:paramtypes', [router_1.Router, index_1.AuthService, index_1.JpaContextMenu, core_1.ViewContainerRef])
     ], AppComponent);
     return AppComponent;
 }());

@@ -12,13 +12,13 @@ var core_1 = require('@angular/core');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var HomeComponent = (function () {
-    function HomeComponent(modal, viewContainer) {
-        this.modal = modal;
+    function HomeComponent() {
     }
     HomeComponent.prototype.ngAfterViewInit = function () {
         console.log('HomeComponent View Initialized', this);
     };
-    HomeComponent.prototype.hello = function () {
+    HomeComponent.prototype.remove = function () {
+        console.log('remove!');
     };
     HomeComponent = __decorate([
         core_1.Component({
@@ -26,9 +26,9 @@ var HomeComponent = (function () {
             selector: 'jpa-home',
             templateUrl: './home.component.html',
             styleUrls: ['./home.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.CONTEXT_MENU_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [index_1.JpaModal, core_1.ViewContainerRef])
+        __metadata('design:paramtypes', [])
     ], HomeComponent);
     return HomeComponent;
 }());

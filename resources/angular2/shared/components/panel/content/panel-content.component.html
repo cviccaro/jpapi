@@ -6,8 +6,12 @@
         {{ imageWidth }}x{{ imageHeight }}px
     </div>
     <div class="image">
+        <button md-button class="open" (click)="menu.open()"><md-icon>more_vert</md-icon></button>
         <img #img [src]="_imageUrl" />
     </div>
+    <jpa-context-menu #menu>
+        <button (click)="removeImage()">Remove</button>
+    </jpa-context-menu>
 </div>
 <div *ngIf="hasOptions">
 	<div class="chips">

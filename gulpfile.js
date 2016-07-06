@@ -271,10 +271,10 @@ Elixir(function(mix) {
     // mix.copy('node_modules/angular2-toaster', 'public/node_modules/angular2-toaster');
     // mix.copy('node_modules/es6-promise', 'public/node_modules/es6-promise');
     // mix.copy('node_modules/promise', 'public/node_modules/promise');
-    // mix.copy('node_modules/angular2-localstorage', 'public/node_modules/angular2-localstorage');
+
     // mix.copy('node_modules/angular2-jwt', 'public/node_modules/angular2-jwt');
     // mix.copy('node_modules/ng2-dnd', 'public/node_modules/ng2-dnd');
-    //mix.copy('node_modules/angular2-modal', 'public/node_modules/angular2-modal');
+    // mix.copy('node_modules/angular2-modal', 'public/node_modules/angular2-modal');
 
     // mix.copy('node_modules/@angular2-material', 'public/node_modules/@angular2-material');
     //mix.copy('node_modules/ng2-material', 'public/node_modules/ng2-material');

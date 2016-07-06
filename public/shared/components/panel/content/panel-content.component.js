@@ -13,6 +13,7 @@ var grid_list_1 = require('@angular2-material/grid-list');
 var angular2_material_1 = require('../../../../shared/libs/angular2-material');
 var index_1 = require('../../../index');
 var chip_component_1 = require('../../chip/chip.component');
+var index_2 = require('../../index');
 var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
 var JpaPanelContent = (function () {
     function JpaPanelContent(el) {
@@ -63,6 +64,11 @@ var JpaPanelContent = (function () {
         e.preventDefault();
         e.stopPropagation();
         console.log('AddToMultiSelect', this);
+    };
+    JpaPanelContent.prototype.imageActions = function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('imageActions', this);
     };
     JpaPanelContent.prototype.onImgLoad = function () {
         this.loading = false;
@@ -152,7 +158,7 @@ var JpaPanelContent = (function () {
             selector: 'jpa-panel-content',
             templateUrl: './panel-content.component.html',
             styleUrls: ['./panel-content.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES, ng2_dnd_1.DND_DIRECTIVES, chip_component_1.ChipComponent]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, ng2_dnd_1.DND_DIRECTIVES, chip_component_1.ChipComponent, index_2.ContextMenuComponent]
         }), 
         __metadata('design:paramtypes', [core_1.ElementRef])
     ], JpaPanelContent);

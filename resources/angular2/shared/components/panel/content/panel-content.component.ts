@@ -16,6 +16,7 @@ import { MATERIAL_DIRECTIVES } from '../../../../shared/libs/angular2-material';
 
 import { JpImage, ImageUpload, JpaPanelChild }  from '../../../index';
 import { ChipComponent } from '../../chip/chip.component';
+import { ContextMenuComponent  } from '../../index';
 
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
@@ -24,7 +25,7 @@ import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
     selector: 'jpa-panel-content',
     templateUrl: './panel-content.component.html',
     styleUrls: ['./panel-content.component.css'],
-    directives: [MATERIAL_DIRECTIVES, DND_DIRECTIVES, ChipComponent]
+    directives: [MATERIAL_DIRECTIVES, DND_DIRECTIVES, ChipComponent, ContextMenuComponent]
 })
 export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPanelChild {
     private _hasImage: boolean = false;
@@ -87,6 +88,13 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
         e.stopPropagation();
 
         console.log('AddToMultiSelect', this);
+    }
+
+    imageActions(e) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        console.log('imageActions', this);
     }
 
     onImgLoad() {

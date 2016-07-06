@@ -1,0 +1,32 @@
+:host {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  min-height: 48px;
+  height: 48px;
+  -ms-flex-line-pack: center;
+  align-content: center;
+  -ms-flex-pack: start;
+  justify-content: flex-start; }
+  :host button {
+    border-radius: 0;
+    margin: auto 0;
+    font-size: 15px;
+    text-transform: none;
+    font-weight: 400;
+    height: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+    text-align: left;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-align: baseline;
+    align-items: baseline;
+    -ms-flex-line-pack: start;
+    align-content: flex-start;
+    width: 100%; }
+  :host md-icon {
+    color: rgba(0, 0, 0, 0.54); }
+
+/*# sourceMappingURL=menu-item.css.map */
