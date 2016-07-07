@@ -24,6 +24,7 @@ export class LoginComponent implements OnInit {
 
     ngOnInit() {
         console.log('LoginComponent initialized.', this);
+        this.service.whenAuthorized.subscribe(authorized => this.router.navigate(['']));
     }
 
     onSubmit() {

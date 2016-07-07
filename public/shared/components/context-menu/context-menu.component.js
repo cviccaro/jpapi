@@ -37,7 +37,6 @@ var ContextMenuComponent = (function () {
         configurable: true
     });
     ContextMenuComponent.prototype.ngAfterViewInit = function () {
-        console.log('ContextMenu View Initialized.', this);
         this.registerSubscribers();
     };
     ContextMenuComponent.prototype.registerSubscribers = function () {
@@ -46,7 +45,6 @@ var ContextMenuComponent = (function () {
             _this.opened = false;
             if (_this.backdrop)
                 _this.backdrop.destroy();
-            console.log('setting opened to false motherfucker', _this);
         });
     };
     ContextMenuComponent.prototype.open = function (e) {

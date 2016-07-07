@@ -19,7 +19,6 @@ var PanelSummaryImage = (function () {
     };
     PanelSummaryImage.prototype.ngAfterViewInit = function () {
         var _this = this;
-        console.info('PanelSummaryImage AfterViewInit. ', this);
         var img = this._preview.nativeElement;
         img.addEventListener('load', function (e) {
             _this.loaded = true;

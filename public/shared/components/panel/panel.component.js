@@ -140,7 +140,6 @@ var JpaPanel = (function () {
         set: function (v) {
             console.debug('JpaPanel' + this.type + '.' + this.name + '# set value(): ', v);
             if (v !== this._value) {
-                console.log('JpaPanel.' + this.type + '.' + this.name + '# value changed!', { v: v, _value: this._value });
                 this._value = v;
                 this._onChangeCallback(v);
             }
@@ -287,7 +286,6 @@ var JpaPanel = (function () {
         this._onTouchedCallback = fn;
     };
     JpaPanel.prototype.handleChange = function (event) {
-        console.debug('JpaPanel.' + this.type + ' ' + this.name + '#handleChange: ', event, this);
         switch (this.type) {
             case 'images':
                 this.value = event;
@@ -372,13 +370,9 @@ var JpaPanel = (function () {
                     break;
             }
         }
-        console.info('JpaPanel.' + this.type + ' ' + this.name + '#AfterContentInit', { this: this, value: this.value, _value: this._value });
     };
     JpaPanel.prototype.ngAfterViewInit = function () {
         switch (this.type) {
-            case 'image':
-                this.value = this.nativeElement.value;
-                break;
             case 'multiselect':
                 this._originalOptions = this.options;
                 break;
@@ -387,7 +381,13 @@ var JpaPanel = (function () {
                     this.value = this.nativeElement.value;
                 }
         }
-        console.info('PanelComponent.' + this.type + ' # AfterViewInit: ', { this: this, value: this.value, _value: this._value });
+        if (this._controls.length) {
+            this._controls.forEach(function (control) {
+                console.log({ control: control });
+                control.valueChanges.debounceTime(500).subscribe(function (val) { return control.value = val; });
+            });
+        }
+        console.info('PanelComponent.' + this.type + '.' + this.name + ' # AfterViewInit: ', this);
     };
     JpaPanel.prototype.ngOnChanges = function (changes) {
         this._validateConstraints();
@@ -430,11 +430,9 @@ var JpaPanel = (function () {
         }
     };
     JpaPanel.prototype.setMultiOptions = function () {
-        console.warn('SetMultiOptions');
         this._secureValue = this.value.length === 0 ? null : JSON.stringify(this.value);
         if (this.options) {
             var ids_1 = this.value.map(function (item) { return item.id; });
-            console.log('value ids: ', ids_1);
             this.options = this._originalOptions.filter(function (option) {
                 return ids_1.indexOf(option.id) === -1;
             });
@@ -442,10 +440,8 @@ var JpaPanel = (function () {
     };
     JpaPanel.prototype.multiselectDrop = function (e) {
         if (e.dragData.hasOwnProperty('preventAdd') && e.dragData.preventAdd === true) {
-            console.log('preventing add from already added chip.');
             return;
         }
-        console.log('Multiselect drop!!!!', e);
         var data = e.dragData;
         var val = this.value.slice(0);
         val.push(data.option);
@@ -464,14 +460,12 @@ var JpaPanel = (function () {
             value[new_index] = source;
             value[old_index] = target;
             this.value = value;
-            console.log('Multiselect reorder from ' + old_index + ' to ' + new_index);
         }
         this._onTouchedCallback();
         this._valueChanged = true;
     };
     JpaPanel.prototype.multiselectOnDragEnter = function (e, index) {
         this._multiselectDropZone = index;
-        console.log("multiselectdragenter on " + index);
     };
     JpaPanel.prototype.multiselectRemove = function (id) {
         var filtered = this.value.filter(function (item) {
@@ -482,20 +476,16 @@ var JpaPanel = (function () {
             var value = this.value;
             value.splice(index, 1);
             this.value = value;
-            console.log('set value to ', value);
             this.setMultiOptions();
         }
         this._onTouchedCallback();
         this._valueChanged = true;
     };
     JpaPanel.prototype.fileAdded = function (e) {
-        console.log('PanelComponent -- ImageUpload -- fileAdded', e);
     };
     JpaPanel.prototype.imageAdded = function (e) {
-        console.log('PanelComponent -- ImageUpload -- imageAdded', e);
     };
     JpaPanel.prototype.imageLoaded = function (e) {
-        console.log('PanelComponent -- ImageUpload -- imageLoaded', e);
     };
     JpaPanel.prototype.reset = function () {
         this._valueChanged = false;
@@ -639,6 +629,10 @@ var JpaPanel = (function () {
         core_1.ViewChild('textarea'), 
         __metadata('design:type', core_1.ElementRef)
     ], JpaPanel.prototype, "_textareaElement", void 0);
+    __decorate([
+        core_1.ViewChildren(forms_1.NgModel), 
+        __metadata('design:type', core_1.QueryList)
+    ], JpaPanel.prototype, "_controls", void 0);
     __decorate([
         core_1.HostBinding('class.focused'), 
         __metadata('design:type', Object)

@@ -92,7 +92,8 @@
         flex-direction: row;
         -ms-flex-pack: center;
         justify-content: center;
-        text-align: center; }
+        text-align: center;
+        outline: none; }
         :host .app-sidebar .sidebar-button [md-icon-button] .md-button-wrapper {
           display: -ms-flexbox;
           display: flex;

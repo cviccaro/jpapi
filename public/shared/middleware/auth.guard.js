@@ -17,7 +17,6 @@ var AuthGuard = (function () {
         this.router = router;
     }
     AuthGuard.prototype.canActivate = function (next, state) {
-        console.log('authGuard#canActivate called');
         if (this.service.authorized)
             return true;
         this.router.navigate(['/login']);

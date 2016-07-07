@@ -23,9 +23,9 @@ export class JpaPanelGroup implements AfterViewInit, AfterContentInit {
      * Implementing AfterContentInit
      */
     ngAfterContentInit() {
-        //console.log('Subscribing to ' + this._panelChildren.length + ' panel changes. ');
+        ////console.log('Subscribing to ' + this._panelChildren.length + ' panel changes. ');
         // this._panelChildren.changes.subscribe(panel => {
-        //     console.log('panel change! ', panel);
+        //     //console.log('panel change! ', panel);
         // });
         this._panelChildren.forEach(panel => {
             panel.onToggle.subscribe(e => {
@@ -38,6 +38,6 @@ export class JpaPanelGroup implements AfterViewInit, AfterContentInit {
      * Implementing AFterViewInit
      */
     ngAfterViewInit() {
-        //console.log('JpaPanelGroup#afterViewInit', this);
+        ////console.log('JpaPanelGroup#afterViewInit', this);
     }
 }

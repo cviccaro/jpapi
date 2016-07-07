@@ -42,7 +42,6 @@ var PanelSummaryComponent = (function () {
     PanelSummaryComponent.prototype.report = function (e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log(this);
     };
     PanelSummaryComponent.prototype.setOptions = function (options) {
         if (options.length) {

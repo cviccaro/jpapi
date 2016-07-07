@@ -44,7 +44,7 @@ export class AppComponent implements OnInit, OnDestroy {
     ngOnInit() {
         let _sub1 = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
         let _sub2 = this.router.events.subscribe(evt => {
-            console.warn(evt.toString());
+            //console.warn(evt.toString());
             if (evt.toString().match('^NavigationEnd')) {
                 this._sidenav.close();
                 this._routeDepth = evt.url.split('/').length - 1;

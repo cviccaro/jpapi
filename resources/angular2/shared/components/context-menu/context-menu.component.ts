@@ -35,8 +35,6 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
-		console.log('ContextMenu View Initialized.', this);
-
 		this.registerSubscribers();
 	}
 
@@ -44,7 +42,6 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 		this.closeSubscriber = this.service.onClose.subscribe(e => {
 			this.opened = false;
 			if (this.backdrop) this.backdrop.destroy();
-			console.log('setting opened to false motherfucker', this);
 		});
 	}
 

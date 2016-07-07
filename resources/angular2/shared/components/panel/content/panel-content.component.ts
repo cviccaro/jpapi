@@ -68,32 +68,32 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
             this.loading = true;
         }
 
-        console.info('PanelContent (' + this.align + ') Content Initialized: ', { this: this });
+        //console.info('PanelContent (' + this.align + ') Content Initialized: ', { this: this });
     }
 
     ngAfterViewInit(): void {
         this.imageEl = this._imageEl.nativeElement
         this.imageEl.addEventListener('load', () => this.onImgLoad());
 
-        console.info('PanelContent (' + this.align + ') View Initialized: ', { this: this });
+        //console.info('PanelContent (' + this.align + ') View Initialized: ', { this: this });
     }
 
     onToggle(expanded: boolean): void {
-        //console.log('PanelContentChild just saw its parent toggle ', expanded);
+        ////console.log('PanelContentChild just saw its parent toggle ', expanded);
     }
 
     addToMultiSelect(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log('AddToMultiSelect', this);
+        //console.log('AddToMultiSelect', this);
     }
 
     removeImage(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log('removeImage', this);
+        //console.log('removeImage', this);
 
         this._hasImage = false;
         this.image = null;
@@ -104,7 +104,7 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
     }
 
     onImgLoad() {
-        //console.debug(this.align + ' image loaded!', {image: this.image});
+        ////console.debug(this.align + ' image loaded!', {image: this.image});
         this.loading = false;
         this.imageWidth = this.imageEl.naturalWidth;
         this.imageHeight = this.imageEl.naturalHeight;
@@ -112,7 +112,7 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
     }
 
     ngOnChanges(changes: SimpleChanges): void {
-        //console.debug('PanelContent (' + this.align + ') changed: ', { changes: changes });
+        ////console.debug('PanelContent (' + this.align + ') changed: ', { changes: changes });
         for (let prop in changes) {
             let previousValue = changes[prop].previousValue;
             let currentValue = changes[prop].currentValue;

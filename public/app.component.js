@@ -35,7 +35,6 @@ var AppComponent = (function () {
         var _this = this;
         var _sub1 = this.authService.whenAuthorized.subscribe(function (authorized) { return _this.loggedIn = authorized; });
         var _sub2 = this.router.events.subscribe(function (evt) {
-            console.warn(evt.toString());
             if (evt.toString().match('^NavigationEnd')) {
                 _this._sidenav.close();
                 _this._routeDepth = evt.url.split('/').length - 1;

@@ -24,7 +24,7 @@ export class PanelSummaryImage implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        console.info('PanelSummaryImage AfterViewInit. ', this);
+        //console.info('PanelSummaryImage AfterViewInit. ', this);
 
         let img = (<HTMLImageElement>this._preview.nativeElement);
 

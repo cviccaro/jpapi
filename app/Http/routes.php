@@ -100,9 +100,27 @@ Route::resource("tags","TagController");
 Route::resource("images","ImageController");
 
 Route::get('test', function() {
-    $blog = App\Blog::with('divisions', 'image', 'images', 'tags')->find(1);
-    $ids_clean = $blog->tags->map(function($tag) { return $tag->id; });
-    dd($ids_clean);
+    $blog = App\Blog::all();
+
+    $blog->each(function($blog) {
+        if ($blog->body) {
+            $matches = [];
+            preg_match_all('/{{2}([\w|\.|\-|\_|\s]*)\}{2}/', $blog->body, $matches);
+
+            if (!empty($matches) && !empty($matches[0]) && !empty($matches[1])) {
+                $body = $blog->body;
+                foreach($matches[0] as $i => $match) {
+                    $capture = $matches[1][$i];
+                    $replace = 'https://jpapi.localhost/img/blogs/' . $capture;
+                    $body = str_replace($match, $replace, $body);
+                }
+                dump($matches);
+                $blog->body = $body;
+
+                $blog->save();
+            }
+        }
+    });
 
     return Response::make('');
 });

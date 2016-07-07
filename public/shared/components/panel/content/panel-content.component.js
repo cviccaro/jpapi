@@ -51,25 +51,21 @@ var JpaPanelContent = (function () {
             this._imageUrl = this.image.url;
             this.loading = true;
         }
-        console.info('PanelContent (' + this.align + ') Content Initialized: ', { this: this });
     };
     JpaPanelContent.prototype.ngAfterViewInit = function () {
         var _this = this;
         this.imageEl = this._imageEl.nativeElement;
         this.imageEl.addEventListener('load', function () { return _this.onImgLoad(); });
-        console.info('PanelContent (' + this.align + ') View Initialized: ', { this: this });
     };
     JpaPanelContent.prototype.onToggle = function (expanded) {
     };
     JpaPanelContent.prototype.addToMultiSelect = function (e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('AddToMultiSelect', this);
     };
     JpaPanelContent.prototype.removeImage = function (e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('removeImage', this);
         this._hasImage = false;
         this.image = null;
         this.menu.close();

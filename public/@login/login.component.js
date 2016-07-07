@@ -23,7 +23,9 @@ var LoginComponent = (function () {
         this.working = false;
     }
     LoginComponent.prototype.ngOnInit = function () {
+        var _this = this;
         console.log('LoginComponent initialized.', this);
+        this.service.whenAuthorized.subscribe(function (authorized) { return _this.router.navigate(['']); });
     };
     LoginComponent.prototype.onSubmit = function () {
         var _this = this;
