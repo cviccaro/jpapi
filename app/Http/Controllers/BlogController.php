@@ -316,4 +316,30 @@ class BlogController extends Controller
         ]);
     }
 
+    /**
+     * Related
+     *
+     * @param Request
+     * @param $id (Blog ID)
+     * @return Response
+     */
+    public function related(Request $request, $id)
+    {
+        $take = $request->input('take', 3);
+        $skip = $request->input('skip', 0);
+
+        $division_id = Blog::find($id)->divisions()->first()->id;
+
+        $blogs = Blog::with('divisions', 'image', 'images', 'tags')
+                        ->whereHas('divisions', function($query) use ($division_id) {
+                            $query->where('id', $division_id);
+                        })
+                        ->orderBy('created_at', 'desc')
+                        ->take($take)
+                        ->skip($skip)
+                        ->get();
+
+        return $this->respond('done', $blogs);
+
+    }
 }

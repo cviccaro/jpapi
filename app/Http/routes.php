@@ -40,7 +40,7 @@ Route::get('blogs/paged', 'BlogController@paged');
 Route::get('blogs/recent', 'BlogController@recent');
 Route::get('blogs/uri/{uri}', 'BlogController@getFromSlug');
 Route::get('blogs/{id}', 'BlogController@get');
-Route::get('blog/related/{id}', 'BlogController@related');
+Route::get('blogs/related/{id}', 'BlogController@related');
 
 Route::get('staff', 'StaffController@all');
 Route::get('staff/{id}', 'StaffController@get');
@@ -79,7 +79,7 @@ Route::group(['namespace' => 'Auth'], function () {
 
 // Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
 Route::group([], function() {
-    //Route::post('blog', 'BlogController@add');
+    Route::post('blogs', 'BlogController@store');
     Route::put('blogs/{id}', 'BlogController@update');
     Route::post('blogs/update/{id}', 'BlogController@update');
     Route::delete('blogs/{id}', 'BlogController@remove');
@@ -88,7 +88,7 @@ Route::group([], function() {
     Route::put('staff/{id}', 'StaffController@put');
     Route::delete('staff/{id}', 'StaffController@remove');
 
-    //Route::post('projects', 'ProjectController@create');
+    Route::post('projects', 'ProjectController@store');
     Route::put('projects/{id}', 'ProjectController@update');
     Route::post('projects/update/{id}', 'ProjectController@update');
     Route::delete('projects/{id}', 'ProjectController@remove');
