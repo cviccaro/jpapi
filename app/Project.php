@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Project extends Model
 {
+    use Sluggable;
+    use PivotSort;
+
     public function client()
     {
         return $this->belongsTo('App\Client');
@@ -29,12 +32,5 @@ class Project extends Model
     public function tags()
     {
         return $this->morphToMany('App\Tag', 'taggable')->withPivot('weight');
-    }
-
-    public function sortImages()
-    {
-        return $this->images->sort(function($a, $b) {
-            return $a->pivot->weight > $b->pivot->weight;
-        });
     }
 }

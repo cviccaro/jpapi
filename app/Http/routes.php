@@ -26,19 +26,27 @@ Route::get('/admin/{page}/{subpage}', function () {
     return view('angular');
 });
 
+// Route::resource("blogs","BlogController");
+// Route::resource("projects","ProjectController");
+// Route::resource("clients","ClientController");
+// Route::resource("divisions","DivisionController");
+// Route::resource("staff","StaffController");
+// Route::resource("tags","TagController");
+// Route::resource("images","ImageController");
+
 
 Route::get('blogs', 'BlogController@all');
 Route::get('blogs/paged', 'BlogController@paged');
 Route::get('blogs/recent', 'BlogController@recent');
-Route::get('blogs/uri/{uri}', 'BlogController@getFromUri');
+Route::get('blogs/uri/{uri}', 'BlogController@getFromSlug');
 Route::get('blogs/{id}', 'BlogController@get');
-// Route::get('blog-related/{id}', 'BlogController@getRelated');
+Route::get('blog/related/{id}', 'BlogController@related');
 
-// Route::get('staff', 'StaffController@all');
-// Route::get('staff/{id}', 'StaffController@get');
+Route::get('staff', 'StaffController@all');
+Route::get('staff/{id}', 'StaffController@get');
 
-// Route::get('clients', 'ClientController@all');
-// Route::get('clients/featured', 'ClientController@featured');
+Route::get('clients', 'ClientController@all');
+Route::get('clients/featured', 'ClientController@featured');
 // Route::get('clients/{id}', 'ClientController@get');
 
 Route::get('options/clients', 'ClientController@options');
@@ -48,11 +56,8 @@ Route::get('options/tags', 'TagController@options');
 Route::get('projects', 'ProjectController@all');
 Route::get('projects/paged', 'ProjectController@paged');
 Route::get('projects/recent', 'ProjectController@recent');
-Route::get('projects/uri/{uri}', 'ProjectController@getFromUri');
+Route::get('projects/uri/{uri}', 'ProjectController@getFromSlug');
 Route::get('projects/{id}', 'ProjectController@get');
-
-// Route::get('images/{path}', 'ImageController@get');
-// Route::get('images/clients/{path}', 'ImageController@getClientImage');
 
 Route::get('img/{model}/{name}', 'ImageController@getPublic');
 
@@ -89,38 +94,4 @@ Route::group([], function() {
     Route::delete('projects/{id}', 'ProjectController@remove');
 
     Route::post('upload/image', 'ImageController@uploadTemp');
-});
-
-Route::resource("blogs","BlogController");
-Route::resource("projects","ProjectController");
-Route::resource("clients","ClientController");
-Route::resource("divisions","DivisionController");
-Route::resource("staff","StaffController");
-Route::resource("tags","TagController");
-Route::resource("images","ImageController");
-
-Route::get('test', function() {
-    $blog = App\Blog::all();
-
-    $blog->each(function($blog) {
-        if ($blog->body) {
-            $matches = [];
-            preg_match_all('/{{2}([\w|\.|\-|\_|\s]*)\}{2}/', $blog->body, $matches);
-
-            if (!empty($matches) && !empty($matches[0]) && !empty($matches[1])) {
-                $body = $blog->body;
-                foreach($matches[0] as $i => $match) {
-                    $capture = $matches[1][$i];
-                    $replace = 'https://jpapi.localhost/img/blogs/' . $capture;
-                    $body = str_replace($match, $replace, $body);
-                }
-                dump($matches);
-                $blog->body = $body;
-
-                $blog->save();
-            }
-        }
-    });
-
-    return Response::make('');
 });

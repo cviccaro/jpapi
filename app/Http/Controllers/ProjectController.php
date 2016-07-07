@@ -15,6 +15,24 @@ class ProjectController extends Controller
     use RESTActions;
 
     /**
+     * All
+     *
+     * @param  Request
+     * @return Response
+     */
+    public function all(Request $request)
+    {
+        $take = $request->input('take', 99999);
+        $skip = $request->input('skip', 0);
+        $count = Project::count();
+        $projects = Project::with('client', 'divisions', 'image', 'images', 'tags')->orderBy('created_at', 'desc')->take($take)->skip($skip)->get();
+        return $this->respond('done', [
+            'projects' => $projects,
+            'remaining' => max(0, $count - $take - $skip),
+        ]);
+    }
+
+    /**
      * Create a new project
      *
      * @return Response
@@ -174,10 +192,28 @@ class ProjectController extends Controller
         }
 
         $json = $project->toArray();
-        $json['images'] = $project->sortImages()->values()->toArray();
+        $json['images'] = $project->sortPivot('images')->values()->toArray();
 
         return $this->respond('done', $json);
     }
+
+    /**
+     * Get From Slug
+     *
+     * @param  $slug string
+     * @return Response
+     */
+    public function getFromSlug($slug)
+    {
+        $projects = Project::select('id', 'title')->get()->filter(function ($project) use ($slug) {
+            return $project->uri === $slug;
+        });
+
+        if ($projects->isEmpty()) abort(404);
+
+        return $this->get($projects->first()->id);
+    }
+
 
     /**
      * Paged
@@ -223,5 +259,37 @@ class ProjectController extends Controller
         $json['data'] = array_values($json['data']);
 
         return $this->respond('done', $json);
+    }
+
+    /**
+     * Recent
+     *
+     * @param  Request
+     * @return Response
+     */
+    public function recent(Request $request)
+    {
+        $take = $request->input('take', 3);
+        $skip = $request->input('skip', 0);
+
+        $projects = Project::with('client', 'divisions', 'image', 'images', 'tags')->orderBy('created_at', 'desc');
+        $count = Project::count();
+        if ($request->has('division')) {
+            $division = Division::where('name', $request->input('division'))->first();
+            $projects = $projects->whereHas('divisions', function($query) use ($division) {
+                $query->where('name', $division->name);
+            });
+            $count = $projects->count();
+        }
+        $projects = $projects
+            ->take($take)
+            ->skip($skip)
+            ->get();
+
+        return $this->respond('done', [
+            'projects' => $projects,
+            'remaining' => max(0, $count - $take - $skip),
+            'total' => $count
+        ]);
     }
 }

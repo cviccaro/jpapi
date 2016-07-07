@@ -16,6 +16,24 @@ class BlogController extends Controller
     const MODEL = 'App\Blog';
 
     /**
+     * All
+     *
+     * @param  Request
+     * @return Response
+     */
+    public function all(Request $request)
+    {
+        $take = $request->input('take', 99999);
+        $skip = $request->input('skip', 0);
+        $count = Blog::count();
+        $blogs = Blog::with('divisions', 'image', 'images', 'tags')->orderBy('created_at', 'desc')->take($take)->skip($skip)->get();
+        return $this->respond('done', [
+            'blogs' => $blogs,
+            'remaining' => max(0, $count - $take - $skip),
+        ]);
+    }
+
+    /**
      * Create a new blog
      *
      * @return Response
@@ -71,28 +89,6 @@ class BlogController extends Controller
                 }
             }
         }
-
-        // if ($request->has('images')) {
-        //  $images = $request->get('images');
-        //  $files = $request->allFiles();
-
-        //  \Log::info('Saving new gallery images.');
-
-        //  foreach($images as $idx => $image) {
-        //      \Log::info('Processing gallery image ' . print_r($image, true));
-
-        //      if (isset($files['images'][$idx])) {
-        //          $file = $files['images'][$idx]['_file'];
-        //          $filename = $file->getClientOriginalName();
-        //          $image = Image::createFromUpload($file, $destination, $filename);
-
-        //          \Log::info('Saving new image to gallery with weight ' . ($idx * 5));
-        //          $project->images()->save($image, ['weight' => $idx * 5]);
-        //      }
-        //  }
-
-        //  \Log::info('Saved new gallery images.');
-        // }
 
         return $this->get($blog->id);
 
@@ -196,49 +192,6 @@ class BlogController extends Controller
         $blog->save();
 
         return $this->get($id);
-
-        // if ($request->has('images')) {
-        //  $images = $request->get('images');
-        //  $files = $request->allFiles();
-
-        //  $ids_clean = $project->images->map(function($img) { return $img->id; })->toArray();
-        //  $ids_dirty = [];
-
-        //  \Log::info('Updating gallery images.  Clean IDs: ' . implode(', ', $ids_clean));
-
-        //  foreach($images as $idx => $image) {
-
-        //      \Log::info('Processing gallery image ' . print_r($image, true));
-        //      if (isset($image['id'])) {
-        //          $ids_dirty[] = $image['id'];
-        //      }
-
-        //      if (isset($files['images'][$idx])) {
-        //          $file = $files['images'][$idx]['_file'];
-        //          $filename = $file->getClientOriginalName();
-        //          $image = Image::createFromUpload($file, $destination, $filename);
-
-        //          \Log::info('Saving new image to gallery with weight ' . ($idx * 5));
-        //          $project->images()->save($image, ['weight' => $idx * 5]);
-        //      } else {
-        //          \Log::info('Updating image ' . $image['id'] . ' to weight ' . ($idx * 5));
-        //          $project->images()->updateExistingPivot($image['id'], ['weight' => $idx * 5]);
-        //      }
-        //  }
-
-        //  \Log::info('Updated gallery images.  Dirty IDs: ' . implode(', ', $ids_dirty));
-
-        //  foreach($ids_clean as $clean_id) {
-        //      if (!in_array($clean_id, $ids_dirty)) {
-        //          \Log::info('Detaching image ' . $clean_id . ' from project ' . $id);
-        //          $project->images()->detach($clean_id);
-        //      }
-        //  }
-        // }
-
-        $blog->save();
-
-        return $this->get($id);
     }
 
     /**
@@ -247,7 +200,8 @@ class BlogController extends Controller
      * @param $id [integer]
      * @return Response
      */
-    public function get($id) {
+    public function get($id)
+    {
         $blog = Blog::with('divisions', 'image', 'images', 'tags')->find($id);
 
         if(is_null($blog)){
@@ -261,22 +215,22 @@ class BlogController extends Controller
 
         return $this->respond('done', $json);
     }
+
     /**
-     * All
+     * Get From Slug
      *
-     * @param  Request
+     * @param  $slug string
      * @return Response
      */
-    public function all(Request $request)
+    public function getFromSlug($slug)
     {
-        $take = $request->input('take', 99999);
-        $skip = $request->input('skip', 0);
-        $blog_count = Blog::all()->count();
-        $blogs = Blog::orderBy('created_at', 'desc')->take($take)->skip($skip)->get();
-        return $this->respond('done', [
-            'blogs' => $blogs,
-            'remaining' => max(0, $blog_count - $take - $skip),
-        ]);
+        $blogs = Blog::select('id', 'title')->get()->filter(function ($blog) use ($slug) {
+            return $blog->uri === $slug;
+        });
+
+        if ($blogs->isEmpty()) abort(404);
+
+        return $this->get($blogs->first()->id);
     }
 
     /**
@@ -341,12 +295,14 @@ class BlogController extends Controller
         $take = $request->input('take', 3);
         $skip = $request->input('skip', 0);
 
-        $blogs = Blog::orderBy('created_at', 'desc');
-        $blog_count = Blog::all()->count();
-        if ($request->has('site')) {
-            $site = Site::where('name', $request->input('site'))->first();
-            $blogs = $blogs->where('site', $site->id);
-            $blog_count = Blog::all()->where('site', $site->name)->count();
+        $blogs = Blog::with('divisions', 'image', 'images', 'tags')->orderBy('created_at', 'desc');
+        $count = Blog::count();
+        if ($request->has('division')) {
+            $division = Division::where('name', $request->input('division'))->first();
+            $blogs = $blogs->whereHas('divisions', function($query) use ($division) {
+                $query->where('name', $division->name);
+            });
+            $count = $blogs->count();
         }
         $blogs = $blogs
             ->take($take)
@@ -355,7 +311,8 @@ class BlogController extends Controller
 
         return $this->respond('done', [
             'blogs' => $blogs,
-            'remaining' => max(0, $blog_count - $take - $skip),
+            'remaining' => max(0, $count - $take - $skip),
+            'total' => $count
         ]);
     }
 

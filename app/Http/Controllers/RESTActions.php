@@ -21,11 +21,11 @@ trait RESTActions {
 	}
 
 
-	// public function all()
-	// {
-	// 	$m = self::MODEL;
-	// 	return $this->respond('done', $m::all());
-	// }
+	public function all()
+	{
+		$m = self::MODEL;
+		return $this->respond('done', $m::all());
+	}
 
 	public function get($id)
 	{
