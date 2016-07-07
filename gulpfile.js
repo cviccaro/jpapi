@@ -279,12 +279,10 @@ Elixir(function(mix) {
     // mix.copy('node_modules/promise', 'public/node_modules/promise');
     // mix.copy('node_modules/angular2-jwt', 'public/node_modules/angular2-jwt');
     // mix.copy('node_modules/ng2-dnd', 'public/node_modules/ng2-dnd');
-    // mix.copy('node_modules/angular2-modal', 'public/node_modules/angular2-modal');
     // mix.copy('node_modules/ckeditor', 'public/node_modules/ckeditor');
     // mix.copy('node_modules/ng2-ckeditor', 'public/node_modules/ng2-ckeditor');
 
     // mix.copy('node_modules/@angular2-material', 'public/node_modules/@angular2-material');
-    //mix.copy('node_modules/ng2-material', 'public/node_modules/ng2-material');
 
     mix.copy('resources/angular2/systemjs.config.js', 'public/systemjs.config.js');
 

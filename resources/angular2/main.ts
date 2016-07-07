@@ -12,7 +12,7 @@ import { APP_SERVICES } from './shared/index';
 
 import {DND_PROVIDERS} from 'ng2-dnd/ng2-dnd';
 
-//enableProdMode();
+enableProdMode();
 
 var appPromise = bootstrap(AppComponent, [
 	disableDeprecatedForms(),

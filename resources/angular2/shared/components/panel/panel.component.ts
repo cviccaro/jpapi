@@ -182,6 +182,11 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         } else {
             if (this.type === 'multiselect' && this.empty) {
                 this._onChangeCallback(null);
+            } else if (this.type === 'images') {
+                this._onChangeCallback(v);
+                this._onTouchedCallback();
+                this._valueChanged = true;
+                this._summaryChild.setSummaryOf(v);
             } else {
                 this._onChangeCallback(this._value);
             }

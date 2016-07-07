@@ -122,7 +122,6 @@ var ImageUploadComponent = (function () {
             var file = files[i];
             var image = new index_1.ImageUpload(file);
             var reader = new FileReader();
-            var k = i;
             this_1.isLoading = true;
             reader.addEventListener('load', function (e) {
                 image.url = reader.result;
@@ -155,6 +154,7 @@ var ImageUploadComponent = (function () {
                 console.warn('emitting change', v);
                 this._onChangeCallback(v);
             }
+            this._onChangeCallback(v);
         },
         enumerable: true,
         configurable: true
@@ -249,6 +249,7 @@ var ImageUploadComponent = (function () {
         images[old_index] = target;
         this.value = images;
         this.change.emit(this.value);
+        this._onChangeCallback(this.value);
         console.log('Just dropped image from drop zone ' + this._dropZoneStart + ' to drop zone ' + new_index);
     };
     ;

@@ -195,7 +195,6 @@ export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
 
             let image = new ImageUpload(file);
             let reader = new FileReader();
-            let k = i;
 
             this.isLoading = true;
 
@@ -236,6 +235,8 @@ export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
              this._onChangeCallback(v);
              //this.setCounts();
          }
+
+         this._onChangeCallback(v);
      }
 
     /**
@@ -357,6 +358,7 @@ export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
         this.value = images;
 
         this.change.emit(this.value);
+        this._onChangeCallback(this.value);
 
         console.log('Just dropped image from drop zone ' + this._dropZoneStart + ' to drop zone ' + new_index);
     };

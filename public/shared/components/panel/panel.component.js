@@ -147,6 +147,12 @@ var JpaPanel = (function () {
                 if (this.type === 'multiselect' && this.empty) {
                     this._onChangeCallback(null);
                 }
+                else if (this.type === 'images') {
+                    this._onChangeCallback(v);
+                    this._onTouchedCallback();
+                    this._valueChanged = true;
+                    this._summaryChild.setSummaryOf(v);
+                }
                 else {
                     this._onChangeCallback(this._value);
                 }
@@ -380,12 +386,6 @@ var JpaPanel = (function () {
                 if (this.nativeElement) {
                     this.value = this.nativeElement.value;
                 }
-        }
-        if (this._controls.length) {
-            this._controls.forEach(function (control) {
-                console.log({ control: control });
-                control.valueChanges.debounceTime(500).subscribe(function (val) { return control.value = val; });
-            });
         }
         console.info('PanelComponent.' + this.type + '.' + this.name + ' # AfterViewInit: ', this);
     };
