@@ -1,5 +1,5 @@
 import { bootstrap } from '@angular/platform-browser-dynamic';
-import { provide } from '@angular/core';
+import { provide, enableProdMode } from '@angular/core';
 import { HTTP_PROVIDERS, RequestOptions } from '@angular/http';
 import { disableDeprecatedForms, provideForms } from '@angular/forms';
 
@@ -11,6 +11,8 @@ import { APP_ROUTER_PROVIDERS } from './app.routes';
 import { APP_SERVICES } from './shared/index';
 
 import {DND_PROVIDERS} from 'ng2-dnd/ng2-dnd';
+
+enableProdMode();
 
 var appPromise = bootstrap(AppComponent, [
 	disableDeprecatedForms(),

@@ -32,6 +32,9 @@
                     <span class="summary-text" *ngSwitchCase="'images'">
                         <jpa-panel-summary-images [old]="_imagesCount" [queue]="_imagesQueueCount"></jpa-panel-summary-images>
                     </span>
+                    <span class="summary-text" *ngSwitchCase="'textarea'">
+                        {{ summary.length }} characters
+                    </span>
                     <span *ngSwitchDefault class="summary-text">{{ summary }}</span>
                 </div>
             </div>

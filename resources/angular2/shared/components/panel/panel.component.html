@@ -27,10 +27,10 @@
                   <div class="panel-control-infix">
                       <div *ngIf="_isMultiSelect && value !== ''" class="chips" dnd-droppable [dropEnabled]="true" (onDropSuccess)="multiselectDrop($event)">
                         <div class="chip-wrapper" (onDragEnter)="multiselectOnDragEnter($event, index)" dnd-droppable [dropEnabled]="true" *ngFor="let option of value; let index = index;" (onDropSuccess)="multiselectReorder($event)">
-                          <jpa-chip 
-                            [id]="option.id" 
-                            [name]="option.name" 
-                            (onRemove)="multiselectRemove($event)" 
+                          <jpa-chip
+                            [id]="option.id"
+                            [name]="option.name"
+                            (onRemove)="multiselectRemove($event)"
                             dnd-draggable
                             [dragData]="{option: option, index: index, preventAdd: true}"
                             [dragEnabled]="true">
@@ -80,28 +80,18 @@
                           <option value="" selected></option>
                           <ng-content select="option"></ng-content>
                       </select>
-                      <textarea *ngIf="_isTextarea"
-                          #textarea
-                          class="panel-control-element form-control textarea"
-                          [class.md-end]="align == 'end'"
-                          [autofocus]="autoFocus"
-                          [disabled]="disabled"
+                      <ckeditor *ngIf="_isTextarea"
+                          [(ngModel)]="value"
+                          debounce="500"
                           [id]="inputId"
-                          [attr.max]="max"
-                          [attr.maxlength]="maxLength"
-                          [attr.min]="min"
-                          [attr.minlength]="minLength"
-                          [readonly]="readOnly"
-                          [required]="required"
-                          [spellcheck]="spellCheck"
                           [attr.step]="step"
                           [attr.tabindex]="tabIndex"
                           [attr.name]="name"
                           (focus)="handleFocus($event)"
                           (blur)="handleBlur($event)"
-                          [(ngModel)]="value"
-                          (change)="handleChange($event)">
-                      </textarea>
+                          (change)="handleChange($event)"
+                          #textarea>
+                      </ckeditor>
                       <input *ngIf="_isImage"
                           #input
                           type="file"

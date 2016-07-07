@@ -16,7 +16,9 @@
       'angular2-toaster',
       //'angular2-localstorage',
       'angular2-jwt',
-      'ng2-dnd'
+      'ng2-dnd',
+      'ckeditor',
+      'ng2-ckeditor'
     ];
 
     var map = modules.reduce(function(carry, module) {
@@ -43,7 +45,9 @@
         'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' },
         // 'angular2-localstorage': { main: 'index.js', defaultExtension: 'js' },
         'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' },
-        'ng2-dnd': { main: 'bundles/ng2-dnd.js', defaultExtension: 'js'}
+        'ng2-dnd': { main: 'bundles/ng2-dnd.js', defaultExtension: 'js'},
+        'ckeditor': { main: 'ckeditor.js', defaultExtension: 'js' },
+        'ng2-ckeditor': { main: 'lib/CKEditor.js', defaultExtension: 'js' }
     };
 
     var ngPackageNames = [

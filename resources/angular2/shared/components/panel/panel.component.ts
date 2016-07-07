@@ -18,6 +18,7 @@ import {
     ElementRef,
     QueryList,
     OnChanges,
+    OnDestroy,
     EventEmitter,
     Output,
 } from '@angular/core';
@@ -25,7 +26,7 @@ import { SlicePipe, NgIf, NgSwitch } from '@angular/common';
 import {NgModel, NgSelectOption, ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {BooleanFieldValue} from '@angular2-material/core/annotations/field-value';
 import {MdError} from '@angular2-material/core/errors/error';
-import {Observable} from 'rxjs/Observable';
+import { Observable, Subscription } from 'rxjs/Rx';
 import { MdHint } from '@angular2-material/input';
 import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-list';
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
@@ -33,6 +34,8 @@ import { JpaPanelContent } from './content/index';
 import { PanelSummaryComponent } from './summary/index';
 import { ImageUploadComponent } from '../image-upload/index';
 import { ChipComponent } from '../chip/index';
+
+import {CKEditor} from 'ng2-ckeditor';
 
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
@@ -90,7 +93,8 @@ export class JpaPanelDuplicatedHintError extends MdError {
         ImageUploadComponent,
         PanelSummaryComponent,
         ChipComponent,
-        DND_DIRECTIVES
+        DND_DIRECTIVES,
+        CKEditor
         // FILE_UPLOAD_DIRECTIVES,
         // MD_GRID_LIST_DIRECTIVES
     ],
@@ -100,7 +104,7 @@ export class JpaPanelDuplicatedHintError extends MdError {
         '(click)': 'focus()'
     }
 })
-export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChanges, ControlValueAccessor {
+export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChanges, ControlValueAccessor, OnDestroy {
     private _focused: boolean = false;
     private _expanded: boolean = false;
     private _value: any = '';
@@ -123,6 +127,8 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     private _onChangeCallback: (_: any) => void = noop;
     private _originalOptions: any[];
     private _multiselectDropZone: number = -1;
+
+    private subscriptions: Subscription[] = [];
 
     /**
      * Bindings.
@@ -154,7 +160,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     get focused() { return this._focused; }
     get empty() {
         let v = this.value;
-        let x = !v || v === undefined || v === null || (Array.isArray(v) && v.length === 0)
+        let x = !v || v === undefined || v === null || (Array.isArray(v) && v.length === 0) || v === '' || v === '__deleted';
         // console.warn('Panel'+this.type+' is checking empty of value: ', {
         //     v: v,
         //     x: x,
@@ -170,7 +176,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
         console.debug('JpaPanel'+this.type+'.'+this.name+'# set value(): ', v);
 
         if (v !== this._value) {
-            console.log('JpaPanel.'+this.type+'.'+this.name+'# value cahnged!', { v: v, _value: this._value});
+            console.log('JpaPanel.'+this.type+'.'+this.name+'# value changed!', { v: v, _value: this._value});
             this._value = v;
             this._onChangeCallback(v);
         } else {
@@ -295,7 +301,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
                 this.value = (<HTMLSelectElement>event.target).value;
                 break;
             case 'textarea':
-                this.value = (<HTMLTextAreaElement>event.target).value;
+                // ckeditor handles this
                 break;
             case 'image':
                 this.value = event.target.files[0];
@@ -358,6 +364,15 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
                     case 'right': this._hasContentRight = true; break;
                     case 'left': this._hasContentLeft = true; break;
                     case 'bottom': this._hasContentBottom = true; break;
+                }
+
+                if (this.type === 'image') {
+                    let sub = panel.onRemoveImage.subscribe(e => {
+                        this.value = '__deleted';
+                        this.currentImage = '';
+                    });
+
+                    this.subscriptions.push(sub);
                 }
             })
         }
@@ -568,5 +583,11 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
             this._inputElement.nativeElement.value = '';
         }
         this.expanded = false;
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach((sub: Subscription) => {
+            sub.unsubscribe();
+        });
     }
 }

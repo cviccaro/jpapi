@@ -18,13 +18,14 @@ var common_1 = require('@angular/common');
 var forms_1 = require('@angular/forms');
 var field_value_1 = require('@angular2-material/core/annotations/field-value');
 var error_1 = require('@angular2-material/core/errors/error');
-var Observable_1 = require('rxjs/Observable');
+var Rx_1 = require('rxjs/Rx');
 var input_1 = require('@angular2-material/input');
 var angular2_material_1 = require('../../libs/angular2-material');
 var index_1 = require('./content/index');
 var index_2 = require('./summary/index');
 var index_3 = require('../image-upload/index');
 var index_4 = require('../chip/index');
+var ng2_ckeditor_1 = require('ng2-ckeditor');
 var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
 exports.JPA_PANEL_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCESSOR, {
     useExisting: core_1.forwardRef(function () { return JpaPanel; }),
@@ -84,6 +85,7 @@ var JpaPanel = (function () {
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
         this._multiselectDropZone = -1;
+        this.subscriptions = [];
         this.autoFocus = false;
         this.currentImage = null;
         this.disabled = false;
@@ -117,7 +119,7 @@ var JpaPanel = (function () {
     Object.defineProperty(JpaPanel.prototype, "empty", {
         get: function () {
             var v = this.value;
-            var x = !v || v === undefined || v === null || (Array.isArray(v) && v.length === 0);
+            var x = !v || v === undefined || v === null || (Array.isArray(v) && v.length === 0) || v === '' || v === '__deleted';
             return x;
         },
         enumerable: true,
@@ -138,7 +140,7 @@ var JpaPanel = (function () {
         set: function (v) {
             console.debug('JpaPanel' + this.type + '.' + this.name + '# set value(): ', v);
             if (v !== this._value) {
-                console.log('JpaPanel.' + this.type + '.' + this.name + '# value cahnged!', { v: v, _value: this._value });
+                console.log('JpaPanel.' + this.type + '.' + this.name + '# value changed!', { v: v, _value: this._value });
                 this._value = v;
                 this._onChangeCallback(v);
             }
@@ -294,7 +296,6 @@ var JpaPanel = (function () {
                 this.value = event.target.value;
                 break;
             case 'textarea':
-                this.value = event.target.value;
                 break;
             case 'image':
                 this.value = event.target.files[0];
@@ -354,6 +355,13 @@ var JpaPanel = (function () {
                     case 'bottom':
                         _this._hasContentBottom = true;
                         break;
+                }
+                if (_this.type === 'image') {
+                    var sub = panel.onRemoveImage.subscribe(function (e) {
+                        _this.value = '__deleted';
+                        _this.currentImage = '';
+                    });
+                    _this.subscriptions.push(sub);
                 }
             });
         }
@@ -496,6 +504,11 @@ var JpaPanel = (function () {
             this._inputElement.nativeElement.value = '';
         }
         this.expanded = false;
+    };
+    JpaPanel.prototype.ngOnDestroy = function () {
+        this.subscriptions.forEach(function (sub) {
+            sub.unsubscribe();
+        });
     };
     __decorate([
         core_1.Input(),
@@ -672,15 +685,15 @@ var JpaPanel = (function () {
     ], JpaPanel.prototype, "imageFieldChanged", void 0);
     __decorate([
         core_1.Output('blur'), 
-        __metadata('design:type', Observable_1.Observable)
+        __metadata('design:type', Rx_1.Observable)
     ], JpaPanel.prototype, "onBlur", null);
     __decorate([
         core_1.Output('focus'), 
-        __metadata('design:type', Observable_1.Observable)
+        __metadata('design:type', Rx_1.Observable)
     ], JpaPanel.prototype, "onFocus", null);
     __decorate([
         core_1.Output('toggle'), 
-        __metadata('design:type', Observable_1.Observable)
+        __metadata('design:type', Rx_1.Observable)
     ], JpaPanel.prototype, "onToggle", null);
     JpaPanel = __decorate([
         core_1.Component({
@@ -697,7 +710,8 @@ var JpaPanel = (function () {
                 index_3.ImageUploadComponent,
                 index_2.PanelSummaryComponent,
                 index_4.ChipComponent,
-                ng2_dnd_1.DND_DIRECTIVES
+                ng2_dnd_1.DND_DIRECTIVES,
+                ng2_ckeditor_1.CKEditor
             ],
             providers: [exports.JPA_PANEL_VALUE_ACCESSOR],
             pipes: [common_1.SlicePipe],

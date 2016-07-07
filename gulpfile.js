@@ -38,7 +38,8 @@ var packages = {
     'ng2-file-upload': { main: 'ng2-file-upload.js', defaultExtension: 'js' },
     'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' },
     // 'angular2-localstorage': { main: 'index.js', defaultExtension: 'js' },
-    'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' }
+    'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' },
+    'ng2-ckeditor': { main: 'lib/CKEditor.js', defaultExtension: 'js' }
 };
 
 var ngPackageNames = [
@@ -80,6 +81,11 @@ materialPkgs.forEach(function(pkgName) {
   packages['@angular2-material/' + pkgName] = {main: pkgName + '.js'};
 });
 
+
+/**
+ * Bundle
+ * @type {Object}
+ */
 var SYSTEM_BUILDER_CONFIG = {
     defaultJSExtensions: true,
     packageConfigPaths: [
@@ -129,11 +135,6 @@ var SYSTEM_BUILDER_CONFIG = {
     }
   };
 
-/**
- * Typescript elixir task
- *
- * @return
- */
 
  Elixir.extend('bundle', function(message) {
      new Task('bundle', function() {
@@ -150,6 +151,11 @@ var SYSTEM_BUILDER_CONFIG = {
  });
 
 
+/**
+ * Typescript elixir task
+ *
+ * @return
+ */
 Elixir.extend('typescript', function(src, output, options) {
     var paths = new Elixir.GulpPaths()
         .src(src)
@@ -271,10 +277,11 @@ Elixir(function(mix) {
     // mix.copy('node_modules/angular2-toaster', 'public/node_modules/angular2-toaster');
     // mix.copy('node_modules/es6-promise', 'public/node_modules/es6-promise');
     // mix.copy('node_modules/promise', 'public/node_modules/promise');
-
     // mix.copy('node_modules/angular2-jwt', 'public/node_modules/angular2-jwt');
     // mix.copy('node_modules/ng2-dnd', 'public/node_modules/ng2-dnd');
     // mix.copy('node_modules/angular2-modal', 'public/node_modules/angular2-modal');
+    // mix.copy('node_modules/ckeditor', 'public/node_modules/ckeditor');
+    // mix.copy('node_modules/ng2-ckeditor', 'public/node_modules/ng2-ckeditor');
 
     // mix.copy('node_modules/@angular2-material', 'public/node_modules/@angular2-material');
     //mix.copy('node_modules/ng2-material', 'public/node_modules/ng2-material');

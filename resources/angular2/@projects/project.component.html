@@ -17,7 +17,7 @@
           <md-hint align="end">{{bodyPanel.characterCount}} / &infin;</md-hint>
         </jpa-panel>
         <jpa-panel label="Cover Image" type="image" name="image" editText="Browse for a new picture" [(ngModel)]="project.image" [currentImage]="_projectImage">
-          <jpa-panel-content [file]="project.image" align="left" label="Preview your upload"></jpa-panel-content>
+          <jpa-panel-content *ngIf="project.image !== '__deleted'" [file]="project.image" align="left" label="Preview your upload"></jpa-panel-content>
           <jpa-panel-content [image]="_projectImage" align="right" label="Current"></jpa-panel-content>
         </jpa-panel>
         <jpa-panel

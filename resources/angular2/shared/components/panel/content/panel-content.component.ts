@@ -1,7 +1,8 @@
 import {
     Component,
     Input,
-    OnInit,
+    Output,
+    EventEmitter,
     AfterContentInit,
     AfterViewInit,
     ElementRef,
@@ -11,23 +12,28 @@ import {
     SimpleChanges,
     SimpleChange
 } from '@angular/core';
-import { MdGridList } from '@angular2-material/grid-list';
+import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 import { MATERIAL_DIRECTIVES } from '../../../../shared/libs/angular2-material';
 
-import { JpImage, ImageUpload, JpaPanelChild }  from '../../../index';
+import {
+    JpImage,
+    ImageUpload,
+    JpaPanelChild,
+    JpaModal
+} from '../../../index';
 import { ChipComponent } from '../../chip/chip.component';
-import { ContextMenuComponent  } from '../../index';
-
-import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
+import { CONTEXT_MENU_DIRECTIVES, JpaContextMenu } from '../../context-menu/index';
 
 @Component({
     moduleId: module.id,
     selector: 'jpa-panel-content',
     templateUrl: './panel-content.component.html',
     styleUrls: ['./panel-content.component.css'],
-    directives: [MATERIAL_DIRECTIVES, DND_DIRECTIVES, ChipComponent, ContextMenuComponent]
+    directives: [MATERIAL_DIRECTIVES, DND_DIRECTIVES, ChipComponent, CONTEXT_MENU_DIRECTIVES]
 })
 export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPanelChild {
+    constructor(public el: ElementRef, public menu: JpaContextMenu) { }
+
     private _hasImage: boolean = false;
     private _imageUrl: any = '';
     private loading: boolean = false;
@@ -38,19 +44,18 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
     imageWidth: number;
     imageHeight: number;
 
-    constructor(public el: ElementRef) { }
-
     @Input() file: File = null;
     @Input() image: JpImage = null;
     @Input() align: string = 'right';
     @Input() label: string = '';
     @Input() options: any[] = [];
 
+    @Output() onRemoveImage = new EventEmitter();
+
     @HostBinding('class.left') get ifLeftClass() { return this.align === 'left'; }
     @HostBinding('class.right') get ifRightClass() { return this.align === 'right'; }
     @HostBinding('class.bottom') get ifBottomClass() { return this.align === 'bottom'; }
 
-    @ContentChild(MdGridList) private _gridList: MdGridList;
     @ViewChild('img') private _imageEl: ElementRef;
 
     ngAfterContentInit(): void {
@@ -75,12 +80,6 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
 
     onToggle(expanded: boolean): void {
         //console.log('PanelContentChild just saw its parent toggle ', expanded);
-        // if (expanded) {
-        //     if (this._gridList) {
-        //         console.log(this._gridList);
-        //         setTimeout(() => { this._gridList['_layoutTiles']() }, 1000);
-        //     }
-        // }
     }
 
     addToMultiSelect(e) {
@@ -90,11 +89,18 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
         console.log('AddToMultiSelect', this);
     }
 
-    imageActions(e) {
+    removeImage(e) {
         e.preventDefault();
         e.stopPropagation();
 
-        console.log('imageActions', this);
+        console.log('removeImage', this);
+
+        this._hasImage = false;
+        this.image = null;
+        // this._imageUrl = undefined;
+
+        this.menu.close();
+        this.onRemoveImage.emit(e);
     }
 
     onImgLoad() {

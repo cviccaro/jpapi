@@ -143,7 +143,8 @@ $label_width: 21%;
     /**
      * Changed
      */
-    &.changed {
+    &.changed,
+    &.ng-dirty {
         md-card-title {
             color: $accent;
         }
@@ -160,6 +161,21 @@ $label_width: 21%;
         }
     }
 
+    /**
+     * Error
+     */
+    &.ng-dirty.ng-invalid {
+        .panel-summary {
+            .summary-text {
+                color: $danger;
+            }
+        }
+        &.expanded {
+            .panel-summary .summary-text {
+                color: $black;
+            }
+        }
+    }
 
     /**
      * Panel control
@@ -322,11 +338,19 @@ $label_width: 21%;
             display: none;
         }
         &.changed {
-            .panel-control{
+            .panel-control {
                 display: none;
             }
             .panel-content-left {
                 display: flex;
+            }
+        }
+        &.changed.empty {
+            .panel-control {
+                display: block;
+            }
+            .panel-content-left {
+                display: none;
             }
         }
     }

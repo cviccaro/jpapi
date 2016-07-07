@@ -9,12 +9,24 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var Rx_1 = require('rxjs/Rx');
 var ContextMenuFocusTrap = (function () {
     function ContextMenuFocusTrap() {
+        this._clickOutsideEmitter = new core_1.EventEmitter();
     }
-    ContextMenuFocusTrap.prototype.destroy = function () {
-        console.log('FocusTrap Destroy');
+    Object.defineProperty(ContextMenuFocusTrap.prototype, "onClickOutside", {
+        get: function () { return this._clickOutsideEmitter.asObservable(); },
+        enumerable: true,
+        configurable: true
+    });
+    ContextMenuFocusTrap.prototype.clickedOutside = function (e) {
+        console.log('focus trap destroy', e);
+        this._clickOutsideEmitter.emit('');
     };
+    __decorate([
+        core_1.Output('clickOutside'), 
+        __metadata('design:type', Rx_1.Observable)
+    ], ContextMenuFocusTrap.prototype, "onClickOutside", null);
     ContextMenuFocusTrap = __decorate([
         core_1.Component({
             selector: 'jpa-context-menu-focus-trap',
@@ -22,7 +34,7 @@ var ContextMenuFocusTrap = (function () {
             styles: [
                 ':host { display: block; position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 75; }'
             ],
-            host: { '(click)': 'destroy()' }
+            host: { '(click)': 'clickedOutside($event)' }
         }), 
         __metadata('design:paramtypes', [])
     ], ContextMenuFocusTrap);

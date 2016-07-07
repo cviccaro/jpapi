@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
+
+import { Observable } from 'rxjs/Rx';
 
 @Component({
 	selector: 'jpa-context-menu-focus-trap',
@@ -6,10 +8,15 @@ import { Component } from '@angular/core';
 	styles: [
 		':host { display: block; position: absolute; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 75; }'
 	],
-	host: { '(click)': 'destroy()'}
+	host: { '(click)': 'clickedOutside($event)'}
 })
 export class ContextMenuFocusTrap {
-	destroy() {
-		console.log('FocusTrap Destroy');
+    private _clickOutsideEmitter:EventEmitter<any> = new EventEmitter<any>();
+
+    @Output('clickOutside') get onClickOutside(): Observable<any> { return this._clickOutsideEmitter.asObservable(); }
+
+	clickedOutside(e) {
+        console.log('focus trap destroy', e);
+		this._clickOutsideEmitter.emit('');
 	}
 }

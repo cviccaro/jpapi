@@ -42,6 +42,9 @@
      * Changed
      */
   /**
+     * Error
+     */
+  /**
      * Panel control
      **/
   /**
@@ -136,11 +139,15 @@
     color: #1976d2; }
   :host.expanded .panel-summary {
     color: #000; }
-  :host.changed md-card-title {
+  :host.changed md-card-title, :host.ng-dirty md-card-title {
     color: #1976d2; }
-  :host.changed .panel-summary .summary-text {
+  :host.changed .panel-summary .summary-text, :host.ng-dirty .panel-summary .summary-text {
     color: #1976d2; }
-  :host.changed.expanded .panel-summary .summary-text {
+  :host.changed.expanded .panel-summary .summary-text, :host.ng-dirty.expanded .panel-summary .summary-text {
+    color: #000; }
+  :host.ng-dirty.ng-invalid .panel-summary .summary-text {
+    color: #f44336; }
+  :host.ng-dirty.ng-invalid.expanded .panel-summary .summary-text {
     color: #000; }
   :host .panel-control {
     min-width: 25%;
@@ -238,6 +245,10 @@
   :host.image.changed .panel-content-left {
     display: -ms-flexbox;
     display: flex; }
+  :host.image.changed.empty .panel-control {
+    display: block; }
+  :host.image.changed.empty .panel-content-left {
+    display: none; }
   :host.images .summary-text-wrapper md-icon {
     margin-left: 0px;
     margin-right: 4px;

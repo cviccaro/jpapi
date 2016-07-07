@@ -6,21 +6,25 @@
         {{ imageWidth }}x{{ imageHeight }}px
     </div>
     <div class="image">
-        <button md-button class="open" (click)="menu.open()"><md-icon>more_vert</md-icon></button>
+        <div class="overlay">
+            <button md-icon-button (click)="menu.open($event)" class="remove"><md-icon>more_vert</md-icon></button>
+        </div>
         <img #img [src]="_imageUrl" />
     </div>
     <jpa-context-menu #menu>
-        <button (click)="removeImage()">Remove</button>
+        <jpa-context-menu-item>
+            <button md-button (click)="removeImage($event)"><md-icon>delete</md-icon>Remove</button>
+        </jpa-context-menu-item>
     </jpa-context-menu>
 </div>
 <div *ngIf="hasOptions">
 	<div class="chips">
-	  <jpa-chip 
-	  	*ngFor="let option of options; let index = index; let odd = odd; let even = even;" 
-	  	[id]="option.id" 
+	  <jpa-chip
+	  	*ngFor="let option of options; let index = index; let odd = odd; let even = even;"
+	  	[id]="option.id"
 	  	[removeEnabled]="false"
-	  	[name]="option.name" 
-	  	[class.even]="even" 
+	  	[name]="option.name"
+	  	[class.even]="even"
 	  	[class.odd]="odd"
 	  	[dragEnabled]="true"
 	  	[dragData]="{option: option, index: index}"

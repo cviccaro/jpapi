@@ -109,7 +109,6 @@ class BlogController extends Controller
     {
         \Log::info('Received request to update blog ' . $id . ': ' . print_r($request->toArray(), true));
 
-
         $destination = path_join(['app', 'public', 'images', 'blogs']);
 
         $blog = Blog::findOrFail($id);
@@ -121,7 +120,9 @@ class BlogController extends Controller
             }
         }
 
-        if ($request->hasFile('image')) {
+        if ($request->has('image') && $request->get('image') === '__deleted') {
+            $blog->image()->dissociate();
+        } else if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = $file->getClientOriginalName();
 

@@ -14,12 +14,12 @@ var menu_item_1 = require('./menu-item');
 var focus_trap_1 = require('./focus-trap');
 var context_menu_1 = require('./context-menu');
 var ContextMenuComponent = (function () {
-    function ContextMenuComponent(_cr, service) {
-        this._cr = _cr;
+    function ContextMenuComponent(service, element) {
         this.service = service;
         this.opened = false;
         this._topPos = '0px';
         this._leftPos = '0px';
+        this.element = element;
     }
     Object.defineProperty(ContextMenuComponent.prototype, "topPos", {
         get: function () { return this._topPos; },
@@ -38,17 +38,38 @@ var ContextMenuComponent = (function () {
     });
     ContextMenuComponent.prototype.ngAfterViewInit = function () {
         console.log('ContextMenu View Initialized.', this);
+        this.registerSubscribers();
+    };
+    ContextMenuComponent.prototype.registerSubscribers = function () {
+        var _this = this;
+        this.closeSubscriber = this.service.onClose.subscribe(function (e) {
+            _this.opened = false;
+            if (_this.backdrop)
+                _this.backdrop.destroy();
+            console.log('setting opened to false motherfucker', _this);
+        });
     };
     ContextMenuComponent.prototype.open = function (e) {
+        var _this = this;
         e.preventDefault();
         e.stopPropagation();
         if (this.opened) {
             return;
         }
-        this.service.resolveBackdrop();
+        this.backdropSubscription = this.service.resolveBackdrop(this).subscribe(function (cmpRef) {
+            _this.backdrop = cmpRef;
+        });
         this._topPos = (e.clientY + 10) + 'px';
         this._leftPos = (e.clientX + 10) + 'px';
         this.opened = true;
+    };
+    ContextMenuComponent.prototype.ngOnDestroy = function () {
+        if (this.closeSubscriber)
+            this.closeSubscriber.unsubscribe();
+        if (this.backdropSubscription)
+            this.backdropSubscription.unsubscribe();
+        if (this.backdrop)
+            this.backdrop.destroy();
     };
     __decorate([
         core_1.HostBinding('style.top'), 
@@ -70,7 +91,7 @@ var ContextMenuComponent = (function () {
             styleUrls: ['./context-menu.component.css'],
             directives: [angular2_material_1.MATERIAL_DIRECTIVES, menu_item_1.ContextMenuItem, focus_trap_1.ContextMenuFocusTrap]
         }), 
-        __metadata('design:paramtypes', [core_1.ComponentResolver, context_menu_1.JpaContextMenu])
+        __metadata('design:paramtypes', [context_menu_1.JpaContextMenu, core_1.ElementRef])
     ], ContextMenuComponent);
     return ContextMenuComponent;
 }());

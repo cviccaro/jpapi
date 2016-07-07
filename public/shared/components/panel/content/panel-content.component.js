@@ -9,15 +9,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var grid_list_1 = require('@angular2-material/grid-list');
+var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
 var angular2_material_1 = require('../../../../shared/libs/angular2-material');
 var index_1 = require('../../../index');
 var chip_component_1 = require('../../chip/chip.component');
-var index_2 = require('../../index');
-var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
+var index_2 = require('../../context-menu/index');
 var JpaPanelContent = (function () {
-    function JpaPanelContent(el) {
+    function JpaPanelContent(el, menu) {
         this.el = el;
+        this.menu = menu;
         this._hasImage = false;
         this._imageUrl = '';
         this.loading = false;
@@ -27,6 +27,7 @@ var JpaPanelContent = (function () {
         this.align = 'right';
         this.label = '';
         this.options = [];
+        this.onRemoveImage = new core_1.EventEmitter();
     }
     Object.defineProperty(JpaPanelContent.prototype, "ifLeftClass", {
         get: function () { return this.align === 'left'; },
@@ -65,10 +66,14 @@ var JpaPanelContent = (function () {
         e.stopPropagation();
         console.log('AddToMultiSelect', this);
     };
-    JpaPanelContent.prototype.imageActions = function (e) {
+    JpaPanelContent.prototype.removeImage = function (e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('imageActions', this);
+        console.log('removeImage', this);
+        this._hasImage = false;
+        this.image = null;
+        this.menu.close();
+        this.onRemoveImage.emit(e);
     };
     JpaPanelContent.prototype.onImgLoad = function () {
         this.loading = false;
@@ -133,6 +138,10 @@ var JpaPanelContent = (function () {
         __metadata('design:type', Array)
     ], JpaPanelContent.prototype, "options", void 0);
     __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], JpaPanelContent.prototype, "onRemoveImage", void 0);
+    __decorate([
         core_1.HostBinding('class.left'), 
         __metadata('design:type', Object)
     ], JpaPanelContent.prototype, "ifLeftClass", null);
@@ -145,10 +154,6 @@ var JpaPanelContent = (function () {
         __metadata('design:type', Object)
     ], JpaPanelContent.prototype, "ifBottomClass", null);
     __decorate([
-        core_1.ContentChild(grid_list_1.MdGridList), 
-        __metadata('design:type', grid_list_1.MdGridList)
-    ], JpaPanelContent.prototype, "_gridList", void 0);
-    __decorate([
         core_1.ViewChild('img'), 
         __metadata('design:type', core_1.ElementRef)
     ], JpaPanelContent.prototype, "_imageEl", void 0);
@@ -158,9 +163,9 @@ var JpaPanelContent = (function () {
             selector: 'jpa-panel-content',
             templateUrl: './panel-content.component.html',
             styleUrls: ['./panel-content.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES, ng2_dnd_1.DND_DIRECTIVES, chip_component_1.ChipComponent, index_2.ContextMenuComponent]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, ng2_dnd_1.DND_DIRECTIVES, chip_component_1.ChipComponent, index_2.CONTEXT_MENU_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [core_1.ElementRef])
+        __metadata('design:paramtypes', [core_1.ElementRef, index_2.JpaContextMenu])
     ], JpaPanelContent);
     return JpaPanelContent;
 }());

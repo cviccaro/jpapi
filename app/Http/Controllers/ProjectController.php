@@ -105,7 +105,9 @@ class ProjectController extends Controller
             $project->client()->associate($client);
         }
 
-        if ($request->hasFile('image')) {
+        if ($request->has('image') && $request->get('image') === '__deleted') {
+            $project->image()->dissociate();
+        } else if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = $file->getClientOriginalName();
 
