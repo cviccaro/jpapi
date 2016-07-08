@@ -19,6 +19,7 @@ var ContextMenuComponent = (function () {
         this.opened = false;
         this._topPos = '0px';
         this._leftPos = '0px';
+        this.showOnHover = false;
         this.element = element;
     }
     Object.defineProperty(ContextMenuComponent.prototype, "topPos", {
@@ -69,6 +70,10 @@ var ContextMenuComponent = (function () {
         if (this.backdrop)
             this.backdrop.destroy();
     };
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Boolean)
+    ], ContextMenuComponent.prototype, "showOnHover", void 0);
     __decorate([
         core_1.HostBinding('style.top'), 
         __metadata('design:type', Object)

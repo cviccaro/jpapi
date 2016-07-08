@@ -8,5 +8,6 @@ __export(require('./blog-list.guard'));
 __export(require('./login.guard'));
 __export(require('./project.guard'));
 __export(require('./project-list.guard'));
+__export(require('./clients.guard'));
 
 //# sourceMappingURL=index.js.map

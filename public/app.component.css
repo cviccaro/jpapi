@@ -53,9 +53,9 @@
       :host .app-sidenav .title .md-list-item span {
         line-height: 64px;
         font-size: 20px; }
-    :host .app-sidenav a:hover {
+    :host .app-sidenav a:hover .md-list-text, :host .app-sidenav a:hover md-icon {
       color: initial; }
-    :host .app-sidenav a.active {
+    :host .app-sidenav a.active .md-list-text, :host .app-sidenav a.active md-icon {
       color: #1976d2; }
     :host .app-sidenav a:active .md-list-item {
       background-color: rgba(0, 0, 0, 0.0992157); }

@@ -46,6 +46,7 @@ Route::get('staff', 'StaffController@all');
 Route::get('staff/{id}', 'StaffController@get');
 
 Route::get('clients', 'ClientController@all');
+Route::get('clients/paged', 'ClientController@paged');
 Route::get('clients/featured', 'ClientController@featured');
 // Route::get('clients/{id}', 'ClientController@get');
 

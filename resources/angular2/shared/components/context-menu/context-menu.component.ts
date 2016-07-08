@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, HostBinding, ComponentRef, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy, Input, HostBinding, ComponentRef, ElementRef } from '@angular/core';
 
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 
@@ -25,6 +25,8 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 	private backdrop: ComponentRef<ContextMenuFocusTrap>;
 	private backdropSubscription: Subscription;
 	private closeSubscriber: Subscription;
+
+	@Input() showOnHover: boolean = false;
 
 	@HostBinding('style.top') get topPos() { return this._topPos; }
 	@HostBinding('style.left') get leftPos() { return this._leftPos; }

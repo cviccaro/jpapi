@@ -10,10 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var angular2_material_1 = require('../../libs/angular2-material');
+var common_1 = require('@angular/common');
 var Rx_1 = require('rxjs/Rx');
+var modal_interface_1 = require('./modal.interface');
 var ModalComponent = (function () {
     function ModalComponent() {
         this._actionEmitter = new core_1.EventEmitter();
+        this._files = {};
     }
     Object.defineProperty(ModalComponent.prototype, "onAction", {
         get: function () {
@@ -29,6 +32,24 @@ var ModalComponent = (function () {
         console.log(type + ' button clicked.', event);
         this._actionEmitter.emit({ type: type, config: config, event: event });
     };
+    ModalComponent.prototype.modalFormSubmit = function () {
+        this._actionEmitter.emit({ type: 'submit', config: this.config, event: null });
+    };
+    ModalComponent.prototype.handleChange = function (col, e) {
+        col.value = e.target['files'];
+    };
+    ModalComponent.prototype.ngOnChanges = function (changes) {
+        if (changes.hasOwnProperty('config')) {
+            var currentValue = changes['config'].currentValue;
+            if (currentValue) {
+                switch (currentValue.mode) {
+                    case "form":
+                        this.config.inputs = this.config.inputs.map(function (input) { return new modal_interface_1.ModalFormColumn(input); });
+                        break;
+                }
+            }
+        }
+    };
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Object)
@@ -43,7 +64,7 @@ var ModalComponent = (function () {
             selector: 'jpa-modal',
             templateUrl: './modal.html',
             styleUrls: ['./modal.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, common_1.NgSwitch, common_1.NgSwitchCase, common_1.NgSwitchDefault]
         }), 
         __metadata('design:paramtypes', [])
     ], ModalComponent);

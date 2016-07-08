@@ -15,22 +15,45 @@ var JpaModal = (function () {
     function JpaModal(_cr) {
         var _this = this;
         this._cr = _cr;
-        this.defaults = {
-            okText: 'GOT IT!',
-            cancelText: 'Cancel',
-            mode: 'alert',
-            message: 'Are you sure?'
-        };
+        this._modes = ['alert', 'form'];
         this.openModal = new Rx_1.Observable(function (observer) { return _this._openModal = observer; }).share();
     }
+    Object.defineProperty(JpaModal.prototype, "defaults", {
+        get: function () {
+            switch (this._config.mode) {
+                case 'form':
+                    return {
+                        okText: 'Create',
+                        cancelText: 'Cancel',
+                        inputs: []
+                    };
+                default:
+                    return {
+                        okText: 'GOT IT!',
+                        cancelText: 'Cancel',
+                        message: 'Are you sure?'
+                    };
+            }
+        },
+        enumerable: true,
+        configurable: true
+    });
+    ;
     JpaModal.prototype.open = function (config) {
         var _this = this;
-        config = Object.assign(this.defaults, config);
+        this._config = config;
+        if (this._modes.indexOf(config.mode) < 0) {
+            config.mode = 'alert';
+        }
+        this._config = Object.assign(this.defaults, config);
+        if (this._config.mode === 'form' && this._config.inputs.length === 0) {
+            throw new Error('Modal with type \'form\' needs some inputs.');
+        }
         if (!this._openModal) {
             throw new Error("No Modal Containers have been initialized to receive modals.");
         }
-        this._openModal.next(config);
-        console.log('Opened modal with config', config);
+        this._openModal.next(this._config);
+        console.log('Opened modal with config', this._config);
         return Rx_1.Observable.create(function (observer) { return _this.buttonClicked = observer; });
     };
     JpaModal = __decorate([

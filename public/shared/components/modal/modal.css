@@ -82,5 +82,12 @@
       color: #1976d2; }
     :host .jpa-modal-actions .md-button-wrapper {
       text-transform: uppercase; }
+  :host form {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: column;
+    flex-direction: column; }
+    :host form .modal-form-col md-input {
+      width: 100%; }
 
 /*# sourceMappingURL=modal.css.map */

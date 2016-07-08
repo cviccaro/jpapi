@@ -1,0 +1,1 @@
+{"version":3,"sources":["@clients/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,mBAAmB,CAAC,EAAA;AAClC,iBAAc,qBAAqB,CAAC,EAAA;AACpC,iBAAc,kBAAkB,CAAC,EAAA","file":"@clients/index.js","sourcesContent":["export * from './index.component';\r\nexport * from './clients.component';\r\nexport * from './clients.routes';\r\n"],"sourceRoot":"/source/"}

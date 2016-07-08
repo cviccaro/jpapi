@@ -45,10 +45,10 @@
       }
       a {
         &:hover {
-          color: initial;
+          .md-list-text,md-icon { color: initial; }
         }
         &.active {
-          color: $accent;
+          .md-list-text,md-icon { color: $accent; }
         }
         &:active {
           .md-list-item {

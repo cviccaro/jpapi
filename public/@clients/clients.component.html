@@ -1,0 +1,41 @@
+<md-toolbar layout="row" layout-padding class="list-toolbar">
+  <!-- <div layout="row" layout-align="start center" flex="50"> -->
+    <h2 class="list-title">Clients</h2>
+    <!-- <h4 class="list-info">Showing {{ state.from }} - {{ state.to }} of {{ state.total }}</h4> -->
+    <button md-icon-button (click)="menu.open($event)" class="menu-btn"><md-icon>more_horiz</md-icon></button>
+    <jpa-context-menu #menu>
+        <jpa-context-menu-item>
+            <button md-button (click)="add($event)"><md-icon>add_circle</md-icon>Add Client</button>
+        </jpa-context-menu-item>
+    </jpa-context-menu>
+  <!-- </div> -->
+ <!--  <div layout="row" layout-align="end center" flex="50" class="sorts" [hidden]="!clients.length">
+    <md-input-container>
+      <label>Per Page</label>
+      <select [(ngModel)]="state.per_page" (ngModelChange)="fetch()">
+        <option *ngFor="let option of state.perPageOptions" [value]="option">{{ option }}</option>
+      </select>
+    </md-input-container>
+    <md-input-container>
+      <label>Sort</label>
+      <select [(ngModel)]="state.sort.by" (ngModelChange)="fetch()">
+        <option *ngFor="let option of state.sortOptions" [value]="option.value">{{ option.name }}</option>
+      </select>
+    </md-input-container>
+    <md-input-container>
+      <label>Order</label>
+      <select [(ngModel)]="state.sort.descending" (ngModelChange)="fetch()">
+        <option value="false">Ascending</option>
+        <option value="true">Descending</option>
+      </select>
+    </md-input-container>
+  </div> -->
+</md-toolbar>
+<md-grid-list cols="6" rowHeight="150px" gutterSize="8px">
+    <md-grid-tile *ngFor="let client of clients" [class.featured]="client.featured">
+        <button class="toggle-featured" md-icon-button title="Featured" (click)="toggleFeatured(client)"><md-icon *ngIf="client.featured">stars</md-icon></button>
+        <img *ngIf="client.image_id" [src]="client.image.url" />
+        <h4 [hidden]="client.image_id" class="client-name">{{ client.name }}</h4>
+        <p>{{ client.projects.length }} Projects</p>
+    </md-grid-tile>
+</md-grid-list>

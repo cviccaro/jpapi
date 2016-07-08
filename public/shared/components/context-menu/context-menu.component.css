@@ -12,5 +12,7 @@
     display: none; }
   :host .menu-content {
     width: 100%; }
+    :host .menu-content md-icon {
+      margin-right: 4px; }
 
 /*# sourceMappingURL=context-menu.component.css.map */

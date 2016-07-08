@@ -15,11 +15,24 @@ export class JpaModal {
 
     public buttonClicked: Observer<any>;
 
-    private defaults: ModalConfig = {
-        okText: 'GOT IT!',
-        cancelText: 'Cancel',
-        mode: 'alert',
-        message: 'Are you sure?'
+    private _modes = ['alert', 'form'];
+    private _config: ModalConfig;
+
+    private get defaults(): ModalConfig {
+        switch(this._config.mode) {
+            case 'form':
+                return {
+                    okText: 'Create',
+                    cancelText: 'Cancel',
+                    inputs: []
+                };
+            default:
+                return {
+                    okText: 'GOT IT!',
+                    cancelText: 'Cancel',
+                    message: 'Are you sure?'
+                };
+        }
     };
 
     constructor(private _cr: ComponentResolver) {
@@ -28,13 +41,25 @@ export class JpaModal {
     }
 
     open(config: ModalConfig) {
-        config = Object.assign(this.defaults, config);
+        this._config = config;
+
+        if (this._modes.indexOf(config.mode) < 0) {
+            // Assign a default if no mode is provided
+            config.mode = 'alert';
+        }
+
+        this._config = Object.assign(this.defaults, config);
+
+        if (this._config.mode === 'form' && this._config.inputs.length === 0) {
+            throw new Error('Modal with type \'form\' needs some inputs.');
+        }
+
         if (!this._openModal) {
             throw new Error("No Modal Containers have been initialized to receive modals.");
         }
 
-        this._openModal.next(config);
-        console.log('Opened modal with config', config);
+        this._openModal.next(this._config);
+        console.log('Opened modal with config', this._config);
 
         return Observable.create(observer => this.buttonClicked = observer);
     }

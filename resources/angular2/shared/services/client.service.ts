@@ -12,6 +12,17 @@ export class ClientService {
 		this.http = http;
 	}
 
+    all(params: {} = {}) {
+        let query = new URLSearchParams();
+        for (var key in params) {
+            const param: string = params[key];
+            query.set(key, param);
+        }
+
+        return this.http.get('/clients/paged', {search: query})
+            .map(res => res.json());
+    }
+
 	options() {
 		return this.http.get('/options/clients')
 			.map(res => res.json());

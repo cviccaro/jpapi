@@ -1,10 +1,38 @@
-<div class="jpa-modal-content" *ngIf="config">
-    <h2 class="jpa-modal-title" [hidden]="config.mode == 'alert'">{{ config.title }}</h2>
-    <div class="jpa-modal-content-body">
-        <p>{{ config.message }}</p>
-    </div>
-</div>
-<div class="jpa-modal-actions" *ngIf="config">
-    <button class="cancel" md-button (click)="action('cancel', config, $event)">{{ config.cancelText }}</button>
-    <button class="ok" md-button (click)="action('ok', config, $event)">{{ config.okText }}</button>
+<div class="jpa-modal-content {{ config.mode }}" *ngIf="config" [ngSwitch]="config.mode">
+    <template [ngSwitchCase]="'alert'">
+        <div class="jpa-modal-content-body">
+            <p>{{ config.message }}</p>
+        </div>
+        <div class="jpa-modal-actions">
+            <button class="cancel" md-button (click)="action('cancel', config, $event)">{{ config.cancelText }}</button>
+            <button class="ok" md-button (click)="action('ok', config, $event)">{{ config.okText }}</button>
+        </div>
+    </template>
+    <template [ngSwitchCase]="'form'">
+        <form #modalForm="ngForm" (ngSubmit)="modalFormSubmit()">
+            <h2 class="jpa-modal-title">{{ config.title }}</h2>
+            <div class="jpa-modal-content-body">
+                <div class="modal-form-col" *ngFor="let col of config.inputs; let rowIndex = index; let odd = odd; let even = even;">
+                    <div [ngSwitch]="col.type">
+                        <template [ngSwitchCase]="'file'">
+                            <label [attr.for]="col.name">{{ col.label }}</label><input type="file" [name]="col.name" [(ngModel)]="_files[col.name]" (change)="handleChange(col, $event)" [required]="col.required" />
+                        </template>
+                        <template [ngSwitchCase]="'checkbox'">
+                            <md-checkbox [name]="col.name" [(ngModel)]="col.value" [required]="col.required">
+                                {{ col.label }}
+                            </md-checkbox>
+                        </template>
+                        <template ngSwitchDefault>
+                            <md-input [placeholder]="col.placeholder" [name]="col.name" [(ngModel)]="col.value" [required]="col.required">
+                            </md-input>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            <div class="jpa-modal-actions">
+                <button class="cancel" md-button (click)="action('cancel', config, $event)">{{ config.cancelText }}</button>
+                <button class="ok" md-button type="submit">{{ config.okText }}</button>
+            </div>
+        </form>
+    </template>
 </div>

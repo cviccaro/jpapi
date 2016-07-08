@@ -16,6 +16,16 @@ var ClientService = (function () {
         this.http = http;
         this.http = http;
     }
+    ClientService.prototype.all = function (params) {
+        if (params === void 0) { params = {}; }
+        var query = new http_1.URLSearchParams();
+        for (var key in params) {
+            var param = params[key];
+            query.set(key, param);
+        }
+        return this.http.get('/clients/paged', { search: query })
+            .map(function (res) { return res.json(); });
+    };
     ClientService.prototype.options = function () {
         return this.http.get('/options/clients')
             .map(function (res) { return res.json(); });

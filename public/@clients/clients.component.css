@@ -1,0 +1,78 @@
+/**
+ * Retrieves a color value from the $material-colors Sass map
+ * Inspired by https://github.com/nilskaspersson/Google-Material-UI-Color-Palette/
+ *
+ * @function
+ * @param {string} color-name             - quoted, lower-case, dasherized color
+ *                                          name (e.g. 'pink', 'amber')
+ * @param {string} [color-variant='500']  - quoted, lowercase color variant (e.g.
+ *                                          '200', 'a100')
+ */
+/**
+ * Palette
+ */
+/**
+ * Colors
+ */
+/**
+ * Fonts
+ */
+/**
+ * Animations & Transitions
+ */
+/**
+ * Transition mixins
+ */
+:host {
+  /**
+     * Toolbar
+     */ }
+  :host md-grid-tile figure {
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    -webkit-justify-content: space-around; }
+    :host md-grid-tile figure p {
+      margin-top: 8px; }
+    :host md-grid-tile figure .toggle-featured {
+      position: absolute;
+      top: 0;
+      right: 0;
+      color: rgba(0, 0, 0, 0.54);
+      border: 1px solid #9e9e9e;
+      height: 24px;
+      width: 24px; }
+  :host md-grid-tile.featured figure .toggle-featured {
+    color: #ffeb3b;
+    border: none; }
+  :host md-toolbar {
+    background: none;
+    padding: 0;
+    margin-bottom: 24px; }
+    :host md-toolbar button[md-button],
+    :host md-toolbar button[md-raised-button] {
+      height: 36px; }
+    :host md-toolbar .list-info {
+      padding-left: 0.5em;
+      border-left: 1px solid #ccc;
+      line-height: normal; }
+    :host md-toolbar .list-title {
+      padding-right: 0.5em;
+      margin: 0 0 0 1.25em;
+      line-height: normal; }
+    :host md-toolbar .list-toolbar-actions {
+      margin-left: 1em; }
+    :host md-toolbar .sorts {
+      -ms-flex-pack: justify;
+      justify-content: space-between; }
+      :host md-toolbar .sorts md-input-container {
+        -ms-flex-direction: row;
+        flex-direction: row; }
+        :host md-toolbar .sorts md-input-container label {
+          font-size: 14px; }
+        :host md-toolbar .sorts md-input-container select {
+          font-size: 14px;
+          min-width: 120px; }
+
+/*# sourceMappingURL=clients.component.css.map */

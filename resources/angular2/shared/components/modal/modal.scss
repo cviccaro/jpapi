@@ -77,4 +77,15 @@
             text-transform: uppercase;
         }
     }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        // flex-wrap: wrap;
+        .modal-form-col {
+            md-input {
+                width: 100%;
+            }
+        }
+    }
 }

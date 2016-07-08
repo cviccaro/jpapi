@@ -6,6 +6,7 @@ __export(require('./modal'));
 __export(require('./backdrop'));
 __export(require('./provider'));
 __export(require('./container'));
+__export(require('./modal.interface'));
 var backdrop_2 = require('./backdrop');
 var container_2 = require('./container');
 var modal_2 = require('./modal');
