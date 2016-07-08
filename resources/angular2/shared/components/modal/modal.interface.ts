@@ -1,13 +1,3 @@
-export interface ModalInput {
-    label?: string;
-    name: string;
-    type?: string;
-    required?: boolean;
-    placeholder?: string;
-    value?: any;
-    hint?: any;
-}
-
 export interface ModalConfig {
     mode?: string;
     title?: string;
@@ -16,12 +6,24 @@ export interface ModalConfig {
     cancelText?: string;
     okText?: string;
     inputs?: ModalInput[];
+    formClass?: any;
 }
 
 export interface ModalAction {
     type: string;
     config?: any;
     event: MouseEvent;
+}
+
+export interface ModalInput {
+    label?: string;
+    name: string;
+    type?: string;
+    required?: boolean;
+    placeholder?: string;
+    value?: any;
+    hint?: any;
+    hidden?: string;
 }
 
 export class GenericFormColumn implements ModalInput {

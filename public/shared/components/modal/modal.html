@@ -9,10 +9,10 @@
         </div>
     </template>
     <template [ngSwitchCase]="'form'">
-        <form #modalForm="ngForm" (ngSubmit)="modalFormSubmit()">
+        <form #modalForm="ngForm" (ngSubmit)="modalFormSubmit()" [class]="config.formClass">
             <h2 class="jpa-modal-title">{{ config.title }}</h2>
             <div class="jpa-modal-content-body">
-                <div class="modal-form-col" *ngFor="let col of config.inputs; let rowIndex = index; let odd = odd; let even = even;">
+                <div class="modal-form-col type-{{ col.type }} name-{{ col.name }}" *ngFor="let col of config.inputs; let rowIndex = index; let odd = odd; let even = even;">
                     <div [ngSwitch]="col.type">
                         <template [ngSwitchCase]="'file'">
                             <label [attr.for]="col.name">{{ col.label }}</label><input type="file" [name]="col.name" [(ngModel)]="_files[col.name]" (change)="handleChange(col, $event)" [required]="col.required" />

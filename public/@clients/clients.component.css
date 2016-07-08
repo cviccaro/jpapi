@@ -35,17 +35,22 @@
     -webkit-justify-content: space-around; }
     :host md-grid-tile figure p {
       margin-top: 8px; }
-    :host md-grid-tile figure .toggle-featured {
+    :host md-grid-tile figure .actions {
       position: absolute;
       top: 0;
       right: 0;
-      color: rgba(0, 0, 0, 0.54);
-      border: 1px solid #9e9e9e;
-      height: 24px;
-      width: 24px; }
-  :host md-grid-tile.featured figure .toggle-featured {
-    color: #ffeb3b;
-    border: none; }
+      display: none;
+      -ms-flex-direction: column;
+      flex-direction: column; }
+      :host md-grid-tile figure .actions button {
+        color: rgba(0, 0, 0, 0.54);
+        height: 24px;
+        width: 24px; }
+        :host md-grid-tile figure .actions button.remove {
+          color: #f44336; }
+  :host md-grid-tile:hover figure .actions {
+    display: -ms-flexbox;
+    display: flex; }
   :host md-toolbar {
     background: none;
     padding: 0;

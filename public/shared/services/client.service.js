@@ -36,6 +36,75 @@ var ClientService = (function () {
     ClientService.prototype.cached = function () {
         return this._cached;
     };
+    ClientService.prototype.update = function (id, values) {
+        var form = new FormData();
+        var _form = {};
+        values.forEach(function (col) {
+            var key = col.name;
+            var value = col.value;
+            switch (key) {
+                case 'image':
+                    if (value !== undefined && value !== null) {
+                        form.append(key, col.value[0]);
+                        _form[key] = col.value[0];
+                    }
+                    break;
+                case 'featured':
+                    if (value !== undefined && value !== null) {
+                        form.append(key, col.value ? 1 : 0);
+                        _form[key] = col.value ? 1 : 0;
+                    }
+                    break;
+                default:
+                    if (value !== undefined && value !== null) {
+                        form.append(key, value);
+                        _form[key] = value;
+                    }
+            }
+        });
+        console.log('update client with data: ', {
+            values: values,
+            form: form,
+            _form: _form
+        });
+        return this.http.post('/clients/update/' + id, form).map(function (res) { return res.json(); });
+    };
+    ClientService.prototype.create = function (values) {
+        var form = new FormData();
+        var _form = {};
+        values.forEach(function (col) {
+            var key = col.name;
+            var value = col.value;
+            switch (key) {
+                case 'image':
+                    if (value !== undefined && value !== null) {
+                        form.append(key, col.value[0]);
+                        _form[key] = col.value[0];
+                    }
+                    break;
+                case 'featured':
+                    if (value !== undefined && value !== null) {
+                        form.append(key, col.value ? 1 : 0);
+                        _form[key] = col.value ? 1 : 0;
+                    }
+                    break;
+                default:
+                    if (value !== undefined && value !== null) {
+                        form.append(key, value);
+                        _form[key] = value;
+                    }
+            }
+        });
+        console.log('create client with data: ', {
+            values: values,
+            form: form,
+            _form: _form
+        });
+        return this.http.post('/clients', form).map(function (res) { return res.json(); });
+    };
+    ClientService.prototype.destroy = function (id) {
+        return this.http.delete('/clients/' + id);
+    };
     ClientService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [http_1.Http])

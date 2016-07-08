@@ -79,7 +79,7 @@ Route::group(['namespace' => 'Auth'], function () {
 });
 
 // Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
-Route::group([], function() {
+Route::group([], function () {
     Route::post('blogs', 'BlogController@store');
     Route::put('blogs/{id}', 'BlogController@update');
     Route::post('blogs/update/{id}', 'BlogController@update');
@@ -88,6 +88,10 @@ Route::group([], function() {
     Route::post('staff', 'StaffController@add');
     Route::put('staff/{id}', 'StaffController@put');
     Route::delete('staff/{id}', 'StaffController@remove');
+
+    Route::post('clients', 'ClientController@store');
+    Route::post('clients/update/{id}', 'ClientController@update');
+    Route::delete('clients/{id}', 'ClientController@remove');
 
     Route::post('projects', 'ProjectController@store');
     Route::put('projects/{id}', 'ProjectController@update');

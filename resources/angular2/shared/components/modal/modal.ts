@@ -28,6 +28,8 @@ export class ModalComponent implements AfterViewInit, OnChanges {
 
     action(type, config, event) {
         console.log(type + ' button clicked.', event);
+        event.preventDefault();
+        event.stopPropagation();
 
         this._actionEmitter.emit({ type: type, config: config, event: event });
     }

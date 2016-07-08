@@ -2,6 +2,7 @@
 var JpClient = (function () {
     function JpClient() {
         this.id = null;
+        this.image_id = null;
         this.featured = false;
     }
     return JpClient;

@@ -9,22 +9,35 @@
             margin-top: 8px;
         }
 
-        .toggle-featured {
+        .actions {
           position: absolute;
           top: 0;
           right: 0;
-          color: $black_54;
-          border: 1px solid $grey_500;
-          height: 24px;
-          width: 24px;
+          display: none;
+          flex-direction: column;
+          button {
+            color: $black_54;
+            height: 24px;
+            width: 24px;
+            &.remove {
+              color: $danger;
+            }
+          }
         }
     }
-    md-grid-tile.featured figure {
-      .toggle-featured {
-        color: $yellow_500;
-        border: none;
+    md-grid-tile:hover {
+      figure {
+        .actions {
+          display: flex;
+        }
       }
     }
+    // md-grid-tile.featured figure {
+    //   .toggle-featured {
+    //     color: $yellow_500;
+    //     border: none;
+    //   }
+    // }
     /**
      * Toolbar
      */

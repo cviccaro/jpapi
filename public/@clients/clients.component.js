@@ -9,13 +9,15 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var angular2_toaster_1 = require('angular2-toaster');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var ClientsComponent = (function () {
-    function ClientsComponent(cache, menu, modal) {
+    function ClientsComponent(service, cache, modal, toaster) {
+        this.service = service;
         this.cache = cache;
-        this.menu = menu;
         this.modal = modal;
+        this.toaster = toaster;
         this.state = this.cache.get('clients');
         this.state.sortOptions = [
             { name: 'Updated At', value: 'updated_at' },
@@ -34,28 +36,84 @@ var ClientsComponent = (function () {
         console.log('ClientsComponent View Initialized.', this);
     };
     ClientsComponent.prototype.add = function () {
+        var _this = this;
         console.log('add a client');
-        this.menu.close();
         this.modal.open({
             mode: 'form',
             inputs: [
                 { name: 'name', required: true },
                 { name: 'alias' },
                 { name: 'featured', type: 'checkbox' },
-                { name: 'image', type: 'file' },
+                { name: 'image', type: 'file' }
             ],
             title: 'Add a client'
         }).subscribe(function (action) {
-            var form = action.config.inputs;
-            console.log('We can now save our client with this data: ', {
-                form: form
-            });
+            if (action.type === 'submit') {
+                var form = action.config.inputs;
+                console.log('We can now save our client with this data: ', {
+                    form: form
+                });
+                _this.service.create(form)
+                    .subscribe(function (res) {
+                    _this.toaster.pop('success', 'Success!', res.name + ' has been created.');
+                    setTimeout(function () { _this.fetch(); }, 0);
+                });
+            }
         });
     };
     ClientsComponent.prototype.toggleFeatured = function (client) {
         console.log('toggle featured', client);
     };
-    ClientsComponent.prototype.fetch = function () { };
+    ClientsComponent.prototype.edit = function (client) {
+        var _this = this;
+        console.log('Edit Client', client);
+        this.modal.open({
+            mode: 'form',
+            inputs: [
+                { name: 'name', required: true, value: client.name },
+                { name: 'alias', value: client.alias },
+                { name: 'featured', type: 'checkbox', value: client.featured },
+                { name: 'image', type: 'file' },
+                { name: 'image_remove', type: 'checkbox', label: 'Delete Image' }
+            ],
+            formClass: 'update' + (client.image_id !== null ? ' has-image' : ''),
+            okText: 'Update',
+            title: 'Edit client ' + client.name
+        }).subscribe(function (action) {
+            if (action.type === 'submit') {
+                var form = action.config.inputs;
+                console.log('We can now save our client with this data: ', {
+                    form: form
+                });
+                _this.service.update(client.id, form)
+                    .subscribe(function (res) {
+                    _this.toaster.pop('success', 'Success!', res.name + ' has been edited.');
+                    setTimeout(function () { _this.fetch(); }, 0);
+                });
+            }
+        });
+    };
+    ClientsComponent.prototype.remove = function (client) {
+        var _this = this;
+        console.log('Remove  Client', client);
+        var name = client.name;
+        this.modal.open({ message: 'Discard client?', okText: 'Discard' })
+            .subscribe(function (action) {
+            if (action.type === 'ok') {
+                _this.service.destroy(client.id)
+                    .subscribe(function (res) {
+                    _this.toaster.pop('success', 'Success!', name + ' has been obliterated.');
+                    setTimeout(function () { _this.fetch(); }, 0);
+                });
+            }
+        });
+    };
+    ClientsComponent.prototype.fetch = function () {
+        var _this = this;
+        this.service.all().subscribe(function (res) {
+            _this.clients = res.data;
+        });
+    };
     ClientsComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
@@ -64,7 +122,7 @@ var ClientsComponent = (function () {
             styleUrls: ['./clients.component.css'],
             directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.CONTEXT_MENU_DIRECTIVES]
         }), 
-        __metadata('design:paramtypes', [index_1.JpaCache, index_1.JpaContextMenu, index_1.JpaModal])
+        __metadata('design:paramtypes', [index_1.ClientService, index_1.JpaCache, index_1.JpaModal, angular2_toaster_1.ToasterService])
     ], ClientsComponent);
     return ClientsComponent;
 }());

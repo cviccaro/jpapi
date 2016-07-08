@@ -30,6 +30,8 @@ var ModalComponent = (function () {
     };
     ModalComponent.prototype.action = function (type, config, event) {
         console.log(type + ' button clicked.', event);
+        event.preventDefault();
+        event.stopPropagation();
         this._actionEmitter.emit({ type: type, config: config, event: event });
     };
     ModalComponent.prototype.modalFormSubmit = function () {

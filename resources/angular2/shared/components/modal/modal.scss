@@ -48,6 +48,10 @@
                 margin: 0.8em 0 1.6em;
             }
         }
+        &.alert {
+            margin-bottom: 0;
+            border: none;
+        }
     }
     .jpa-modal-actions {
         display: -webkit-flex;
@@ -85,6 +89,16 @@
         .modal-form-col {
             md-input {
                 width: 100%;
+            }
+        }
+        &.update {
+            .modal-form-col.name-image_remove {
+                display: none;
+            }
+        }
+        &.update.has-image {
+            .modal-form-col.name-image_remove {
+                display: block;
             }
         }
     }

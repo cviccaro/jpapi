@@ -63,6 +63,9 @@
         letter-spacing: 0.010em;
         line-height: 1.6em;
         margin: 0.8em 0 1.6em; }
+    :host .jpa-modal-content.alert {
+      margin-bottom: 0;
+      border: none; }
   :host .jpa-modal-actions {
     display: -ms-flexbox;
     display: flex;
@@ -89,5 +92,9 @@
     flex-direction: column; }
     :host form .modal-form-col md-input {
       width: 100%; }
+    :host form.update .modal-form-col.name-image_remove {
+      display: none; }
+    :host form.update.has-image .modal-form-col.name-image_remove {
+      display: block; }
 
 /*# sourceMappingURL=modal.css.map */
