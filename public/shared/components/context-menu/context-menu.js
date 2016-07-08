@@ -21,7 +21,7 @@ var JpaContextMenu = (function () {
         enumerable: true,
         configurable: true
     });
-    JpaContextMenu.prototype.setContainer = function (vc) {
+    JpaContextMenu.prototype.registerContainer = function (vc) {
         this.viewContainer = vc;
     };
     JpaContextMenu.prototype.resolveBackdrop = function (component) {

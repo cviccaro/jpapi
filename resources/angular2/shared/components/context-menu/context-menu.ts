@@ -21,7 +21,7 @@ export class JpaContextMenu {
 
 	constructor(private _cr: ComponentResolver) { }
 
-	setContainer(vc: ViewContainerRef) {
+	registerContainer(vc: ViewContainerRef) {
 		// @todo: there must be a better way to get the container than
 		// having to register it in a "root" component
 		this.viewContainer = vc;

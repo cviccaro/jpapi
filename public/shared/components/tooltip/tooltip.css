@@ -1,0 +1,21 @@
+:host {
+  position: absolute;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -ms-flex-pack: center;
+  justify-content: center; }
+  :host .tooltip {
+    opacity: 1;
+    text-align: center;
+    font-size: 11px;
+    border-radius: 3px;
+    padding: 4px 8px;
+    color: #fff;
+    background: #666;
+    -ms-flex: 1;
+    flex: 1;
+    white-space: nowrap; }
+
+/*# sourceMappingURL=tooltip.css.map */

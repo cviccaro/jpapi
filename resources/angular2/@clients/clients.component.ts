@@ -1,14 +1,14 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { ToasterService } from 'angular2-toaster';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { JpaCache, JpClient, JpaContextMenu, CONTEXT_MENU_DIRECTIVES, JpaModal, ModalAction, ClientService } from '../shared/index';
+import { JpaCache, JpClient, JpaContextMenu, CONTEXT_MENU_DIRECTIVES, JpaModal, ModalAction, ClientService, TooltipDirective } from '../shared/index';
 
 @Component({
     moduleId: module.id,
     selector: 'jpa-clients',
     templateUrl: './clients.component.html',
     styleUrls: ['./clients.component.css'],
-    directives: [ MATERIAL_DIRECTIVES, CONTEXT_MENU_DIRECTIVES ]
+    directives: [ MATERIAL_DIRECTIVES, CONTEXT_MENU_DIRECTIVES, TooltipDirective ]
 })
 export class ClientsComponent implements AfterViewInit {
     public state: any;

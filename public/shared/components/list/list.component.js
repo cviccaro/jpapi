@@ -11,7 +11,8 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var angular2_moment_1 = require('angular2-moment');
 var angular2_material_1 = require('../../libs/angular2-material');
-var index_1 = require('./pager/index');
+var index_1 = require('../tooltip/index');
+var index_2 = require('./pager/index');
 var ListComponent = (function () {
     function ListComponent() {
         this.listUpdate = new core_1.EventEmitter();
@@ -78,7 +79,8 @@ var ListComponent = (function () {
             styleUrls: ['./list.component.css'],
             directives: [
                 angular2_material_1.MATERIAL_DIRECTIVES,
-                index_1.PagerComponent
+                index_2.PagerComponent,
+                index_1.TooltipDirective
             ],
             pipes: [angular2_moment_1.TimeAgoPipe, angular2_moment_1.CalendarPipe]
         }), 

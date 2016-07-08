@@ -120,7 +120,7 @@ var ClientsComponent = (function () {
             selector: 'jpa-clients',
             templateUrl: './clients.component.html',
             styleUrls: ['./clients.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.CONTEXT_MENU_DIRECTIVES]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.CONTEXT_MENU_DIRECTIVES, index_1.TooltipDirective]
         }), 
         __metadata('design:paramtypes', [index_1.ClientService, index_1.JpaCache, index_1.JpaModal, angular2_toaster_1.ToasterService])
     ], ClientsComponent);

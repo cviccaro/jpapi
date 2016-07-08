@@ -48,19 +48,19 @@
     </div>
 </md-sidenav-layout>
 <div class="app-sidebar" *ngIf="loggedIn" [hidden]="_routeDepth === 2">
-  <div class="sidebar-button" [class.active]="routeIs('/', true)">
+  <div class="sidebar-button" [class.active]="routeIs('/', true)" jpa-tooltip tooltip="Home">
     <a md-icon-button [routerLink]="['/']"><md-icon>home</md-icon></a>
   </div>
-  <div class="sidebar-button" [class.active]="routeIs('/blogs')">
+  <div class="sidebar-button" [class.active]="routeIs('/blogs')" jpa-tooltip tooltip="Blogs">
     <a md-icon-button [routerLink]="['/blogs']"><md-icon>speaker_notes</md-icon></a>
   </div>
-  <div class="sidebar-button" [class.active]="routeIs('/projects')">
+  <div class="sidebar-button" [class.active]="routeIs('/projects')" jpa-tooltip tooltip="Projects">
     <a md-icon-button [routerLink]="['/projects']"><md-icon>work</md-icon></a>
   </div>
-  <div class="sidebar-button" [class.active]="routeIs('/clients')">
+  <div class="sidebar-button" [class.active]="routeIs('/clients')" jpa-tooltip tooltip="Clients">
     <a md-icon-button [routerLink]="['/clients']"><md-icon>business</md-icon></a>
   </div>
-  <div class="sidebar-button">
+  <div class="sidebar-button" jpa-tooltip tooltip="Main Menu">
     <button md-icon-button (click)="sidenav.toggle()"><md-icon>more_horiz</md-icon></button>
   </div>
 </div>

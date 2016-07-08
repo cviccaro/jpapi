@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import {TimeAgoPipe, CalendarPipe} from 'angular2-moment';
 
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
-
+import { TooltipDirective } from '../tooltip/index';
 import { PagerComponent, PagerData } from './pager/index';
 
 @Component({
@@ -12,7 +12,8 @@ import { PagerComponent, PagerData } from './pager/index';
     styleUrls: ['./list.component.css'],
     directives: [
         MATERIAL_DIRECTIVES,
-        PagerComponent
+        PagerComponent,
+        TooltipDirective
     ],
     pipes: [TimeAgoPipe, CalendarPipe]
 })

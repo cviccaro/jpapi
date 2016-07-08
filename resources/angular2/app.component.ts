@@ -6,19 +6,20 @@ import { MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS } from './shared/libs/angular2-
 import { MdSidenav} from '@angular2-material/sidenav';
 import { Subscription } from 'rxjs/Subscription';
 
-import { AuthService, MODAL_DIRECTIVES, JpaModal, JpaContextMenu } from './shared/index';
+import { AuthService, MODAL_DIRECTIVES, JpaModal, JpaContextMenu, TooltipDirective, JpaTooltip } from './shared/index';
 
 @Component({
     selector: 'jpa-app',
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css'],
     viewProviders: [HTTP_PROVIDERS],
-    providers: [MATERIAL_PROVIDERS, ToasterService, JpaModal, JpaContextMenu],
+    providers: [MATERIAL_PROVIDERS, ToasterService, JpaModal, JpaContextMenu, JpaTooltip],
     directives: [
         ROUTER_DIRECTIVES,
         MATERIAL_DIRECTIVES,
         ToasterContainerComponent,
-        MODAL_DIRECTIVES
+        MODAL_DIRECTIVES,
+        TooltipDirective
     ]
 })
 export class AppComponent implements OnInit, OnDestroy {
@@ -33,8 +34,15 @@ export class AppComponent implements OnInit, OnDestroy {
 
     @ViewChild(MdSidenav) private _sidenav: MdSidenav;
 
-    constructor(public router: Router, private authService: AuthService, private contextMenu: JpaContextMenu, private container: ViewContainerRef) {
-        this.contextMenu.setContainer(container);
+    constructor(
+        public router: Router,
+        private authService: AuthService,
+        private contextMenu: JpaContextMenu,
+        private tooltip: JpaTooltip,
+        private container: ViewContainerRef
+    ) {
+        this.tooltip.registerContainer(container);
+        this.contextMenu.registerContainer(container);
         this.toasterConfig = new ToasterConfig({
             showCloseButton: true
         });

@@ -10,5 +10,6 @@ __export(require('./md-select/index'));
 __export(require('./panel/index'));
 __export(require('./image-upload/index'));
 __export(require('./modal/index'));
+__export(require('./tooltip/index'));
 
 //# sourceMappingURL=index.js.map
