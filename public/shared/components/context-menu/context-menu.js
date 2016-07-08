@@ -29,8 +29,7 @@ var JpaContextMenu = (function () {
         return Rx_1.Observable.create(function (observer) {
             document.body.appendChild(component.element.nativeElement);
             _this._cr.resolveComponent(focus_trap_1.ContextMenuFocusTrap).then(function (cmpFactory) {
-                var injector = _this.viewContainer.parentInjector;
-                return _this.viewContainer.createComponent(cmpFactory, _this.viewContainer.length, injector);
+                return _this.viewContainer.createComponent(cmpFactory, _this.viewContainer.length);
             }).then(function (cmpRef) {
                 _this._focusTrapRef = cmpRef;
                 _this._focusTrapRef.instance.onClickOutside.subscribe(function (e) {

@@ -17,7 +17,6 @@ var TooltipDirective = (function () {
     }
     TooltipDirective.prototype.onMouseEnter = function (e) {
         var _this = this;
-        console.log(this);
         this.provider.open(this.el, this.tooltip, this.tooltipAlign)
             .subscribe(function (e) {
             _this._cmpRef = e;

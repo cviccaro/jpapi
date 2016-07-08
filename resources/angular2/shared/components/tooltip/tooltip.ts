@@ -15,7 +15,6 @@ export class TooltipDirective {
 
 	@HostListener('mouseenter')
 	onMouseEnter(e: any) {
-		console.log(this);
 		this.provider.open(this.el, this.tooltip, this.tooltipAlign)
 			.subscribe((e: ComponentRef<TooltipComponent>) => {
 				this._cmpRef = e;

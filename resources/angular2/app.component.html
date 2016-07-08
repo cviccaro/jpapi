@@ -23,6 +23,10 @@
           <md-icon md-list-icon>business</md-icon>
           <span md-line>Clients</span>
         </a>
+        <a md-list-item [routerLink]="['/divisions']" [class.active]="routeIs('/divisions')">
+          <md-icon md-list-icon>place</md-icon>
+          <span md-line>Divisions</span>
+        </a>
         <a *ngIf="loggedIn" md-list-item (click)="logout()">
           <md-icon md-list-icon>power_settings_new</md-icon>
           <span md-line>Logout</span>

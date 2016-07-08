@@ -43,6 +43,14 @@ class Image extends Model
     }
 
     /**
+     * Get the division associated with this image
+     */
+    public function division()
+    {
+        return $this->hasOne('App\Division');
+    }
+
+    /**
      * Get the project associated with this image
      */
     public function project()

@@ -1,0 +1,15 @@
+<md-toolbar layout="row" layout-padding class="list-toolbar">
+    <h2 class="list-title">Divisions</h2>
+    <!-- <button md-icon-button (click)="add($event)" class="menu-btn" jpa-tooltip tooltip="Create"><md-icon>add</md-icon></button> -->
+</md-toolbar>
+<md-grid-list cols="3" rowHeight="150px" gutterSize="8px">
+    <md-grid-tile *ngFor="let division of divisions">
+        <div class="actions">
+          <!-- <button class="remove" md-icon-button title="Remove" (click)="remove(division)"><md-icon>delete</md-icon></button> -->
+          <button class="edit" md-icon-button title="Edit" (click)="edit(division)"><md-icon>mode_edit</md-icon></button>
+        </div>
+        <img *ngIf="division.image_id" [src]="division.image.url" [title]="division.name" />
+        <h4 class="division-name">{{ division.name }}</h4>
+        <p>{{ division.blogs }} Blogs</p>
+    </md-grid-tile>
+</md-grid-list>

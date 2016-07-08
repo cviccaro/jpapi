@@ -66,6 +66,7 @@ var JpaPanelContent = (function () {
     JpaPanelContent.prototype.removeImage = function (e) {
         e.preventDefault();
         e.stopPropagation();
+        console.log('removeImage', this);
         this._hasImage = false;
         this.image = null;
         this.menu.close();

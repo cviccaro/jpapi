@@ -50,6 +50,9 @@ Route::get('clients/paged', 'ClientController@paged');
 Route::get('clients/featured', 'ClientController@featured');
 // Route::get('clients/{id}', 'ClientController@get');
 
+Route::get('divisions/paged', 'DivisionController@paged');
+Route::get('divisions/{id}', 'DivisionController@get');
+
 Route::get('options/clients', 'ClientController@options');
 Route::get('options/divisions', 'DivisionController@options');
 Route::get('options/tags', 'TagController@options');
@@ -61,6 +64,8 @@ Route::get('projects/uri/{uri}', 'ProjectController@getFromSlug');
 Route::get('projects/{id}', 'ProjectController@get');
 
 Route::get('img/{model}/{name}', 'ImageController@getPublic');
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +90,8 @@ Route::group([], function () {
     Route::post('blogs/update/{id}', 'BlogController@update');
     Route::delete('blogs/{id}', 'BlogController@remove');
 
+    Route::post('divisions/update/{id}', 'DivisionController@update');
+
     Route::post('staff', 'StaffController@add');
     Route::put('staff/{id}', 'StaffController@put');
     Route::delete('staff/{id}', 'StaffController@remove');
@@ -99,4 +106,9 @@ Route::group([], function () {
     Route::delete('projects/{id}', 'ProjectController@remove');
 
     Route::post('upload/image', 'ImageController@uploadTemp');
+});
+
+
+Route::get('test', function () {
+    dd(App\Division::with('blogs', 'projects')->get()->toArray());
 });

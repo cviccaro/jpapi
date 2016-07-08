@@ -35,11 +35,8 @@ export class JpaContextMenu {
 
 			// Resolve the ContextMenuComponent, and build it
 			this._cr.resolveComponent(ContextMenuFocusTrap).then((cmpFactory: ComponentFactory<any>) => {
-				// Just use the injector of the viewContainer that was registered
-				let injector = this.viewContainer.parentInjector;
-
 				// Create the component, outputs a promise...
-				return this.viewContainer.createComponent(cmpFactory, this.viewContainer.length, injector);
+				return this.viewContainer.createComponent(cmpFactory, this.viewContainer.length);
 			}).then((cmpRef: ComponentRef<ContextMenuFocusTrap>) => {
 				// Store reference to FocusTrap component
 				this._focusTrapRef = cmpRef;

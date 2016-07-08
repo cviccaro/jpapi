@@ -23,9 +23,10 @@ var JpaTooltip = (function () {
         var _this = this;
         return Rx_1.Observable.create(function (observer) {
             _this._cr.resolveComponent(component_1.TooltipComponent).then(function (cmpFactory) {
-                var injector = core_1.ReflectiveInjector.fromResolvedProviders(core_1.ReflectiveInjector.resolve([
+                var providers = core_1.ReflectiveInjector.resolve([
                     { provide: interfaces_1.TooltipData, useValue: new interfaces_1.TooltipData(el, text, align) },
-                ]), _this.viewContainer.parentInjector);
+                ]);
+                var injector = core_1.ReflectiveInjector.fromResolvedProviders(providers, _this.viewContainer.parentInjector);
                 return _this.viewContainer.createComponent(cmpFactory, _this.viewContainer.length, injector);
             }).then(function (cmpRef) {
                 _this._toolTipCmp = cmpRef;
@@ -36,8 +37,8 @@ var JpaTooltip = (function () {
         });
     };
     JpaTooltip.prototype.close = function () {
-        console.log('destroying tool tip component: ', this._toolTipCmp);
-        this._toolTipCmp.destroy();
+        if (this._toolTipCmp)
+            this._toolTipCmp.destroy();
     };
     JpaTooltip = __decorate([
         core_1.Injectable(), 

@@ -8,7 +8,8 @@
     top: 0;
     z-index: 100;
     border-radius: 2px;
-	&[hidden] {
+	&[hidden],
+	&.hidden {
 		display: none;
 	}
 	.menu-content {

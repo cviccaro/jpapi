@@ -37,15 +37,21 @@ var ContextMenuComponent = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(ContextMenuComponent.prototype, "hiddenClass", {
+        get: function () { return this.opened ? false : true; },
+        enumerable: true,
+        configurable: true
+    });
     ContextMenuComponent.prototype.ngAfterViewInit = function () {
         this.registerSubscribers();
     };
     ContextMenuComponent.prototype.registerSubscribers = function () {
         var _this = this;
         this.closeSubscriber = this.service.onClose.subscribe(function (e) {
-            _this.opened = false;
             if (_this.backdrop)
                 _this.backdrop.destroy();
+            _this.opened = false;
+            _this.element.nativeElement.remove();
         });
     };
     ContextMenuComponent.prototype.open = function (e) {
@@ -86,6 +92,10 @@ var ContextMenuComponent = (function () {
         core_1.HostBinding('attr.hidden'), 
         __metadata('design:type', Object)
     ], ContextMenuComponent.prototype, "hiddenAttr", null);
+    __decorate([
+        core_1.HostBinding('class.hidden'), 
+        __metadata('design:type', Object)
+    ], ContextMenuComponent.prototype, "hiddenClass", null);
     ContextMenuComponent = __decorate([
         core_1.Component({
             moduleId: module.id,

@@ -1,0 +1,62 @@
+/**
+ * Retrieves a color value from the $material-colors Sass map
+ * Inspired by https://github.com/nilskaspersson/Google-Material-UI-Color-Palette/
+ *
+ * @function
+ * @param {string} color-name             - quoted, lower-case, dasherized color
+ *                                          name (e.g. 'pink', 'amber')
+ * @param {string} [color-variant='500']  - quoted, lowercase color variant (e.g.
+ *                                          '200', 'a100')
+ */
+/**
+ * Palette
+ */
+/**
+ * Colors
+ */
+/**
+ * Fonts
+ */
+/**
+ * Animations & Transitions
+ */
+/**
+ * Transition mixins
+ */
+:host {
+  /**
+	 * Toolbar
+	 */ }
+  :host md-grid-tile figure {
+    -ms-flex-direction: column;
+    flex-direction: column;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    -webkit-justify-content: space-around; }
+    :host md-grid-tile figure p {
+      margin-top: 8px; }
+    :host md-grid-tile figure .actions {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: none;
+      -ms-flex-direction: column;
+      flex-direction: column; }
+      :host md-grid-tile figure .actions button {
+        color: rgba(0, 0, 0, 0.54);
+        height: 24px;
+        width: 24px; }
+        :host md-grid-tile figure .actions button.remove {
+          color: #f44336; }
+  :host md-grid-tile:hover figure .actions {
+    display: -ms-flexbox;
+    display: flex; }
+  :host md-toolbar {
+    background: none;
+    padding: 0;
+    margin-bottom: 24px; }
+    :host md-toolbar button[md-button],
+    :host md-toolbar button[md-raised-button] {
+      height: 36px; }
+
+/*# sourceMappingURL=divisions.component.css.map */

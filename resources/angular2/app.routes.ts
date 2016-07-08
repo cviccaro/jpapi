@@ -5,15 +5,17 @@ import { HomeRoutes } from './@home/index';
 import { BlogRoutes } from './@blogs/index';
 import { ProjectRoutes } from './@projects/index';
 import { ClientRoutes } from './@clients/index';
+import { DivisionRoutes } from './@divisions/index';
 
-import { AuthGuard, LoginGuard, BlogListGuard, BlogGuard, ProjectGuard, ProjectListGuard, ClientsGuard } from './shared/index';
+import { AuthGuard, LoginGuard, BlogListGuard, BlogGuard, ProjectGuard, ProjectListGuard, ClientsGuard, DivisionsGuard, DivisionGuard } from './shared/index';
 
 const routes: RouterConfig = [
     ...LoginRoutes,
     ...HomeRoutes,
     ...BlogRoutes,
     ...ProjectRoutes,
-    ...ClientRoutes
+    ...ClientRoutes,
+    ...DivisionRoutes
 ];
 
 export const APP_ROUTER_PROVIDERS = [
@@ -24,5 +26,7 @@ export const APP_ROUTER_PROVIDERS = [
     BlogGuard,
     ProjectListGuard,
     ProjectGuard,
-    ClientsGuard
+    ClientsGuard,
+    DivisionsGuard,
+    DivisionGuard
 ];

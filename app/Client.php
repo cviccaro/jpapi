@@ -13,7 +13,8 @@ class Client extends Model
         return $this->hasMany('App\Project');
     }
 
-    public function image() {
+    public function image()
+    {
         return $this->belongsTo('App\Image');
     }
 }

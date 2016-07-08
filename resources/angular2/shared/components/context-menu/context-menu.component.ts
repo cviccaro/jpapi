@@ -31,6 +31,7 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 	@HostBinding('style.top') get topPos() { return this._topPos; }
 	@HostBinding('style.left') get leftPos() { return this._leftPos; }
 	@HostBinding('attr.hidden') get hiddenAttr() { return this.opened ? null : true; }
+	@HostBinding('class.hidden') get hiddenClass() { return this.opened ? false : true; }
 
 	constructor(private service: JpaContextMenu, element: ElementRef) {
 		this.element = element;
@@ -42,8 +43,9 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 
 	registerSubscribers() {
 		this.closeSubscriber = this.service.onClose.subscribe(e => {
-			this.opened = false;
 			if (this.backdrop) this.backdrop.destroy();
+			this.opened = false;
+			this.element.nativeElement.remove();
 		});
 	}
 

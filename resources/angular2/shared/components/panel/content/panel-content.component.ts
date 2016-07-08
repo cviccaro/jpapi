@@ -93,7 +93,7 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
         e.preventDefault();
         e.stopPropagation();
 
-        //console.log('removeImage', this);
+        console.log('removeImage', this);
 
         this._hasImage = false;
         this.image = null;

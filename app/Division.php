@@ -8,13 +8,20 @@ class Division extends Model
 {
     protected $fillable = ['name'];
 
+    protected $with = ['image'];
+
     public function blogs()
     {
-        return $this->hasMany('App\Blog');
+        return $this->belongsToMany('App\Blog')->withPivot('weight');
     }
 
     public function projects()
     {
-        return $this->hasMany('App\Project');
+        return $this->belongsToMany('App\Project')->withPivot('weight');
+    }
+
+    public function image()
+    {
+        return $this->belongsTo('App\Image');
     }
 }

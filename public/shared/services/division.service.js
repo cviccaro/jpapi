@@ -16,6 +16,16 @@ var DivisionService = (function () {
         this.http = http;
         this.http = http;
     }
+    DivisionService.prototype.all = function (params) {
+        if (params === void 0) { params = {}; }
+        var query = new http_1.URLSearchParams();
+        for (var key in params) {
+            var param = params[key];
+            query.set(key, param);
+        }
+        return this.http.get('/divisions/paged', { search: query })
+            .map(function (res) { return res.json(); });
+    };
     DivisionService.prototype.options = function () {
         return this.http.get('/options/divisions')
             .map(function (res) { return res.json(); });
@@ -25,6 +35,31 @@ var DivisionService = (function () {
     };
     DivisionService.prototype.cached = function () {
         return this._cached;
+    };
+    DivisionService.prototype.find = function (id) {
+        return this.http.get('/divisions/' + id)
+            .map(function (res) { return res.json(); });
+    };
+    DivisionService.prototype.update = function (id, attributes) {
+        var form = new FormData();
+        var _form = {};
+        Object.keys(attributes).forEach(function (key) {
+            var val = attributes[key];
+            switch (key) {
+                case 'image':
+                    form.append(key, val);
+                    _form[key] = val;
+                    break;
+                default:
+                    if (val !== undefined && val !== null) {
+                        form.append(key, val);
+                        _form[key] = val;
+                    }
+            }
+        });
+        console.debug('DivisionService is sending POST update request with form ', _form);
+        return this.http.post('/divisions/' + id, form)
+            .map(function (res) { return res.json(); });
     };
     DivisionService = __decorate([
         core_1.Injectable(), 

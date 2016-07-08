@@ -118,7 +118,7 @@ class BlogController extends Controller
 
         if ($request->has('image') && $request->get('image') === '__deleted') {
             $blog->image()->dissociate();
-        } else if ($request->hasFile('image')) {
+        } elseif ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = $file->getClientOriginalName();
 
