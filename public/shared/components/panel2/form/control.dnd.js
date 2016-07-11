@@ -20,10 +20,20 @@ var PanelFormControlDragnDrop = (function (_super) {
         configurable: true
     });
     PanelFormControlDragnDrop.prototype.summary = function (panelExpanded) {
-        var summary = panelExpanded ?
-            { text: this.editText, icon: this.editIcon }
-            : { text: this.value.length + ' selected', icon: false };
-        return summary;
+        if (panelExpanded) {
+            return { text: this.editText, icon: this.editIcon };
+        }
+        if (this.value.length > 5) {
+            return { text: this.value.length + ' selected', icon: false };
+        }
+        else {
+            var val = this.value.slice(0);
+            var text = val.shift().name;
+            if (val.length) {
+                text = val.reduce(function (carry, item) { return carry += ', ' + item.name; }, text);
+            }
+            return { text: text, icon: false };
+        }
     };
     return PanelFormControlDragnDrop;
 }(control_1.PanelFormControl));

@@ -9,16 +9,18 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var common_1 = require('@angular/common');
 var forms_1 = require('@angular/forms');
+var Rx_1 = require('rxjs/Rx');
 var field_value_1 = require('@angular2-material/core/annotations/field-value');
 var grid_list_1 = require('@angular2-material/grid-list');
 var progress_bar_1 = require('@angular2-material/progress-bar');
 var icon_1 = require('@angular2-material/icon');
-var Rx_1 = require('rxjs/Rx');
+var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
 var index_1 = require('./grid-image/index');
 var jp_file_1 = require('../../models/jp-file');
 var index_2 = require('./toolbar/index');
-var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
+var index_3 = require('./file-icon/index');
 var auth_service_1 = require('../../services/auth.service');
 var noop = function () { };
 var nextUniqueId = 0;
@@ -40,6 +42,7 @@ var ImageUploadComponent = (function () {
         this.multiple = false;
         this.images = [];
         this.type = 'file';
+        this.icon = 'panorama';
         this.gutterSize = "8px";
         this.cols = 4;
         this.rowHeight = '16:9';
@@ -48,6 +51,7 @@ var ImageUploadComponent = (function () {
         this.id = "jpa-panel-" + nextUniqueId++;
         this.step = null;
         this.tabIndex = null;
+        this.accept = '*';
         this.fileAdded = new core_1.EventEmitter();
         this.imageLoaded = new core_1.EventEmitter();
         this.imageAdded = new core_1.EventEmitter();
@@ -59,6 +63,13 @@ var ImageUploadComponent = (function () {
     Object.defineProperty(ImageUploadComponent.prototype, "typeClass", {
         get: function () {
             return "file-upload-" + this.type + " file-upload-" + (this.multiple ? 'multiple' : 'single');
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(ImageUploadComponent.prototype, "empty", {
+        get: function () {
+            return this.value === undefined || this.value === null || Array.isArray(this.value) && this.value.length === 0 || Object.keys(this.value).length === 0;
         },
         enumerable: true,
         configurable: true
@@ -103,28 +114,43 @@ var ImageUploadComponent = (function () {
                 }
                 this._onTouchedCallback();
             }
+            else {
+                console.debug('ImageUploadComponent# not emitting change events');
+            }
         },
         enumerable: true,
         configurable: true
     });
     ;
+    ImageUploadComponent.prototype.ngOnInit = function () {
+        if (this.type === 'image' && this.accept === '*') {
+            this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
+        }
+    };
     ImageUploadComponent.prototype.ngAfterViewInit = function () {
-        var _this = this;
-        if (this.type === 'image' && !this.multiple && this.value) {
+        if (this.type === 'image' && !this.multiple) {
             console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
                 this: this,
-                imageEl: this._currentImageEl.nativeElement
+                imageEl: this._currentImageEl
             });
-            var imageEl_1 = this._currentImageEl.nativeElement;
-            imageEl_1.addEventListener('load', function (event) {
-                console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Image loaded!', event);
-                var val = _this.value;
-                val.width = imageEl_1.naturalWidth;
-                val.height = imageEl_1.naturalHeight;
-                _this.value = val;
-                _this.change.emit(_this.value);
-            });
+            if (this._currentImageEl) {
+                var imageEl = this._currentImageEl.nativeElement;
+                this.imageLoad(imageEl);
+            }
         }
+    };
+    ImageUploadComponent.prototype.imageLoad = function (imageEl) {
+        var _this = this;
+        console.warn('ImageUploadComponent. imageLoad()');
+        imageEl.addEventListener('load', function (event) {
+            console.debug('ImageUploadComponent.imageLoad() ....  Image loaded!', event);
+            var val = _this.value;
+            val.width = imageEl.naturalWidth;
+            val.height = imageEl.naturalHeight;
+            _this.value = val;
+            _this.change.emit(_this.value);
+        });
+        setTimeout(function () { imageEl.src = _this._value.url; });
     };
     ImageUploadComponent.prototype.writeValue = function (value) {
         var _this = this;
@@ -135,6 +161,12 @@ var ImageUploadComponent = (function () {
                 case 'image':
                     if (value) {
                         this._value = new jp_file_1.ManagedImage(value, 0);
+                        setTimeout(function () {
+                            if (_this._currentImageEl) {
+                                var imageEl = _this._currentImageEl.nativeElement;
+                                _this.imageLoad(imageEl);
+                            }
+                        });
                     }
                     else {
                         this._value = '';
@@ -309,6 +341,56 @@ var ImageUploadComponent = (function () {
     ;
     ImageUploadComponent.prototype.reset = function () {
     };
+    ImageUploadComponent.prototype.handleSingleFileAttach = function (e) {
+        console.log('handle single file attach ', e);
+        this._stopEvent(e);
+        var files = e.target.files || e.dataTransfer.files;
+        var file = files[0];
+        switch (this.type) {
+            case 'image':
+                this.attachSingleImage(file);
+                break;
+            case 'file':
+                this.attachSingleFile(file);
+                break;
+        }
+    };
+    ImageUploadComponent.prototype.attachSingleFile = function (file) {
+        console.log('Attach Single File: ', file);
+        var managedFile = new jp_file_1.ManagedFile({ _file: file }, 0);
+        console.log('attachSingleFile created new ManagedFile ', managedFile);
+        this.value = managedFile;
+    };
+    ImageUploadComponent.prototype.attachSingleImage = function (file) {
+        var _this = this;
+        console.log('Attach Single Image: ', file);
+        var image = new index_1.ImageUpload(file);
+        console.log('attachSingleImage created new ImageUpload ', image);
+        var reader = new FileReader();
+        this.isLoading = true;
+        image.load().subscribe(function (e) {
+            image.url = e;
+            _this.value = image;
+            setTimeout(function () {
+                var imageEl = _this._currentImageEl.nativeElement;
+                imageEl.src = e;
+                var val = _this.value;
+                val.width = imageEl.naturalWidth;
+                val.height = imageEl.naturalHeight;
+                _this.value = val;
+                _this.change.emit(_this.value);
+                _this.isLoading = false;
+            });
+        });
+        setTimeout(function () { reader.readAsDataURL(file); });
+    };
+    ImageUploadComponent.prototype.remove = function (e) {
+        this.value = '';
+    };
+    ImageUploadComponent.prototype.replace = function (e) {
+        console.log('ImageUploadComponent#replace ' + this.type + ' ', e);
+        this.handleSingleFileAttach(e);
+    };
     __decorate([
         core_1.ViewChildren(index_1.GridImage), 
         __metadata('design:type', core_1.QueryList)
@@ -337,6 +419,10 @@ var ImageUploadComponent = (function () {
         core_1.Input(), 
         __metadata('design:type', String)
     ], ImageUploadComponent.prototype, "type", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], ImageUploadComponent.prototype, "icon", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
@@ -370,6 +456,10 @@ var ImageUploadComponent = (function () {
         core_1.Input(), 
         __metadata('design:type', Number)
     ], ImageUploadComponent.prototype, "tabIndex", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], ImageUploadComponent.prototype, "accept", void 0);
     __decorate([
         core_1.Output(), 
         __metadata('design:type', core_1.EventEmitter)
@@ -415,7 +505,11 @@ var ImageUploadComponent = (function () {
                 forms_1.NgModel,
                 index_1.GridImage,
                 ng2_dnd_1.DND_DIRECTIVES,
-                index_2.ImageUploadToolbar
+                index_2.FileUploadToolbar,
+                index_3.FileIconComponent,
+                common_1.NgSwitch,
+                common_1.NgSwitchCase,
+                common_1.NgSwitchDefault
             ],
             providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR]
         }), 

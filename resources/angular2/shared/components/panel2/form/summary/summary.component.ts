@@ -7,7 +7,8 @@ import { PanelFormControl } from '../control';
     moduleId: module.id,
     selector: 'jpa-panel2-form-control-summary',
     templateUrl: './summary.component.html',
-    directives: [ MATERIAL_DIRECTIVES ]
+    directives: [ MATERIAL_DIRECTIVES ],
+    //styles: [ ':host { display: flex; flex-direction: row; }' ]
 })
 export class PanelFormControlSummary implements AfterViewInit {
     @Input() control: PanelFormControl<any>;

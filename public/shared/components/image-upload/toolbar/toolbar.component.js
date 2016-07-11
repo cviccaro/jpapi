@@ -9,30 +9,81 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
+var common_1 = require('@angular/common');
+var angular2_moment_1 = require('angular2-moment');
 var angular2_material_1 = require('../../../libs/angular2-material');
-var jp_file_1 = require('../../../models/jp-file');
-var ImageUploadToolbar = (function () {
-    function ImageUploadToolbar() {
+var index_1 = require('../../tooltip/index');
+var FileUploadToolbar = (function () {
+    function FileUploadToolbar() {
+        this.type = 'file';
+        this.icon = 'panorama';
+        this.onRemoveFile = new core_1.EventEmitter();
+        this.onReplaceFile = new core_1.EventEmitter();
     }
-    ImageUploadToolbar.prototype.ngAfterViewInit = function () {
-        console.log('ImageUploadTOolbar AFter View Init', this);
+    FileUploadToolbar.prototype.ngAfterViewInit = function () {
+        console.log('FileUploadToolbar AFter View Init', this);
+    };
+    FileUploadToolbar.prototype.removeFile = function (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        this.onRemoveFile.emit(evt);
+        console.log('remove file! ', evt);
+    };
+    FileUploadToolbar.prototype.replaceFile = function (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        this._newFileInput.nativeElement.dispatchEvent(new Event('click'));
+        console.log('replace file! ', evt);
+    };
+    FileUploadToolbar.prototype.fileReplaced = function (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        console.log('file replaced! ', evt);
+        this.onReplaceFile.emit(evt);
+    };
+    FileUploadToolbar.prototype.fileDescriptionChanged = function (evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        evt.stopImmediatePropagation();
+        console.log('FileDescriptionChanged!', evt);
     };
     __decorate([
         core_1.Input(), 
-        __metadata('design:type', jp_file_1.ManagedImage)
-    ], ImageUploadToolbar.prototype, "image", void 0);
-    ImageUploadToolbar = __decorate([
+        __metadata('design:type', Object)
+    ], FileUploadToolbar.prototype, "file", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], FileUploadToolbar.prototype, "type", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], FileUploadToolbar.prototype, "icon", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], FileUploadToolbar.prototype, "onRemoveFile", void 0);
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], FileUploadToolbar.prototype, "onReplaceFile", void 0);
+    __decorate([
+        core_1.ViewChild('newFile'), 
+        __metadata('design:type', core_1.ElementRef)
+    ], FileUploadToolbar.prototype, "_newFileInput", void 0);
+    FileUploadToolbar = __decorate([
         core_1.Component({
             moduleId: module.id,
-            selector: 'jpa-image-upload-toolbar',
+            selector: 'jpa-file-upload-toolbar',
             templateUrl: './toolbar.component.html',
             styleUrls: ['./toolbar.component.css'],
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES, common_1.NgSwitch, common_1.NgSwitchCase, index_1.TooltipDirective],
+            pipes: [angular2_moment_1.DateFormatPipe]
         }), 
         __metadata('design:paramtypes', [])
-    ], ImageUploadToolbar);
-    return ImageUploadToolbar;
+    ], FileUploadToolbar);
+    return FileUploadToolbar;
 }());
-exports.ImageUploadToolbar = ImageUploadToolbar;
+exports.FileUploadToolbar = FileUploadToolbar;
 
 //# sourceMappingURL=toolbar.component.js.map

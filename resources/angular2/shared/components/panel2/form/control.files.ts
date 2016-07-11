@@ -24,6 +24,10 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
       this.filesLabel = config.filesLabel || 'files';
       this.type = config.type || 'file';
 
+      if (this.type === 'file' && this.editIcon === 'panorama') {
+          this.editIcon = 'attachment';
+      }
+
       console.warn('PanelFormControlFiles constructed', {
           this: this,
           config: config
@@ -58,8 +62,18 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
 
             return { text: text, icon: this.editIcon };
         } else {
-            let text = `${val.filename} | ${Math.round(val.size/10)/100}kb | ${val.width} x ${val.height} px`;
-            return { text: text, icon: this.editIcon };
+            if (val) {
+                let text = '';
+                if (this.type === 'image') {
+                    text = `${val.filename} | ${Math.round(val.size/10)/100}kb | ${val.width} x ${val.height} px`;
+                } else {
+                    text = `${val.filename} | ${Math.round(val.size/10)/100}kb`;
+                }
+
+                return { text: text, icon: this.editIcon };
+            } else {
+                return { text: this.editText, icon: this.editIcon };
+            }
         }
     }
 

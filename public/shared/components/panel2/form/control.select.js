@@ -10,6 +10,7 @@ var PanelFormControlSelect = (function (_super) {
     function PanelFormControlSelect(config) {
         _super.call(this, config);
         this.controlType = 'select';
+        this.focused = false;
         this.options = config.options || [];
     }
     Object.defineProperty(PanelFormControlSelect.prototype, "empty", {

@@ -15,14 +15,14 @@ export interface JpFile {
     size?: number;
     updated_at?: any;
     title?: string;
-    url: string;
+    url?: string;
 
     _file?: File;
     webkitRelativePath?: any;
 
-    map(mapFn: (key: string, val: any) => any): any;
-
+    date?(): any;
     load?(imageEl?: HTMLImageElement) : Observable<any>;
+    map?(mapFn: (key: string, val: any) => any): any;
 }
 
 export class ManagedFile implements JpFile {
@@ -42,11 +42,45 @@ export class ManagedFile implements JpFile {
     title: string;
     url: string;
 
+    _file: File;
+    webkitRelativePath: string;
+
     constructor(attributes: JpFile, idx: number) {
         Object.assign(this, attributes);
 
         this.idx = idx;
+
+        if (attributes._file) {
+            // Fill in managed file from File object
+            let f = attributes._file;
+            this.filename = f.name;
+            this.size = f.size;
+            this.mimetype = f.type;
+            this.extension = f.name.split('.').pop();
+            this.last_modified = f.lastModifiedDate.getTime();
+            this.created_at = f.lastModifiedDate;
+            if (f['webkitRelativePath']) {
+                this.webkitRelativePath = f['webkitRelativePath'];
+            }
+
+        }
         console.warn('ManagedFile constructed ...', this);
+    }
+
+    date() {
+        return this.created_at;
+    }
+
+    filesize(units: string = 'kb') {
+        let divisor = 10;
+
+        switch(units) {
+            case 'mb':
+                divisor = 100;
+                break;
+        }
+        
+        return Math.round(this.size / divisor) / 100;
     }
 
     map(mapFn: (key: string, val: any) => any) {
@@ -65,14 +99,6 @@ export class ManagedImage extends ManagedFile {
         console.warn('ManagedImage constructed ...', this);
     }
 
-    watchForDimensions(imageEl: HTMLImageElement) {
-        this.load(imageEl).subscribe(e => {
-            this.width = e.width;
-            this.height = e.height;
-            console.debug('ManagedImage.load subscription done', this);
-        })
-    }
-
     load(imageEl: HTMLImageElement) : Observable<any> {
         console.debug('ManagedImage.load start');
         return Observable.create(observer => {
@@ -82,5 +108,17 @@ export class ManagedImage extends ManagedFile {
                 observer.next({width: imageEl.naturalWidth, height: imageEl.naturalHeight});
             }
         })
+    }
+
+    watchForDimensions(imageEl: HTMLImageElement) {
+        this.load(imageEl).subscribe(e => {
+            this.width = e.width;
+            this.height = e.height;
+            console.debug('ManagedImage.load subscription done', this);
+        })
+    }
+
+    megapixels() {
+        return Math.round((this.width * this.height) / 10000) / 100;
     }
 }

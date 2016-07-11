@@ -75,19 +75,13 @@
 :host .jpa-panel.type-files jpa-image-upload {
   width: 100%; }
 
-:host .jpa-panel.type-files jpa-panel2-bar-subtitle .subtitle-wrapper {
-  display: -ms-flexbox;
-  display: flex; }
-  :host .jpa-panel.type-files jpa-panel2-bar-subtitle .subtitle-wrapper .subtitle-text {
-    -ms-flex-order: 2;
-    order: 2; }
-  :host .jpa-panel.type-files jpa-panel2-bar-subtitle .subtitle-wrapper md-icon {
-    -ms-flex-order: 1;
-    order: 1;
-    margin-right: 4px; }
+:host .jpa-panel.type-files jpa-panel2-bar-subtitle jpa-panel2-form-control-summary md-icon {
+  margin-left: 4px; }
 
-:host .jpa-panel.type-files jpa-panel2-content .panel-content-spacer {
-  display: none; }
+:host .jpa-panel.type-files jpa-panel2-content {
+  padding-top: 36px; }
+  :host .jpa-panel.type-files jpa-panel2-content .panel-content-spacer {
+    display: none; }
 
 :host .jpa-panel.type-textarea jpa-panel2-content:not(.single-file) .panel-content-spacer {
   display: none; }
@@ -102,5 +96,61 @@
 
 :host .jpa-panel span.required {
   color: #f44336; }
+
+:host .psuedo-md-input-wrapper {
+  min-width: 25%;
+  min-height: 26px;
+  margin-left: 0;
+  margin-right: auto;
+  position: relative; }
+  :host .psuedo-md-input-wrapper .psuedo-md-input-table {
+    display: inline-table;
+    -ms-flex-flow: column;
+    flex-flow: column;
+    vertical-align: bottom;
+    width: 100%; }
+    :host .psuedo-md-input-wrapper .psuedo-md-input-table > * {
+      display: table-cell; }
+  :host .psuedo-md-input-wrapper .psuedo-md-input-infix {
+    position: relative; }
+    :host .psuedo-md-input-wrapper .psuedo-md-input-infix select {
+      width: 100%;
+      -moz-appearance: none;
+      appearance: none;
+      -webkit-appearance: none;
+      outline: none;
+      border: none;
+      background: transparent; }
+  :host .psuedo-md-input-wrapper .psuedo-md-input-underline {
+    position: absolute;
+    height: 1px;
+    width: 100%;
+    margin-top: 4px;
+    border-top: 1px solid rgba(0, 0, 0, 0.38); }
+    :host .psuedo-md-input-wrapper .psuedo-md-input-underline.md-disabled {
+      border-top: 0;
+      background-image: linear-gradient(to right, rgba(0, 0, 0, 0.26) 0%, rgba(0, 0, 0, 0.26) 33%, transparent 0%);
+      background-position: 0;
+      background-size: 4px 1px;
+      background-repeat: repeat-x; }
+    :host .psuedo-md-input-wrapper .psuedo-md-input-underline .psuedo-md-input-ripple {
+      position: absolute;
+      height: 2px;
+      z-index: 1;
+      background-color: #009688;
+      top: -1px;
+      width: 100%;
+      transform-origin: top;
+      opacity: 0;
+      transform: scaleY(0);
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), -webkit-transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); }
+      :host .psuedo-md-input-wrapper .psuedo-md-input-underline .psuedo-md-input-ripple.md-accent {
+        background-color: #9c27b0; }
+      :host .psuedo-md-input-wrapper .psuedo-md-input-underline .psuedo-md-input-ripple.md-warn {
+        background-color: #f44336; }
+      :host .psuedo-md-input-wrapper .psuedo-md-input-underline .psuedo-md-input-ripple.md-focused {
+        opacity: 1;
+        transform: scaleY(1); }
 
 /*# sourceMappingURL=panel-form.component.css.map */

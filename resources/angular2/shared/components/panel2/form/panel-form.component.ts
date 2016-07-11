@@ -50,6 +50,7 @@ export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewIn
     private _controlPanels: { [key: string]: PanelComponent } = {};
 
     ngOnInit() {
+        this.formClass = 'panel-form' + (this.formClass ? ' ' + this.formClass : '');
         this.controls = this.controls.sort((a, b) => a.order - b.order);
         this.controls.forEach(control => {
             control.value = this.model[control.name];
@@ -131,13 +132,17 @@ export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewIn
             e: e,
             value: value,
         });
-
-        if (value !== undefined) {
-            console.debug('Setting ' + control.name + ' in model to passed in value:', value);
-            this.model[control.name] = control.value = value;
+        if (control.controlType === 'files' && control['type'] === 'image' && !control['multiple']) {
+            console.debug('Handle change for single image file please!');
+            this.model[control.name] = value;
         } else {
-            console.debug('Setting ' + control.name + ' in model to control\'s value:', control.value);
-            this.model[control.name] = control.value;
+            if (value !== undefined) {
+                console.debug('Setting ' + control.name + ' in model to passed in value:', value);
+                this.model[control.name] = control.value = value;
+            } else {
+                console.debug('Setting ' + control.name + ' in model to control\'s value:', control.value);
+                this.model[control.name] = control.value;
+            }
         }
     }
 

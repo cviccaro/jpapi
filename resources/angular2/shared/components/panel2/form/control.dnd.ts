@@ -21,11 +21,22 @@ export class PanelFormControlDragnDrop extends PanelFormControl<Array<any>> {
     }
 
     summary(panelExpanded: boolean) {
-        let summary = panelExpanded ?
-                { text: this.editText, icon: this.editIcon }
-                : {text: this.value.length + ' selected', icon: false};
+        if (panelExpanded) {
+            return { text: this.editText, icon: this.editIcon };
+        }
 
-        return summary;
+        if (this.value.length > 5) {
+            return { text: this.value.length + ' selected', icon: false};
+        } else {
+            let val = this.value.slice(0);
+            let text: string = val.shift().name;
+
+            if (val.length) {
+                text = val.reduce((carry, item) => { return carry += ', ' + item.name }, text);
+            }
+            
+            return { text: text, icon: false};
+        }
     }
 
     // summary(panelExpanded: boolean): Observable<{ text: any, icon: string|boolean }> {

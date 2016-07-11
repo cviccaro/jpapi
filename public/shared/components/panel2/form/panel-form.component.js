@@ -29,6 +29,7 @@ var PanelFormComponent = (function () {
     }
     PanelFormComponent.prototype.ngOnInit = function () {
         var _this = this;
+        this.formClass = 'panel-form' + (this.formClass ? ' ' + this.formClass : '');
         this.controls = this.controls.sort(function (a, b) { return a.order - b.order; });
         this.controls.forEach(function (control) {
             control.value = _this.model[control.name];
@@ -97,13 +98,19 @@ var PanelFormComponent = (function () {
             e: e,
             value: value,
         });
-        if (value !== undefined) {
-            console.debug('Setting ' + control.name + ' in model to passed in value:', value);
-            this.model[control.name] = control.value = value;
+        if (control.controlType === 'files' && control['type'] === 'image' && !control['multiple']) {
+            console.debug('Handle change for single image file please!');
+            this.model[control.name] = value;
         }
         else {
-            console.debug('Setting ' + control.name + ' in model to control\'s value:', control.value);
-            this.model[control.name] = control.value;
+            if (value !== undefined) {
+                console.debug('Setting ' + control.name + ' in model to passed in value:', value);
+                this.model[control.name] = control.value = value;
+            }
+            else {
+                console.debug('Setting ' + control.name + ' in model to control\'s value:', control.value);
+                this.model[control.name] = control.value;
+            }
         }
     };
     PanelFormComponent.prototype.submit = function () {

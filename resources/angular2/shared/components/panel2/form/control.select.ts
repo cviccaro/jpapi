@@ -9,6 +9,7 @@ export interface SelectConfig extends PanelFormControlConfig {
 export class PanelFormControlSelect extends PanelFormControl<string|number> {
     controlType = 'select';
     options: {label: string, value: any}[];
+    focused: boolean = false;
 
     get empty(): boolean {
         return (typeof this.value === "number") ? (this.value === undefined || this.value === null) : this.value['length'] === 0;

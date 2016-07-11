@@ -1,17 +1,50 @@
+<md-toolbar>
+	<span class="filler"></span>
+	<button md-icon-button (click)="removeFile($event)" class="danger" jpa-tooltip tooltip="Delete"><md-icon>delete</md-icon></button>
+	<button md-icon-button (click)="replaceFile($event)" jpa-tooltip tooltip="Upload"><md-icon>file_upload</md-icon></button>
+	<input [(ngModel)]="new_file" name="new_file" type="file" #newFile class="new-file" (change)="fileReplaced($event)" />
+</md-toolbar>
 <div class="toolbar-container">
-<h2>Information</h2>
-{{ image?.width }} x {{ image?.height }}px
-
-<h3>JSON</h3>
-{{ image | json }}
-
-<h4>Buttons!</h4>
-<div class="actions flex-row">
-    <button md-fab><md-icon>delete</md-icon></button>
-    <button md-fab color="accent"><md-icon>file_upload</md-icon></button>
-    <button md-fab color="primary"><md-icon>file_upload</md-icon></button>
-    <button md-fab color="secondary"><md-icon>file_upload</md-icon></button>
-    <button md-fab color="danger"><md-icon>file_upload</md-icon></button>
-    <button md-fab color="warn"><md-icon>file_upload</md-icon></button>
-</div>
+	<h3 class="toolbar-heading">Info</h3>
+	<md-input name="image_description" class="image-description" [(ngModel)]="file.title" placeholder="Add a description" (change)="fileDescriptionChanged($event)"></md-input>
+	<div class="toolbar-hr"></div>
+	<h5 class="light details">Details</h5>
+	<div class="toolbar-row">
+		<div class="icon-wrapper">
+			<md-icon>event</md-icon>
+		</div>
+		<div class="detail">
+			<div class="detail-title-row">
+				{{ file.date() | amDateFormat: 'LL' }}
+			</div>
+			<div class="detail-subtitle-row">
+				{{ file.date() | amDateFormat: 'h:mm A' }}
+			</div>
+		</div>
+	</div>
+	<div class="toolbar-row">
+		<div class="icon-wrapper">
+			<md-icon>{{ icon }}</md-icon>
+		</div>
+		<div class="detail">
+			<div class="detail-title-row">
+				{{ file.alias || file.filename }}
+			</div>
+			<div class="detail-subtitle-row flex-row" [ngSwitch]="type">
+				<template [ngSwitchCase]="'file'">
+					<span class="mimetype">{{ file.mimetype }}</span><span class="filesize">{{ file.filesize() }} KB</span>
+				</template>
+				<template [ngSwitchCase]="'image'">
+					<span class="megapixels">{{ file.megapixels() }}MP</span><span class="dimensions">{{ file.width }} x {{ file.height }}</span><span class="filesize">{{ file.filesize() }} KB</span>
+				</template>
+			</div>
+		</div>
+	</div>
+<!-- 	<div class="toolbar-actions">
+		<h3 class="toolbar-heading">Manage</h3>
+		<div class="actions flex-row">
+	    	<button md-icon-button color="danger"><md-icon>delete</md-icon></button>
+	    	<button md-icon-button color="accent"><md-icon>file_upload</md-icon></button>
+		</div>
+	</div> -->
 </div>

@@ -32,6 +32,22 @@ var ImageUpload = (function () {
             setTimeout(function () { return reader.readAsDataURL(file); }, 50);
         });
     };
+    ImageUpload.prototype.date = function () {
+        return new Date(this.last_modified);
+    };
+    ImageUpload.prototype.filesize = function (units) {
+        if (units === void 0) { units = 'kb'; }
+        var divisor = 10;
+        switch (units) {
+            case 'mb':
+                divisor = 100;
+                break;
+        }
+        return Math.round(this.size / divisor) / 100;
+    };
+    ImageUpload.prototype.megapixels = function () {
+        return Math.round((this.width * this.height) / 10000) / 100;
+    };
     return ImageUpload;
 }());
 exports.ImageUpload = ImageUpload;

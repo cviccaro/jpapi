@@ -44,7 +44,7 @@ var PanelFormControlSummary = (function () {
             moduleId: module.id,
             selector: 'jpa-panel2-form-control-summary',
             templateUrl: './summary.component.html',
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES]
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES],
         }), 
         __metadata('design:paramtypes', [])
     ], PanelFormControlSummary);

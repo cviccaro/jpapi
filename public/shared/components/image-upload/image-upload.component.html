@@ -1,4 +1,3 @@
-{{ value | json }}
 <div class="progress-bar-wrapper" [hidden]="!isLoading">
   <md-progress-bar mode="indeterminate" color="accent"></md-progress-bar>
 </div>
@@ -29,14 +28,32 @@
   </md-grid-list>
 </div>
 <div class="single-file-wrapper" *ngIf="!multiple">
-  <jpa-image-upload-toolbar class="side-toolbar" *ngIf="!multiple" [image]="value"></jpa-image-upload-toolbar>
-  <div class="viewport" [hidden]="!value">
-    <div [ngSwitch]="type">
-      <template [ngSwitchCase]="'image'">
-        <img #currentImage class="current-image" [src]="value?.url" />
-      </template>
-      <template ngSwitchDefault>
-        {{ value | json }}
-      </template>
-  </div>
+  <div class="single-file-container" [ngSwitch]="empty">
+    <template [ngSwitchCase]="false">
+      <jpa-file-upload-toolbar 
+        *ngIf="!multiple && !!value" 
+        [type]="type" 
+        [icon]="icon"
+        class="side-toolbar" 
+        [file]="value" 
+        (onRemoveFile)="remove($event)" 
+        (onReplaceFile)="replace($event)">
+      </jpa-file-upload-toolbar>
+      <div class="viewport" [hidden]="!value">
+        <div class="viewport-inner" [ngSwitch]="type">
+          <template [ngSwitchCase]="'image'">
+            <img #currentImage class="current-image" />
+          </template>
+          <template ngSwitchDefault>
+            <div class="file-wrapper">
+              <jpa-file-icon [file]="value"></jpa-file-icon> {{ value.filename }}
+            </div>
+          </template>
+        </div>
+      </div>
+    </template>
+    <template ngSwitchDefault>
+      <div class="spacer"></div>EMPTY!!!
+      <input type="file" [accept]="accept" [(ngModel)]="new_file" name="new_file" #fileInput (change)="handleSingleFileAttach($event)" />
+    </template>
 </div>

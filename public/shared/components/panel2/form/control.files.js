@@ -14,6 +14,9 @@ var PanelFormControlFiles = (function (_super) {
         this.multiple = config.multiple === undefined ? true : config.multiple;
         this.filesLabel = config.filesLabel || 'files';
         this.type = config.type || 'file';
+        if (this.type === 'file' && this.editIcon === 'panorama') {
+            this.editIcon = 'attachment';
+        }
         console.warn('PanelFormControlFiles constructed', {
             this: this,
             config: config
@@ -43,8 +46,19 @@ var PanelFormControlFiles = (function (_super) {
             return { text: text, icon: this.editIcon };
         }
         else {
-            var text = val.filename + " | " + Math.round(val.size / 10) / 100 + "kb | " + val.width + " x " + val.height + " px";
-            return { text: text, icon: this.editIcon };
+            if (val) {
+                var text = '';
+                if (this.type === 'image') {
+                    text = val.filename + " | " + Math.round(val.size / 10) / 100 + "kb | " + val.width + " x " + val.height + " px";
+                }
+                else {
+                    text = val.filename + " | " + Math.round(val.size / 10) / 100 + "kb";
+                }
+                return { text: text, icon: this.editIcon };
+            }
+            else {
+                return { text: this.editText, icon: this.editIcon };
+            }
         }
     };
     return PanelFormControlFiles;

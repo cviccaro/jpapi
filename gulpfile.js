@@ -20,137 +20,6 @@ var PROJECT_ROOT = __dirname;
 var TMP_DIR = join(PROJECT_ROOT, 'tmp');
 var ANGULAR_ROOT = join(__dirname, 'resources', 'angular2');
 
-var BUNDLER_OPTIONS = {
-  format: 'cjs',
-  minify: true,
-  mangle: false
-};
-
-// packages tells the System loader how to load when no filename and/or no extension
-var packages = {
-    'app': { main: 'main.js', defaultExtension: 'js' },
-    'rxjs': { defaultExtension: 'js' },
-    'angular2-in-memory-web-api': { main: 'index.js', defaultExtension: 'js' },
-    'moment': { main: 'moment.js', defaultExtension: 'js' },
-    'angular2-moment': { main: 'index.js', defaultExtension: 'js' },
-    // 'ng2-material': { main: 'index.js', defaultExtension: 'js' },
-    'hammerjs': { main: 'hammer.js', defaultExtension: 'js' },
-    'ng2-file-upload': { main: 'ng2-file-upload.js', defaultExtension: 'js' },
-    'angular2-toaster': { main: 'angular2-toaster.js', defaultExtension: 'js' },
-    // 'angular2-localstorage': { main: 'index.js', defaultExtension: 'js' },
-    'angular2-jwt': { main: 'angular2-jwt.js', defaultExtension: 'js' },
-    'ng2-ckeditor': { main: 'lib/CKEditor.js', defaultExtension: 'js' }
-};
-
-var ngPackageNames = [
-    'common',
-    'compiler',
-    'core',
-    'forms',
-    'http',
-    'platform-browser',
-    'platform-browser-dynamic',
-    'router',
-    'router-deprecated',
-    'upgrade',
-];
-
-var materialPkgs = [
-  'core',
-  'button',
-  'card',
-  'checkbox',
-  'grid-list',
-  'icon',
-  'input',
-  'list',
-  'progress-bar',
-  'progress-circle',
-  'radio',
-  'sidenav',
-  'slide-toggle',
-  'tabs',
-  'toolbar'
-];
-
-// Add package entries for angular packages
-ngPackageNames.forEach(function(pkgName) {
-  packages['@angular/' + pkgName] = { main: 'index.js', defaultExtension: 'js' };
-});
-materialPkgs.forEach(function(pkgName) {
-  packages['@angular2-material/' + pkgName] = {main: pkgName + '.js'};
-});
-
-
-/**
- * Bundle
- * @type {Object}
- */
-var SYSTEM_BUILDER_CONFIG = {
-    defaultJSExtensions: true,
-    packageConfigPaths: [
-      path.join(PROJECT_ROOT, 'node_modules', '*', 'package.json'),
-      path.join(PROJECT_ROOT, 'node_modules', '@angular', '*', 'package.json')
-    ],
-    paths: {
-      'tmp/*': join(TMP_DIR, '*'),
-      '*': 'node_modules/*'
-    },
-    packages: {
-      '@angular/common': {
-        main: 'index.js',
-        defaultExtension: 'js'
-      },
-      '@angular/compiler': {
-        main: 'index.js',
-        defaultExtension: 'js'
-      },
-      '@angular/core': {
-        main: 'index.js',
-        defaultExtension: 'js'
-      },
-      '@angular/forms': {
-        main: 'index.js',
-        defaultExtension: 'js'
-      },
-      '@angular/http': {
-        main: 'index.js',
-        defaultExtension: 'js'
-      },
-      '@angular/platform-browser': {
-        main: 'index.js',
-        defaultExtension: 'js'
-      },
-      '@angular/platform-browser-dynamic': {
-        main: 'index.js',
-        defaultExtension: 'js'
-      },
-      '@angular/router': {
-        main: 'index.js',
-        defaultExtension: 'js'
-      },
-      'rxjs': {
-        defaultExtension: 'js'
-      }
-    }
-  };
-
-
- Elixir.extend('bundle', function(message) {
-     new Task('bundle', function() {
-        var builder = new Builder(SYSTEM_BUILDER_CONFIG);
-
-        builder.buildStatic('main', join('public', 'app.js'), BUNDLER_OPTIONS)
-        .then(function() {
-            console.log('build static promise resolved : ', {args: arguments});
-        })
-        .catch(function() {
-            console.log('build static promise rejected', {args: arguments});
-        });
-     });
- });
-
-
 /**
  * Typescript elixir task
  *
@@ -262,6 +131,8 @@ Elixir.extend('angular2Sass', function(src, output, options) {
 
 Elixir(function(mix) {
     mix.sass('app.scss');
+    
+    //mix.copy('resources/assets/images/Free-file-icons-master/*', 'public/libs/Free-file-icons-master');
 
     // mix.copy('node_modules/@angular', 'public/node_modules/@angular');
     // mix.copy('node_modules/rxjs', 'public/node_modules/rxjs');

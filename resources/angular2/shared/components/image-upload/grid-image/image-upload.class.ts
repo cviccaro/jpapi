@@ -19,6 +19,9 @@ export class ImageUpload implements JpFile {
     title: string;
     url: string;
 
+    width: number;
+    height: number;
+
     _file: File;
     webkitRelativePath: any;
 
@@ -61,5 +64,24 @@ export class ImageUpload implements JpFile {
 
             setTimeout(() => reader.readAsDataURL(file), 50);
         });
+    }
+
+    date() {
+        return new Date(this.last_modified);
+    }
+
+    filesize(units: string = 'kb') {
+        let divisor = 10;
+
+        switch(units) {
+            case 'mb':
+                divisor = 100;
+                break;
+        }
+        
+        return Math.round(this.size / divisor) / 100;
+    }
+    megapixels() {
+        return Math.round((this.width * this.height) / 10000) / 100;
     }
 }

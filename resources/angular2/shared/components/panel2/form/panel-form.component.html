@@ -1,6 +1,5 @@
-<!-- <pre>{{ model | json }}</pre>
+<pre>{{ model | json }}</pre>
 <pre>{{ controls | json }}</pre>
-<pre>{{ subtitles | json }}</pre> -->
 <form *ngIf="ready" #panelForm="ngForm" (ngSubmit)="submit()" [class]="formClass">
     <jpa-panel2-group>
         <jpa-panel2 *ngFor="let control of controls; let rowIndex = index; let odd = odd; let even = even;"
@@ -28,12 +27,14 @@
                     </md-slide-toggle>
                 </template>
                 <template [ngSwitchCase]="'files'">
+                    <pre> {{ control.value | json }} </pre>
                     <jpa-image-upload
                         [multiple]="control.multiple"
                         [name]="control.name"
                         [required]="control.required"
                         [(ngModel)]="control.value"
                         [type]="control.type"
+                        [icon]="control.editIcon"
                         (change)="handleChange(control, null, $event)">
                     </jpa-image-upload>
                 </template>
@@ -68,9 +69,18 @@
                     </jpa-dnd-form-control>
                 </template>
                 <template [ngSwitchCase]="'select'">
-                    <select #select [name]="control.name" [(ngModel)]="control.value" (change)="handleChange(control, $event, select.value)">
-                      <option *ngFor="let opt of control.options" [value]="opt.value">{{opt.label}}</option>
-                    </select>
+                    <div class="psuedo-md-input-wrapper">
+                        <div class="psuedo-md-input-table">
+                            <div class="psuedo-md-input-infix">
+                                <select #select (focus)="control.focused = true" (blur)="control.focused = false" [name]="control.name" [(ngModel)]="control.value" (change)="handleChange(control, $event, select.value)">
+                                    <option *ngFor="let opt of control.options" [value]="opt.value">{{opt.label}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="psuedo-md-input-underline">
+                            <span class="psuedo-md-input-ripple" [class.md-focused]="control.focused"></span>
+                        </div>
+                    </div>
                 </template>
                 <template ngSwitchDefault>
                     <md-input
