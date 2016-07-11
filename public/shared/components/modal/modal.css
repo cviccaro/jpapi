@@ -24,6 +24,44 @@
  * Transition mixins
  */
 /**
+ * Icon and button sizes
+ */
+.md-14 {
+  font-size: 14px;
+  width: 14px;
+  height: 14px; }
+
+.md-16 {
+  font-size: 16px;
+  height: 16px;
+  width: 16px; }
+
+.md-18 {
+  font-size: 18px;
+  width: 18px;
+  height: 18px; }
+
+.md-20 {
+  font-size: 20px;
+  width: 20px;
+  height: 20px; }
+
+.md-22 {
+  font-size: 22px;
+  width: 22px;
+  height: 22px; }
+
+.md-24 {
+  font-size: 24px;
+  width: 24px;
+  height: 24px; }
+
+.md-32 {
+  font-size: 32px;
+  width: 32px;
+  height: 32px; }
+
+/**
  * Styling largely lifted wholesale from angular-material dialog
  */
 :host {
@@ -39,7 +77,11 @@
   display: flex;
   -ms-flex-direction: column;
   flex-direction: column;
-  z-index: 83; }
+  z-index: 83;
+  padding: 0;
+  margin-bottom: 0;
+  border: none;
+  border-radius: 4px; }
   :host .jpa-modal-title {
     margin-top: 0;
     font-size: 20px;
@@ -54,7 +96,7 @@
     flex-direction: column;
     overflow: auto;
     -webkit-overflow-scrolling: touch;
-    padding: 24px 24px 16px; }
+    padding: 16px 24px 12px; }
     :host .jpa-modal-content .jpa-modal-content-body {
       width: 100%; }
       :host .jpa-modal-content .jpa-modal-content-body p {
@@ -77,8 +119,7 @@
     -ms-flex-pack: end;
     justify-content: flex-end;
     margin-bottom: 0;
-    padding-right: 8px;
-    padding-left: 16px;
+    padding: 0;
     min-height: 52px;
     overflow: hidden; }
     :host .jpa-modal-actions .ok .md-button-wrapper {
@@ -96,5 +137,7 @@
       display: none; }
     :host form.update.has-image .modal-form-col.name-image_remove {
       display: block; }
+  :host.form .jpa-modal-actions {
+    padding: 24px 0 0; }
 
 /*# sourceMappingURL=modal.css.map */

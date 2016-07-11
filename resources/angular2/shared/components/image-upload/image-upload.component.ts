@@ -8,12 +8,14 @@ import {
     Input,
     Output,
     HostListener,
+    HostBinding,
     EventEmitter,
     ViewChild,
     ViewChildren,
     ContentChildren,
     Provider,
-    QueryList
+    QueryList,
+    ElementRef
 } from '@angular/core';
 
 import { NgModel, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -25,8 +27,8 @@ import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 import { Observable } from 'rxjs/Rx';
 
 import { GridImage, ImageUpload } from './grid-image/index';
-import { JpImage } from '../../models/jp-image';
-
+import { JpFile, ManagedFile, ManagedImage } from '../../models/jp-file';
+import { ImageUploadToolbar } from './toolbar/index';
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
 import { AuthService } from '../../services/auth.service';
@@ -50,20 +52,23 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
         MD_ICON_DIRECTIVES,
         NgModel,
         GridImage,
-        DND_DIRECTIVES
+        DND_DIRECTIVES,
+        ImageUploadToolbar
     ],
     providers: [IMAGE_UPLOAD_VALUE_ACCESSOR]
 })
-export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
+export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit {
+    constructor(authService: AuthService) { }
+
     public isDragOver: boolean = false;
     public isLoading: boolean = false;
 
-    private _imagesLoaded:number = 0;
-    private _value: File[] = [];
+    private _imagesLoaded: number = 0;
+    private _value: any = [];
 
     private _rows: any[] = [];
     private _cols: any[] = [];
-    private _draggingImage: boolean = false;
+    private _dragging: boolean = false;
     private _dragImage: any;
     private _dropZoneStart: number;
     private _droppedImage: any;
@@ -71,18 +76,25 @@ export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
     private _onTouchedCallback: () => void = noop;
     private _onChangeCallback: (_: any) => void = noop;
 
-
     /**
      * Content directives
      */
     @ViewChildren(GridImage) private _gridImages: QueryList<GridImage>;
     @ViewChild(MdGridList) private _gridList: MdGridList;
 
+    @ViewChild('currentImage') private _currentImageEl: ElementRef;
+
+    @HostBinding('class') get typeClass() {
+        return `file-upload-${this.type} file-upload-${this.multiple ? 'multiple' : 'single'}`;
+    }
+
     /**
      * Inputs
      */
-    @Input() @BooleanFieldValue() multiple: boolean = false;
+    @Input() multiple: boolean = false;
     @Input() images: any[] = [];
+
+    @Input() type: string = 'file';
 
     // MdGridList
     @Input() gutterSize: string = "8px";
@@ -129,123 +141,90 @@ export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
         console.log('ImageUploadComponent#handleBlur', event);
     }
 
-    /**
-     * Lifecycle
-     */
-    constructor(authService: AuthService) { }
-
-    ngOnChanges(changes: { [key: string]: SimpleChange }) {
-        console.debug('ImageUploadComponent#OnChanges ---', changes);
-    }
-
-    /**
-     * Grid interaction events
-     */
-    onDragOver(e: any) {
-        if (this._draggingImage) {
-            return;
-        }
-
-        let transfer = this._getTransfer(e);
-        if (!this._haveFiles(transfer.types)) {
-            return;
-        }
-        transfer.dropEffect = 'copy';
-        this._stopEvent(e);
-        this.isDragOver = true;
-    }
-
-    onDragLeave(e: any) {
-        if (this._draggingImage) {
-            return;
-        }
-
-        this._stopEvent(e);
-        this.isDragOver = false;
-    }
-
-    onFileDrop(e: any) {
-        if (this._draggingImage) {
-            console.log('onFileDrop cancelling because we are dragging image.');
-            this._draggingImage = false;
-            return;
-        } else {
-            console.log('onFileDrop ', e);
-            let files = e.target.files || e.dataTransfer.files;
-
-            this._stopEvent(e);
-            this.fileAdded.emit(files);
-
-            this.isDragOver = false;
-            this.isLoading = true;
-
-            this.readFiles(files);
-        }
-        console.log('ImageUploadComponent#FileDrop', {
-            e: e,
-            this: this
+    get value(): any { return this._value; };
+    @Input() set value(v: any) {
+        console.debug('ImageUploadComponent# set value(): ', {
+            v: v,
+            _value: this._value
         });
-    }
 
-    readFiles(files) {
-        let count = this.value.length;
+        if (v !== this._value) {
+            this._value = v;
 
-        for (let i = 0; i < files.length; i++) {
-            let file = files[i];
+            console.warn('emitting change', v);
+            this.change.emit(v);
 
-            let image = new ImageUpload(file);
-            let reader = new FileReader();
+            if (this.multiple) {
+                let val = v.length === 0 ? '' : v;
+                this._onChangeCallback(val);
+            } else {
+                this._onChangeCallback(v);
+            }
 
-            this.isLoading = true;
-
-            reader.addEventListener('load', e => {
-                image.url = reader.result;
-                this.addImageToGrid(image);
-                this.isLoading = false;
-            });
-
-            setTimeout(() => { reader.readAsDataURL(file); });
+            this._onTouchedCallback();
         }
     }
 
-    addImageToGrid(image) {
-        console.log('Loaded new image: ', image);
+    ngAfterViewInit() {
+        if (this.type === 'image' && !this.multiple && this.value) {
+            console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
+                this: this,
+                imageEl: this._currentImageEl.nativeElement
+            });
+            let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
+            imageEl.addEventListener('load', (event: Event) => {
+                console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Image loaded!', event);
+                let val: ManagedImage = this.value;
 
-        let value = this.value;
-        value.push(image);
-        this.value = value;
+                val.width = imageEl.naturalWidth;
+                val.height = imageEl.naturalHeight;
 
-        this.imageAdded.emit(image);
+                this.value = val;
+
+                // this.imageLoaded.emit({ event: event, config: this.value });
+                this.change.emit(this.value);
+            });
+        }
     }
 
     /**
-     * NgControl value
-     */
-
-     get value(): any { return this._value; };
-     @Input() set value(v: any) {
-         console.debug('ImageUploadComponent# set value(): ', {
-             v: v,
-             _value: this._value
-         });
-         if (v !== this._value) {
-             this._value = v;
-             console.warn('emitting change', v);
-             //this.change.emit(v);
-             this._onChangeCallback(v);
-             //this.setCounts();
-         }
-
-         this._onChangeCallback(v);
-     }
-
-    /**
-     * ControlValueAccessor implementation
+     * ControlValueAccessor protocol
+     *
+     * Runs when value is first set
      */
     writeValue(value: any) {
-        this._value = value || [];
-        console.debug('ImageUpload#writeValue: ', {value: this._value});
+        let m = this.multiple ? 'multiple' : 'single';
+        console.debug('ImageUpload --- '+m+' -- #writeValue: ', { value: value });
+        if (!this.multiple) {
+            switch(this.type) {
+                case 'image':
+                    if (value) {
+                        this._value = new ManagedImage(value, 0);
+
+                        // let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
+
+                        // this._value.watchForDimensions(imageEl);
+                    } else {
+                        this._value = '';
+                    }
+                    break;
+                default:
+                    this._value = value ? new ManagedFile(value, 0) : '';
+                    break;
+            }
+        } else {
+            let v = value || [];
+            console.warn('about to run v.map ! ', v);
+            this._value = v.map((item, i) => {
+                switch(this.type) {
+                    case 'image': return new ManagedImage(item, i);
+                    default: return new ManagedFile(item, i);
+                }
+            });
+        }
+        console.debug('ImageUpload#writeValue: ', { value: this._value });
     }
+
     registerOnChange(fn: any) {
         this._onChangeCallback = fn;
     }
@@ -279,7 +258,7 @@ export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
         }
     }
 
-    handleImageLoaded(e: any) {
+    gridImageLoaded(e: any) {
         e._hasNew = false;
 
         if (!e.config.hasOwnProperty('id')) {
@@ -303,47 +282,123 @@ export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
             value: this.value
         });
 
-        let value = this.value;
+        let value = this.value.slice(0);
         value.splice(e.index, 1);
         this.value = value;
 
         this.imageRemoved.emit(e);
     }
 
-    /**
-     * Drag and drop grid images to reorder
-     */
 
-    private _dragData(image: JpImage, idx: number): JpImage {
-        return Object.assign(image, {idx: idx})
-    }
-
-    imageDragStart(e: any): void {
-        this._dropZoneStart = e.dragData.idx;
-        this._draggingImage = true;
-        this._dragImage = e.dragData;
-        console.debug('ImageUpload imageDragStart  from zone ' + this._dropZoneStart + ': ', e);
-    }
-
-    imageDropped(event: any, image: JpImage, zone: number): void {
-        console.info('ImageUpload image dropped', {
-            event: event,
-            image: image,
-            zone: zone
-        });
-        this._draggingImage = false;
-        this._dragImage = null;
-
-        let data = event.dragData;
-
-        if (this._dropZoneStart !== zone) {
-            this.moveImage(this._dropZoneStart, zone);
+    onDragOver(e: any) {
+        if (this._dragging) {
+            this._stopEvent(e);
+            return;
         }
+
+        let transfer = this._getTransfer(e);
+        if (!this._haveFiles(transfer.types)) {
+            return;
+        }
+        transfer.dropEffect = 'copy';
+        this._stopEvent(e);
+        this.isDragOver = true;
+    }
+
+    onDragLeave(e: any) {
+        if (this._dragging) {
+            return;
+        }
+
+        this._stopEvent(e);
+        this.isDragOver = false;
+    }
+
+    fileDragStart(e: any): void {
+        console.log('ImageUploadComponent#fileDragStart', e);
+        this._dragging = true;
     }
 
     onDragEnd(e: any) {
         console.debug('onDragEnd');
-        this._draggingImage = false;
+        this._stopEvent(e);
+        this._dragging = false;
+    }
+
+    add(e: any) {
+        if (this._dragging) {
+            console.log('add cancelling because we are dragging image.');
+            this._dragging = false;
+            return;
+        } else {
+            console.log('add ', e);
+            let files = e.target.files || e.dataTransfer.files;
+
+            this._stopEvent(e);
+            this.fileAdded.emit(files);
+
+            this.isDragOver = false;
+            this.isLoading = true;
+
+            this.readFiles(files);
+        }
+        console.log('ImageUploadComponent#add', {
+            e: e,
+            this: this
+        });
+    }
+
+    readFiles(files) {
+        let count = this.value.slice(0).length;
+
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+
+            let image = new ImageUpload(file);
+            let reader = new FileReader();
+
+            this.isLoading = true;
+
+            reader.addEventListener('load', e => {
+                image.url = reader.result;
+                this.addImageToGrid(image);
+                this.isLoading = false;
+            });
+
+            setTimeout(() => { reader.readAsDataURL(file); });
+        }
+    }
+
+    addImageToGrid(image) {
+        console.log('Loaded new image: ', image);
+
+        let value = this.value.slice(0);
+        value.push(image);
+        this.value = value;
+
+        this.imageAdded.emit(image);
+    }
+    // private _dragData(image: JpFile, idx: number): JpFile {
+    //     let img = Object.assign({}, image);
+    //     img.idx = idx;
+    //     return img;
+    // }
+
+    reorder(event: {dragData: number, mouseEvent: DragEvent}, new_index: number): void {
+        let old_index = event.dragData;
+
+        this._stopEvent(event.mouseEvent);
+
+        console.info('ImageUploadComponent#reorder', {
+            old_index: old_index,
+            new_index: new_index,
+            event: event
+        });
+        this._dragging = false;
+
+        if (old_index !== new_index) {
+            this.moveImage(old_index, new_index);
+        }
     }
 
     moveImage(old_index, new_index): void {
@@ -357,10 +412,7 @@ export class ImageUploadComponent implements OnChanges, ControlValueAccessor {
 
         this.value = images;
 
-        this.change.emit(this.value);
-        this._onChangeCallback(this.value);
-
-        console.log('Just dropped image from drop zone ' + this._dropZoneStart + ' to drop zone ' + new_index);
+        console.log('Just dropped image from drop zone ' + old_index + ' to drop zone ' + new_index);
     };
 
     /**

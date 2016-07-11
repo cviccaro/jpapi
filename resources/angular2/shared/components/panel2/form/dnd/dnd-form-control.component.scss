@@ -1,0 +1,46 @@
+@import "../../../../../../assets/sass/variables";
+
+:host {
+    flex: 1;
+    flex-direction: row;
+    display: flex;
+    .drop-area,
+    .chips.available {
+        width: 50%;
+    }
+    .drop-area {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        transition: all $transition_duration $transition_ease;
+        will-change: border;
+        &.dnd-drag-enter {
+            border: 2px dashed $accent;
+        }
+        jpa-chip {
+            background: $grey_400;
+            //color: #fff;
+            button {
+                // background: $blue_400;
+                // color: #fff;
+            }
+        }
+    }
+
+    jpa-chip {
+        cursor: pointer;
+    }
+    .chip-wrapper {
+        display: inline-block;
+    }
+    // .drop-area-wrapper {
+    //     justify-content: flex-start;
+    //     flex: 1 1 auto;
+    //     display: flex;
+    // }
+    // .chips {
+    //     justify-content: center;
+    //     flex: 1 1 auto;
+    //     display: flex;
+    // }
+}

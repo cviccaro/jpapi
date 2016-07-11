@@ -1,3 +1,4 @@
+<pre *ngIf="ready">{{ division.name }}</pre>
 <div class="container-fluid">
     <h2 class="page-title form-title" [ngSwitch]="isNew">
       <span *ngSwitchCase="true">Create Division</span>
@@ -8,10 +9,11 @@
         <jpa-panel #namePanel label="Name" [(ngModel)]="division.name" name="title" type="text" editText="Enter a name" required>
           <md-hint align="end">{{namePanel.characterCount}} / 100</md-hint>
         </jpa-panel>
-        <jpa-panel label="Background" type="image" name="image" editText="Browse for a new picture" [(ngModel)]="division.image" [currentImage]="_divisionImage">
+
+<!--         <jpa-panel label="Background" type="image" name="image" editText="Browse for a new picture" [(ngModel)]="division.image" [currentImage]="_divisionImage">
           <jpa-panel-content *ngIf="division.image !== '__deleted'" [file]="division.image" align="left" label="Preview your upload"></jpa-panel-content>
           <jpa-panel-content [image]="_divisionImage" align="right" label="Current"></jpa-panel-content>
-        </jpa-panel>
+        </jpa-panel> -->
       </jpa-panel-group>
       <div class="row form-actions">
         <div class="col-md-12">

@@ -1,29 +1,42 @@
+{{ value | json }}
 <div class="progress-bar-wrapper" [hidden]="!isLoading">
   <md-progress-bar mode="indeterminate" color="accent"></md-progress-bar>
 </div>
-<div class="well file-drop-zone-wrapper" [class.file-over]="isDragOver">
+<div class="well file-drop-zone-wrapper" [class.file-over]="isDragOver" *ngIf="multiple">
   <div class="file-drop-zone"
     (dragover)="onDragOver($event)"
     (dragend)="onDragEnd($event)"
     (dragleave)="onDragLeave($event)"
-    (drop)="onFileDrop($event)">
+    (drop)="add($event)">
   </div>
-  <md-grid-list [cols]="cols" [rowHeight]="rowHeight" [gutterSize]="gutterSize" *ngIf="multiple" (dragend)="onDragEnd($event)">
+  <md-grid-list [cols]="cols" [rowHeight]="rowHeight" [gutterSize]="gutterSize" (dragend)="onDragEnd($event)">
       <md-grid-tile *ngFor="let image of value; let index = index"
         dnd-droppable
         [dropEnabled]="true"
-        (onDropSuccess)="imageDropped($event, image, index)">
+        (onDropSuccess)="reorder($event, index)">
         <jpa-grid-image
           dnd-draggable
           [dragEnabled]="true"
-          [dragData]="_dragData(image, index)"
-          (onDragStart)="imageDragStart($event)"
+          [dragData]="index"
+          (onDragStart)="fileDragStart($event)"
           [imageConfig]="image"
           [index]="index"
-          (imageLoaded)="handleImageLoaded($event)"
+          (imageLoaded)="gridImageLoaded($event)"
           (clickedRemove)="handleClickedRemove($event)">
         </jpa-grid-image>
       </md-grid-tile>
       <!-- <md-grid-tile *ngIf="value.length % 4 !== 1" flex="25"></md-grid-tile> -->
   </md-grid-list>
+</div>
+<div class="single-file-wrapper" *ngIf="!multiple">
+  <jpa-image-upload-toolbar class="side-toolbar" *ngIf="!multiple" [image]="value"></jpa-image-upload-toolbar>
+  <div class="viewport" [hidden]="!value">
+    <div [ngSwitch]="type">
+      <template [ngSwitchCase]="'image'">
+        <img #currentImage class="current-image" [src]="value?.url" />
+      </template>
+      <template ngSwitchDefault>
+        {{ value | json }}
+      </template>
+  </div>
 </div>

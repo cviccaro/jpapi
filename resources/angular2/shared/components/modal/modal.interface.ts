@@ -7,12 +7,19 @@ export interface ModalConfig {
     okText?: string;
     inputs?: ModalInput[];
     formClass?: any;
+    showTitle?: boolean;
 }
 
 export interface ModalAction {
     type: string;
     config?: any;
     event: MouseEvent;
+}
+
+export interface ModalInputCondition {
+    target: string;
+    condition: (source: ModalInput, target: ModalInput) => boolean;
+    action: string;
 }
 
 export interface ModalInput {
@@ -23,10 +30,11 @@ export interface ModalInput {
     placeholder?: string;
     value?: any;
     hint?: any;
-    hidden?: string;
+    hidden?: boolean;
+    conditions?: ModalInputCondition[];
 }
 
-export class GenericFormColumn implements ModalInput {
+export class GenericFormField implements ModalInput {
     label: string;
     name: string;
     type: string = 'text';
@@ -34,9 +42,11 @@ export class GenericFormColumn implements ModalInput {
     placeholder: string;
     value: any;
     hint: any;
+    conditions: ModalInputCondition[];
+    hidden: boolean = false;
 }
 
-export class ModalFormColumn extends GenericFormColumn {
+export class ModalFormField extends GenericFormField {
     constructor(column: any) {
         super();
 
@@ -46,5 +56,32 @@ export class ModalFormColumn extends GenericFormColumn {
             column.placeholder = column.label;
         }
         Object.assign(this, column);
+    }
+
+    evaluateConditions(inputs: ModalFormField[]) {
+        if (this.conditions) {
+            this.conditions.forEach((condition: ModalInputCondition) => {
+                let target:any = false;
+
+                inputs.forEach((input: ModalFormField) => {
+                    if (input.name === condition.target) target = input;
+                });
+
+                if (target) {
+                    let result = condition.condition.apply(this, [this, target]);
+
+                    switch(condition.action) {
+                        case 'hidden':
+                            this.hidden = result;
+                            break;
+                        case 'required':
+                            this.required = result;
+                            break;
+                    }
+                } else {
+                    console.warn(`No target field "${condition.target}" was found while checking condition for source field ${this.name}`);
+                }
+            });
+        }
     }
 }

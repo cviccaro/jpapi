@@ -13,11 +13,12 @@ var angular2_toaster_1 = require('angular2-toaster');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var ClientsComponent = (function () {
-    function ClientsComponent(service, cache, modal, toaster) {
+    function ClientsComponent(service, cache, modal, toaster, menu) {
         this.service = service;
         this.cache = cache;
         this.modal = modal;
         this.toaster = toaster;
+        this.menu = menu;
         this.state = this.cache.get('clients');
         this.state.sortOptions = [
             { name: 'Updated At', value: 'updated_at' },
@@ -37,7 +38,6 @@ var ClientsComponent = (function () {
     };
     ClientsComponent.prototype.add = function () {
         var _this = this;
-        console.log('add a client');
         this.modal.open({
             mode: 'form',
             inputs: [
@@ -61,25 +61,35 @@ var ClientsComponent = (function () {
             }
         });
     };
-    ClientsComponent.prototype.toggleFeatured = function (client) {
-        console.log('toggle featured', client);
-    };
     ClientsComponent.prototype.edit = function (client) {
         var _this = this;
-        console.log('Edit Client', client);
-        this.modal.open({
+        this.menu.close();
+        var modalConfig = {
             mode: 'form',
             inputs: [
                 { name: 'name', required: true, value: client.name },
                 { name: 'alias', value: client.alias },
                 { name: 'featured', type: 'checkbox', value: client.featured },
-                { name: 'image', type: 'file' },
-                { name: 'image_remove', type: 'checkbox', label: 'Delete Image' }
+                { name: 'image_remove', type: 'toggle', label: 'Slide to Delete Image' },
+                { name: 'image', type: 'file', label: 'Replace Image', conditions: [
+                        {
+                            target: 'image_remove',
+                            condition: function (source, target) {
+                                return target.value;
+                            },
+                            action: 'hidden'
+                        }
+                    ] },
             ],
             formClass: 'update' + (client.image_id !== null ? ' has-image' : ''),
-            okText: 'Update',
+            okText: 'Save',
             title: 'Edit client ' + client.name
-        }).subscribe(function (action) {
+        };
+        if (client.image_id === null) {
+            modalConfig.inputs[4]['label'] = 'Add an image';
+            modalConfig.inputs.splice(3, 1);
+        }
+        this.modal.open(modalConfig).subscribe(function (action) {
             if (action.type === 'submit') {
                 var form = action.config.inputs;
                 console.log('We can now save our client with this data: ', {
@@ -95,7 +105,7 @@ var ClientsComponent = (function () {
     };
     ClientsComponent.prototype.remove = function (client) {
         var _this = this;
-        console.log('Remove  Client', client);
+        this.menu.close();
         var name = client.name;
         this.modal.open({ message: 'Discard client?', okText: 'Discard' })
             .subscribe(function (action) {
@@ -122,7 +132,7 @@ var ClientsComponent = (function () {
             styleUrls: ['./clients.component.css'],
             directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.CONTEXT_MENU_DIRECTIVES, index_1.TooltipDirective]
         }), 
-        __metadata('design:paramtypes', [index_1.ClientService, index_1.JpaCache, index_1.JpaModal, angular2_toaster_1.ToasterService])
+        __metadata('design:paramtypes', [index_1.ClientService, index_1.JpaCache, index_1.JpaModal, angular2_toaster_1.ToasterService, index_1.JpaContextMenu])
     ], ClientsComponent);
     return ClientsComponent;
 }());

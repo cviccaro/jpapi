@@ -1,0 +1,10 @@
+:host {
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  max-width: 25%; }
+
+/*# sourceMappingURL=toolbar.component.css.map */

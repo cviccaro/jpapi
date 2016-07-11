@@ -16,7 +16,7 @@ import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 import { MATERIAL_DIRECTIVES } from '../../../../shared/libs/angular2-material';
 
 import {
-    JpImage,
+    JpFile,
     ImageUpload,
     JpaPanelChild,
     JpaModal
@@ -45,7 +45,7 @@ export class JpaPanelContent implements AfterContentInit, AfterViewInit, JpaPane
     imageHeight: number;
 
     @Input() file: File = null;
-    @Input() image: JpImage = null;
+    @Input() image: JpFile = null;
     @Input() align: string = 'right';
     @Input() label: string = '';
     @Input() options: any[] = [];

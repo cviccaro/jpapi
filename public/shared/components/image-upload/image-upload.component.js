@@ -16,6 +16,8 @@ var progress_bar_1 = require('@angular2-material/progress-bar');
 var icon_1 = require('@angular2-material/icon');
 var Rx_1 = require('rxjs/Rx');
 var index_1 = require('./grid-image/index');
+var jp_file_1 = require('../../models/jp-file');
+var index_2 = require('./toolbar/index');
 var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
 var auth_service_1 = require('../../services/auth.service');
 var noop = function () { };
@@ -32,11 +34,12 @@ var ImageUploadComponent = (function () {
         this._value = [];
         this._rows = [];
         this._cols = [];
-        this._draggingImage = false;
+        this._dragging = false;
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
         this.multiple = false;
         this.images = [];
+        this.type = 'file';
         this.gutterSize = "8px";
         this.cols = 4;
         this.rowHeight = '16:9';
@@ -53,6 +56,13 @@ var ImageUploadComponent = (function () {
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
     }
+    Object.defineProperty(ImageUploadComponent.prototype, "typeClass", {
+        get: function () {
+            return "file-upload-" + this.type + " file-upload-" + (this.multiple ? 'multiple' : 'single');
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ImageUploadComponent.prototype, "onBlur", {
         get: function () {
             return this._blurEmitter.asObservable();
@@ -73,75 +83,6 @@ var ImageUploadComponent = (function () {
     ImageUploadComponent.prototype.handleBlur = function (event) {
         console.log('ImageUploadComponent#handleBlur', event);
     };
-    ImageUploadComponent.prototype.ngOnChanges = function (changes) {
-        console.debug('ImageUploadComponent#OnChanges ---', changes);
-    };
-    ImageUploadComponent.prototype.onDragOver = function (e) {
-        if (this._draggingImage) {
-            return;
-        }
-        var transfer = this._getTransfer(e);
-        if (!this._haveFiles(transfer.types)) {
-            return;
-        }
-        transfer.dropEffect = 'copy';
-        this._stopEvent(e);
-        this.isDragOver = true;
-    };
-    ImageUploadComponent.prototype.onDragLeave = function (e) {
-        if (this._draggingImage) {
-            return;
-        }
-        this._stopEvent(e);
-        this.isDragOver = false;
-    };
-    ImageUploadComponent.prototype.onFileDrop = function (e) {
-        if (this._draggingImage) {
-            console.log('onFileDrop cancelling because we are dragging image.');
-            this._draggingImage = false;
-            return;
-        }
-        else {
-            console.log('onFileDrop ', e);
-            var files = e.target.files || e.dataTransfer.files;
-            this._stopEvent(e);
-            this.fileAdded.emit(files);
-            this.isDragOver = false;
-            this.isLoading = true;
-            this.readFiles(files);
-        }
-        console.log('ImageUploadComponent#FileDrop', {
-            e: e,
-            this: this
-        });
-    };
-    ImageUploadComponent.prototype.readFiles = function (files) {
-        var _this = this;
-        var count = this.value.length;
-        var _loop_1 = function(i) {
-            var file = files[i];
-            var image = new index_1.ImageUpload(file);
-            var reader = new FileReader();
-            this_1.isLoading = true;
-            reader.addEventListener('load', function (e) {
-                image.url = reader.result;
-                _this.addImageToGrid(image);
-                _this.isLoading = false;
-            });
-            setTimeout(function () { reader.readAsDataURL(file); });
-        };
-        var this_1 = this;
-        for (var i = 0; i < files.length; i++) {
-            _loop_1(i);
-        }
-    };
-    ImageUploadComponent.prototype.addImageToGrid = function (image) {
-        console.log('Loaded new image: ', image);
-        var value = this.value;
-        value.push(image);
-        this.value = value;
-        this.imageAdded.emit(image);
-    };
     Object.defineProperty(ImageUploadComponent.prototype, "value", {
         get: function () { return this._value; },
         set: function (v) {
@@ -152,16 +93,68 @@ var ImageUploadComponent = (function () {
             if (v !== this._value) {
                 this._value = v;
                 console.warn('emitting change', v);
-                this._onChangeCallback(v);
+                this.change.emit(v);
+                if (this.multiple) {
+                    var val = v.length === 0 ? '' : v;
+                    this._onChangeCallback(val);
+                }
+                else {
+                    this._onChangeCallback(v);
+                }
+                this._onTouchedCallback();
             }
-            this._onChangeCallback(v);
         },
         enumerable: true,
         configurable: true
     });
     ;
+    ImageUploadComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
+        if (this.type === 'image' && !this.multiple && this.value) {
+            console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
+                this: this,
+                imageEl: this._currentImageEl.nativeElement
+            });
+            var imageEl_1 = this._currentImageEl.nativeElement;
+            imageEl_1.addEventListener('load', function (event) {
+                console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Image loaded!', event);
+                var val = _this.value;
+                val.width = imageEl_1.naturalWidth;
+                val.height = imageEl_1.naturalHeight;
+                _this.value = val;
+                _this.change.emit(_this.value);
+            });
+        }
+    };
     ImageUploadComponent.prototype.writeValue = function (value) {
-        this._value = value || [];
+        var _this = this;
+        var m = this.multiple ? 'multiple' : 'single';
+        console.debug('ImageUpload --- ' + m + ' -- #writeValue: ', { value: value });
+        if (!this.multiple) {
+            switch (this.type) {
+                case 'image':
+                    if (value) {
+                        this._value = new jp_file_1.ManagedImage(value, 0);
+                    }
+                    else {
+                        this._value = '';
+                    }
+                    break;
+                default:
+                    this._value = value ? new jp_file_1.ManagedFile(value, 0) : '';
+                    break;
+            }
+        }
+        else {
+            var v = value || [];
+            console.warn('about to run v.map ! ', v);
+            this._value = v.map(function (item, i) {
+                switch (_this.type) {
+                    case 'image': return new jp_file_1.ManagedImage(item, i);
+                    default: return new jp_file_1.ManagedFile(item, i);
+                }
+            });
+        }
         console.debug('ImageUpload#writeValue: ', { value: this._value });
     };
     ImageUploadComponent.prototype.registerOnChange = function (fn) {
@@ -191,7 +184,7 @@ var ImageUploadComponent = (function () {
             return false;
         }
     };
-    ImageUploadComponent.prototype.handleImageLoaded = function (e) {
+    ImageUploadComponent.prototype.gridImageLoaded = function (e) {
         e._hasNew = false;
         if (!e.config.hasOwnProperty('id')) {
             this.isLoading = false;
@@ -210,36 +203,99 @@ var ImageUploadComponent = (function () {
             e: e,
             value: this.value
         });
-        var value = this.value;
+        var value = this.value.slice(0);
         value.splice(e.index, 1);
         this.value = value;
         this.imageRemoved.emit(e);
     };
-    ImageUploadComponent.prototype._dragData = function (image, idx) {
-        return Object.assign(image, { idx: idx });
-    };
-    ImageUploadComponent.prototype.imageDragStart = function (e) {
-        this._dropZoneStart = e.dragData.idx;
-        this._draggingImage = true;
-        this._dragImage = e.dragData;
-        console.debug('ImageUpload imageDragStart  from zone ' + this._dropZoneStart + ': ', e);
-    };
-    ImageUploadComponent.prototype.imageDropped = function (event, image, zone) {
-        console.info('ImageUpload image dropped', {
-            event: event,
-            image: image,
-            zone: zone
-        });
-        this._draggingImage = false;
-        this._dragImage = null;
-        var data = event.dragData;
-        if (this._dropZoneStart !== zone) {
-            this.moveImage(this._dropZoneStart, zone);
+    ImageUploadComponent.prototype.onDragOver = function (e) {
+        if (this._dragging) {
+            this._stopEvent(e);
+            return;
         }
+        var transfer = this._getTransfer(e);
+        if (!this._haveFiles(transfer.types)) {
+            return;
+        }
+        transfer.dropEffect = 'copy';
+        this._stopEvent(e);
+        this.isDragOver = true;
+    };
+    ImageUploadComponent.prototype.onDragLeave = function (e) {
+        if (this._dragging) {
+            return;
+        }
+        this._stopEvent(e);
+        this.isDragOver = false;
+    };
+    ImageUploadComponent.prototype.fileDragStart = function (e) {
+        console.log('ImageUploadComponent#fileDragStart', e);
+        this._dragging = true;
     };
     ImageUploadComponent.prototype.onDragEnd = function (e) {
         console.debug('onDragEnd');
-        this._draggingImage = false;
+        this._stopEvent(e);
+        this._dragging = false;
+    };
+    ImageUploadComponent.prototype.add = function (e) {
+        if (this._dragging) {
+            console.log('add cancelling because we are dragging image.');
+            this._dragging = false;
+            return;
+        }
+        else {
+            console.log('add ', e);
+            var files = e.target.files || e.dataTransfer.files;
+            this._stopEvent(e);
+            this.fileAdded.emit(files);
+            this.isDragOver = false;
+            this.isLoading = true;
+            this.readFiles(files);
+        }
+        console.log('ImageUploadComponent#add', {
+            e: e,
+            this: this
+        });
+    };
+    ImageUploadComponent.prototype.readFiles = function (files) {
+        var _this = this;
+        var count = this.value.slice(0).length;
+        var _loop_1 = function(i) {
+            var file = files[i];
+            var image = new index_1.ImageUpload(file);
+            var reader = new FileReader();
+            this_1.isLoading = true;
+            reader.addEventListener('load', function (e) {
+                image.url = reader.result;
+                _this.addImageToGrid(image);
+                _this.isLoading = false;
+            });
+            setTimeout(function () { reader.readAsDataURL(file); });
+        };
+        var this_1 = this;
+        for (var i = 0; i < files.length; i++) {
+            _loop_1(i);
+        }
+    };
+    ImageUploadComponent.prototype.addImageToGrid = function (image) {
+        console.log('Loaded new image: ', image);
+        var value = this.value.slice(0);
+        value.push(image);
+        this.value = value;
+        this.imageAdded.emit(image);
+    };
+    ImageUploadComponent.prototype.reorder = function (event, new_index) {
+        var old_index = event.dragData;
+        this._stopEvent(event.mouseEvent);
+        console.info('ImageUploadComponent#reorder', {
+            old_index: old_index,
+            new_index: new_index,
+            event: event
+        });
+        this._dragging = false;
+        if (old_index !== new_index) {
+            this.moveImage(old_index, new_index);
+        }
     };
     ImageUploadComponent.prototype.moveImage = function (old_index, new_index) {
         var images = this.value;
@@ -248,9 +304,7 @@ var ImageUploadComponent = (function () {
         images[new_index] = source;
         images[old_index] = target;
         this.value = images;
-        this.change.emit(this.value);
-        this._onChangeCallback(this.value);
-        console.log('Just dropped image from drop zone ' + this._dropZoneStart + ' to drop zone ' + new_index);
+        console.log('Just dropped image from drop zone ' + old_index + ' to drop zone ' + new_index);
     };
     ;
     ImageUploadComponent.prototype.reset = function () {
@@ -264,14 +318,25 @@ var ImageUploadComponent = (function () {
         __metadata('design:type', grid_list_1.MdGridList)
     ], ImageUploadComponent.prototype, "_gridList", void 0);
     __decorate([
-        core_1.Input(),
-        field_value_1.BooleanFieldValue(), 
+        core_1.ViewChild('currentImage'), 
+        __metadata('design:type', core_1.ElementRef)
+    ], ImageUploadComponent.prototype, "_currentImageEl", void 0);
+    __decorate([
+        core_1.HostBinding('class'), 
+        __metadata('design:type', Object)
+    ], ImageUploadComponent.prototype, "typeClass", null);
+    __decorate([
+        core_1.Input(), 
         __metadata('design:type', Boolean)
     ], ImageUploadComponent.prototype, "multiple", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Array)
     ], ImageUploadComponent.prototype, "images", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], ImageUploadComponent.prototype, "type", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
@@ -349,7 +414,8 @@ var ImageUploadComponent = (function () {
                 icon_1.MD_ICON_DIRECTIVES,
                 forms_1.NgModel,
                 index_1.GridImage,
-                ng2_dnd_1.DND_DIRECTIVES
+                ng2_dnd_1.DND_DIRECTIVES,
+                index_2.ImageUploadToolbar
             ],
             providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR]
         }), 

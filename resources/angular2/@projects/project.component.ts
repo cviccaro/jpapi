@@ -24,7 +24,7 @@ import {
     JpaPanel,
     JpaPanelGroup,
     JpaPanelContent,
-    JpImage,
+    JpFile,
     ProjectService,
     Project
 } from '../shared/index';
@@ -50,7 +50,7 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     private _originalTitle: string;
     private _isNew: boolean = false;
     private _project: Project = new Project();
-    private _projectImage: JpImage = undefined;
+    private _projectImage: JpFile = undefined;
 
     @HostBinding('class.new') get isNewClass() { return this._isNew; }
 

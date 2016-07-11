@@ -1,8 +1,8 @@
-import { JpImage } from '../../../index';
+import { JpFile } from '../../../index';
 
 import {Observable} from 'rxjs/Observable';
 
-export class ImageUpload implements JpImage {
+export class ImageUpload implements JpFile {
     alias: string;
     alt: string;
     created_at: any;
@@ -22,9 +22,9 @@ export class ImageUpload implements JpImage {
     _file: File;
     webkitRelativePath: any;
 
-    constructor(file: File) {
+    constructor(file: File, idx?: number) {
         this._file = file;
-
+        this.idx = idx;
         this.filename = this.alias = file.name;
         this.mimetype = file.type;
         this.size = file.size;

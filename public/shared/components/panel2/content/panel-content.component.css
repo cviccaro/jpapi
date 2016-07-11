@@ -1,0 +1,8 @@
+:host {
+  height: auto;
+  padding-top: 16px; }
+  :host .hidden {
+    padding-top: 0;
+    height: 0; }
+
+/*# sourceMappingURL=panel-content.component.css.map */

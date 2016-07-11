@@ -38,7 +38,15 @@ var ModalComponent = (function () {
         this._actionEmitter.emit({ type: 'submit', config: this.config, event: null });
     };
     ModalComponent.prototype.handleChange = function (col, e) {
-        col.value = e.target['files'];
+        console.log('handle change in modal', {
+            col: col,
+            e: e
+        });
+        if (col.type === 'file') {
+            col.value = e.target['files'];
+        }
+        var inputs = this.config.inputs;
+        this.config.inputs.forEach(function (col) { col.evaluateConditions(inputs); });
     };
     ModalComponent.prototype.ngOnChanges = function (changes) {
         if (changes.hasOwnProperty('config')) {
@@ -46,7 +54,7 @@ var ModalComponent = (function () {
             if (currentValue) {
                 switch (currentValue.mode) {
                     case "form":
-                        this.config.inputs = this.config.inputs.map(function (input) { return new modal_interface_1.ModalFormColumn(input); });
+                        this.config.inputs = this.config.inputs.map(function (input) { return new modal_interface_1.ModalFormField(input); });
                         break;
                 }
             }

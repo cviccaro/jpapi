@@ -43,21 +43,21 @@
             &.dnd-drag-over {
                 // background: rgba(25, 118, 210, 0.35);
                 figure {
-                    @extend .hvr-hang;
-                    -webkit-animation-name: hvr-hang-sink, hvr-hang;
-                    animation-name: hvr-hang-sink, hvr-hang;
-                    -webkit-animation-duration: .3s, 1.5s;
-                    animation-duration: .3s, 1.5s;
-                    -webkit-animation-delay: 0s, .3s;
-                    animation-delay: 0s, .3s;
-                    -webkit-animation-timing-function: ease-out, ease-in-out;
-                    animation-timing-function: ease-out, ease-in-out;
-                    -webkit-animation-iteration-count: 1, infinite;
-                    animation-iteration-count: 1, infinite;
-                    -webkit-animation-fill-mode: forwards;
-                    animation-fill-mode: forwards;
-                    -webkit-animation-direction: normal, alternate;
-                    animation-direction: normal, alternate;
+                    // @extend .hvr-hang;
+                    // -webkit-animation-name: hvr-hang-sink, hvr-hang;
+                    // animation-name: hvr-hang-sink, hvr-hang;
+                    // -webkit-animation-duration: .3s, 1.5s;
+                    // animation-duration: .3s, 1.5s;
+                    // -webkit-animation-delay: 0s, .3s;
+                    // animation-delay: 0s, .3s;
+                    // -webkit-animation-timing-function: ease-out, ease-in-out;
+                    // animation-timing-function: ease-out, ease-in-out;
+                    // -webkit-animation-iteration-count: 1, infinite;
+                    // animation-iteration-count: 1, infinite;
+                    // -webkit-animation-fill-mode: forwards;
+                    // animation-fill-mode: forwards;
+                    // -webkit-animation-direction: normal, alternate;
+                    // animation-direction: normal, alternate;
                 }
             }
         }
@@ -80,6 +80,21 @@
             display: flex;
             flex-direction: row;
             flex: 1;
+        }
+    }
+    .single-file-wrapper {
+        display: flex;
+        flex-direction: row;
+        .side-toolbar {
+            max-width: 25%;
+            padding-right: 16px;
+            margin-right: 16px;
+        }
+        .viewport {
+            flex: 1;
+            .current-image {
+                width: 100%;
+            }
         }
     }
 }

@@ -23,7 +23,7 @@ import {
     JpaPanel,
     JpaPanelGroup,
     JpaPanelContent,
-    JpImage,
+    JpFile,
     BlogService,
     Blog,
     DivisionService,
@@ -54,7 +54,7 @@ export class BlogComponent implements OnInit, AfterViewInit {
     private _originalTitle: string;
     private _isNew: boolean = false;
     private _blog: Blog = new Blog();
-    private _blogImage: JpImage = undefined;
+    private _blogImage: JpFile = undefined;
 
     get blog(): Blog { return this._blog; }
     set blog(v: Blog) {

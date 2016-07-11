@@ -19,17 +19,27 @@ import { ModalConfig } from './modal.interface';
 @Component({
     moduleId: module.id,
     selector: 'jpa-modal-container',
-    template: '<jpa-modal class="jpa-modal-wrapper" #modal [config]="config"></jpa-modal><jpa-modal-backdrop #backdrop></jpa-modal-backdrop>',
+    template: '<jpa-modal #modal [config]="config" [class]="classList"></jpa-modal><jpa-modal-backdrop #backdrop></jpa-modal-backdrop>',
     styleUrls: ['./container.css'],
     directives: [ ModalBackdropComponent, ModalComponent ]
 })
 export class ModalContainerComponent implements OnInit, OnDestroy {
+
     public config: ModalConfig;
     private opened = false;
 
     private openModalSubscriber: Subscription;
     private actionSubscriber: Subscription;
     private okModalSubscriber: Subscription;
+
+    public get classList() {
+        let cl = 'jpa-modal-wrapper';
+        if (this.config) {
+            cl += ' ' + this.config.mode;
+        }
+
+        return cl;
+    }
 
     @HostBinding('attr.hidden') get hiddenAttr() { return this.opened ? null : true; }
 

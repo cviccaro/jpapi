@@ -1,8 +1,9 @@
 "use strict";
 var Observable_1 = require('rxjs/Observable');
 var ImageUpload = (function () {
-    function ImageUpload(file) {
+    function ImageUpload(file, idx) {
         this._file = file;
+        this.idx = idx;
         this.filename = this.alias = file.name;
         this.mimetype = file.type;
         this.size = file.size;

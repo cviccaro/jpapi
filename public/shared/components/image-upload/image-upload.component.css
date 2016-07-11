@@ -48,7 +48,7 @@
   100% {
     transform: translateY(8px); } }
 
-.hvr-hang, :host md-grid-list md-grid-tile.dnd-drag-over figure {
+.hvr-hang {
   display: inline-block;
   vertical-align: middle;
   transform: translateZ(0);
@@ -56,7 +56,7 @@
   backface-visibility: hidden;
   -moz-osx-font-smoothing: grayscale; }
 
-.hvr-hang:hover, :host md-grid-list md-grid-tile.dnd-drag-over figure:hover, .hvr-hang:focus, :host md-grid-list md-grid-tile.dnd-drag-over figure:focus, .hvr-hang:active, :host md-grid-list md-grid-tile.dnd-drag-over figure:active {
+.hvr-hang:hover, .hvr-hang:focus, .hvr-hang:active {
   animation-name: hvr-hang-sink, hvr-hang;
   animation-duration: .3s, 1.5s;
   animation-delay: 0s, .3s;
@@ -90,6 +90,44 @@
 /**
  * Transition mixins
  */
+/**
+ * Icon and button sizes
+ */
+.md-14 {
+  font-size: 14px;
+  width: 14px;
+  height: 14px; }
+
+.md-16 {
+  font-size: 16px;
+  height: 16px;
+  width: 16px; }
+
+.md-18 {
+  font-size: 18px;
+  width: 18px;
+  height: 18px; }
+
+.md-20 {
+  font-size: 20px;
+  width: 20px;
+  height: 20px; }
+
+.md-22 {
+  font-size: 22px;
+  width: 22px;
+  height: 22px; }
+
+.md-24 {
+  font-size: 24px;
+  width: 24px;
+  height: 24px; }
+
+.md-32 {
+  font-size: 32px;
+  width: 32px;
+  height: 32px; }
+
 :host {
   display: block; }
   :host .file-drop-zone-wrapper {
@@ -115,14 +153,6 @@
     :host md-grid-list md-grid-tile {
       z-index: 5;
       transition: all 250ms cubic-bezier(0.75, 0.17, 0.59, 1.09); }
-      :host md-grid-list md-grid-tile.dnd-drag-over figure {
-        animation-name: hvr-hang-sink, hvr-hang;
-        animation-duration: .3s, 1.5s;
-        animation-delay: 0s, .3s;
-        animation-timing-function: ease-out, ease-in-out;
-        animation-iteration-count: 1, infinite;
-        animation-fill-mode: forwards;
-        animation-direction: normal, alternate; }
   :host .drop-zone-rows {
     display: -ms-flexbox;
     display: flex;
@@ -145,5 +175,19 @@
       flex-direction: row;
       -ms-flex: 1;
       flex: 1; }
+  :host .single-file-wrapper {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+    flex-direction: row; }
+    :host .single-file-wrapper .side-toolbar {
+      max-width: 25%;
+      padding-right: 16px;
+      margin-right: 16px; }
+    :host .single-file-wrapper .viewport {
+      -ms-flex: 1;
+      flex: 1; }
+      :host .single-file-wrapper .viewport .current-image {
+        width: 100%; }
 
 /*# sourceMappingURL=image-upload.component.css.map */

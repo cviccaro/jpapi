@@ -1,0 +1,92 @@
+/**
+ * Retrieves a color value from the $material-colors Sass map
+ * Inspired by https://github.com/nilskaspersson/Google-Material-UI-Color-Palette/
+ *
+ * @function
+ * @param {string} color-name             - quoted, lower-case, dasherized color
+ *                                          name (e.g. 'pink', 'amber')
+ * @param {string} [color-variant='500']  - quoted, lowercase color variant (e.g.
+ *                                          '200', 'a100')
+ */
+/**
+ * Palette
+ */
+/**
+ * Colors
+ */
+/**
+ * Fonts
+ */
+/**
+ * Animations & Transitions
+ */
+/**
+ * Transition mixins
+ */
+/**
+ * Icon and button sizes
+ */
+.md-14 {
+  font-size: 14px;
+  width: 14px;
+  height: 14px; }
+
+.md-16 {
+  font-size: 16px;
+  height: 16px;
+  width: 16px; }
+
+.md-18 {
+  font-size: 18px;
+  width: 18px;
+  height: 18px; }
+
+.md-20 {
+  font-size: 20px;
+  width: 20px;
+  height: 20px; }
+
+.md-22 {
+  font-size: 22px;
+  width: 22px;
+  height: 22px; }
+
+.md-24 {
+  font-size: 24px;
+  width: 24px;
+  height: 24px; }
+
+.md-32 {
+  font-size: 32px;
+  width: 32px;
+  height: 32px; }
+
+:host {
+  -ms-flex: 1;
+  flex: 1;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  display: -ms-flexbox;
+  display: flex; }
+  :host .drop-area,
+  :host .chips.available {
+    width: 50%; }
+  :host .drop-area {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-pack: distribute;
+    justify-content: space-around;
+    transition: all 250ms cubic-bezier(0.75, 0.17, 0.59, 1.09);
+    will-change: border; }
+    :host .drop-area.dnd-drag-enter {
+      border: 2px dashed #1976d2; }
+    :host .drop-area jpa-chip {
+      background: #bdbdbd; }
+  :host jpa-chip {
+    cursor: pointer; }
+  :host .chip-wrapper {
+    display: inline-block; }
+
+/*# sourceMappingURL=dnd-form-control.component.css.map */

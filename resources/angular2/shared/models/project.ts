@@ -1,13 +1,13 @@
 import { JpClient } from './client';
-import { JpImage } from './jp-image';
+import { JpFile } from './jp-file';
 
 export class Project {
 	id: any = undefined;
 	title: string = '';
 	body: string = '';
-	image: JpImage = undefined;
+	image: JpFile = undefined;
     image_id: number = undefined;
-    images: JpImage[] = [];
+    images: JpFile[] = [];
 	client: JpClient = new JpClient();
     client_id:number = undefined;
 	created_at: any = undefined;

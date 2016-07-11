@@ -125,10 +125,11 @@ md-icon-button,
           background-color: rgba(0,0,0,0.12);
         }
     }
-    &.small {
-        font-size: 24px;
-        width: 24px;
-        height: 24px;
+    &.md-24 {
+        @extend .md-24;
+        md-icon {
+            @extend .md-24;
+        }
     }
 }
 
@@ -139,19 +140,22 @@ md-icon.spin {
 
 md-icon {
     &.md-14 {
-        font-size: 14px;
-        width: 14px;
-        height: 14px;
+        @extend .md-14;
     }
-    &.md-20 {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
+    &.md-16 {
+        @extend .md-16;
     }
     &.md-18 {
-        font-size: 18px;
-        width: 18px;
-        height: 18px;
+        @extend .md-18;
+    }
+    &.md-20 {
+        @extend .md-20;
+    }
+    &.md-22 {
+        @extend .md-22;
+    }
+    &.md-24 {
+        @extend .md-24;
     }
 }
 
@@ -249,6 +253,20 @@ md-icon {
     justify-content: flex-end;
 }
 
+
+.flex {
+    display: flex;
+}
+.flex-row {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+.flex-column {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+}
 /**
 | Forms
 |

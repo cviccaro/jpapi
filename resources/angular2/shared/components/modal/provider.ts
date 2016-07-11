@@ -22,15 +22,17 @@ export class JpaModal {
         switch(this._config.mode) {
             case 'form':
                 return {
-                    okText: 'Create',
+                    okText: 'Save',
                     cancelText: 'Cancel',
-                    inputs: []
+                    inputs: [],
+                    showTitle: true
                 };
             default:
                 return {
                     okText: 'GOT IT!',
                     cancelText: 'Cancel',
-                    message: 'Are you sure?'
+                    message: 'Are you sure?',
+                    showTitle: false
                 };
         }
     };

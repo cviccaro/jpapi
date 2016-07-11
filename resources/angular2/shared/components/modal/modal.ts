@@ -2,7 +2,7 @@ import { Component, AfterViewInit, Input, Output, EventEmitter, SimpleChanges, O
 import { MATERIAL_DIRECTIVES }  from '../../libs/angular2-material';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
-import { ModalConfig, ModalInput, ModalFormColumn, ModalAction } from './modal.interface';
+import { ModalConfig, ModalInput, ModalFormField, ModalAction } from './modal.interface';
 
 @Component({
     moduleId: module.id,
@@ -38,8 +38,18 @@ export class ModalComponent implements AfterViewInit, OnChanges {
         this._actionEmitter.emit({ type: 'submit', config: this.config, event: null });
     }
 
-    handleChange(col: ModalFormColumn, e: Event) {
-        col.value = e.target['files'];
+    handleChange(col: ModalFormField, e: Event) {
+        console.log('handle change in modal', {
+            col: col,
+            e: e
+        });
+        if (col.type === 'file') {
+            col.value = e.target['files'];
+        }
+
+        let inputs = <ModalFormField[]>this.config.inputs;
+
+        this.config.inputs.forEach(col => { (<ModalFormField>col).evaluateConditions(inputs); });
     }
 
     ngOnChanges(changes: SimpleChanges) {
@@ -49,7 +59,7 @@ export class ModalComponent implements AfterViewInit, OnChanges {
             if (currentValue) {
                 switch (currentValue.mode) {
                     case "form":
-                        this.config.inputs = this.config.inputs.map(input => new ModalFormColumn(input));
+                        this.config.inputs = this.config.inputs.map(input => new ModalFormField(input));
                         break;
                 }
             }

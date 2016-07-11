@@ -14,7 +14,13 @@ export class ClientsComponent implements AfterViewInit {
     public state: any;
     public clients: JpClient[];
 
-    constructor(private service: ClientService, private cache: JpaCache, private modal: JpaModal, private toaster: ToasterService) {
+    constructor(
+        private service: ClientService,
+        private cache: JpaCache,
+        private modal: JpaModal,
+        private toaster: ToasterService,
+        private menu: JpaContextMenu
+    ) {
         this.state = this.cache.get('clients');
 
         this.state.sortOptions = [
@@ -36,7 +42,6 @@ export class ClientsComponent implements AfterViewInit {
     }
 
     add() {
-        console.log('add a client');
         this.modal.open({
             mode: 'form',
             inputs: [
@@ -62,25 +67,36 @@ export class ClientsComponent implements AfterViewInit {
         });
     }
 
-    toggleFeatured(client: JpClient) {
-        console.log('toggle featured', client);
-    }
-
     edit(client: JpClient) {
-        console.log('Edit Client', client);
-        this.modal.open({
+        this.menu.close();
+        let modalConfig = {
             mode: 'form',
             inputs: [
                 { name: 'name', required: true, value: client.name },
                 { name: 'alias', value: client.alias },
                 { name: 'featured', type: 'checkbox', value: client.featured },
-                { name: 'image', type: 'file' },
-                { name: 'image_remove', type: 'checkbox', label: 'Delete Image' }
+                { name: 'image_remove', type: 'toggle', label: 'Slide to Delete Image'},
+                { name: 'image', type: 'file', label: 'Replace Image', conditions: [
+                    {
+                        target: 'image_remove',
+                        condition: (source, target) => {
+                            return target.value;
+                        },
+                        action: 'hidden'
+                    }
+                ]},
             ],
             formClass: 'update' + (client.image_id !== null ? ' has-image' : ''),
-            okText: 'Update',
+            okText: 'Save',
             title: 'Edit client ' + client.name
-        }).subscribe((action: ModalAction) => {
+        };
+
+        if (client.image_id === null) {
+            modalConfig.inputs[4]['label'] = 'Add an image';
+            modalConfig.inputs.splice(3, 1);
+        }
+
+        this.modal.open(modalConfig).subscribe((action: ModalAction) => {
             if (action.type === 'submit') {
                 let form = action.config.inputs;
 
@@ -97,8 +113,8 @@ export class ClientsComponent implements AfterViewInit {
     }
 
     remove(client: JpClient) {
-        console.log('Remove  Client', client);
-        let name = client.name; 
+        this.menu.close();
+        let name = client.name;
         this.modal.open({message: 'Discard client?', okText: 'Discard'})
             .subscribe((action: ModalAction) => {
                 if (action.type === 'ok') {
@@ -111,7 +127,7 @@ export class ClientsComponent implements AfterViewInit {
             })
     }
 
-    fetch() { 
+    fetch() {
         this.service.all().subscribe(res => {
             this.clients = res.data;
         });

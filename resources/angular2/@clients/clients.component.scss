@@ -10,25 +10,19 @@
         }
 
         .actions {
-          position: absolute;
-          top: 0;
-          right: 0;
-          display: none;
-          flex-direction: column;
-          button {
-            color: $black_54;
-            height: 24px;
-            width: 24px;
-            &.remove {
-              color: $danger;
-            }
-          }
+          position: relative;
+          opacity: 0;
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-end;
+          transition: all $transition_duration $transition_ease;
+          width: 100%;
         }
     }
     md-grid-tile:hover {
       figure {
         .actions {
-          display: flex;
+            opacity: 1;
         }
       }
     }

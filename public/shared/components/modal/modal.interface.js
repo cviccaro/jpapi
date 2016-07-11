@@ -4,17 +4,18 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-var GenericFormColumn = (function () {
-    function GenericFormColumn() {
+var GenericFormField = (function () {
+    function GenericFormField() {
         this.type = 'text';
         this.required = false;
+        this.hidden = false;
     }
-    return GenericFormColumn;
+    return GenericFormField;
 }());
-exports.GenericFormColumn = GenericFormColumn;
-var ModalFormColumn = (function (_super) {
-    __extends(ModalFormColumn, _super);
-    function ModalFormColumn(column) {
+exports.GenericFormField = GenericFormField;
+var ModalFormField = (function (_super) {
+    __extends(ModalFormField, _super);
+    function ModalFormField(column) {
         _super.call(this);
         if (!column.label) {
             column.label = column.name.substr(0, 1).toUpperCase() + column.name.substr(1, column.name.length - 1);
@@ -22,8 +23,34 @@ var ModalFormColumn = (function (_super) {
         }
         Object.assign(this, column);
     }
-    return ModalFormColumn;
-}(GenericFormColumn));
-exports.ModalFormColumn = ModalFormColumn;
+    ModalFormField.prototype.evaluateConditions = function (inputs) {
+        var _this = this;
+        if (this.conditions) {
+            this.conditions.forEach(function (condition) {
+                var target = false;
+                inputs.forEach(function (input) {
+                    if (input.name === condition.target)
+                        target = input;
+                });
+                if (target) {
+                    var result = condition.condition.apply(_this, [_this, target]);
+                    switch (condition.action) {
+                        case 'hidden':
+                            _this.hidden = result;
+                            break;
+                        case 'required':
+                            _this.required = result;
+                            break;
+                    }
+                }
+                else {
+                    console.warn("No target field \"" + condition.target + "\" was found while checking condition for source field " + _this.name);
+                }
+            });
+        }
+    };
+    return ModalFormField;
+}(GenericFormField));
+exports.ModalFormField = ModalFormField;
 
 //# sourceMappingURL=modal.interface.js.map

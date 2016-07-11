@@ -1,0 +1,86 @@
+<div class="control-container" [ngSwitch]="type">
+  <template [ngSwitchCase]="'text'">
+    <input #input
+      class="panel-control-element text"
+      [class.md-end]="align == 'end'"
+      [attr.autocomplete]="autoComplete"
+      [autofocus]="autoFocus"
+      [disabled]="disabled"
+      [id]="inputId"
+      [attr.max]="max"
+      [attr.maxlength]="maxLength"
+      [attr.min]="min"
+      [attr.minlength]="minLength"
+      [readonly]="readOnly"
+      [required]="required"
+      [spellcheck]="spellCheck"
+      [attr.step]="step"
+      [attr.tabindex]="tabIndex"
+      [attr.name]="name"
+      (focus)="handleFocus($event)"
+      (blur)="handleBlur($event)"
+      [(ngModel)]="value"
+      (change)="handleChange($event)" />
+  </template>
+  <template [ngSwitchCase]="'textarea'">
+    <ckeditor #textarea
+      [(ngModel)]="value"
+      debounce="500"
+      [id]="inputId"
+      [attr.step]="step"
+      [attr.tabindex]="tabIndex"
+      [attr.name]="name"
+      (focus)="handleFocus($event)"
+      (blur)="handleBlur($event)"
+      (change)="handleChange($event)">
+    </ckeditor>
+  </template>
+  <template [ngSwitchCase]="'select'">
+    <select *ngIf="_isSelect"
+      #select
+      class="panel-control-element select"
+      [class.md-end]="align == 'end'"
+      [autofocus]="autoFocus"
+      [disabled]="disabled"
+      [id]="inputId"
+      [attr.list]="list"
+      [required]="required"
+      [attr.step]="step"
+      [attr.tabindex]="tabIndex"
+      [attr.name]="name"
+      (focus)="handleFocus($event)"
+      (blur)="handleBlur($event)"
+      [(ngModel)]="value"
+      (change)="handleChange($event)">
+      <option value="" selected></option>
+    </select>
+  </template>
+  <template [ngSwitchCase]="'multiselect'">
+    <div *ngIf="value !== ''" class="chips" dnd-droppable [dropEnabled]="true" (onDropSuccess)="multiselectDrop($event)">
+      <div class="chip-wrapper" (onDragEnter)="multiselectOnDragEnter($event, index)" dnd-droppable [dropEnabled]="true" *ngFor="let option of value; let index = index;" (onDropSuccess)="multiselectReorder($event)">
+        <jpa-chip
+        [id]="option.id"
+        [name]="option.name"
+        (onRemove)="multiselectRemove($event)"
+        dnd-draggable
+        [dragData]="{option: option, index: index, preventAdd: true}"
+        [dragEnabled]="true">
+        </jpa-chip>
+      </div>
+      <input #input [hidden]="true" [id]="inputId" [attr.name]="name" class="panel-control-multiselect" type="text" [(ngModel)]="_secureValue" (change)="handleChange($event)" [required]="required" />
+    </div>
+  </template>
+  <template [ngSwitchCase]="'images'">
+    <jpa-image-upload
+        [multiple]="multiple"
+        [images]="gallery"
+        [name]="name"
+        [required]="required"
+        [(ngModel)]="value"
+        (change)="handleChange($event)"
+        (fileAdded)="fileAdded($event)"
+        (imageAdded)="imageAdded($event)"
+        (imageLoaded)="imageLoaded($event)">
+    </jpa-image-upload>
+  </template>
+</div>

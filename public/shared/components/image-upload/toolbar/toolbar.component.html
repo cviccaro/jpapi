@@ -1,0 +1,17 @@
+<div class="toolbar-container">
+<h2>Information</h2>
+{{ image?.width }} x {{ image?.height }}px
+
+<h3>JSON</h3>
+{{ image | json }}
+
+<h4>Buttons!</h4>
+<div class="actions flex-row">
+    <button md-fab><md-icon>delete</md-icon></button>
+    <button md-fab color="accent"><md-icon>file_upload</md-icon></button>
+    <button md-fab color="primary"><md-icon>file_upload</md-icon></button>
+    <button md-fab color="secondary"><md-icon>file_upload</md-icon></button>
+    <button md-fab color="danger"><md-icon>file_upload</md-icon></button>
+    <button md-fab color="warn"><md-icon>file_upload</md-icon></button>
+</div>
+</div>

@@ -14,16 +14,24 @@ var TooltipDirective = (function () {
     function TooltipDirective(el, provider) {
         this.el = el;
         this.provider = provider;
+        this._hasRef = false;
     }
     TooltipDirective.prototype.onMouseEnter = function (e) {
         var _this = this;
-        this.provider.open(this.el, this.tooltip, this.tooltipAlign)
-            .subscribe(function (e) {
-            _this._cmpRef = e;
-        });
+        clearTimeout(this._openTimer);
+        this._openTimer = setTimeout(function () {
+            _this.provider.open(_this.el, _this.tooltip, _this.tooltipAlign)
+                .subscribe(function (e) {
+                _this._cmpRef = e;
+                _this._hasRef = true;
+            });
+        }, 500);
     };
     TooltipDirective.prototype.onMouseLeave = function (e) {
-        this._cmpRef.destroy();
+        clearTimeout(this._openTimer);
+        if (this._hasRef) {
+            this._cmpRef.destroy();
+        }
     };
     __decorate([
         core_1.Input(), 

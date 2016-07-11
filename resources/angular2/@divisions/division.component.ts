@@ -4,7 +4,7 @@ import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 import { ToasterService } from 'angular2-toaster';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { JpaCache, Division, DivisionService, PANEL_DIRECTIVES, JpImage } from '../shared/index';
+import { JpaCache, Division, DivisionService, PANEL_DIRECTIVES, JpFile } from '../shared/index';
 
 @Component({
 	moduleId: module.id,
@@ -21,7 +21,7 @@ import { JpaCache, Division, DivisionService, PANEL_DIRECTIVES, JpImage } from '
 })
 export class DivisionComponent implements OnInit, AfterViewInit {
 	private _division: Division;
-	private _divisionImage: JpImage;
+	private _divisionImage: JpFile;
 
 	public ready: boolean = false;
 	public isNew: boolean = false;

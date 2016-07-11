@@ -1,0 +1,80 @@
+@import "../../../../../assets/sass/variables";
+
+:host {
+    .jpa-panel {
+        &.ng-dirty {
+
+            jpa-panel2-bar-title,
+            jpa-panel2-bar-subtitle {
+                color: $accent;
+            }
+
+            &.ng-invalid {
+                jpa-panel2-bar-title,
+                jpa-panel2-bar-subtitle {
+                    color: $danger;
+                }
+            }
+        }
+
+        &.type-textarea {
+            .textarea-infix {
+                width: 100%;
+            }
+        }
+        &.type-files {
+            jpa-image-upload {
+                width: 100%;
+            }
+            jpa-panel2-bar-subtitle {
+                .subtitle-wrapper {
+                    display: flex;
+                    .subtitle-text { order: 2; }
+                    md-icon { order: 1; margin-right: 4px; }
+                }
+            }
+
+            jpa-panel2-content {
+                .panel-content-spacer {
+                    display: none;
+                }
+            }
+
+            // jpa-panel2-content:not(.single-file) {
+            //     .panel-content-spacer {
+            //         display: none;
+            //     }
+            // }
+            // jpa-panel2-content.single-file {
+            //     .panel-content-spacer {
+            //         flex-shrink: 0;
+            //     }
+            // }
+        }
+
+        &.type-textarea {
+            jpa-panel2-content:not(.single-file) {
+                .panel-content-spacer {
+                    display: none;
+                }
+            }
+        }
+        // &.type-dnd {
+        //     .panel-content-spacer {
+        //         display: none;
+        //     }
+        // }
+
+        jpa-panel2-content {
+            display: flex;
+            flex-direction: row;
+            .panel-content-spacer {
+                width: 24.5%;
+            }
+        }
+
+        span.required {
+            color: $danger;
+        }
+    }
+}

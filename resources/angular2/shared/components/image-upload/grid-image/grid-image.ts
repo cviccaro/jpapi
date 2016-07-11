@@ -1,7 +1,7 @@
 import { Component, Input, Output, AfterViewInit, ViewChild, ElementRef, EventEmitter, HostListener } from '@angular/core';
 import {MdIcon} from '@angular2-material/icon';
 
-import {JpImage} from '../../../index';
+import {JpFile} from '../../../index';
 
 @Component({
     moduleId: module.id,
@@ -17,7 +17,7 @@ export class GridImage {
 
     @ViewChild('image') public _imageEl: ElementRef;
 
-    @Input() imageConfig: JpImage;
+    @Input() imageConfig: JpFile;
     @Input() index: number;
 
     @Output() clickedRemove = new EventEmitter();
@@ -39,6 +39,10 @@ export class GridImage {
             //console.log('GridImage Loaded.', this);
             this.imageLoaded.emit({event: e, config: this.imageConfig});
         });
+    }
+
+    ngAfterViewInit() {
+        console.log('GridImage View Initialized', this);
     }
 
     remove() {

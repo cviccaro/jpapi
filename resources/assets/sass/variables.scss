@@ -11,11 +11,14 @@ $grey_50: material-color('grey', '50');
 $grey_100: material-color('grey', '100');
 $grey_200: material-color('grey', '200');
 $grey_300: material-color('grey', '300');
+$grey_400: material-color('grey', '400');
 $grey_500: material-color('grey', '500');
 $grey_600: material-color('grey', '600');
 $grey_700: material-color('grey', '700');
 $grey_800: material-color('grey', '800');
+$blue_400: material-color('blue', '400');
 $blue_700: material-color('blue', '700');
+$blue_900: material-color('blue', '900');
 $red_500: material-color('red', '500');
 $red_900: material-color('red', '900');
 $yellow_500: material-color('yellow', '500');
@@ -30,6 +33,7 @@ $primary: $bluegrey_600;
 $secondary: $lightgreen_600;
 $accent: $blue_700;
 $danger: $red_500;
+$warn: $yellow_500;
 $background_color: #fff;
 $text-color: #212121;
 
@@ -63,4 +67,44 @@ $transition_ease: cubic-bezier(.75,.17,.59,1.09);
     @if ($depth == 3) {
         box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2), 0px 6px 10px 0px rgba(0, 0, 0, 0.14), 0px 1px 18px 0px rgba(0, 0, 0, 0.12);
     }
+}
+
+/**
+ * Icon and button sizes
+ */
+.md-14 {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+.md-16 {
+  font-size: 16px;
+  height: 16px;
+  width: 16px;
+}
+.md-18 {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+.md-20 {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+.md-22 {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+}
+.md-24 {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+}
+
+.md-32 {
+    font-size: 32px;
+    width: 32px;
+    height: 32px;
 }

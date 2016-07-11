@@ -19,6 +19,17 @@ var ModalContainerComponent = (function () {
         this.ref = ref;
         this.opened = false;
     }
+    Object.defineProperty(ModalContainerComponent.prototype, "classList", {
+        get: function () {
+            var cl = 'jpa-modal-wrapper';
+            if (this.config) {
+                cl += ' ' + this.config.mode;
+            }
+            return cl;
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(ModalContainerComponent.prototype, "hiddenAttr", {
         get: function () { return this.opened ? null : true; },
         enumerable: true,
@@ -66,7 +77,7 @@ var ModalContainerComponent = (function () {
         core_1.Component({
             moduleId: module.id,
             selector: 'jpa-modal-container',
-            template: '<jpa-modal class="jpa-modal-wrapper" #modal [config]="config"></jpa-modal><jpa-modal-backdrop #backdrop></jpa-modal-backdrop>',
+            template: '<jpa-modal #modal [config]="config" [class]="classList"></jpa-modal><jpa-modal-backdrop #backdrop></jpa-modal-backdrop>',
             styleUrls: ['./container.css'],
             directives: [backdrop_1.ModalBackdropComponent, modal_1.ModalComponent]
         }), 

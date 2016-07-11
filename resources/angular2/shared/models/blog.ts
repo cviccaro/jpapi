@@ -1,4 +1,4 @@
-import {JpImage} from './jp-image';
+import {JpFile} from './jp-file';
 import {Tag} from './tag';
 import {Division} from './division';
 
@@ -12,9 +12,9 @@ export class Blog {
 	body: string = '';
 	summary: string = '';
 
-	image: JpImage;
+	image: JpFile;
 	image_id: number;
-	images: JpImage[] = [];
+	images: JpFile[] = [];
 
 	tags: Tag[] = [];
 
