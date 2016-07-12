@@ -1,6 +1,6 @@
-import { Input, Component, OnInit, AfterViewInit, QueryList, ViewChildren, AfterContentInit, Output, EventEmitter } from '@angular/core';
+import { Input, Component, OnInit, AfterViewInit, QueryList, ViewChildren, ContentChildren, AfterContentInit, Output, EventEmitter } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
-import { NgModel } from '@angular/forms';
+import { NgModel, REACTIVE_FORM_DIRECTIVES, NgControl, FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CKEditor } from 'ng2-ckeditor';
 
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
@@ -32,10 +32,15 @@ import { PanelFormControlSummary } from './summary/summary.component';
         CKEditor,
         DragnDropFormControl,
         FileUploadComponent,
-        PanelFormControlSummary
-    ]
+        PanelFormControlSummary,
+        REACTIVE_FORM_DIRECTIVES
+    ],
+    viewProviders: [NgControl]
 })
 export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewInit {
+    constructor(public builder: FormBuilder) { }
+
+    panelForm: FormGroup;
     ready: boolean = true;
     panelToggleStates: { [key: string] : boolean } = {};
 
@@ -44,24 +49,39 @@ export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewIn
     @Input() controls: PanelFormControl<any>[];
     @Input() model: any;
     @Input() formClass: string;
+    @Input() saving: boolean = false;
+    @Input() savingText: string = 'Saving...';
     @Input() submitText: string = 'Submit';
 
     @ViewChildren(PanelComponent) panels: QueryList<PanelComponent>;
     @ViewChildren(NgModel) _models: QueryList<NgModel>;
+    @ViewChildren(NgControl) _formControls: QueryList<NgControl>;
+    @ContentChildren(FormControl) _formControlsContent: QueryList<FormControl>;
 
     private _controlPanels: { [key: string]: PanelComponent } = {};
 
     ngOnInit() {
+        let group = {};
+
         this.formClass = 'panel-form' + (this.formClass ? ' ' + this.formClass : '');
         this.controls = this.controls.sort((a, b) => a.order - b.order);
         this.controls.forEach(control => {
             control.value = this.model[control.name];
+
+            let validators = [];
+            if (control.required) {
+                validators.push(Validators.required);
+            }
+            group[control.name] = [control.value, validators];
             this.panelToggleStates[control.name] = false;
             console.log('Just set value for control ' + control.name + ' to ' + control.value, {
                 model: this.model,
                 control: control
             });
         });
+
+        this.panelForm = this.builder.group(group);
+        console.log('PanelForm', this.panelForm);
     }
 
     ngAfterContentInit() {
@@ -81,24 +101,14 @@ export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewIn
             this._controlPanels[control.name] = panel;
         });
 
-        // Sync validation classes with the model
-        this._models.forEach(model => {
-            let control = this.controls.find(control => control.name === model.name);
+        this._formControls.forEach(formControl => {
+            console.warn('Subscribing to status Changes on form control: ',formControl);
+            formControl.valueChanges.debounceTime(250).subscribe(e => {
+               let panel = this._controlPanels[formControl.name];
 
-            let panel = this._controlPanels[control.name];
+               let el: HTMLElement = panel.el.nativeElement;
 
-            let el: HTMLElement = panel.el.nativeElement;
-            model.valueChanges.debounceTime(500).subscribe(e => {
-                // Handle CKEditor's lack of proper validation
-                // @todo: remove when CKEditor patches this
-                if (control.required && control.controlType === 'textarea' && control['ckeditor']) {
-                    if (model.value === '') {
-                        model['_control']['_status'] = 'INVALID';
-                        model['_value'] = model['_control']['_value'] = model['viewModel'] = model['model'] = null;
-                    }
-                }
-
-                if (model.valid) {
+                if (formControl.valid) {
                     el.classList.remove('ng-invalid');
                     el.classList.add('ng-valid');
                 } else {
@@ -106,15 +116,64 @@ export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewIn
                     el.classList.remove('ng-valid');
                 }
 
-                if (model.dirty) {
+                if (formControl.dirty) {
                     el.classList.remove('ng-pristine');
                     el.classList.add('ng-dirty');
                 } else {
                     el.classList.add('ng-pristine');
                     el.classList.remove('ng-dirty');
                 }
+
+                console.log('form control ' + formControl.name + ' value change', e);
             });
         });
+
+        // Sync validation classes with the model
+        // this._models.forEach(model => {
+        //     console.log('Model ', {
+        //         model: model,
+        //         validator: model.validator,
+        //         validators: model['_validators'],
+        //         control: model['_control']
+        //     })
+
+        //     let control = this.controls.find(control => control.name === model.name);
+
+        //     let panel = this._controlPanels[control.name];
+
+        //     let el: HTMLElement = panel.el.nativeElement;
+
+        //     model.valueChanges.debounceTime(500).subscribe(e => {
+        //         console.log('Model value changed ', { 
+        //             e: e,
+        //             control: control
+        //         });
+        //         // Handle CKEditor's lack of proper validation
+        //         // @todo: remove when CKEditor patches this
+        //         if (control.required && control.controlType === 'textarea' && control['ckeditor']) {
+        //             if (model.value === '') {
+        //                 model['_control']['_status'] = 'INVALID';
+        //                 model['_value'] = model['_control']['_value'] = model['viewModel'] = model['model'] = null;
+        //             }
+        //         }
+
+        //         if (model.valid) {
+        //             el.classList.remove('ng-invalid');
+        //             el.classList.add('ng-valid');
+        //         } else {
+        //             el.classList.add('ng-invalid');
+        //             el.classList.remove('ng-valid');
+        //         }
+
+        //         if (model.dirty) {
+        //             el.classList.remove('ng-pristine');
+        //             el.classList.add('ng-dirty');
+        //         } else {
+        //             el.classList.add('ng-pristine');
+        //             el.classList.remove('ng-dirty');
+        //         }
+        //     });
+        // });
     }
 
     getPanel(control: PanelFormControl<any>): PanelComponent {
@@ -128,28 +187,14 @@ export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewIn
         return panels[0];
     }
 
-    handleChange(control: PanelFormControl<any>, e: any, value?: any) {
-        console.warn('PanelFormComponent.handleChange : ', {
-            control: control,
-            e: e,
-            value: value,
-        });
-        if (control.controlType === 'files' && control['type'] === 'image' && !control['multiple']) {
-            this.model[control.name] = value;
-        } else {
-            if (value !== undefined) {
-                console.debug('Setting ' + control.name + ' in model to passed in value:', value);
-                this.model[control.name] = control.value = value;
-            } else {
-                console.debug('Setting ' + control.name + ' in model to control\'s value:', control.value);
-                this.model[control.name] = control.value;
-            }
-        }
+    handleChange(control: PanelFormControl<any>, e: any) {
+        setTimeout(() => { this.model[control.name] = control.value = this.panelForm.value[control.name]; });
+
     }
 
     submit() {
-        console.log('submit!', this.model);
+        console.log('submit!', this.panelForm.value);
 
-        this.formSubmit.emit(this.model);
+        this.formSubmit.emit(this.panelForm.value);
     }
 }

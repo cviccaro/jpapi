@@ -21,25 +21,36 @@ var dnd_form_control_component_1 = require('./dnd/dnd-form-control.component');
 var file_upload_component_1 = require('../../file-upload/file-upload.component');
 var summary_component_1 = require('./summary/summary.component');
 var PanelFormComponent = (function () {
-    function PanelFormComponent() {
+    function PanelFormComponent(builder) {
+        this.builder = builder;
         this.ready = true;
         this.panelToggleStates = {};
         this.formSubmit = new core_1.EventEmitter();
+        this.saving = false;
+        this.savingText = 'Saving...';
         this.submitText = 'Submit';
         this._controlPanels = {};
     }
     PanelFormComponent.prototype.ngOnInit = function () {
         var _this = this;
+        var group = {};
         this.formClass = 'panel-form' + (this.formClass ? ' ' + this.formClass : '');
         this.controls = this.controls.sort(function (a, b) { return a.order - b.order; });
         this.controls.forEach(function (control) {
             control.value = _this.model[control.name];
+            var validators = [];
+            if (control.required) {
+                validators.push(forms_1.Validators.required);
+            }
+            group[control.name] = [control.value, validators];
             _this.panelToggleStates[control.name] = false;
             console.log('Just set value for control ' + control.name + ' to ' + control.value, {
                 model: _this.model,
                 control: control
             });
         });
+        this.panelForm = this.builder.group(group);
+        console.log('PanelForm', this.panelForm);
     };
     PanelFormComponent.prototype.ngAfterContentInit = function () {
         console.log('PanelFormComponent AfterContentInit', this);
@@ -54,18 +65,12 @@ var PanelFormComponent = (function () {
             });
             _this._controlPanels[control.name] = panel;
         });
-        this._models.forEach(function (model) {
-            var control = _this.controls.find(function (control) { return control.name === model.name; });
-            var panel = _this._controlPanels[control.name];
-            var el = panel.el.nativeElement;
-            model.valueChanges.debounceTime(500).subscribe(function (e) {
-                if (control.required && control.controlType === 'textarea' && control['ckeditor']) {
-                    if (model.value === '') {
-                        model['_control']['_status'] = 'INVALID';
-                        model['_value'] = model['_control']['_value'] = model['viewModel'] = model['model'] = null;
-                    }
-                }
-                if (model.valid) {
+        this._formControls.forEach(function (formControl) {
+            console.warn('Subscribing to status Changes on form control: ', formControl);
+            formControl.valueChanges.debounceTime(250).subscribe(function (e) {
+                var panel = _this._controlPanels[formControl.name];
+                var el = panel.el.nativeElement;
+                if (formControl.valid) {
                     el.classList.remove('ng-invalid');
                     el.classList.add('ng-valid');
                 }
@@ -73,7 +78,7 @@ var PanelFormComponent = (function () {
                     el.classList.add('ng-invalid');
                     el.classList.remove('ng-valid');
                 }
-                if (model.dirty) {
+                if (formControl.dirty) {
                     el.classList.remove('ng-pristine');
                     el.classList.add('ng-dirty');
                 }
@@ -81,6 +86,7 @@ var PanelFormComponent = (function () {
                     el.classList.add('ng-pristine');
                     el.classList.remove('ng-dirty');
                 }
+                console.log('form control ' + formControl.name + ' value change', e);
             });
         });
     };
@@ -93,29 +99,13 @@ var PanelFormComponent = (function () {
             throw new Error('Could not get panel for control ' + control.name);
         return panels[0];
     };
-    PanelFormComponent.prototype.handleChange = function (control, e, value) {
-        console.warn('PanelFormComponent.handleChange : ', {
-            control: control,
-            e: e,
-            value: value,
-        });
-        if (control.controlType === 'files' && control['type'] === 'image' && !control['multiple']) {
-            this.model[control.name] = value;
-        }
-        else {
-            if (value !== undefined) {
-                console.debug('Setting ' + control.name + ' in model to passed in value:', value);
-                this.model[control.name] = control.value = value;
-            }
-            else {
-                console.debug('Setting ' + control.name + ' in model to control\'s value:', control.value);
-                this.model[control.name] = control.value;
-            }
-        }
+    PanelFormComponent.prototype.handleChange = function (control, e) {
+        var _this = this;
+        setTimeout(function () { _this.model[control.name] = control.value = _this.panelForm.value[control.name]; });
     };
     PanelFormComponent.prototype.submit = function () {
-        console.log('submit!', this.model);
-        this.formSubmit.emit(this.model);
+        console.log('submit!', this.panelForm.value);
+        this.formSubmit.emit(this.panelForm.value);
     };
     __decorate([
         core_1.Output(), 
@@ -135,6 +125,14 @@ var PanelFormComponent = (function () {
     ], PanelFormComponent.prototype, "formClass", void 0);
     __decorate([
         core_1.Input(), 
+        __metadata('design:type', Boolean)
+    ], PanelFormComponent.prototype, "saving", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], PanelFormComponent.prototype, "savingText", void 0);
+    __decorate([
+        core_1.Input(), 
         __metadata('design:type', String)
     ], PanelFormComponent.prototype, "submitText", void 0);
     __decorate([
@@ -145,6 +143,14 @@ var PanelFormComponent = (function () {
         core_1.ViewChildren(forms_1.NgModel), 
         __metadata('design:type', core_1.QueryList)
     ], PanelFormComponent.prototype, "_models", void 0);
+    __decorate([
+        core_1.ViewChildren(forms_1.NgControl), 
+        __metadata('design:type', core_1.QueryList)
+    ], PanelFormComponent.prototype, "_formControls", void 0);
+    __decorate([
+        core_1.ContentChildren(forms_1.FormControl), 
+        __metadata('design:type', core_1.QueryList)
+    ], PanelFormComponent.prototype, "_formControlsContent", void 0);
     PanelFormComponent = __decorate([
         core_1.Component({
             moduleId: module.id,
@@ -164,10 +170,12 @@ var PanelFormComponent = (function () {
                 ng2_ckeditor_1.CKEditor,
                 dnd_form_control_component_1.DragnDropFormControl,
                 file_upload_component_1.FileUploadComponent,
-                summary_component_1.PanelFormControlSummary
-            ]
+                summary_component_1.PanelFormControlSummary,
+                forms_1.REACTIVE_FORM_DIRECTIVES
+            ],
+            viewProviders: [forms_1.NgControl]
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [forms_1.FormBuilder])
     ], PanelFormComponent);
     return PanelFormComponent;
 }());

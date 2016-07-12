@@ -1,34 +1,24 @@
-import {
-    AfterViewInit,
-    AfterViewChecked,
-    AfterContentChecked,
-    AfterContentInit,
-    Component,
-    HostBinding,
-    OnInit,
-    QueryList,
-    ViewChild,
-    ViewChildren,
-    ContentChildren
-} from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
-import { NgForm, FormControl, FormControlDirective } from '@angular/forms';
-import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import { ToasterService } from 'angular2-toaster';
 
+import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import {
-    ImageUpload,
-    JpaMdSelectComponent,
-    JpaPanel,
-    JpaPanelGroup,
-    JpaPanelContent,
-    JpFile,
     BlogService,
     Blog,
     DivisionService,
     Tag,
-    TagService
+    TagService,
+    JpaCache,
+    PANEL2_DIRECTIVES,
+    PanelFormControl,
+    PanelFormControlTextfield,
+    PanelFormControlSelect,
+    PanelFormControlTextarea,
+    PanelFormControlDragnDrop,
+    PanelFormControlFiles
 } from '../shared/index';
 
 @Component({
@@ -37,24 +27,21 @@ import {
     styleUrls: ['./blog.component.css'],
     directives: [
         MATERIAL_DIRECTIVES,
-        JpaMdSelectComponent,
-        JpaPanel,
-        JpaPanelGroup,
-        JpaPanelContent,
-        NgForm
+        PANEL2_DIRECTIVES
     ]
 })
-export class BlogComponent implements OnInit, AfterViewInit {
-    public divisions: string[];
-    public tags: string[];
+export class BlogComponent implements OnInit {
+    public divisions: { label: string, value: any }[];
+    public tags: { label: string, value: any }[];
 
+    public isNew: boolean = false;
     public ready: boolean = false;
-    public submitted = false;
+    public saving: boolean = false;
 
     private _originalTitle: string;
-    private _isNew: boolean = false;
     private _blog: Blog = new Blog();
-    private _blogImage: JpFile = undefined;
+
+    public controls: PanelFormControl<any>[];
 
     get blog(): Blog { return this._blog; }
     set blog(v: Blog) {
@@ -65,21 +52,20 @@ export class BlogComponent implements OnInit, AfterViewInit {
     constructor(
         private route: ActivatedRoute,
         private service: BlogService,
-        private divisionService: DivisionService,
+        private cache: JpaCache,
         private toasterService: ToasterService,
-        private tagService: TagService,
         private router: Router
     ) { }
 
     ngOnInit() {
-        this.tags = this.tagService.cached();
-        this.divisions = this.divisionService.cached();
+        this.tags = this.cache.get('tags');
+        this.divisions = this.cache.get('divisions');
 
         let id = this.route.snapshot.params['id'];
 
         if (id === 'new') {
             this.ready = true;
-            this._isNew = true;
+            this.isNew = true;
         } else {
             this.service.find(+id).subscribe(res => {
                 this.blog = res;
@@ -88,38 +74,74 @@ export class BlogComponent implements OnInit, AfterViewInit {
             });
         }
 
-        console.info('BlogComponent#'+(this._isNew?'create':'edit')+' initialized.', this);
+        this.controls = [
+          new PanelFormControlTextfield({
+            name: 'title',
+            required: true,
+            order: 3
+          }),
+          new PanelFormControlDragnDrop({
+              name: 'tags',
+              required: true,
+              options: this.tags
+          }),
+          new PanelFormControlDragnDrop({
+              name: 'divisions',
+              required: true,
+              options: this.divisions
+          }),
+          new PanelFormControlTextarea({
+              name: 'body',
+              required: true,
+              ckeditor: true
+          }),
+          new PanelFormControlTextarea({
+              name: 'summary',
+              required: false,
+              ckeditor: true
+          }),
+          new PanelFormControlTextfield({
+            name: 'author',
+            required: true
+          }),
+          new PanelFormControlFiles({
+              name: 'image',
+              label: 'Cover Image',
+              required: true,
+              multiple: false,
+              type: 'image'
+          })
+        ];
+
+        console.info('BlogComponent#' + (this.isNew ? 'create' : 'edit') + ' initialized.', this);
     }
 
-    ngAfterViewInit() {
-        console.info('BlogComponent#'+(this._isNew?'create':'edit')+' View Initialized.', this);
-    }
+    onSubmit(model) {
+        this.saving = true;
 
-    onSubmit() {
-        this.submitted = true;
-        if (this._isNew) {
-            console.log('Save NEW blog. ', this.blog);
-            this.service.create(this.blog)
+        if (this.isNew) {
+            console.log('Save NEW blog. ', model);
+            this.service.create(model)
                 .subscribe(res => {
-                    this.toasterService.pop('success', 'Success!', this.blog.title + ' has been created.  Redirecting to its page.');
+                    this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
                         this.blog = res;
                         console.log("Navigating to /blogs/" + res.id);
                         this.router.navigate(['/blogs', res.id]);
                         this.reset();
                     }, 2000);
-                },err => {
+                }, err => {
                     console.log('Error when saving blog: ', err);
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
         } else {
-            console.log('Save UPDATED blog. ', this.blog);
-            this.service.update(this.blog.id, this.blog)
+            console.log('Save UPDATED blog. ', model);
+            this.service.update(this.blog.id, model)
                 .subscribe(res => {
                     console.log('response from update: ', res);
                     this.blog = res;
                     this.reset();
-                    this.toasterService.pop('success', 'Success!', this.blog.title + ' has been saved.');
+                    this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
                 }, err => {
                     console.log('Error when saving blog: ', err);
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
@@ -128,35 +150,23 @@ export class BlogComponent implements OnInit, AfterViewInit {
     }
 
     private setup() {
-        this._blogImage = this._blog.image;
-        this._blog.image = null;
         this._originalTitle = this._blog.title;
-        this._isNew = this.blog.id === undefined;
+        this.isNew = this.blog.id === undefined;
+
         console.info('BlogComponent.setup()', this);
     }
 
-    private reset(e?:Event) {
+    private reset(e?: Event) {
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
         console.info('BlogComponent.reset()', this);
 
-        // this._panelChildren.forEach(panel => {
-        //     panel.reset();
-        // });
-
         // Temporary workaround until angular2 implements
         // a proper form reset
         this.ready = false;
 
-        setTimeout(() => { this.ready = true; },0);
-    }
-
-    report(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        console.log(this.blog);
+        setTimeout(() => { this.ready = true; }, 0);
     }
 }

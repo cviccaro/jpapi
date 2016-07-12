@@ -1,4 +1,4 @@
-<form *ngIf="ready" #panelForm="ngForm" (ngSubmit)="submit()" [class]="formClass">
+<form *ngIf="ready" [formGroup]="panelForm" (ngSubmit)="submit()" [class]="formClass">
     <jpa-panel2-group>
         <jpa-panel2 *ngFor="let control of controls; let rowIndex = index; let odd = odd; let even = even;"
         [hidden]="control.hidden" class="panel-form-control type-{{ control.controlType }} control-{{ control.name }}">
@@ -13,12 +13,12 @@
                 [class.single-file]="control.controlType === 'files' && control.multiple === false">
                 <div class="panel-content-spacer"></div>
                 <template [ngSwitchCase]="'checkbox'">
-                    <md-checkbox [name]="control.name" [(ngModel)]="control.value" [required]="control.required" (change)="handleChange(control, $event)">
+                    <md-checkbox [name]="control.name" [formControlName]="control.name" (change)="handleChange(control, $event)">
                         {{ control.label }}
                     </md-checkbox>
                 </template>
                 <template [ngSwitchCase]="'toggle'">
-                    <md-slide-toggle [name]="control.name" [(ngModel)]="control.value" (change)="handleChange(control, $event)">
+                    <md-slide-toggle [name]="control.name" [formControlName]="control.name" (change)="handleChange(control, $event)">
                         {{ control.label }}
                     </md-slide-toggle>
                 </template>
@@ -26,31 +26,27 @@
                     <jpa-file-upload
                         [multiple]="control.multiple"
                         [name]="control.name"
-                        [required]="control.required"
-                        [(ngModel)]="control.value"
+                        [formControlName]="control.name" 
                         [type]="control.type"
                         [icon]="control.editIcon"
                         [control]="control"
                         [accept]="control.accept"
-                        (change)="handleChange(control, null, $event)">
+                        (change)="handleChange(control, $event)">
                     </jpa-file-upload>
                 </template>
                 <template [ngSwitchCase]="'textarea'">
                     <div class="textarea-infix" [ngSwitch]="control.ckeditor">
                         <template [ngSwitchCase]="true">
                             <ckeditor #textarea
-                                [name]="control.name"
-                                [(ngModel)]="control.value"
-                                debounce="500"
-                                [attr.required]="control.required"
+                                [formControlName]="control.name"
+                                debounce="250"
                                 (change)="handleChange(control, $event)">
                             </ckeditor>
                         </template>
                         <template ngSwitchDefault>
                             <textarea #textarea
                                 [name]="control.name"
-                                [(ngModel)]="control.value"
-                                [required]="control.required"
+                                [formControlName]="control.name"
                                 (change)="handleChange(control, $event)">
                             </textarea>
                         </template>
@@ -58,7 +54,7 @@
                 </template>
                 <template [ngSwitchCase]="'dnd'">
                     <jpa-dnd-form-control
-                        [(ngModel)]="control.value"
+                        [formControlName]="control.name"
                         [name]="control.name"
                         [options]="control.options"
                         [required]="control.required"
@@ -69,7 +65,7 @@
                     <div class="psuedo-md-input-wrapper">
                         <div class="psuedo-md-input-table">
                             <div class="psuedo-md-input-infix">
-                                <select #select (focus)="control.focused = true" (blur)="control.focused = false" [name]="control.name" [(ngModel)]="control.value" (change)="handleChange(control, $event, select.value)">
+                                <select #select (focus)="control.focused = true" (blur)="control.focused = false" [name]="control.name" [formControlName]="control.name" (change)="handleChange(control, $event)">
                                     <option *ngFor="let opt of control.options" [value]="opt.value">{{opt.label}}</option>
                                 </select>
                             </div>
@@ -84,8 +80,7 @@
                         [type]="control.type"
                         [name]="control.name"
                         [placeholder]="control.placeholder"
-                        [required]="control.required"
-                        [(ngModel)]="control.value"
+                        [formControlName]="control.name"
                         (change)="handleChange(control, $event)">
                     </md-input>
                 </template>
@@ -93,8 +88,13 @@
         </jpa-panel2>
     </jpa-panel2-group>
     <div class="panel-form-actions">
-        <button md-raised-button class="submit" type="submit" [disabled]="!panelForm.form.valid">
-            <md-icon>save</md-icon> {{ submitText }}
+        <button md-raised-button class="submit" type="submit" [disabled]="!panelForm.valid || saving" [ngSwitch]="saving" color="secondary">
+            <template [ngSwitchCase]="true">
+                <md-icon class="spin">update</md-icon> {{ savingText }}
+            </template>
+            <template ngSwitchDefault>
+                <md-icon>save</md-icon> {{ submitText }}
+            </template>
         </button>
     </div>
 </form>

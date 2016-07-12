@@ -1,35 +1,8 @@
 <div class="container-fluid">
-    <h2 class="page-title form-title" [ngSwitch]="_isNew">
+    <h2 class="page-title form-title" [ngSwitch]="isNew">
       <span *ngSwitchCase="true">Create Blog</span>
       <span *ngSwitchDefault>Edit Blog {{ _originalTitle }}</span>
     </h2>
-    <form *ngIf="ready" #blogForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
-      <jpa-panel-group>
-        <jpa-panel #titlePanel label="Title" [(ngModel)]="blog.title" name="title" type="text" editText="Enter a title" required>
-          <md-hint align="end">{{titlePanel.characterCount}} / 100</md-hint>
-        </jpa-panel>
-        <jpa-panel #tagPanel label="Tags" [(ngModel)]="blog.tags" [options]="tags" name="tags" type="multiselect" editText="Select some tags" required>
-        </jpa-panel>
-        <jpa-panel class="division" #divisionPanel label="Divisions" [(ngModel)]="blog.divisions" [options]="divisions" name="divisions" type="multiselect" editText="Assign a site or two" required>
-        </jpa-panel>
-        <jpa-panel #bodyPanel label="Body" [(ngModel)]="blog.body" name="body" type="textarea" editText="Write some copy" required>
-          <md-hint align="end">{{bodyPanel.characterCount}} / &infin;</md-hint>
-        </jpa-panel>
-        <jpa-panel #summaryPanel label="Summary" [(ngModel)]="blog.summary" name="summary" type="textarea" editText="Write a summary">
-          <md-hint align="end">{{summaryPanel.characterCount}} / &infin;</md-hint>
-        </jpa-panel>
-        <jpa-panel #authorPanel label="Author" [(ngModel)]="blog.author" name="author" type="text" editText="Enter an author">
-          <md-hint align="end">{{authorPanel.characterCount}} / 100</md-hint>
-        </jpa-panel>
-        <jpa-panel label="Cover Image" type="image" name="image" editText="Browse for a new picture" [(ngModel)]="blog.image" [currentImage]="_blogImage">
-          <jpa-panel-content *ngIf="blog.image !== '__deleted'" [file]="blog.image" align="left" label="Preview your upload"></jpa-panel-content>
-          <jpa-panel-content [image]="_blogImage" align="right" label="Current"></jpa-panel-content>
-        </jpa-panel>
-      </jpa-panel-group>
-      <div class="row form-actions">
-        <div class="col-md-12">
-          <button type="submit" md-raised-button [disabled]="!blogForm.form.valid"><md-icon>save</md-icon> Save</button>
-        </div>
-      </div>
-    </form>
+    <jpa-panel2-form *ngIf="ready" [controls]="controls" [model]="blog" submitText="Save" (formSubmit)="onSubmit($event)" [saving]="saving">
+    </jpa-panel2-form>
 </div>

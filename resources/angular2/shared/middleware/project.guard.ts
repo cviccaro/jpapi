@@ -22,34 +22,12 @@ export class ProjectGuard implements CanActivate, OnDestroy {
     canActivate() {
       console.log('ProjectGuard can activate called', this);
       return Observable.create(observer => {
-        let gotClients = false;
-        let gotProject = false;
-
         let _sub = this.clientService.options().subscribe(res => {
             this.cache.store('clients', res);
-            gotClients = true;
-            if (gotProject) observer.complete(true);
+            observer.complete(true);
         });
 
         this.subs.push(_sub);
-
-        let _sub2 = this.route.params.subscribe(params => {
-          console.log('got sweet ass router params: ', params);
-            let id = params['id'];
-            if (id === undefined || id === 'new') {
-              gotProject = true;
-            } else {
-              id = +id;
-              let _sub = this.projectService.find(id).subscribe(res => {
-                  this.cache.store('project', res);
-                  gotProject = true;
-                  if (gotClients) observer.complete(true);
-              });
-              this.subs.push(_sub);
-            }
-        });
-
-        this.subs.push(_sub2);
       });
     }
 

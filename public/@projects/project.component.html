@@ -1,39 +1,8 @@
 <div class="container-fluid">
-    <h2 class="page-title form-title" [ngSwitch]="_isNew">
+    <h2 class="page-title form-title" [ngSwitch]="isNew">
       <span *ngSwitchCase="true">Create Project</span>
       <span *ngSwitchDefault>Edit Project {{ _originalTitle }}</span>
     </h2>
-    <jpa-panel2-form *ngIf="ready" [controls]="controls" [model]="project" submitText="Save" (formSubmit)="onSubmit()">
+    <jpa-panel2-form *ngIf="ready" [controls]="controls" [model]="project" submitText="Save" (formSubmit)="onSubmit($event)" [saving]="saving">
     </jpa-panel2-form>
-<!--     <button (click)="report($event)">Report</button>
-    <button (click)="reset($event)">Reset</button> -->
-<!--     <form *ngIf="ready" #projectForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
-      <jpa-panel-group>
-        <jpa-panel #titlePanel label="Title" [(ngModel)]="project.title" name="title" type="text" editText="Enter a title" required>
-          <md-hint align="end">{{titlePanel.characterCount}} / 100</md-hint>
-        </jpa-panel>
-        <jpa-panel #clientPanel label="Client" [(ngModel)]="project.client_id" name="client" type="select" editText="Select a client" required>
-          <option *ngFor="let client of clients" [value]="client.id">{{client.name}}</option>
-        </jpa-panel>
-        <jpa-panel #bodyPanel label="Description" [(ngModel)]="project.description" name="description" type="textarea" editText="Write some copy" required>
-          <md-hint align="end">{{bodyPanel.characterCount}} / &infin;</md-hint>
-        </jpa-panel>
-        <jpa-panel label="Cover Image" type="image" name="image" editText="Browse for a new picture" [(ngModel)]="project.image" [currentImage]="_projectImage">
-          <jpa-panel-content *ngIf="project.image !== '__deleted'" [file]="project.image" align="left" label="Preview your upload"></jpa-panel-content>
-          <jpa-panel-content [image]="_projectImage" align="right" label="Current"></jpa-panel-content>
-        </jpa-panel>
-        <jpa-panel
-          label="Gallery"
-          type="images"
-          editText="Select images"
-          name="images"
-          [(ngModel)]="project.images">
-        </jpa-panel>
-      </jpa-panel-group>
-      <div class="row form-actions">
-        <div class="col-md-12">
-          <button type="submit" md-raised-button [disabled]="!projectForm.form.valid"><md-icon>save</md-icon> Save</button>
-        </div>
-      </div>
-    </form> -->
 </div>

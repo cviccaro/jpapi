@@ -16,6 +16,8 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
     accept: string;
 
     get empty(): boolean {
+        if (typeof this.value === 'undefined') return true;
+        
         return !this.value || this.value.length === 0;
     }
 
@@ -68,7 +70,10 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
             if (val) {
                 let text = '';
                 if (this.type === 'image') {
-                    text = `${val.filename} | ${Math.round(val.size/10)/100}kb | ${val.width} x ${val.height} px`;
+                    text = `${val.filename} | ${Math.round(val.size/10)/100}kb`;
+                    if (val.width && val.height) {
+                        text += ` | ${val.width} x ${val.height} px`;
+                    }
                 } else {
                     text = `${val.filename} | ${Math.round(val.size/10)/100}kb | ${val.mimetype}`;
                 }

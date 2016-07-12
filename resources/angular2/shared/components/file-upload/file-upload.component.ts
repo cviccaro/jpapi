@@ -188,18 +188,14 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     ngAfterViewInit() {
         if (this.type === 'image' && !this.multiple) {
             if (this._currentImageEl) {
-                console.debug('FileUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
-                    this: this,
-                    imageEl: this._currentImageEl
-                });
                  let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
-                 this.imageLoad(imageEl);
+                 this.registerImageWatcher(imageEl);
+                 if (this.value.url) setTimeout(() => { imageEl.src = this._value.url; });
             }
         }
     }
 
-    imageLoad(imageEl: HTMLImageElement) {
-        console.warn('FileUploadComponent. imageLoad()');
+    registerImageWatcher(imageEl: HTMLImageElement) {
         imageEl.addEventListener('load', (event: Event) => {
             console.debug('FileUploadComponent.imageLoad() ....  Image loaded!', event);
             let val = this.value;
@@ -213,7 +209,6 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
                 this.control.value = this.value;
             }
         });
-        setTimeout(() => { imageEl.src = this._value.url; });
     }
 
     /**
@@ -505,11 +500,13 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         this.isLoading = true;
 
         image.read().subscribe(e => {
+            console.log('image read finished');
             image.url = e;
 
             this.value = image;
 
             let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
+            // this.imageLoad(imageEl);
             imageEl.src = e;
 
             this.isLoading = false;

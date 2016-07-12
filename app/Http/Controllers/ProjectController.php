@@ -122,10 +122,10 @@ class ProjectController extends Controller
 
             $project->client()->associate($client);
         }
-
-        if ($request->has('image') && $request->get('image') === '__deleted') {
+        
+        if ($request->get('image') === '') {
             $project->image()->dissociate();
-        } else if ($request->hasFile('image')) {
+        } elseif ($request->hasFile('image')) {
             $file = $request->file('image');
             $filename = $file->getClientOriginalName();
 
@@ -184,10 +184,11 @@ class ProjectController extends Controller
      * @param  $id integer
      * @return Response
      */
-    public function get($id) {
+    public function get($id)
+    {
         $project = Project::with('client', 'divisions', 'image', 'images', 'tags')->find($id);
 
-        if(is_null($project)){
+        if (is_null($project)) {
             return $this->respond('not_found');
         }
 
@@ -276,7 +277,7 @@ class ProjectController extends Controller
         $count = Project::count();
         if ($request->has('division')) {
             $division = Division::where('name', $request->input('division'))->first();
-            $projects = $projects->whereHas('divisions', function($query) use ($division) {
+            $projects = $projects->whereHas('divisions', function ($query) use ($division) {
                 $query->where('name', $division->name);
             });
             $count = $projects->count();

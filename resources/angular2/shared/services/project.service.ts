@@ -76,8 +76,13 @@ export class ProjectService {
 					});
 					break;
 				case 'image':
-					form.append(key, val);
-					_form[key] = val;
+					if (val === '') {
+						form.append(key, val);
+						_form[key] = val;
+					} else if (!!val && val._file) {
+						form.append(key, val._file);
+						_form[key] = val._file;
+					}
 					break;
 				case 'client':
 					break;
@@ -125,8 +130,10 @@ export class ProjectService {
 					});
 					break;
 				case 'image':
-					form.append(key, val);
-					_form[key] = val;
+					if (!!val && val._file) {
+						form.append(key, val._file);
+						_form[key] = val._file;
+					}
 					break;
 				case 'client':
 					break;

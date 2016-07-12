@@ -94,6 +94,11 @@
 :host .jpa-panel.type-textarea jpa-panel2-content:not(.single-file) .panel-content-spacer {
   display: none; }
 
+:host .jpa-panel.type-text md-input {
+  max-width: 25%;
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto; }
+
 :host .jpa-panel jpa-panel2-content {
   display: -ms-flexbox;
   display: flex;
@@ -160,5 +165,9 @@
       :host .psuedo-md-input-wrapper .psuedo-md-input-underline .psuedo-md-input-ripple.md-focused {
         opacity: 1;
         transform: scaleY(1); }
+
+:host .panel-form-actions {
+  margin-top: 24px;
+  text-align: right; }
 
 /*# sourceMappingURL=panel-form.component.css.map */

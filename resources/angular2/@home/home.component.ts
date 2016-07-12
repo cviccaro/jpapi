@@ -59,77 +59,77 @@ export class HomeComponent {
     };
 
     constructor() {
-        this.controls = [
-          new PanelFormControlTextfield({
-            name: 'title',
-            required: true,
-            order: 3
-          }),
-          new PanelFormControlSelect({
-              name: 'client_id',
-              label: 'Client',
-              required: true,
-              options: [{
-                  label: 'Adobe',
-                  value: 2
-              }, {
-                  label: 'Cisco',
-                  value: 3
-              }]
-          }),
-          new PanelFormControlTextarea({
-              name: 'body',
-              required: true,
-              ckeditor: true
-          }),
-          new PanelFormControlDragnDrop({
-              name: 'tags',
-              required: true,
-              options: [
-                  {
-                      id: 1,
-                      name: 'Sweet!'
-                  },
-                  {
-                      id: 2,
-                      name:'Sweeter!'
-                  },
-                  {
-                      id: 3,
-                      name: 'Cool!'
-                  },
-                  {
-                      id: 4,
-                      name: 'Cooler!'
-                  }
-              ]
-          }),
-          new PanelFormControlFiles({
-              name: 'pdf',
-              required: true,
-              multiple: false,
-              label: 'PDF Document',
-              emptyText: 'Add a new PDF document damnit!!',
-              accept: 'application/pdf'
-          }),
-          new PanelFormControlFiles({
-              name: 'image',
-              required: false,
-              multiple: false,
-              type: 'image'
-          }),
-          new PanelFormControlFiles({
-              name: 'images',
-              required: true,
-              filesLabel: 'images in gallery',
-              type: 'image'
-          }),
-          new PanelFormControlFiles({
-              name: 'files',
-              required: true,
-              filesLabel: 'files in dropbox',
-              type: 'file'
-          })
-        ];
+        // this.controls = [
+        //   new PanelFormControlTextfield({
+        //     name: 'title',
+        //     required: true,
+        //     order: 3
+        //   }),
+        //   new PanelFormControlSelect({
+        //       name: 'client_id',
+        //       label: 'Client',
+        //       required: true,
+        //       options: [{
+        //           label: 'Adobe',
+        //           value: 2
+        //       }, {
+        //           label: 'Cisco',
+        //           value: 3
+        //       }]
+        //   }),
+        //   new PanelFormControlTextarea({
+        //       name: 'body',
+        //       required: true,
+        //       ckeditor: true
+        //   }),
+        //   new PanelFormControlDragnDrop({
+        //       name: 'tags',
+        //       required: true,
+        //       options: [
+        //           {
+        //               id: 1,
+        //               name: 'Sweet!'
+        //           },
+        //           {
+        //               id: 2,
+        //               name:'Sweeter!'
+        //           },
+        //           {
+        //               id: 3,
+        //               name: 'Cool!'
+        //           },
+        //           {
+        //               id: 4,
+        //               name: 'Cooler!'
+        //           }
+        //       ]
+        //   }),
+        //   new PanelFormControlFiles({
+        //       name: 'pdf',
+        //       required: true,
+        //       multiple: false,
+        //       label: 'PDF Document',
+        //       emptyText: 'Add a new PDF document damnit!!',
+        //       accept: 'application/pdf'
+        //   }),
+        //   new PanelFormControlFiles({
+        //       name: 'image',
+        //       required: false,
+        //       multiple: false,
+        //       type: 'image'
+        //   }),
+        //   new PanelFormControlFiles({
+        //       name: 'images',
+        //       required: true,
+        //       filesLabel: 'images in gallery',
+        //       type: 'image'
+        //   }),
+        //   new PanelFormControlFiles({
+        //       name: 'files',
+        //       required: true,
+        //       filesLabel: 'files in dropbox',
+        //       type: 'file'
+        //   })
+        // ];
     }
 }

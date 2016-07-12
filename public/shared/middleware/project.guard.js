@@ -26,33 +26,11 @@ var ProjectGuard = (function () {
         var _this = this;
         console.log('ProjectGuard can activate called', this);
         return Rx_1.Observable.create(function (observer) {
-            var gotClients = false;
-            var gotProject = false;
             var _sub = _this.clientService.options().subscribe(function (res) {
                 _this.cache.store('clients', res);
-                gotClients = true;
-                if (gotProject)
-                    observer.complete(true);
+                observer.complete(true);
             });
             _this.subs.push(_sub);
-            var _sub2 = _this.route.params.subscribe(function (params) {
-                console.log('got sweet ass router params: ', params);
-                var id = params['id'];
-                if (id === undefined || id === 'new') {
-                    gotProject = true;
-                }
-                else {
-                    id = +id;
-                    var _sub_1 = _this.projectService.find(id).subscribe(function (res) {
-                        _this.cache.store('project', res);
-                        gotProject = true;
-                        if (gotClients)
-                            observer.complete(true);
-                    });
-                    _this.subs.push(_sub_1);
-                }
-            });
-            _this.subs.push(_sub2);
         });
     };
     ProjectGuard.prototype.ngOnDestroy = function () {

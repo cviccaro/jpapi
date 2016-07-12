@@ -126,20 +126,18 @@ var FileUploadComponent = (function () {
         console.debug('FileUploadComponent Initialized! ', this);
     };
     FileUploadComponent.prototype.ngAfterViewInit = function () {
+        var _this = this;
         if (this.type === 'image' && !this.multiple) {
             if (this._currentImageEl) {
-                console.debug('FileUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
-                    this: this,
-                    imageEl: this._currentImageEl
-                });
-                var imageEl = this._currentImageEl.nativeElement;
-                this.imageLoad(imageEl);
+                var imageEl_1 = this._currentImageEl.nativeElement;
+                this.registerImageWatcher(imageEl_1);
+                if (this.value.url)
+                    setTimeout(function () { imageEl_1.src = _this._value.url; });
             }
         }
     };
-    FileUploadComponent.prototype.imageLoad = function (imageEl) {
+    FileUploadComponent.prototype.registerImageWatcher = function (imageEl) {
         var _this = this;
-        console.warn('FileUploadComponent. imageLoad()');
         imageEl.addEventListener('load', function (event) {
             console.debug('FileUploadComponent.imageLoad() ....  Image loaded!', event);
             var val = _this.value;
@@ -150,7 +148,6 @@ var FileUploadComponent = (function () {
                 _this.control.value = _this.value;
             }
         });
-        setTimeout(function () { imageEl.src = _this._value.url; });
     };
     FileUploadComponent.prototype.writeValue = function (value) {
         this._value = this.convertValueForInputType(value);
@@ -375,6 +372,7 @@ var FileUploadComponent = (function () {
         console.log('attachSingleImage created new ManagedImage ', image);
         this.isLoading = true;
         image.read().subscribe(function (e) {
+            console.log('image read finished');
             image.url = e;
             _this.value = image;
             var imageEl = _this._currentImageEl.nativeElement;

@@ -24,7 +24,9 @@ class DivisionController extends Controller
      */
     public function options(Request $request)
     {
-        $list = Division::select('id', 'name')->get();
+        $list = Division::select('id', 'name')->get()->map(function ($division) {
+            return ['label' => $division->name, 'value' => $division->id];
+        });
         return $this->respond('done', $list);
     }
 

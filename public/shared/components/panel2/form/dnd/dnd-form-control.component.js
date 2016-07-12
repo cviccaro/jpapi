@@ -78,7 +78,7 @@ var DragnDropFormControl = (function () {
     DragnDropFormControl.prototype.setOptions = function () {
         this._valueString = this.value.length === 0 ? null : JSON.stringify(this.value);
         if (this.options) {
-            var ids_1 = this.value.map(function (item) { return item.id; });
+            var ids_1 = this.value.map(function (item) { return item.value; });
             this.options = this._originalOptions.filter(function (option) {
                 return ids_1.indexOf(option.id) === -1;
             });

@@ -12,10 +12,13 @@ var PanelFormControl = (function () {
             config.editIcon = config.editIcon || 'help_outline';
         }
         Object.assign(this, config);
+        console.log('PanelFormControl constructed....', this);
     }
     Object.defineProperty(PanelFormControl.prototype, "empty", {
         get: function () {
-            return this.value === undefined;
+            if (typeof this.value === 'undefined')
+                return true;
+            return this.value === undefined || this.value === null;
         },
         enumerable: true,
         configurable: true

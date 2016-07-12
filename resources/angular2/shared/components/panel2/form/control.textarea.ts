@@ -13,6 +13,8 @@ export class PanelFormControlTextarea extends PanelFormControl<string> {
     ckeditorConfig: { [key: string] : any };
 
     get empty(): boolean {
+        if (typeof this.value === 'undefined') return true;
+        
         return this.value === '';
     }
 

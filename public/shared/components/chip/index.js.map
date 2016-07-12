@@ -1,1 +1,1 @@
-{"version":3,"sources":["shared/components/chip/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,kBAAkB,CAAC,EAAA","file":"shared/components/chip/index.js","sourcesContent":["export * from './chip.component';\r\n"],"sourceRoot":"/source/"}
+{"version":3,"sources":["shared/components/chip/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,kBAAkB,CAAC,EAAA","file":"shared/components/chip/index.js","sourcesContent":["export * from './chip.component';\n"],"sourceRoot":"/source/"}

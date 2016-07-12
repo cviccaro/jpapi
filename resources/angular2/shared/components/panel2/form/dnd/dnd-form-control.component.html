@@ -7,8 +7,8 @@
         [dropEnabled]="true"
         (onDropSuccess)="reorder($event, index)">
       <jpa-chip
-        [id]="option.id"
-        [name]="option.name"
+        [id]="option.value"
+        [name]="option.label"
         (onRemove)="remove($event)"
         dnd-draggable
         [dragData]="{option: option, index: index, preventAdd: true}"
@@ -26,9 +26,9 @@
 <div class="chips available">
   <jpa-chip
     *ngFor="let option of options; let index = index; let odd = odd; let even = even;"
-    [id]="option.id"
+    [id]="option.value"
     [removeEnabled]="false"
-    [name]="option.name"
+    [name]="option.label"
     [class.even]="even"
     [class.odd]="odd"
     [dragEnabled]="true"

@@ -10,61 +10,43 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
-var index_1 = require('../services/index');
 var Rx_1 = require('rxjs/Rx');
+var index_1 = require('../services/index');
 var BlogGuard = (function () {
-    function BlogGuard(blogService, tagService, divisionService, route) {
-        this.blogService = blogService;
+    function BlogGuard(cache, tagService, divisionService, route) {
+        this.cache = cache;
         this.tagService = tagService;
         this.divisionService = divisionService;
         this.route = route;
-        this.subs = [];
     }
     BlogGuard.prototype.canActivate = function () {
         var _this = this;
         return Rx_1.Observable.create(function (observer) {
-            var gotTags = false;
-            var gotBlog = false;
             var gotDivisions = false;
-            var _sub = _this.tagService.options().subscribe(function (res) {
-                console.log('got tag options!', res);
-                _this.tagService.cache(res);
-                gotTags = true;
-                if (gotBlog && gotDivisions)
-                    observer.complete(true);
-            });
-            var _sub2 = _this.divisionService.options().subscribe(function (res) {
-                _this.divisionService.cache(res);
+            var gotTags = false;
+            _this.divisionsSub = _this.divisionService.options().subscribe(function (res) {
+                _this.cache.store('divisions', res);
                 gotDivisions = true;
-                if (gotTags && gotBlog)
+                if (gotTags)
                     observer.complete(true);
             });
-            _this.subs.push(_sub2);
-            var _sub3 = _this.route.params.subscribe(function (params) {
-                var id = params['id'];
-                if (id === undefined || id === 'new') {
-                    gotBlog = true;
-                }
-                else {
-                    id = +id;
-                    var _sub3_1 = _this.blogService.find(id).subscribe(function (res) {
-                        _this.blogService.cache(res);
-                        gotBlog = true;
-                        if (gotTags && gotDivisions)
-                            observer.complete(true);
-                    });
-                    _this.subs.push(_sub3_1);
-                }
+            _this.tagsSub = _this.tagService.options().subscribe(function (res) {
+                _this.cache.store('tags', res);
+                gotTags = true;
+                if (gotDivisions)
+                    observer.complete(true);
             });
-            _this.subs.push(_sub3);
         });
     };
     BlogGuard.prototype.ngOnDestroy = function () {
-        this.subs.forEach(function (sub) { return sub.unsubscribe(); });
+        if (this.divisionsSub)
+            this.divisionsSub.unsubscribe();
+        if (this.tagsSub)
+            this.tagsSub.unsubscribe();
     };
     BlogGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.BlogService, index_1.TagService, index_1.DivisionService, router_1.ActivatedRoute])
+        __metadata('design:paramtypes', [index_1.JpaCache, index_1.TagService, index_1.DivisionService, router_1.ActivatedRoute])
     ], BlogGuard);
     return BlogGuard;
 }());

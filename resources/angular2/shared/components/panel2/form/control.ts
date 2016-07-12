@@ -1,3 +1,5 @@
+import { FormControl, Validators } from '@angular/forms';
+
 export interface PanelFormControlCondition {
     target: string;
     condition: (source: PanelFormControl<any>, target: PanelFormControl<any>) => boolean;
@@ -33,7 +35,9 @@ export class PanelFormControl<T> {
     conditions: PanelFormControlCondition[];
 
     get empty(): boolean {
-        return this.value === undefined;
+        if (typeof this.value === 'undefined') return true;
+
+        return this.value === undefined || this.value === null;
     }
 
     get editableText(): string {
@@ -57,6 +61,8 @@ export class PanelFormControl<T> {
         }
 
         Object.assign(this, config);
+
+        console.log('PanelFormControl constructed....', this);
     }
 
     summary(panelExpanded: boolean): { text: any, icon: string|boolean } {

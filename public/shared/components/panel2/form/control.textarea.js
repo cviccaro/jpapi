@@ -15,6 +15,8 @@ var PanelFormControlTextarea = (function (_super) {
     }
     Object.defineProperty(PanelFormControlTextarea.prototype, "empty", {
         get: function () {
+            if (typeof this.value === 'undefined')
+                return true;
             return this.value === '';
         },
         enumerable: true,

@@ -12,7 +12,12 @@ export class PanelFormControlSelect extends PanelFormControl<string|number> {
     focused: boolean = false;
 
     get empty(): boolean {
-        return (typeof this.value === "number") ? (this.value === undefined || this.value === null) : this.value['length'] === 0;
+        if (typeof this.value === 'undefined') return true;
+
+        switch(typeof this.value) {
+            case 'number': return this.value === undefined || this.value === null;
+            default: return !!this.value && this.value['length'] === 0;
+        }
     }
 
     constructor(config: SelectConfig) {

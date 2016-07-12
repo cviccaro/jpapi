@@ -14,6 +14,8 @@ var PanelFormControlDragnDrop = (function (_super) {
     }
     Object.defineProperty(PanelFormControlDragnDrop.prototype, "empty", {
         get: function () {
+            if (typeof this.value === 'undefined')
+                return true;
             return this.value.length === 0;
         },
         enumerable: true,

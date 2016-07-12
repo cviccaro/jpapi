@@ -55,7 +55,7 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
 
     @Input() name: string;
     @Input() required: boolean = false;
-    @Input() options: { id: number, name: string }[];
+    @Input() options: { label: string, value: any }[];
 
     @ViewChild('input') private _inputElement: ElementRef;
 
@@ -97,7 +97,7 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
     setOptions() {
         this._valueString = this.value.length === 0 ? null : JSON.stringify(this.value);
         if (this.options) {
-            let ids = this.value.map(item => item.id);
+            let ids = this.value.map(item => item.value);
             this.options = this._originalOptions.filter(option => {
                 return ids.indexOf(option.id) === -1;
             });

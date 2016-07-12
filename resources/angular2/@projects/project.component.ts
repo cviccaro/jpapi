@@ -1,37 +1,14 @@
-import {
-    AfterViewInit,
-    AfterViewChecked,
-    AfterContentChecked,
-    AfterContentInit,
-    Component,
-    HostBinding,
-    OnInit,
-    QueryList,
-    ViewChild,
-    ViewChildren,
-    ContentChildren
-} from '@angular/core';
+import { Component, HostBinding, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
+import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
-import { NgForm, FormControl, FormControlDirective } from '@angular/forms';
-import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { ToasterContainerComponent, ToasterService, ToasterConfig } from 'angular2-toaster';
+import { ToasterService } from 'angular2-toaster';
 
+import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import {
-    ClientService,
-    ImageUpload,
-    JpaMdSelectComponent,
-    JpaPanel,
-    JpaPanelGroup,
-    JpaPanelContent,
-    JpClient,
-    JpFile,
     ProjectService,
     Project,
-    JpaCache
-} from '../shared/index';
-
-import {
+    JpaCache,
     PANEL2_DIRECTIVES,
     PanelFormControl,
     PanelFormControlTextfield,
@@ -47,51 +24,34 @@ import {
     styleUrls: ['./project.component.css'],
     directives: [
         MATERIAL_DIRECTIVES,
-        JpaMdSelectComponent,
-        JpaPanel,
-        JpaPanelGroup,
-        JpaPanelContent,
-        PANEL2_DIRECTIVES,
-        NgForm
+        PANEL2_DIRECTIVES
     ]
 })
-export class ProjectComponent implements OnInit, AfterViewInit {
+export class ProjectComponent implements OnInit {
     public clients: { label: string, value: any }[];
+    public isNew: boolean = false;
     public ready: boolean = false;
-    public submitted = false;
+    public saving: boolean = false;
 
     private _originalTitle: string;
-    private _isNew: boolean = false;
     private _project: Project = new Project();
-    private _projectImage: JpFile = undefined;
 
     public controls: PanelFormControl<any>[];
 
-
-    @HostBinding('class.new') get isNewClass() { return this._isNew; }
-
-    @ViewChildren(JpaPanel) private _panelChildren: QueryList<JpaPanel>;
-    @ContentChildren(FormControl) private _controls: QueryList<FormControl>;
-    @ViewChildren(FormControl) private _controlsView: QueryList<FormControl>;
-    @ContentChildren(FormControlDirective) private _controlsDir: QueryList<FormControlDirective>;
-    @ViewChildren(FormControlDirective) private _controlsDirView: QueryList<FormControlDirective>;
-    @ViewChild(NgForm) private _form: NgForm;
+    @HostBinding('class.new') get isNewClass() { return this.isNew; }
 
     constructor(
         private route: ActivatedRoute,
         private service: ProjectService,
-        private clientService: ClientService,
         private toasterService: ToasterService,
         private router: Router,
         private cache: JpaCache
-    ) {
-
-    }
+    ) { }
 
     get project(): Project { return this._project; }
     set project(v: Project) {
         this._project = v;
-        // this.setup();
+        this.setup();
     }
 
     ngOnInit() {
@@ -99,7 +59,7 @@ export class ProjectComponent implements OnInit, AfterViewInit {
 
         if (this.route.snapshot.params['id'] === 'new') {
             this.ready = true;
-            this._isNew = true;
+            this.isNew = true;
         } else {
             // this.project = this.cache.get('project');
             // this.ready = true;
@@ -144,50 +104,49 @@ export class ProjectComponent implements OnInit, AfterViewInit {
           })
         ];
 
-        console.info('ProjectComponent#'+(this._isNew?'create':'edit')+' initialized.', this);
+        console.info('ProjectComponent#'+(this.isNew?'create':'edit')+' initialized.', this);
     }
 
-    ngAfterViewInit() {
-        console.info('ProjectComponent#'+(this._isNew?'create':'edit')+' View Initialized.', this);
-    }
+    onSubmit(model) {
+        this.saving = true;
 
-    onSubmit() {
-        this.submitted = true;
-        if (this._isNew) {
-            console.log('Save NEW project. ', this.project);
-            this.service.create(this.project)
+        if (this.isNew) {
+            console.log('Save NEW project. ', model);
+            this.service.create(model)
                 .subscribe(res => {
-                    this.toasterService.pop('success', 'Success!', this.project.title + ' has been created.  Redirecting to its page.');
+                    this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
                         this.project = res;
+                        this.saving = false;
                         console.log("Navigating to /projects/" + res.id);
                         this.router.navigate(['/projects', res.id]);
                         this.reset();
                     }, 2000);
                 },err => {
-                    console.log('Error when saving projet: ', err);
+                    console.log('Error when saving project: ', err);
+                    this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
                 });
         } else {
-            console.log('Save UPDATED project. ', this.project);
-            this.service.update(this.project.id, this.project)
+            console.log('Save UPDATED project. ', model);
+            this.service.update(this.project.id, model)
                 .subscribe(res => {
                     console.log('response from update: ', res);
                     this.project = res;
+                    this.saving = false;
                     this.reset();
-                    this.toasterService.pop('success', 'Success!', this.project.title + ' has been saved.');
+                    this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
                 }, err => {
                     console.log('Error when saving projet: ', err);
+                    this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
                 });
         }
     }
 
     private setup() {
-        this._projectImage = this._project.image;
-        this._project.image = null;
         this._originalTitle = this._project.title;
-        this._isNew = this.project.id === undefined;
+        this.isNew = this.project.id === undefined;
         console.info('ProjectComponent.setup()', this);
     }
 
@@ -198,21 +157,10 @@ export class ProjectComponent implements OnInit, AfterViewInit {
         }
         console.info('ProjectComponent.reset()', this);
 
-        // this._panelChildren.forEach(panel => {
-        //     panel.reset();
-        // });
-
         // Temporary workaround until angular2 implements
         // a proper form reset
         this.ready = false;
 
         setTimeout(() => { this.ready = true; },0);
-    }
-
-    report(e) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        console.log(this.project);
     }
 }

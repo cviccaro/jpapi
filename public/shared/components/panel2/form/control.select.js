@@ -15,7 +15,12 @@ var PanelFormControlSelect = (function (_super) {
     }
     Object.defineProperty(PanelFormControlSelect.prototype, "empty", {
         get: function () {
-            return (typeof this.value === "number") ? (this.value === undefined || this.value === null) : this.value['length'] === 0;
+            if (typeof this.value === 'undefined')
+                return true;
+            switch (typeof this.value) {
+                case 'number': return this.value === undefined || this.value === null;
+                default: return !!this.value && this.value['length'] === 0;
+            }
         },
         enumerable: true,
         configurable: true

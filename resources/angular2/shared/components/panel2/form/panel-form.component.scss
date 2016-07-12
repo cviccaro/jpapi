@@ -47,6 +47,12 @@
                 }
             }
         }
+        &.type-text {
+            md-input {
+                max-width: 25%;
+                flex: 1 1 auto;
+            }
+        }
         // &.type-dnd {
         //     .panel-content-spacer {
         //         display: none;
@@ -144,5 +150,10 @@
                 }
             }
         }
+    }
+
+    .panel-form-actions {
+        margin-top: 24px;
+        text-align: right;
     }
 }
