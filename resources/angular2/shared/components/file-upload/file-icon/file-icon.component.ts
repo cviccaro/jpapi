@@ -9,11 +9,13 @@ import { ManagedFile, ManagedImage } from '../../../models/jp-file';
 	styleUrls: ['./file-icon.component.css' ]
 })
 export class FileIconComponent {
-	@Input() file: ManagedFile|ManagedImage;
+	@Input() extension: string;
 	@Input() size: number = 48;
 
 	get iconUrl() {
-		return this.file ? `/libs/Free-file-icons-master/${this.size}px/${this.file.extension}.png` : '';
+		return this.extension ?
+			`/libs/Free-file-icons-master/${this.size}px/${this.extension}.png`
+			: '';
 	}
 
 	ngAfterViewInit() {

@@ -1,5 +1,3 @@
-<pre>{{ model | json }}</pre>
-<pre>{{ controls | json }}</pre>
 <form *ngIf="ready" #panelForm="ngForm" (ngSubmit)="submit()" [class]="formClass">
     <jpa-panel2-group>
         <jpa-panel2 *ngFor="let control of controls; let rowIndex = index; let odd = odd; let even = even;"
@@ -7,14 +5,12 @@
             <jpa-panel2-bar>
                 <jpa-panel2-bar-title>{{ control.label }} <span *ngIf="control.required" class="required">*</span></jpa-panel2-bar-title>
                 <jpa-panel2-bar-subtitle>
-                    <span class="subtitle-wrapper">
-                        <jpa-panel2-form-control-summary [control]="control" [expanded]="panelToggleStates[control.name]"></jpa-panel2-form-control-summary>
-                        <!-- <span class="subtitle-text">{{ subtitles[control.name]?.text }}</span>
-                        <md-icon *ngIf="subtitles[control.name]?.icon" class="md-18">{{ subtitles[control.name]?.icon }}</md-icon> -->
-                    </span>
+                    <jpa-panel2-form-control-summary [control]="control" [expanded]="panelToggleStates[control.name]"></jpa-panel2-form-control-summary>
                 </jpa-panel2-bar-subtitle>
             </jpa-panel2-bar>
-            <jpa-panel2-content [ngSwitch]="control.controlType" [class.single-file]="control.controlType === 'files' && control.multiple === false">
+            <jpa-panel2-content
+                [ngSwitch]="control.controlType"
+                [class.single-file]="control.controlType === 'files' && control.multiple === false">
                 <div class="panel-content-spacer"></div>
                 <template [ngSwitchCase]="'checkbox'">
                     <md-checkbox [name]="control.name" [(ngModel)]="control.value" [required]="control.required" (change)="handleChange(control, $event)">
@@ -27,16 +23,17 @@
                     </md-slide-toggle>
                 </template>
                 <template [ngSwitchCase]="'files'">
-                    <pre> {{ control.value | json }} </pre>
-                    <jpa-image-upload
+                    <jpa-file-upload
                         [multiple]="control.multiple"
                         [name]="control.name"
                         [required]="control.required"
                         [(ngModel)]="control.value"
                         [type]="control.type"
                         [icon]="control.editIcon"
+                        [control]="control"
+                        [accept]="control.accept"
                         (change)="handleChange(control, null, $event)">
-                    </jpa-image-upload>
+                    </jpa-file-upload>
                 </template>
                 <template [ngSwitchCase]="'textarea'">
                     <div class="textarea-infix" [ngSwitch]="control.ckeditor">
@@ -95,28 +92,6 @@
             </jpa-panel2-content>
         </jpa-panel2>
     </jpa-panel2-group>
-    <!-- <div *ngFor="let control of controls; let rowIndex = index; let odd = odd; let even = even;"
-        [hidden]="control.hidden" class="panel-form-control type-{{ control.type }} name-{{ control.name }}">
-        <div [ngSwitch]="control.type">
-            <template [ngSwitchCase]="'file'">
-                <label [attr.for]="control.name">{{ control.label }}</label><input type="file" [name]="control.name" [(ngModel)]="_files[control.name]" (change)="handleChange(control, $event)" [required]="control.required" />
-            </template>
-            <template [ngSwitchCase]="'checkbox'">
-                <md-checkbox [name]="control.name" [(ngModel)]="control.value" [required]="control.required" (change)="handleChange(control, $event)">
-                    {{ control.label }}
-                </md-checkbox>
-            </template>
-            <template [ngSwitchCase]="'toggle'">
-                <md-slide-toggle [name]="control.name" [(ngModel)]="control.value" (change)="handleChange(control, $event)">
-                    {{ control.label }}
-                </md-slide-toggle>
-            </template>
-            <template ngSwitchDefault>
-                <md-input [placeholder]="control.placeholder" [name]="control.name" [(ngModel)]="control.value" [required]="control.required" (change)="handleChange(control, $event)">
-                </md-input>
-            </template>
-        </div>
-    </div> -->
     <div class="panel-form-actions">
         <button md-raised-button class="submit" type="submit" [disabled]="!panelForm.form.valid">
             <md-icon>save</md-icon> {{ submitText }}

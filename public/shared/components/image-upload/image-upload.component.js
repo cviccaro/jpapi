@@ -40,18 +40,17 @@ var ImageUploadComponent = (function () {
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
         this.multiple = false;
-        this.images = [];
         this.type = 'file';
         this.icon = 'panorama';
-        this.gutterSize = "8px";
-        this.cols = 4;
-        this.rowHeight = '16:9';
         this.name = null;
+        this.accept = '*';
         this.required = false;
         this.id = "jpa-panel-" + nextUniqueId++;
         this.step = null;
         this.tabIndex = null;
-        this.accept = '*';
+        this.gutterSize = "8px";
+        this.cols = 4;
+        this.rowHeight = '16:9';
         this.fileAdded = new core_1.EventEmitter();
         this.imageLoaded = new core_1.EventEmitter();
         this.imageAdded = new core_1.EventEmitter();
@@ -126,14 +125,15 @@ var ImageUploadComponent = (function () {
         if (this.type === 'image' && this.accept === '*') {
             this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
         }
+        console.debug('ImageUploadComponent Initialized! ', this);
     };
     ImageUploadComponent.prototype.ngAfterViewInit = function () {
         if (this.type === 'image' && !this.multiple) {
-            console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
-                this: this,
-                imageEl: this._currentImageEl
-            });
             if (this._currentImageEl) {
+                console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
+                    this: this,
+                    imageEl: this._currentImageEl
+                });
                 var imageEl = this._currentImageEl.nativeElement;
                 this.imageLoad(imageEl);
             }
@@ -149,6 +149,9 @@ var ImageUploadComponent = (function () {
             val.height = imageEl.naturalHeight;
             _this.value = val;
             _this.change.emit(_this.value);
+            if (_this.control) {
+                _this.control.value = _this.value;
+            }
         });
         setTimeout(function () { imageEl.src = _this._value.url; });
     };
@@ -160,13 +163,10 @@ var ImageUploadComponent = (function () {
             switch (this.type) {
                 case 'image':
                     if (value) {
-                        this._value = new jp_file_1.ManagedImage(value, 0);
-                        setTimeout(function () {
-                            if (_this._currentImageEl) {
-                                var imageEl = _this._currentImageEl.nativeElement;
-                                _this.imageLoad(imageEl);
-                            }
-                        });
+                        if (!(value instanceof jp_file_1.ManagedImage))
+                            this._value = new jp_file_1.ManagedImage(value, 0);
+                        else
+                            this._value = value;
                     }
                     else {
                         this._value = '';
@@ -413,10 +413,6 @@ var ImageUploadComponent = (function () {
     ], ImageUploadComponent.prototype, "multiple", void 0);
     __decorate([
         core_1.Input(), 
-        __metadata('design:type', Array)
-    ], ImageUploadComponent.prototype, "images", void 0);
-    __decorate([
-        core_1.Input(), 
         __metadata('design:type', String)
     ], ImageUploadComponent.prototype, "type", void 0);
     __decorate([
@@ -425,20 +421,16 @@ var ImageUploadComponent = (function () {
     ], ImageUploadComponent.prototype, "icon", void 0);
     __decorate([
         core_1.Input(), 
-        __metadata('design:type', String)
-    ], ImageUploadComponent.prototype, "gutterSize", void 0);
-    __decorate([
-        core_1.Input(), 
-        __metadata('design:type', Number)
-    ], ImageUploadComponent.prototype, "cols", void 0);
-    __decorate([
-        core_1.Input(), 
         __metadata('design:type', Object)
-    ], ImageUploadComponent.prototype, "rowHeight", void 0);
+    ], ImageUploadComponent.prototype, "control", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
     ], ImageUploadComponent.prototype, "name", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', String)
+    ], ImageUploadComponent.prototype, "accept", void 0);
     __decorate([
         core_1.Input(),
         field_value_1.BooleanFieldValue(), 
@@ -459,7 +451,15 @@ var ImageUploadComponent = (function () {
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)
-    ], ImageUploadComponent.prototype, "accept", void 0);
+    ], ImageUploadComponent.prototype, "gutterSize", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Number)
+    ], ImageUploadComponent.prototype, "cols", void 0);
+    __decorate([
+        core_1.Input(), 
+        __metadata('design:type', Object)
+    ], ImageUploadComponent.prototype, "rowHeight", void 0);
     __decorate([
         core_1.Output(), 
         __metadata('design:type', core_1.EventEmitter)

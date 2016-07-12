@@ -72,16 +72,24 @@
 :host .jpa-panel.type-textarea .textarea-infix {
   width: 100%; }
 
-:host .jpa-panel.type-files jpa-image-upload {
+:host .jpa-panel.type-files jpa-file-upload {
   width: 100%; }
-
-:host .jpa-panel.type-files jpa-panel2-bar-subtitle jpa-panel2-form-control-summary md-icon {
-  margin-left: 4px; }
 
 :host .jpa-panel.type-files jpa-panel2-content {
   padding-top: 36px; }
   :host .jpa-panel.type-files jpa-panel2-content .panel-content-spacer {
     display: none; }
+
+:host .jpa-panel.type-files jpa-panel2-form-control-summary {
+  display: -ms-flexbox;
+  display: flex; }
+  :host .jpa-panel.type-files jpa-panel2-form-control-summary .subtitle-text {
+    -ms-flex-order: 2;
+    order: 2; }
+  :host .jpa-panel.type-files jpa-panel2-form-control-summary md-icon {
+    -ms-flex-order: 1;
+    order: 1;
+    margin-right: 4px; }
 
 :host .jpa-panel.type-textarea jpa-panel2-content:not(.single-file) .panel-content-spacer {
   display: none; }

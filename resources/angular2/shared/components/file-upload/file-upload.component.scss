@@ -40,6 +40,10 @@
         md-grid-tile {
             z-index: 5;
             transition: all $transition_duration $transition_ease;
+            jpa-grid-image,
+            jpa-file-card {
+                cursor: move;
+            }
             &.dnd-drag-over {
                 // background: rgba(25, 118, 210, 0.35);
                 figure {
@@ -88,9 +92,9 @@
             display: flex;
             flex-direction: row;
             width: 100%;
+            &[hidden] { display: none; }
             .side-toolbar {
                 max-width: 33%;
-                border-left: 1px solid $grey_200;
                 order: 2;
             }
             .viewport {
@@ -105,6 +109,15 @@
         }
     }
 
+    &.file-upload-image {
+        .viewport {
+            .viewport-inner {
+                border: 16px solid black;
+                background: black;
+                text-align: center;
+            }
+        }
+    }
     &.file-upload-file {
         .viewport {
             display: flex;

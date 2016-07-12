@@ -7,6 +7,7 @@ var PanelFormControl = (function () {
             config.placeholder = config.label;
         }
         config.editText = config.editText || 'Edit ' + config.label;
+        config.emptyText = config.emptyText || 'Add ' + config.label;
         if (config.editIcon !== false) {
             config.editIcon = config.editIcon || 'help_outline';
         }
@@ -19,9 +20,18 @@ var PanelFormControl = (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(PanelFormControl.prototype, "editableText", {
+        get: function () {
+            if (this.empty)
+                return this.emptyText;
+            return this.editText;
+        },
+        enumerable: true,
+        configurable: true
+    });
     PanelFormControl.prototype.summary = function (panelExpanded) {
         if (panelExpanded || this.empty)
-            return { text: this.editText, icon: this.editIcon };
+            return { text: this.editableText, icon: this.editIcon };
         return { text: this.value, icon: false };
     };
     PanelFormControl.prototype.evaluateConditions = function (inputs) {

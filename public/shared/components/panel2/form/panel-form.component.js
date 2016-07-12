@@ -18,12 +18,13 @@ var index_1 = require('../bar/index');
 var index_2 = require('../content/index');
 var index_3 = require('../group/index');
 var dnd_form_control_component_1 = require('./dnd/dnd-form-control.component');
-var image_upload_component_1 = require('../../image-upload/image-upload.component');
+var file_upload_component_1 = require('../../file-upload/file-upload.component');
 var summary_component_1 = require('./summary/summary.component');
 var PanelFormComponent = (function () {
     function PanelFormComponent() {
         this.ready = true;
         this.panelToggleStates = {};
+        this.formSubmit = new core_1.EventEmitter();
         this.submitText = 'Submit';
         this._controlPanels = {};
     }
@@ -99,7 +100,6 @@ var PanelFormComponent = (function () {
             value: value,
         });
         if (control.controlType === 'files' && control['type'] === 'image' && !control['multiple']) {
-            console.debug('Handle change for single image file please!');
             this.model[control.name] = value;
         }
         else {
@@ -115,7 +115,12 @@ var PanelFormComponent = (function () {
     };
     PanelFormComponent.prototype.submit = function () {
         console.log('submit!', this.model);
+        this.formSubmit.emit(this.model);
     };
+    __decorate([
+        core_1.Output(), 
+        __metadata('design:type', Object)
+    ], PanelFormComponent.prototype, "formSubmit", void 0);
     __decorate([
         core_1.Input(), 
         __metadata('design:type', Array)
@@ -158,7 +163,7 @@ var PanelFormComponent = (function () {
                 angular2_material_1.MATERIAL_DIRECTIVES,
                 ng2_ckeditor_1.CKEditor,
                 dnd_form_control_component_1.DragnDropFormControl,
-                image_upload_component_1.ImageUploadComponent,
+                file_upload_component_1.FileUploadComponent,
                 summary_component_1.PanelFormControlSummary
             ]
         }), 

@@ -1,1 +1,1 @@
-{"version":3,"sources":["shared/components/image-upload/toolbar/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,qBAAqB,CAAC,EAAA","file":"shared/components/image-upload/toolbar/index.js","sourcesContent":["export * from './toolbar.component';\n"],"sourceRoot":"/source/"}
+{"version":3,"sources":["shared/components/image-upload/toolbar/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,qBAAqB,CAAC,EAAA","file":"shared/components/image-upload/toolbar/index.js","sourcesContent":["export * from './toolbar.component';\r\n"],"sourceRoot":"/source/"}

@@ -126,7 +126,7 @@
         <div class="panel-content-bottom" *ngIf="_hasContentBottom">
           <ng-content *ngIf="!_isGallery" select="jpa-panel-content[align=bottom]"></ng-content>
           <jpa-panel-content *ngIf="_isGallery" align="bottom">
-            <jpa-image-upload
+            <jpa-file-upload
                 url="/upload/image"
                 multiple="true"
                 [images]="gallery"
@@ -137,7 +137,7 @@
                 (fileAdded)="fileAdded($event)"
                 (imageAdded)="imageAdded($event)"
                 (imageLoaded)="imageLoaded($event)">
-            </jpa-image-upload>
+            </jpa-file-upload>
           </jpa-panel-content>
         </div>
     </div>

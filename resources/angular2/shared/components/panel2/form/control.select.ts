@@ -23,7 +23,7 @@ export class PanelFormControlSelect extends PanelFormControl<string|number> {
 
     summary(panelExpanded: boolean) {
         if (panelExpanded || this.empty) {
-            return { text: this.editText, icon: this.editIcon };
+            return { text: this.editableText, icon: this.editIcon };
         } else {
             return { text: this.options.find(option => option.value == this.value).label, icon: false};
         }

@@ -1,0 +1,16 @@
+<md-card>
+    <md-card-header>
+        <jpa-file-icon [extension]="file.extension"></jpa-file-icon>
+        <md-card-title>{{ file.filename }}</md-card-title>
+        <md-card-subtitle>
+            <span class="date">{{ file.date() | amDateFormat: 'l' }}</span>
+            <span class="filesize">{{ file.filesize() }} KB</span>
+        </md-card-subtitle>
+    </md-card-header>
+    <md-icon *ngIf="!file.id" class="new md-18">star</md-icon>
+    <div class="shade" *ngIf="actions">
+        <span class="remove" jpa-action-delegate (click)="remove($event)">
+        <md-icon>delete_forever</md-icon>
+        </span>
+    </div>
+</md-card>

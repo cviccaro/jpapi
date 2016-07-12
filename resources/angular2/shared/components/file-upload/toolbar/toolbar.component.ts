@@ -16,8 +16,11 @@ import { TooltipDirective } from '../../tooltip/index';
     pipes: [ DateFormatPipe ]
 })
 export class FileUploadToolbar implements AfterViewInit {
+    new_file: any = '';
+
     @Input() file: ManagedImage|ManagedFile;
     @Input() type: string = 'file';
+    @Input() accept: string = '*';
     @Input() icon: string = 'panorama';
 
     @Output() onRemoveFile = new EventEmitter();
@@ -42,7 +45,7 @@ export class FileUploadToolbar implements AfterViewInit {
     	evt.stopPropagation();
 
     	//this.onReplaceFile.emit(evt);
-    	
+
     	this._newFileInput.nativeElement.dispatchEvent(new Event('click'));
     	console.log('replace file! ', evt);
     }
@@ -50,10 +53,11 @@ export class FileUploadToolbar implements AfterViewInit {
     fileReplaced(evt: Event) {
     	evt.preventDefault();
     	evt.stopPropagation();
+        evt.stopImmediatePropagation();
 
-    	console.log('file replaced! ', evt);
+    	console.log('file replaced! ');
 
-    	this.onReplaceFile.emit(evt);
+    	this.onReplaceFile.emit(evt.target['files'][0]);
     }
 
     fileDescriptionChanged(evt: Event) {

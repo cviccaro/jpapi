@@ -23,7 +23,7 @@ var PanelFormControlSelect = (function (_super) {
     PanelFormControlSelect.prototype.summary = function (panelExpanded) {
         var _this = this;
         if (panelExpanded || this.empty) {
-            return { text: this.editText, icon: this.editIcon };
+            return { text: this.editableText, icon: this.editIcon };
         }
         else {
             return { text: this.options.find(function (option) { return option.value == _this.value; }).label, icon: false };

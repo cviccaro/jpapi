@@ -1,4 +1,4 @@
-import { Input, Component, OnInit, AfterViewInit, QueryList, ViewChildren, AfterContentInit } from '@angular/core';
+import { Input, Component, OnInit, AfterViewInit, QueryList, ViewChildren, AfterContentInit, Output, EventEmitter } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { NgModel } from '@angular/forms';
 import { CKEditor } from 'ng2-ckeditor';
@@ -11,7 +11,7 @@ import { PanelContentComponent } from '../content/index';
 import { PanelGroupComponent } from '../group/index';
 import { PanelFormControl } from './control';
 import { DragnDropFormControl } from './dnd/dnd-form-control.component';
-import { ImageUploadComponent } from '../../image-upload/image-upload.component';
+import { FileUploadComponent } from '../../file-upload/file-upload.component';
 import { PanelFormControlSummary } from './summary/summary.component';
 
 @Component({
@@ -31,13 +31,15 @@ import { PanelFormControlSummary } from './summary/summary.component';
         MATERIAL_DIRECTIVES,
         CKEditor,
         DragnDropFormControl,
-        ImageUploadComponent,
+        FileUploadComponent,
         PanelFormControlSummary
     ]
 })
 export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewInit {
     ready: boolean = true;
     panelToggleStates: { [key: string] : boolean } = {};
+
+    @Output() formSubmit = new EventEmitter();
 
     @Input() controls: PanelFormControl<any>[];
     @Input() model: any;
@@ -133,7 +135,6 @@ export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewIn
             value: value,
         });
         if (control.controlType === 'files' && control['type'] === 'image' && !control['multiple']) {
-            console.debug('Handle change for single image file please!');
             this.model[control.name] = value;
         } else {
             if (value !== undefined) {
@@ -148,5 +149,7 @@ export class PanelFormComponent implements OnInit, AfterContentInit, AfterViewIn
 
     submit() {
         console.log('submit!', this.model);
+
+        this.formSubmit.emit(this.model);
     }
 }

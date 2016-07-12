@@ -1,6 +1,7 @@
 import {
     forwardRef,
     Component,
+    OnInit,
     AfterViewInit,
     AfterContentInit,
     SimpleChange,
@@ -28,9 +29,10 @@ import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
-import { GridImage, ImageUpload } from './grid-image/index';
+import { GridImage } from './grid-image/index';
 import { JpFile, ManagedFile, ManagedImage } from '../../models/jp-file';
 import { FileUploadToolbar } from './toolbar/index';
+import { FileCardComponent } from './file-card/index';
 import { FileIconComponent } from './file-icon/index';
 import { AuthService } from '../../services/auth.service';
 
@@ -38,15 +40,15 @@ const noop = () => { };
 let nextUniqueId = 0;
 
 export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
-    useExisting: forwardRef(() => ImageUploadComponent),
+    useExisting: forwardRef(() => FileUploadComponent),
     multi: true
 });
 
 @Component({
     moduleId: module.id,
-    selector: 'jpa-image-upload',
-    templateUrl: './image-upload.component.html',
-    styleUrls: ['./image-upload.component.css'],
+    selector: 'jpa-file-upload',
+    templateUrl: './file-upload.component.html',
+    styleUrls: ['./file-upload.component.css'],
     directives: [
         MD_GRID_LIST_DIRECTIVES,
         MD_PROGRESS_BAR_DIRECTIVES,
@@ -55,6 +57,7 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
         GridImage,
         DND_DIRECTIVES,
         FileUploadToolbar,
+        FileCardComponent,
         FileIconComponent,
         NgSwitch,
         NgSwitchCase,
@@ -62,13 +65,13 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     ],
     providers: [IMAGE_UPLOAD_VALUE_ACCESSOR]
 })
-export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit {
+export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterViewInit {
     constructor(authService: AuthService) { }
 
     public isDragOver: boolean = false;
     public isLoading: boolean = false;
     private _imagesLoaded: number = 0;
-    private _value: any = [];
+    private _value: any;
     private _rows: any[] = [];
     private _cols: any[] = [];
     private _dragging: boolean = false;
@@ -100,32 +103,28 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
      * Inputs
      */
     @Input() multiple: boolean = false;
-    @Input() images: any[] = [];
-
     @Input() type: string = 'file';
     @Input() icon: string = 'panorama';
-    
-    // MdGridList
-    @Input() gutterSize: string = "8px";
-    @Input() cols: number = 4;
-    @Input() rowHeight: any = '16:9';
+    @Input() control: any;
 
-    // form-related
     @Input() name: string = null;
+    @Input() accept: string = '*';
     @Input() @BooleanFieldValue() required: boolean = false;
     @Input() id: string = `jpa-panel-${nextUniqueId++}`;
     @Input() step: number = null;
     @Input() tabIndex: number = null;
 
-    @Input() accept: string = '*';
+    // MdGridList
+    @Input() gutterSize: string = "8px";
+    @Input() cols: number = 4;
+    @Input() rowHeight: any = '16:9';
 
     /**
      * Outputs
      */
-    @Output() fileAdded: EventEmitter<File[]> = new EventEmitter<File[]>();
-    @Output() imageLoaded = new EventEmitter();
-    @Output() imageAdded = new EventEmitter();
-    @Output() imageRemoved = new EventEmitter();
+    @Output() imageLoaded = new EventEmitter<ManagedImage>();
+    @Output() fileRemoved = new EventEmitter<ManagedFile|ManagedImage>();
+    @Output() fileAdded = new EventEmitter<ManagedFile|ManagedImage>();
     @Output() change = new EventEmitter();
 
     /** element  outputs **/
@@ -144,20 +143,21 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
 
     /** @internal */
     handleFocus(event: FocusEvent) {
-        console.log('ImageUploadComponent#handleFocus', event);
+        console.log('FileUploadComponent#handleFocus', event);
     }
 
     /** @internal */
     handleBlur(event: FocusEvent) {
-        console.log('ImageUploadComponent#handleBlur', event);
+        console.log('FileUploadComponent#handleBlur', event);
     }
 
     get value(): any { return this._value; };
     @Input() set value(v: any) {
-        console.debug('ImageUploadComponent# set value(): ', {
-            v: v,
-            _value: this._value
-        });
+        console.debug('FileUploadComponent#set value() to ', v);
+
+        v = this.convertValueForInputType(v);
+
+        console.log('FileUploadComponent#set value() CONVERTED: ', v);
 
         if (v !== this._value) {
             this._value = v;
@@ -166,15 +166,15 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
             this.change.emit(v);
 
             if (this.multiple) {
-                let val = v.length === 0 ? '' : v;
-                this._onChangeCallback(val);
+                let ngModelValue = (Array.isArray(v) && v.length === 0) ? '' : v;
+                this._onChangeCallback(ngModelValue);
             } else {
                 this._onChangeCallback(v);
             }
 
             this._onTouchedCallback();
         } else {
-            console.debug('ImageUploadComponent# not emitting change events');
+            console.debug('FileUploadComponent#set value(): not emitting change events');
         }
     }
 
@@ -182,15 +182,16 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
         if (this.type === 'image' && this.accept === '*') {
             this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
         }
+        console.debug('FileUploadComponent Initialized! ', this);
     }
 
     ngAfterViewInit() {
         if (this.type === 'image' && !this.multiple) {
-            console.debug('ImageUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
-                this: this,
-                imageEl: this._currentImageEl
-            });
             if (this._currentImageEl) {
+                console.debug('FileUploadComponent | image - single #ngAfterViewInit().  Subscribing to image load...', {
+                    this: this,
+                    imageEl: this._currentImageEl
+                });
                  let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
                  this.imageLoad(imageEl);
             }
@@ -198,20 +199,19 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
     }
 
     imageLoad(imageEl: HTMLImageElement) {
-        console.warn('ImageUploadComponent. imageLoad()');
+        console.warn('FileUploadComponent. imageLoad()');
         imageEl.addEventListener('load', (event: Event) => {
-            console.debug('ImageUploadComponent.imageLoad() ....  Image loaded!', event);
-            let val: ManagedImage = this.value;
+            console.debug('FileUploadComponent.imageLoad() ....  Image loaded!', event);
+            let val = this.value;
 
             val.width = imageEl.naturalWidth;
             val.height = imageEl.naturalHeight;
-            
-            // this.change.emit(val);
 
             this.value = val;
 
-            // this.imageLoaded.emit({ event: event, config: this.value });
-            this.change.emit(this.value);
+            if (this.control) {
+                this.control.value = this.value;
+            }
         });
         setTimeout(() => { imageEl.src = this._value.url; });
     }
@@ -222,42 +222,37 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
      * Runs when value is first set
      */
     writeValue(value: any) {
-        let m = this.multiple ? 'multiple' : 'single';
-        console.debug('ImageUpload --- ' + m + ' -- #writeValue: ', { value: value });
+        this._value = this.convertValueForInputType(value);
+        console.debug(`FileUploadComponent.${this.multiple?'multiple':'single'}.${this.type}.${this.name}#writeValue: `, { value: this._value });
+    }
+
+    /**
+     * Convert the value to the appropriate
+     * type based on properties multiple and type
+     *
+     * @param {any} value [description]
+     */
+    convertValueForInputType(value: any): any {
+        console.log('FileUploadComponent#convertValueForInputType', value);
+
         if (!this.multiple) {
-            switch (this.type) {
-                case 'image':
-                    if (value) {
-                        this._value = new ManagedImage(value, 0);
+            if ( !value ) return '';
 
-                        // let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
-
-                        // this._value.watchForDimensions(imageEl);
-                        setTimeout(() => {
-                            if (this._currentImageEl) {
-                                 let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
-                                 this.imageLoad(imageEl);
-                            }
-                        });
-                    } else {
-                        this._value = '';
-                    }
-                    break;
-                default:
-                    this._value = value ? new ManagedFile(value, 0) : '';
-                    break;
-            }
+            return this.managedFile(this.type, value);
         } else {
-            let v = value || [];
-            console.warn('about to run v.map ! ', v);
-            this._value = v.map((item, i) => {
-                switch (this.type) {
-                    case 'image': return new ManagedImage(item, i);
-                    default: return new ManagedFile(item, i);
-                }
-            });
+            if ( !value ) return [];
+
+            return value.map((item, i) => this.managedFile(this.type, item, i));
         }
-        console.debug('ImageUpload#writeValue: ', { value: this._value });
+    }
+
+    managedFile(type: string, value: any, idx: number = 0) {
+        switch(type) {
+            case 'image': if (!(value instanceof ManagedImage)) return new ManagedImage(value, idx);
+            case 'file': if (!(value instanceof ManagedFile)) return new ManagedFile(value, idx);
+        }
+
+        return value;
     }
 
     registerOnChange(fn: any) {
@@ -312,7 +307,7 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
     }
 
     handleClickedRemove(e: any) {
-        console.debug('ImageUpload.handleClickedRemove', {
+        console.debug('FileUploadComponent.handleClickedRemove', {
             e: e,
             value: this.value
         });
@@ -321,7 +316,7 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
         value.splice(e.index, 1);
         this.value = value;
 
-        this.imageRemoved.emit(e);
+        this.fileRemoved.emit(e);
     }
 
 
@@ -350,7 +345,7 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
     }
 
     fileDragStart(e: any): void {
-        console.log('ImageUploadComponent#fileDragStart', e);
+        console.log('FileUploadComponent#fileDragStart', e);
         this._dragging = true;
     }
 
@@ -360,71 +355,77 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
         this._dragging = false;
     }
 
-    add(e: any) {
+    add(event: Event) {
         if (this._dragging) {
             console.log('add cancelling because we are dragging image.');
+
             this._dragging = false;
-            return;
-        } else {
-            console.log('add ', e);
-            let files = e.target.files || e.dataTransfer.files;
-
-            this._stopEvent(e);
-            this.fileAdded.emit(files);
-
             this.isDragOver = false;
-            this.isLoading = true;
 
-            this.readFiles(files);
+            return;
         }
-        console.log('ImageUploadComponent#add', {
-            e: e,
+
+        let files = event.target['files'] || event['dataTransfer']['files'];
+
+        this._stopEvent(event);
+        this.isDragOver = false;
+
+        this.readFiles(files);
+
+        console.log('FileUploadComponent#add', {
+            event: event,
             this: this
         });
     }
 
-    readFiles(files) {
-        let count = this.value.slice(0).length;
+    readFiles(files: any[] = []) {
+        if (!files.length) {
+            return;
+        }
 
+        this.isLoading = true;
         for (let i = 0; i < files.length; i++) {
             let file = files[i];
 
-            let image = new ImageUpload(file);
-            let reader = new FileReader();
+            switch(this.type) {
+                case 'image':
+                    let managedImage = new ManagedImage({_file: file}, i);
 
-            this.isLoading = true;
+                    managedImage.read().subscribe(e => {
+                        managedImage.url = e;
+                        this.addToGrid(managedImage);
+                        this.isLoading = false;
+                    });
 
-            reader.addEventListener('load', e => {
-                image.url = reader.result;
-                this.addImageToGrid(image);
-                this.isLoading = false;
-            });
+                    break;
+                default:
+                    let managedFile = new ManagedFile({_file: file}, i);
+                    this.addToGrid(managedFile);
+                    this.isLoading = false;
+                    break;
+            }
 
-            setTimeout(() => { reader.readAsDataURL(file); });
         }
     }
 
-    addImageToGrid(image) {
-        console.log('Loaded new image: ', image);
-
-        let value = this.value.slice(0);
-        value.push(image);
-        this.value = value;
-
-        this.imageAdded.emit(image);
+    addToGrid(file: ManagedFile|ManagedImage) {
+        console.log('Loaded new image: ', file);
+        this.pushValue(file);
+        this.fileAdded.emit(file);
     }
-    // private _dragData(image: JpFile, idx: number): JpFile {
-    //     let img = Object.assign({}, image);
-    //     img.idx = idx;
-    //     return img;
-    // }
+
+    pushValue(file: ManagedFile|ManagedImage) {
+        let value = this.value.slice(0);
+        value.push(file);
+        this.value = value;
+    }
 
     reorder(event: { dragData: number, mouseEvent: DragEvent }, new_index: number): void {
         let old_index = event.dragData;
 
         this._stopEvent(event.mouseEvent);
 
-        console.info('ImageUploadComponent#reorder', {
+        console.info('FileUploadComponent#reorder', {
             old_index: old_index,
             new_index: new_index,
             event: event
@@ -454,7 +455,7 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
      * Form reset
      */
     reset() {
-
+        console.log('FileUploadComponent.reset()', this);
     }
 
     /**
@@ -464,8 +465,14 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
         console.log('handle single file attach ', e);
         this._stopEvent(e);
 
-        let files = e.target.files || e.dataTransfer.files;
-        let file = files[0];
+        let file: File;
+
+        if (e instanceof File) {
+            file = e;
+        } else {
+            let files = e.target.files || e.dataTransfer.files;
+            file = files[0];
+        }
 
         switch(this.type) {
             case 'image':
@@ -486,77 +493,34 @@ export class ImageUploadComponent implements ControlValueAccessor, AfterViewInit
         console.log('attachSingleFile created new ManagedFile ', managedFile);
 
         this.value = managedFile;
-        // let reader = new FileReader();
-
-        // this.isLoading = true;
-
-        // image.load().subscribe(e => {
-        //     image.url = e;
-
-        //     this.value = image;
-        //     setTimeout(() => {
-        //         let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
-        //         imageEl.src = e;
-
-        //         let val: ManagedImage = this.value;
-        //         val.width = imageEl.naturalWidth;
-        //         val.height = imageEl.naturalHeight;
-
-        //         this.value = val;
-        //         this.change.emit(this.value);
-
-        //         this.isLoading = false;
-        //     });
-        // })
-        // setTimeout(() => { reader.readAsDataURL(file); });
     }
 
     attachSingleImage(file: File) {
         console.log('Attach Single Image: ', file);
 
-        let image = new ImageUpload(file);
+        let image = new ManagedImage({_file: file}, 0);
 
-        console.log('attachSingleImage created new ImageUpload ', image);
-
-        let reader = new FileReader();
+        console.log('attachSingleImage created new ManagedImage ', image);
 
         this.isLoading = true;
 
-        image.load().subscribe(e => {
+        image.read().subscribe(e => {
             image.url = e;
 
             this.value = image;
-            setTimeout(() => {
-                let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
-                imageEl.src = e;
 
-                let val: ManagedImage = this.value;
-                val.width = imageEl.naturalWidth;
-                val.height = imageEl.naturalHeight;
+            let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
+            imageEl.src = e;
 
-                this.value = val;
-                this.change.emit(this.value);
-
-                this.isLoading = false;
-            });
+            this.isLoading = false;
         })
-        setTimeout(() => { reader.readAsDataURL(file); });
     }
 
 
     /**
      * Remove single file
      */
-    remove(e: any) {
+    removeFile(e: any) {
         this.value = '';
     }
-
-    /**
-     * Replace single file
-     */
-    replace(e: any) {
-        console.log('ImageUploadComponent#replace ' + this.type + ' ', e);
-        this.handleSingleFileAttach(e);
-    }
-
 }

@@ -5,6 +5,6 @@ export * from './progress/index';
 export * from './md-select/index';
 export * from './panel/index';
 export * from './panel2/index';
-export * from './image-upload/index';
+export * from './file-upload/index';
 export * from './modal/index';
 export * from './tooltip/index';

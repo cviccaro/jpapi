@@ -22,7 +22,7 @@ var PanelFormControlTextarea = (function (_super) {
     });
     PanelFormControlTextarea.prototype.summary = function (panelExpanded) {
         if (panelExpanded || this.empty) {
-            return { text: this.editText, icon: this.editIcon };
+            return { text: this.editableText, icon: this.editIcon };
         }
         else {
             return { text: this.value.length + ' characters', icon: false };

@@ -32,7 +32,7 @@ import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-lis
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { JpaPanelContent } from './content/index';
 import { PanelSummaryComponent } from './summary/index';
-import { ImageUploadComponent } from '../image-upload/index';
+import { FileUploadComponent } from '../file-upload/index';
 import { ChipComponent } from '../chip/index';
 
 import {CKEditor} from 'ng2-ckeditor';
@@ -90,7 +90,7 @@ export class JpaPanelDuplicatedHintError extends MdError {
         NgModel,
         NgSelectOption,
         JpaPanelContent,
-        ImageUploadComponent,
+        FileUploadComponent,
         PanelSummaryComponent,
         ChipComponent,
         DND_DIRECTIVES,
@@ -218,7 +218,7 @@ export class JpaPanel implements OnInit, AfterViewInit, AfterContentInit, OnChan
     @ContentChildren(MdHint) private _hintChildren: QueryList<MdHint>;
     @ContentChildren(NgSelectOption) private _optionChildren: QueryList<NgSelectOption>;
     @ContentChildren(JpaPanelContent) private _contentChildren: QueryList<JpaPanelContent>;
-    @ViewChild(ImageUploadComponent) private _imageUploadCmp: ImageUploadComponent;
+    @ViewChild(FileUploadComponent) private _imageUploadCmp: FileUploadComponent;
     @ViewChild(PanelSummaryComponent) private _summaryChild: PanelSummaryComponent;
     @ViewChild('input') private _inputElement: ElementRef;
     @ViewChild('select') private _selectElement: ElementRef;

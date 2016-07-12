@@ -13,10 +13,11 @@ var router_1 = require('@angular/router');
 var index_1 = require('../services/index');
 var Rx_1 = require('rxjs/Rx');
 var ProjectGuard = (function () {
-    function ProjectGuard(projectService, clientService, route) {
+    function ProjectGuard(projectService, clientService, route, cache) {
         this.projectService = projectService;
         this.clientService = clientService;
         this.route = route;
+        this.cache = cache;
         this.subs = [];
     }
     ProjectGuard.prototype.ngOnInit = function () {
@@ -28,13 +29,14 @@ var ProjectGuard = (function () {
             var gotClients = false;
             var gotProject = false;
             var _sub = _this.clientService.options().subscribe(function (res) {
-                _this.clientService.cache(res);
+                _this.cache.store('clients', res);
                 gotClients = true;
                 if (gotProject)
                     observer.complete(true);
             });
             _this.subs.push(_sub);
             var _sub2 = _this.route.params.subscribe(function (params) {
+                console.log('got sweet ass router params: ', params);
                 var id = params['id'];
                 if (id === undefined || id === 'new') {
                     gotProject = true;
@@ -42,7 +44,7 @@ var ProjectGuard = (function () {
                 else {
                     id = +id;
                     var _sub_1 = _this.projectService.find(id).subscribe(function (res) {
-                        _this.projectService.cache(res);
+                        _this.cache.store('project', res);
                         gotProject = true;
                         if (gotClients)
                             observer.complete(true);
@@ -58,7 +60,7 @@ var ProjectGuard = (function () {
     };
     ProjectGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.ProjectService, index_1.ClientService, router_1.ActivatedRoute])
+        __metadata('design:paramtypes', [index_1.ProjectService, index_1.ClientService, router_1.ActivatedRoute, index_1.JpaCache])
     ], ProjectGuard);
     return ProjectGuard;
 }());

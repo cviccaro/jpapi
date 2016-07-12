@@ -23,7 +23,7 @@ var input_1 = require('@angular2-material/input');
 var angular2_material_1 = require('../../libs/angular2-material');
 var index_1 = require('./content/index');
 var index_2 = require('./summary/index');
-var index_3 = require('../image-upload/index');
+var index_3 = require('../file-upload/index');
 var index_4 = require('../chip/index');
 var ng2_ckeditor_1 = require('ng2-ckeditor');
 var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
@@ -610,8 +610,8 @@ var JpaPanel = (function () {
         __metadata('design:type', core_1.QueryList)
     ], JpaPanel.prototype, "_contentChildren", void 0);
     __decorate([
-        core_1.ViewChild(index_3.ImageUploadComponent), 
-        __metadata('design:type', index_3.ImageUploadComponent)
+        core_1.ViewChild(index_3.FileUploadComponent), 
+        __metadata('design:type', index_3.FileUploadComponent)
     ], JpaPanel.prototype, "_imageUploadCmp", void 0);
     __decorate([
         core_1.ViewChild(index_2.PanelSummaryComponent), 
@@ -701,7 +701,7 @@ var JpaPanel = (function () {
                 forms_1.NgModel,
                 forms_1.NgSelectOption,
                 index_1.JpaPanelContent,
-                index_3.ImageUploadComponent,
+                index_3.FileUploadComponent,
                 index_2.PanelSummaryComponent,
                 index_4.ChipComponent,
                 ng2_dnd_1.DND_DIRECTIVES,

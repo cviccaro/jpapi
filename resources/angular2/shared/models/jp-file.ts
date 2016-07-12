@@ -52,23 +52,22 @@ export class ManagedFile implements JpFile {
 
         if (attributes._file) {
             // Fill in managed file from File object
-            let f = attributes._file;
-            this.filename = f.name;
-            this.size = f.size;
-            this.mimetype = f.type;
-            this.extension = f.name.split('.').pop();
-            this.last_modified = f.lastModifiedDate.getTime();
-            this.created_at = f.lastModifiedDate;
-            if (f['webkitRelativePath']) {
-                this.webkitRelativePath = f['webkitRelativePath'];
-            }
+            let file = attributes._file;
+            this.filename = file.name;
+            this.size = file.size;
+            this.mimetype = file.type;
+            this.extension = file.name.split('.').pop();
+            this.created_at = this.last_modified = file.lastModifiedDate;
 
+            if ( file['webkitRelativePath'] ) {
+                this.webkitRelativePath = file['webkitRelativePath'];
+            }
         }
         console.warn('ManagedFile constructed ...', this);
     }
 
     date() {
-        return this.created_at;
+        return this.created_at || this.last_modified;
     }
 
     filesize(units: string = 'kb') {
@@ -79,7 +78,7 @@ export class ManagedFile implements JpFile {
                 divisor = 100;
                 break;
         }
-        
+
         return Math.round(this.size / divisor) / 100;
     }
 
@@ -97,6 +96,26 @@ export class ManagedImage extends ManagedFile {
     constructor(attributes: JpFile, idx: number) {
         super(attributes, idx);
         console.warn('ManagedImage constructed ...', this);
+    }
+
+    read() : Observable<any> {
+        let file = this._file;
+
+        console.info('ManagedImage # read file: start', file);
+        const filename = file.name;
+
+        return Observable.create(observer => {
+            console.debug('ManagedImage # read file: working', file);
+            let reader = new FileReader();
+
+            reader.onload = readerEvt => {
+                console.debug('ManagedImage # read file: complete');
+
+                observer.next(reader.result);
+            };
+
+            setTimeout(() => reader.readAsDataURL(file), 50);
+        });
     }
 
     load(imageEl: HTMLImageElement) : Observable<any> {

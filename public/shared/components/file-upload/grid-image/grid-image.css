@@ -9,6 +9,9 @@
  *                                          '200', 'a100')
  */
 /**
+ * Palette
+ */
+/**
  * Colors
  */
 /**
@@ -20,12 +23,56 @@
 /**
  * Transition mixins
  */
+/**
+ * Icon and button sizes
+ */
+.md-14 {
+  font-size: 14px;
+  width: 14px;
+  height: 14px; }
+
+.md-16 {
+  font-size: 16px;
+  height: 16px;
+  width: 16px; }
+
+.md-18 {
+  font-size: 18px;
+  width: 18px;
+  height: 18px; }
+
+.md-20 {
+  font-size: 20px;
+  width: 20px;
+  height: 20px; }
+
+.md-22 {
+  font-size: 22px;
+  width: 22px;
+  height: 22px; }
+
+.md-24 {
+  font-size: 24px;
+  width: 24px;
+  height: 24px; }
+
+.md-32 {
+  font-size: 32px;
+  width: 32px;
+  height: 32px; }
+
 :host {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
   border: 4px solid #fff;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  -ms-flex-pack: center;
+  justify-content: center;
   box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
   transition: box-shadow 280ms cubic-bezier(0.4, 0, 0.2, 1);
   will-change: box-shadow;
@@ -39,6 +86,11 @@
     left: 0;
     right: 0;
     bottom: 0; }
+  :host .new {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: #ffeb3b; }
   :host .remove {
     position: absolute;
     top: 10px;
@@ -47,8 +99,10 @@
     :host .remove md-icon {
       color: #fff; }
   :host:hover .shade {
-    background: rgba(0, 0, 0, 0.5); }
+    background: rgba(0, 0, 0, 0.54); }
   :host img {
     max-width: 100%; }
+  :host.dnd-drag-start {
+    border: 2px dashed #000; }
 
 /*# sourceMappingURL=grid-image.css.map */

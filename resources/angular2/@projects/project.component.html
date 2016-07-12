@@ -3,9 +3,11 @@
       <span *ngSwitchCase="true">Create Project</span>
       <span *ngSwitchDefault>Edit Project {{ _originalTitle }}</span>
     </h2>
+    <jpa-panel2-form *ngIf="ready" [controls]="controls" [model]="project" submitText="Save" (formSubmit)="onSubmit()">
+    </jpa-panel2-form>
 <!--     <button (click)="report($event)">Report</button>
     <button (click)="reset($event)">Reset</button> -->
-    <form *ngIf="ready" #projectForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
+<!--     <form *ngIf="ready" #projectForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
       <jpa-panel-group>
         <jpa-panel #titlePanel label="Title" [(ngModel)]="project.title" name="title" type="text" editText="Enter a title" required>
           <md-hint align="end">{{titlePanel.characterCount}} / 100</md-hint>
@@ -33,5 +35,5 @@
           <button type="submit" md-raised-button [disabled]="!projectForm.form.valid"><md-icon>save</md-icon> Save</button>
         </div>
       </div>
-    </form>
+    </form> -->
 </div>

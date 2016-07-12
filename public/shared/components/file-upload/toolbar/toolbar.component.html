@@ -2,7 +2,7 @@
 	<span class="filler"></span>
 	<button md-icon-button (click)="removeFile($event)" class="danger" jpa-tooltip tooltip="Delete"><md-icon>delete</md-icon></button>
 	<button md-icon-button (click)="replaceFile($event)" jpa-tooltip tooltip="Upload"><md-icon>file_upload</md-icon></button>
-	<input [(ngModel)]="new_file" name="new_file" type="file" #newFile class="new-file" (change)="fileReplaced($event)" />
+	<input name="new_file" type="file" #newFile [accept]="accept" class="new-file" (change)="fileReplaced($event)" />
 </md-toolbar>
 <div class="toolbar-container">
 	<h3 class="toolbar-heading">Info</h3>

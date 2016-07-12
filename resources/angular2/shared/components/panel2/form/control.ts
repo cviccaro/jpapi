@@ -11,6 +11,7 @@ export interface PanelFormControlConfig {
     label?: string;
     placeholder?: string;
     editText?: string;
+    emptyText?: string;
     editIcon?: string|boolean;
     hidden?: boolean;
     conditions?: PanelFormControlCondition[];
@@ -28,10 +29,17 @@ export class PanelFormControl<T> {
     placeholder: string;
     editIcon: string|boolean;
     editText: string;
+    emptyText: string;
     conditions: PanelFormControlCondition[];
 
     get empty(): boolean {
         return this.value === undefined;
+    }
+
+    get editableText(): string {
+        if (this.empty) return this.emptyText;
+
+        return this.editText;
     }
 
     constructor(config: PanelFormControlConfig) {
@@ -42,6 +50,7 @@ export class PanelFormControl<T> {
         }
 
         config.editText = config.editText || 'Edit ' + config.label;
+        config.emptyText = config.emptyText || 'Add ' + config.label;
 
         if (config.editIcon !== false) {
             config.editIcon = config.editIcon || 'help_outline';
@@ -51,7 +60,7 @@ export class PanelFormControl<T> {
     }
 
     summary(panelExpanded: boolean): { text: any, icon: string|boolean } {
-        if (panelExpanded || this.empty) return { text: this.editText, icon: this.editIcon };
+        if (panelExpanded || this.empty) return { text: this.editableText, icon: this.editIcon };
 
         return { text: this.value, icon: false };
     }

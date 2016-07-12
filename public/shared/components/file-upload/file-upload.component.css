@@ -1,3 +1,70 @@
+@keyframes fa-spin {
+  0% {
+    transform: rotate(0deg); }
+  100% {
+    transform: rotate(359deg); } }
+
+/* Reveal */
+.hvr-reveal {
+  display: inline-block;
+  vertical-align: middle;
+  transform: translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale;
+  position: relative;
+  overflow: hidden; }
+
+.hvr-reveal:before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  border-color: #2098d1;
+  border-style: solid;
+  border-width: 0;
+  transition-property: border-width;
+  transition-duration: 0.1s;
+  transition-timing-function: ease-out; }
+
+.hvr-reveal:hover:before, .hvr-reveal:focus:before, .hvr-reveal:active:before {
+  transform: translateY(0);
+  border-width: 4px; }
+
+/* Hang */
+
+@keyframes hvr-hang {
+  0% {
+    transform: translateY(8px); }
+  50% {
+    transform: translateY(4px); }
+  100% {
+    transform: translateY(8px); } }
+
+@keyframes hvr-hang-sink {
+  100% {
+    transform: translateY(8px); } }
+
+.hvr-hang {
+  display: inline-block;
+  vertical-align: middle;
+  transform: translateZ(0);
+  box-shadow: 0 0 1px transparent;
+  backface-visibility: hidden;
+  -moz-osx-font-smoothing: grayscale; }
+
+.hvr-hang:hover, .hvr-hang:focus, .hvr-hang:active {
+  animation-name: hvr-hang-sink, hvr-hang;
+  animation-duration: .3s, 1.5s;
+  animation-delay: 0s, .3s;
+  animation-timing-function: ease-out, ease-in-out;
+  animation-iteration-count: 1, infinite;
+  animation-fill-mode: forwards;
+  animation-direction: normal, alternate; }
+
 /**
  * Retrieves a color value from the $material-colors Sass map
  * Inspired by https://github.com/nilskaspersson/Google-Material-UI-Color-Palette/
@@ -7,6 +74,9 @@
  *                                          name (e.g. 'pink', 'amber')
  * @param {string} [color-variant='500']  - quoted, lowercase color variant (e.g.
  *                                          '200', 'a100')
+ */
+/**
+ * Palette
  */
 /**
  * Colors
@@ -20,25 +90,141 @@
 /**
  * Transition mixins
  */
+/**
+ * Icon and button sizes
+ */
+.md-14 {
+  font-size: 14px;
+  width: 14px;
+  height: 14px; }
+
+.md-16 {
+  font-size: 16px;
+  height: 16px;
+  width: 16px; }
+
+.md-18 {
+  font-size: 18px;
+  width: 18px;
+  height: 18px; }
+
+.md-20 {
+  font-size: 20px;
+  width: 20px;
+  height: 20px; }
+
+.md-22 {
+  font-size: 22px;
+  width: 22px;
+  height: 22px; }
+
+.md-24 {
+  font-size: 24px;
+  width: 24px;
+  height: 24px; }
+
+.md-32 {
+  font-size: 32px;
+  width: 32px;
+  height: 32px; }
+
 :host {
   display: block; }
-  :host .file-drop-zone {
+  :host .file-drop-zone-wrapper {
     border: dotted 3px #cfd8dc;
-    transition: all 250ms linear; }
+    transition: all 250ms linear;
+    position: relative; }
+    :host .file-drop-zone-wrapper .file-drop-zone {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1; }
   :host .file-over {
     border: dotted 3px #1976d2; }
-  :host .count {
-    font-size: 16px;
-    margin-bottom: 16px;
-    color: rgba(0, 0, 0, 0.54); }
-    :host .count md-icon {
-      vertical-align: bottom; }
-    :host .count .new {
-      color: #1976d2; }
   :host .hidden {
     display: none; }
   :host .info {
     font-size: 12px;
     color: rgba(0, 0, 0, 0.54); }
+  :host md-grid-list {
+    z-index: 5; }
+    :host md-grid-list md-grid-tile {
+      z-index: 5;
+      transition: all 250ms cubic-bezier(0.75, 0.17, 0.59, 1.09); }
+      :host md-grid-list md-grid-tile jpa-grid-image,
+      :host md-grid-list md-grid-tile jpa-file-card {
+        cursor: move; }
+  :host .drop-zone-rows {
+    display: -ms-flexbox;
+    display: flex;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    z-index: 4; }
+    :host .drop-zone-rows[hidden] {
+      display: none; }
+    :host .drop-zone-rows .drop-zone-row {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      -ms-flex: 1;
+      flex: 1; }
+  :host .single-file-wrapper {
+    width: 100%; }
+    :host .single-file-wrapper .single-file-container {
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: row;
+      flex-direction: row;
+      width: 100%; }
+      :host .single-file-wrapper .single-file-container[hidden] {
+        display: none; }
+      :host .single-file-wrapper .single-file-container .side-toolbar {
+        max-width: 33%;
+        -ms-flex-order: 2;
+        order: 2; }
+      :host .single-file-wrapper .single-file-container .viewport {
+        -ms-flex: 1;
+        flex: 1; }
+        :host .single-file-wrapper .single-file-container .viewport .current-image {
+          max-width: 100%; }
+    :host .single-file-wrapper .spacer {
+      width: 24.5%; }
+  :host.file-upload-image .viewport .viewport-inner {
+    border: 16px solid black;
+    background: black;
+    text-align: center; }
+  :host.file-upload-file .viewport {
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -ms-flex-pack: center;
+    justify-content: center;
+    min-height: 20px;
+    padding: 19px;
+    /* margin-bottom: 20px; */
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    margin-right: 16px;
+    box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05); }
+    :host.file-upload-file .viewport .viewport-inner {
+      height: 100%;
+      display: -ms-flexbox;
+      display: flex;
+      -ms-flex-direction: column;
+      flex-direction: column;
+      -ms-flex-pack: center;
+      justify-content: center; }
 
 /*# sourceMappingURL=file-upload.component.css.map */

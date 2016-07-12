@@ -1,1 +1,1 @@
-{"version":3,"sources":["shared/components/panel2/group/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,yBAAyB,CAAC,EAAA","file":"shared/components/panel2/group/index.js","sourcesContent":["export * from './panel-group.component';\n"],"sourceRoot":"/source/"}
+{"version":3,"sources":["shared/components/panel2/group/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,yBAAyB,CAAC,EAAA","file":"shared/components/panel2/group/index.js","sourcesContent":["export * from './panel-group.component';\r\n"],"sourceRoot":"/source/"}

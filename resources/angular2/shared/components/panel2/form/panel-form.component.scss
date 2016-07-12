@@ -23,13 +23,8 @@
             }
         }
         &.type-files {
-            jpa-image-upload {
+            jpa-file-upload {
                 width: 100%;
-            }
-            jpa-panel2-bar-subtitle {
-                jpa-panel2-form-control-summary {
-                    md-icon { margin-left: 4px; }
-                }
             }
             jpa-panel2-content {
                 padding-top: 36px;
@@ -38,26 +33,11 @@
                 }
             }
 
-            // jpa-panel2-content:not(.single-file) {
-            //     .panel-content-spacer {
-            //         display: none;
-            //     }
-            // }
-            // jpa-panel2-content.single-file {
-            //     .panel-content-spacer {
-            //         flex-shrink: 0;
-            //     }
-            // }
-            // &.expanded.ng-valid,
-            // &.ng-valid.ng-dirty {
-            //     jpa-panel2-bar-subtitle {
-            //         jpa-panel2-form-control-summary {
-            //             display: flex;
-            //             .subtitle-text { order: 2; }
-            //             md-icon { order: 1; margin-right: 4px; margin-left: 0; }
-            //         }
-            //     }
-            // }
+            jpa-panel2-form-control-summary {
+                display: flex;
+                .subtitle-text { order: 2; }
+                md-icon { order: 1; margin-right: 4px; }
+            }
         }
 
         &.type-textarea {

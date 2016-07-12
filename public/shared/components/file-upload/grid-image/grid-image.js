@@ -24,10 +24,13 @@ var GridImage = (function () {
     };
     GridImage.prototype.ngOnInit = function () {
         var _this = this;
+        this._imageEl.nativeElement.src = this.imageConfig.url;
         this._imageEl.nativeElement.addEventListener('load', function (e) {
-            console.log('GridImage Loaded.', _this);
             _this.imageLoaded.emit({ event: e, config: _this.imageConfig });
         });
+    };
+    GridImage.prototype.ngAfterViewInit = function () {
+        console.log('GridImage View Initialized', this);
     };
     GridImage.prototype.remove = function () {
         this.clickedRemove.emit({ config: this.imageConfig, index: this.index });

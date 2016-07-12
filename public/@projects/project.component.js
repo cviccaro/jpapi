@@ -14,13 +14,15 @@ var forms_1 = require('@angular/forms');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var angular2_toaster_1 = require('angular2-toaster');
 var index_1 = require('../shared/index');
+var index_2 = require('../shared/index');
 var ProjectComponent = (function () {
-    function ProjectComponent(route, service, clientService, toasterService, router) {
+    function ProjectComponent(route, service, clientService, toasterService, router, cache) {
         this.route = route;
         this.service = service;
         this.clientService = clientService;
         this.toasterService = toasterService;
         this.router = router;
+        this.cache = cache;
         this.ready = false;
         this.submitted = false;
         this._isNew = false;
@@ -36,14 +38,13 @@ var ProjectComponent = (function () {
         get: function () { return this._project; },
         set: function (v) {
             this._project = v;
-            this.setup();
         },
         enumerable: true,
         configurable: true
     });
     ProjectComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.clients = this.clientService.cached();
+        this.clients = this.cache.get('clients');
         if (this.route.snapshot.params['id'] === 'new') {
             this.ready = true;
             this._isNew = true;
@@ -55,6 +56,38 @@ var ProjectComponent = (function () {
                 _this.ready = true;
             });
         }
+        this.controls = [
+            new index_2.PanelFormControlTextfield({
+                name: 'title',
+                required: true,
+                order: 3
+            }),
+            new index_2.PanelFormControlSelect({
+                name: 'client_id',
+                label: 'Client',
+                required: true,
+                options: this.clients
+            }),
+            new index_2.PanelFormControlTextarea({
+                name: 'description',
+                required: true,
+                ckeditor: true
+            }),
+            new index_2.PanelFormControlFiles({
+                name: 'image',
+                label: 'Cover Image',
+                required: true,
+                multiple: false,
+                type: 'image'
+            }),
+            new index_2.PanelFormControlFiles({
+                name: 'images',
+                required: false,
+                multiple: true,
+                filesLabel: 'images in gallery',
+                type: 'image'
+            })
+        ];
         console.info('ProjectComponent#' + (this._isNew ? 'create' : 'edit') + ' initialized.', this);
     };
     ProjectComponent.prototype.ngAfterViewInit = function () {
@@ -154,10 +187,11 @@ var ProjectComponent = (function () {
                 index_1.JpaPanel,
                 index_1.JpaPanelGroup,
                 index_1.JpaPanelContent,
+                index_2.PANEL2_DIRECTIVES,
                 forms_1.NgForm
             ]
         }), 
-        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.ProjectService, index_1.ClientService, angular2_toaster_1.ToasterService, router_1.Router])
+        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.ProjectService, index_1.ClientService, angular2_toaster_1.ToasterService, router_1.Router, index_1.JpaCache])
     ], ProjectComponent);
     return ProjectComponent;
 }());

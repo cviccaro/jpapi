@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { CanActivate, ActivatedRoute, Params } from '@angular/router';
 
-import { ProjectService, ClientService } from '../services/index';
+import { ProjectService, ClientService, JpaCache } from '../services/index';
 
 import { Observable, Observer, Subscription } from 'rxjs/Rx';
 
@@ -10,7 +10,7 @@ export class ProjectGuard implements CanActivate, OnDestroy {
     private subs: Subscription[] = [];
     private params: Params;
 
-    constructor(private projectService: ProjectService, private clientService: ClientService, private route: ActivatedRoute) { }
+    constructor(private projectService: ProjectService, private clientService: ClientService, private route: ActivatedRoute, public cache: JpaCache) { }
 
     ngOnInit() {
         // this.subs.push(this.route.params.subscribe(params => {
@@ -26,7 +26,7 @@ export class ProjectGuard implements CanActivate, OnDestroy {
         let gotProject = false;
 
         let _sub = this.clientService.options().subscribe(res => {
-            this.clientService.cache(res);
+            this.cache.store('clients', res);
             gotClients = true;
             if (gotProject) observer.complete(true);
         });
@@ -34,13 +34,14 @@ export class ProjectGuard implements CanActivate, OnDestroy {
         this.subs.push(_sub);
 
         let _sub2 = this.route.params.subscribe(params => {
+          console.log('got sweet ass router params: ', params);
             let id = params['id'];
             if (id === undefined || id === 'new') {
               gotProject = true;
             } else {
               id = +id;
               let _sub = this.projectService.find(id).subscribe(res => {
-                  this.projectService.cache(res);
+                  this.cache.store('project', res);
                   gotProject = true;
                   if (gotClients) observer.complete(true);
               });

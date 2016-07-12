@@ -25,7 +25,7 @@ export class PanelFormControlTextarea extends PanelFormControl<string> {
 
     summary(panelExpanded: boolean) {
       if (panelExpanded || this.empty) {
-        return { text: this.editText, icon: this.editIcon };
+        return { text: this.editableText, icon: this.editIcon };
       } else {
         return { text: this.value.length + ' characters', icon: false};
       }

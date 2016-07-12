@@ -10,21 +10,20 @@ var ManagedFile = (function () {
         Object.assign(this, attributes);
         this.idx = idx;
         if (attributes._file) {
-            var f = attributes._file;
-            this.filename = f.name;
-            this.size = f.size;
-            this.mimetype = f.type;
-            this.extension = f.name.split('.').pop();
-            this.last_modified = f.lastModifiedDate.getTime();
-            this.created_at = f.lastModifiedDate;
-            if (f['webkitRelativePath']) {
-                this.webkitRelativePath = f['webkitRelativePath'];
+            var file = attributes._file;
+            this.filename = file.name;
+            this.size = file.size;
+            this.mimetype = file.type;
+            this.extension = file.name.split('.').pop();
+            this.created_at = this.last_modified = file.lastModifiedDate;
+            if (file['webkitRelativePath']) {
+                this.webkitRelativePath = file['webkitRelativePath'];
             }
         }
         console.warn('ManagedFile constructed ...', this);
     }
     ManagedFile.prototype.date = function () {
-        return this.created_at;
+        return this.created_at || this.last_modified;
     };
     ManagedFile.prototype.filesize = function (units) {
         if (units === void 0) { units = 'kb'; }
@@ -50,6 +49,20 @@ var ManagedImage = (function (_super) {
         _super.call(this, attributes, idx);
         console.warn('ManagedImage constructed ...', this);
     }
+    ManagedImage.prototype.read = function () {
+        var file = this._file;
+        console.info('ManagedImage # read file: start', file);
+        var filename = file.name;
+        return Rx_1.Observable.create(function (observer) {
+            console.debug('ManagedImage # read file: working', file);
+            var reader = new FileReader();
+            reader.onload = function (readerEvt) {
+                console.debug('ManagedImage # read file: complete');
+                observer.next(reader.result);
+            };
+            setTimeout(function () { return reader.readAsDataURL(file); }, 50);
+        });
+    };
     ManagedImage.prototype.load = function (imageEl) {
         console.debug('ManagedImage.load start');
         return Rx_1.Observable.create(function (observer) {

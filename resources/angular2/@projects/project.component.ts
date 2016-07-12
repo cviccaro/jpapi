@@ -24,9 +24,21 @@ import {
     JpaPanel,
     JpaPanelGroup,
     JpaPanelContent,
+    JpClient,
     JpFile,
     ProjectService,
-    Project
+    Project,
+    JpaCache
+} from '../shared/index';
+
+import {
+    PANEL2_DIRECTIVES,
+    PanelFormControl,
+    PanelFormControlTextfield,
+    PanelFormControlSelect,
+    PanelFormControlTextarea,
+    PanelFormControlDragnDrop,
+    PanelFormControlFiles
 } from '../shared/index';
 
 @Component({
@@ -39,11 +51,12 @@ import {
         JpaPanel,
         JpaPanelGroup,
         JpaPanelContent,
+        PANEL2_DIRECTIVES,
         NgForm
     ]
 })
 export class ProjectComponent implements OnInit, AfterViewInit {
-    public clients: string[];
+    public clients: { label: string, value: any }[];
     public ready: boolean = false;
     public submitted = false;
 
@@ -51,6 +64,9 @@ export class ProjectComponent implements OnInit, AfterViewInit {
     private _isNew: boolean = false;
     private _project: Project = new Project();
     private _projectImage: JpFile = undefined;
+
+    public controls: PanelFormControl<any>[];
+
 
     @HostBinding('class.new') get isNewClass() { return this._isNew; }
 
@@ -66,28 +82,67 @@ export class ProjectComponent implements OnInit, AfterViewInit {
         private service: ProjectService,
         private clientService: ClientService,
         private toasterService: ToasterService,
-        private router: Router
-    ) { }
+        private router: Router,
+        private cache: JpaCache
+    ) {
+
+    }
 
     get project(): Project { return this._project; }
     set project(v: Project) {
         this._project = v;
-        this.setup();
+        // this.setup();
     }
 
     ngOnInit() {
-        this.clients = this.clientService.cached();
+        this.clients = this.cache.get('clients');
 
         if (this.route.snapshot.params['id'] === 'new') {
             this.ready = true;
             this._isNew = true;
         } else {
+            // this.project = this.cache.get('project');
+            // this.ready = true;
+
             this.service.find(+this.route.snapshot.params['id']).subscribe(res => {
                 this.project = res;
                 console.debug('setting project model to ', res);
                 this.ready = true;
             });
         }
+
+        this.controls = [
+          new PanelFormControlTextfield({
+            name: 'title',
+            required: true,
+            order: 3
+          }),
+          new PanelFormControlSelect({
+              name: 'client_id',
+              label: 'Client',
+              required: true,
+              options: this.clients
+          }),
+          new PanelFormControlTextarea({
+              name: 'description',
+              required: true,
+              ckeditor: true
+          }),
+          new PanelFormControlFiles({
+              name: 'image',
+              label: 'Cover Image',
+              required: true,
+              multiple: false,
+              type: 'image'
+          }),
+          new PanelFormControlFiles({
+              name: 'images',
+              required: false,
+              multiple: true,
+              filesLabel: 'images in gallery',
+              type: 'image'
+          })
+        ];
 
         console.info('ProjectComponent#'+(this._isNew?'create':'edit')+' initialized.', this);
     }

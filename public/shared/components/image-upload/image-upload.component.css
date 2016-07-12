@@ -183,9 +183,10 @@
       -ms-flex-direction: row;
       flex-direction: row;
       width: 100%; }
+      :host .single-file-wrapper .single-file-container[hidden] {
+        display: none; }
       :host .single-file-wrapper .single-file-container .side-toolbar {
         max-width: 33%;
-        border-left: 1px solid #eeeeee;
         -ms-flex-order: 2;
         order: 2; }
       :host .single-file-wrapper .single-file-container .viewport {
@@ -195,6 +196,8 @@
           max-width: 100%; }
     :host .single-file-wrapper .spacer {
       width: 24.5%; }
+  :host.file-upload-image .viewport .viewport-inner {
+    border: 16px solid black; }
   :host.file-upload-file .viewport {
     display: -ms-flexbox;
     display: flex;

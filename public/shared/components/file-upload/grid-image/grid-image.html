@@ -1,6 +1,7 @@
+<md-icon *ngIf="!imageConfig.id" class="new">fiber_new</md-icon>
 <div class="shade">
 	<span class="remove" [hidden]="!hovering" (click)="remove()">
 	<md-icon>delete_forever</md-icon>
 	</span>
 </div>
-<img #image class="grid-image" [src]="imageConfig.image_url" [alt]="imageConfig.alt" [title]="imageConfig.title" [class.new]="imageConfig.isNew" />
+<img #image class="grid-image" [alt]="imageConfig.alt" [title]="imageConfig.title" [class.new]="imageConfig.isNew" />

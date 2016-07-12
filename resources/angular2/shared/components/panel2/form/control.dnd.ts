@@ -22,7 +22,7 @@ export class PanelFormControlDragnDrop extends PanelFormControl<Array<any>> {
 
     summary(panelExpanded: boolean) {
         if (panelExpanded) {
-            return { text: this.editText, icon: this.editIcon };
+            return { text: this.editableText, icon: this.editIcon };
         }
 
         if (this.value.length > 5) {
@@ -34,7 +34,7 @@ export class PanelFormControlDragnDrop extends PanelFormControl<Array<any>> {
             if (val.length) {
                 text = val.reduce((carry, item) => { return carry += ', ' + item.name }, text);
             }
-            
+
             return { text: text, icon: false};
         }
     }
@@ -42,7 +42,7 @@ export class PanelFormControlDragnDrop extends PanelFormControl<Array<any>> {
     // summary(panelExpanded: boolean): Observable<{ text: any, icon: string|boolean }> {
     //     return Observable.create(observer => {
     //         let summary = panelExpanded ?
-    //             { text: this.editText, icon: this.editIcon }
+    //             { text: this.editableText, icon: this.editIcon }
     //             : {text: this.value.length + ' selected', icon: false};
 
     //         observer.next(summary);

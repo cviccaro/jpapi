@@ -21,7 +21,7 @@ var PanelFormControlDragnDrop = (function (_super) {
     });
     PanelFormControlDragnDrop.prototype.summary = function (panelExpanded) {
         if (panelExpanded) {
-            return { text: this.editText, icon: this.editIcon };
+            return { text: this.editableText, icon: this.editIcon };
         }
         if (this.value.length > 5) {
             return { text: this.value.length + ' selected', icon: false };

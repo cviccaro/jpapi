@@ -23,7 +23,9 @@ class ClientController extends Controller
      */
     public function options(Request $request)
     {
-        $list = Client::select('id', 'name')->get();
+        $list = Client::select('id', 'name')->get()->map(function($client) {
+            return ['label' => $client->name, 'value' => $client->id];
+        });
         return $this->respond('done', $list);
     }
 
@@ -157,7 +159,7 @@ class ClientController extends Controller
 
     /**
      * Destroy a client
-     * 
+     *
      * @return Response
      */
 }

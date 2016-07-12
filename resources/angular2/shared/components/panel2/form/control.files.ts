@@ -4,6 +4,7 @@ export interface PanelFormControlFilesConfig extends PanelFormControlConfig {
     multiple?: boolean;
     filesLabel?: string;
     type?: string;
+    accept?: string;
 }
 
 export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
@@ -12,9 +13,10 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
     editIcon: string|boolean = 'panorama';
     filesLabel: string;
     type: string;
+    accept: string;
 
     get empty(): boolean {
-        return this.value.length === 0;
+        return !this.value || this.value.length === 0;
     }
 
     constructor(config: PanelFormControlFilesConfig) {
@@ -23,6 +25,7 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
       this.multiple = config.multiple === undefined ? true : config.multiple;
       this.filesLabel = config.filesLabel || 'files';
       this.type = config.type || 'file';
+      this.accept = config.accept || '*';
 
       if (this.type === 'file' && this.editIcon === 'panorama') {
           this.editIcon = 'attachment';
@@ -67,12 +70,12 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
                 if (this.type === 'image') {
                     text = `${val.filename} | ${Math.round(val.size/10)/100}kb | ${val.width} x ${val.height} px`;
                 } else {
-                    text = `${val.filename} | ${Math.round(val.size/10)/100}kb`;
+                    text = `${val.filename} | ${Math.round(val.size/10)/100}kb | ${val.mimetype}`;
                 }
 
                 return { text: text, icon: this.editIcon };
             } else {
-                return { text: this.editText, icon: this.editIcon };
+                return { text: this.editableText, icon: this.editIcon };
             }
         }
     }
