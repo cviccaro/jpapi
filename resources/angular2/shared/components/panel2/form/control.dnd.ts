@@ -3,16 +3,16 @@ import { PanelFormControl, PanelFormControlConfig } from './control';
 import { Observable } from 'rxjs/Rx';
 
 export interface DragnDropConfig extends PanelFormControlConfig {
-    options: {label: string, value: any}[];
+    options: {id: number, name: string}[];
 }
 
 export class PanelFormControlDragnDrop extends PanelFormControl<Array<any>> {
     controlType = 'dnd';
-    options: {label: string, value: any}[];
+    options: {id: number, name: string}[];
 
     get empty(): boolean {
         if (typeof this.value === 'undefined') return true;
-        
+
         return this.value.length === 0;
     }
 
@@ -40,14 +40,4 @@ export class PanelFormControlDragnDrop extends PanelFormControl<Array<any>> {
             return { text: text, icon: false};
         }
     }
-
-    // summary(panelExpanded: boolean): Observable<{ text: any, icon: string|boolean }> {
-    //     return Observable.create(observer => {
-    //         let summary = panelExpanded ?
-    //             { text: this.editableText, icon: this.editIcon }
-    //             : {text: this.value.length + ' selected', icon: false};
-
-    //         observer.next(summary);
-    //     });
-    // }
 }

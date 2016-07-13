@@ -22,9 +22,6 @@ var PanelBarTitleComponent = (function () {
     PanelBarTitleComponent.prototype._onClick = function (evt) {
         this.onClick.emit(evt);
     };
-    PanelBarTitleComponent.prototype.ngAfterViewInit = function () {
-        console.log('PanelBarTitle View Initialized', this);
-    };
     __decorate([
         core_1.Output(), 
         __metadata('design:type', Object)
@@ -74,13 +71,8 @@ var PanelBarComponent = (function () {
                 _this.toggle(evt);
             });
         });
-        console.log('PanelBarComponent Content Initialized ', this);
-    };
-    PanelBarComponent.prototype.ngAfterViewInit = function () {
-        console.log('PanelBarComponent View Initialized ', this);
     };
     PanelBarComponent.prototype.toggle = function (evt) {
-        console.log('PanelBarComponent toggle ', evt);
         evt.preventDefault();
         evt.stopPropagation();
         this.onToggle.emit(evt);

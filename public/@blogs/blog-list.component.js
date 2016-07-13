@@ -13,11 +13,12 @@ var router_1 = require('@angular/router');
 var index_1 = require('../shared/index');
 var angular2_toaster_1 = require('angular2-toaster');
 var BlogListComponent = (function () {
-    function BlogListComponent(blogService, router, modal, toaster) {
+    function BlogListComponent(blogService, router, modal, toaster, cache) {
         this.blogService = blogService;
         this.router = router;
         this.modal = modal;
         this.toaster = toaster;
+        this.cache = cache;
         this.listData = [];
         this.listConfig = {
             sortOptions: [
@@ -42,8 +43,7 @@ var BlogListComponent = (function () {
         };
     }
     BlogListComponent.prototype.ngOnInit = function () {
-        var json = this.blogService.getList();
-        this.parseList(json);
+        this.parseList(this.cache.get('blogList'));
     };
     BlogListComponent.prototype.mapList = function (blog) {
         return {
@@ -126,7 +126,7 @@ var BlogListComponent = (function () {
                 index_1.ListComponent
             ]
         }), 
-        __metadata('design:paramtypes', [index_1.BlogService, router_1.Router, index_1.JpaModal, angular2_toaster_1.ToasterService])
+        __metadata('design:paramtypes', [index_1.BlogService, router_1.Router, index_1.JpaModal, angular2_toaster_1.ToasterService, index_1.JpaCache])
     ], BlogListComponent);
     return BlogListComponent;
 }());

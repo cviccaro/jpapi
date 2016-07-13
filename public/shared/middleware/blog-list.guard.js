@@ -12,8 +12,9 @@ var core_1 = require('@angular/core');
 var index_1 = require('../services/index');
 var Rx_1 = require('rxjs/Rx');
 var BlogListGuard = (function () {
-    function BlogListGuard(blogService) {
+    function BlogListGuard(blogService, cache) {
         this.blogService = blogService;
+        this.cache = cache;
     }
     BlogListGuard.prototype.canActivate = function () {
         var _this = this;
@@ -24,7 +25,7 @@ var BlogListGuard = (function () {
                 order_by: 'updated_at',
                 descending: true
             }).subscribe(function (res) {
-                _this.blogService.setList(res);
+                _this.cache.store('blogList', res);
                 observer.complete(true);
             });
         });
@@ -34,7 +35,7 @@ var BlogListGuard = (function () {
     };
     BlogListGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.BlogService])
+        __metadata('design:paramtypes', [index_1.BlogService, index_1.JpaCache])
     ], BlogListGuard);
     return BlogListGuard;
 }());

@@ -1,6 +1,6 @@
 import { ProjectIndexComponent, ProjectListComponent, ProjectComponent } from './index';
 
-import { AuthGuard, ProjectListGuard, ProjectGuard } from '../shared/index';
+import { AuthGuard, ProjectListGuard, ProjectGuard, CkEditorGuard } from '../shared/index';
 
 export const ProjectRoutes = [
     {
@@ -12,7 +12,7 @@ export const ProjectRoutes = [
         path: 'projects',
         component: ProjectIndexComponent,
         children: [
-            { path: ':id', component: ProjectComponent, canActivate: [ProjectGuard] },
+            { path: ':id', component: ProjectComponent, canActivate: [ProjectGuard], canDeactivate: [ CkEditorGuard ] },
             { path: '', component: ProjectListComponent, canActivate: [ProjectListGuard] }
         ],
         canActivate: [AuthGuard]

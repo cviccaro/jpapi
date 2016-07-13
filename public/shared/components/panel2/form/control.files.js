@@ -18,10 +18,6 @@ var PanelFormControlFiles = (function (_super) {
         if (this.type === 'file' && this.editIcon === 'panorama') {
             this.editIcon = 'attachment';
         }
-        console.warn('PanelFormControlFiles constructed', {
-            this: this,
-            config: config
-        });
     }
     Object.defineProperty(PanelFormControlFiles.prototype, "empty", {
         get: function () {

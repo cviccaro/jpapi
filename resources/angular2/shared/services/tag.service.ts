@@ -3,25 +3,23 @@ import { Http, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map';
 
 import { Tag } from '../models/tag';
+import { XhrService } from './xhr';
 
 @Injectable()
 export class TagService {
 	private _cached: string[];
 
-	constructor(public http: Http) {
+	constructor(public http: Http, private xhr: XhrService) {
 		this.http = http;
 	}
 
 	options() {
+        this.xhr.started();
+
 		return this.http.get('/options/tags')
-			.map(res => res.json());
+			.map(res => {
+                this.xhr.finished();
+                return res.json()
+            });
 	}
-
-    cache(v: string[]) {
-        this._cached = v;
-    }
-
-    cached() : string[] {
-        return this._cached;
-    }
 }

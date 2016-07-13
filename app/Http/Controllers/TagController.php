@@ -18,9 +18,8 @@ class TagController extends Controller
      */
     public function options(Request $request)
     {
-        $list = Tag::select('id', 'name')->get()->map(function ($tag) {
-            return ['label' => $tag->name, 'value' => $tag->id];
-        });
+        $list = Tag::select('id', 'name')->get();
+
         return $this->respond('done', $list);
     }
 }

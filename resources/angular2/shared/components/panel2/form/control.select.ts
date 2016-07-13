@@ -33,14 +33,4 @@ export class PanelFormControlSelect extends PanelFormControl<string|number> {
             return { text: this.options.find(option => option.value == this.value).label, icon: false};
         }
     }
-
-    // summary(panelExpanded: boolean): Observable<{ text: any, icon: string|boolean }> {
-    //     return Observable.create(observer => {
-    //         if (panelExpanded || this.empty) {
-    //             observer.next({ text: this.editText, icon: this.editIcon });
-    //         } else {
-    //             observer.next({ text: this.options.find(option => option.value == this.value).label, icon: false});
-    //         }
-    //     });
-    // }
 }

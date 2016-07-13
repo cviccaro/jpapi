@@ -4,7 +4,7 @@ import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 import { ToasterService } from 'angular2-toaster';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { JpaCache, Division, DivisionService, PANEL_DIRECTIVES, JpFile } from '../shared/index';
+import { JpaCache, Division, DivisionService, JpFile } from '../shared/index';
 
 @Component({
 	moduleId: module.id,
@@ -12,7 +12,6 @@ import { JpaCache, Division, DivisionService, PANEL_DIRECTIVES, JpFile } from '.
 	templateUrl: './division.component.html',
 	styleUrls: ['./division.component.css'],
 	directives: [
-		PANEL_DIRECTIVES,
 		MATERIAL_DIRECTIVES,
 		NgSwitch,
 		NgSwitchCase,

@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {Subscription} from 'rxjs/Rx';
-import {Project, ProjectService, ListComponent, ListConfig, JpaModal, ModalAction} from '../shared/index';
+import {Project, ProjectService, ListComponent, ListConfig, JpaModal, ModalAction, JpaCache} from '../shared/index';
 import { ToasterService } from 'angular2-toaster';
 
 /**
@@ -27,7 +27,8 @@ export class ProjectListComponent implements OnInit {
         public projectService: ProjectService,
         private router: Router,
         private modal: JpaModal,
-        public toaster: ToasterService
+        public toaster: ToasterService,
+        private cache: JpaCache
     ) {
         this.listConfig = {
             sortOptions: [
@@ -49,15 +50,12 @@ export class ProjectListComponent implements OnInit {
                 lastPage: 0,
                 perPage: 15
             },
-            emptyText: 'Looks like no project items have been created yet.'
+            emptyText: 'Looks like no projects have been created yet.'
         };
-        console.log('ProjectListComponent', this);
 	}
 
 	ngOnInit() {
-        let list = this.projectService.getList();
-
-        this.parseList(list);
+        this.parseList(this.cache.get('projectList'));
 	}
 
     parseList(json) {

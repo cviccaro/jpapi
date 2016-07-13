@@ -12,8 +12,9 @@ var core_1 = require('@angular/core');
 var index_1 = require('../services/index');
 var Rx_1 = require('rxjs/Rx');
 var ProjectListGuard = (function () {
-    function ProjectListGuard(projectService) {
+    function ProjectListGuard(projectService, cache) {
         this.projectService = projectService;
+        this.cache = cache;
     }
     ProjectListGuard.prototype.canActivate = function () {
         var _this = this;
@@ -24,7 +25,7 @@ var ProjectListGuard = (function () {
                 order_by: 'updated_at',
                 descending: true
             }).subscribe(function (res) {
-                _this.projectService.setList(res);
+                _this.cache.store('projectList', res);
                 observer.complete(true);
             });
         });
@@ -34,7 +35,7 @@ var ProjectListGuard = (function () {
     };
     ProjectListGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.ProjectService])
+        __metadata('design:paramtypes', [index_1.ProjectService, index_1.JpaCache])
     ], ProjectListGuard);
     return ProjectListGuard;
 }());

@@ -1,7 +1,7 @@
-import { Component, Input, Output, AfterViewInit, ViewChild, ElementRef, EventEmitter, HostListener } from '@angular/core';
-import {MdIcon} from '@angular2-material/icon';
+import { Component, Input, Output, ViewChild, ElementRef, EventEmitter, HostListener } from '@angular/core';
+import { MdIcon } from '@angular2-material/icon';
 
-import {JpFile} from '../../../index';
+import { JpFile } from '../../../index';
 
 @Component({
     moduleId: module.id,
@@ -36,13 +36,8 @@ export class GridImage {
         this._imageEl.nativeElement.src = this.imageConfig.url;
 
         (<HTMLImageElement>this._imageEl.nativeElement).addEventListener('load', e => {
-            //console.log('GridImage Loaded.', this);
             this.imageLoaded.emit({event: e, config: this.imageConfig});
         });
-    }
-
-    ngAfterViewInit() {
-        console.log('GridImage View Initialized', this);
     }
 
     remove() {

@@ -37,20 +37,14 @@ var ModalContainerComponent = (function () {
     });
     ModalContainerComponent.prototype.ngOnInit = function () {
         this.registerSubscribers();
-        console.log('ModalContainerComponent initialized.', this);
-    };
-    ModalContainerComponent.prototype.ngAfterViewInit = function () {
-        console.log('ModalContainerComponent View Initialized', this);
     };
     ModalContainerComponent.prototype.registerSubscribers = function () {
         var _this = this;
         this.openModalSubscriber = this.service.openModal.subscribe(function (config) {
-            console.log('open modal!', config);
             _this.config = config;
             _this.opened = true;
         });
         this.actionSubscriber = this.modal.onAction.subscribe(function (e) {
-            console.log('modal button clicked', e);
             _this.opened = false;
             _this.service.buttonClicked.next(e);
         });

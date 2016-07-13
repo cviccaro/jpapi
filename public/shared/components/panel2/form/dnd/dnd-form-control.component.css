@@ -70,8 +70,11 @@
   display: flex; }
   :host .drop-area,
   :host .chips.available {
-    width: 50%; }
+    width: 48%; }
+  :host .available {
+    margin-left: 1%; }
   :host .drop-area {
+    margin-right: 1%;
     display: -ms-flexbox;
     display: flex;
     -ms-flex-direction: row;
@@ -85,7 +88,9 @@
     :host .drop-area jpa-chip {
       background: #bdbdbd; }
   :host jpa-chip {
-    cursor: pointer; }
+    cursor: pointer;
+    margin-right: 12px;
+    margin-bottom: 12px; }
   :host .chip-wrapper {
     display: inline-block; }
 

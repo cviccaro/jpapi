@@ -63,7 +63,6 @@ export class ManagedFile implements JpFile {
                 this.webkitRelativePath = file['webkitRelativePath'];
             }
         }
-        console.warn('ManagedFile constructed ...', this);
     }
 
     date() {
@@ -95,37 +94,28 @@ export class ManagedImage extends ManagedFile {
 
     constructor(attributes: JpFile, idx: number) {
         super(attributes, idx);
-        console.warn('ManagedImage constructed ...', this);
     }
 
     read() : Observable<any> {
         let file = this._file;
 
-        console.info('ManagedImage # read file: start', file);
         const filename = file.name;
 
         return Observable.create(observer => {
-            console.debug('ManagedImage # read file: working', file);
             let reader = new FileReader();
 
-            reader.onload = readerEvt => {
-                console.debug('ManagedImage # read file: complete');
-
-                observer.next(reader.result);
-            };
+            reader.onload = readerEvt => observer.next(reader.result);
 
             setTimeout(() => reader.readAsDataURL(file), 50);
         });
     }
 
     load(imageEl: HTMLImageElement) : Observable<any> {
-        console.debug('ManagedImage.load start');
         return Observable.create(observer => {
-            console.debug('ManagedImage.load subscription start');
-            imageEl.onload = (e) => {
-                console.debug('ManagedImage.load on load returned ', e);
-                observer.next({width: imageEl.naturalWidth, height: imageEl.naturalHeight});
-            }
+            imageEl.onload = (e) => observer.next({
+                width: imageEl.naturalWidth,
+                height: imageEl.naturalHeight
+            });
         })
     }
 
@@ -133,7 +123,6 @@ export class ManagedImage extends ManagedFile {
         this.load(imageEl).subscribe(e => {
             this.width = e.width;
             this.height = e.height;
-            console.debug('ManagedImage.load subscription done', this);
         })
     }
 

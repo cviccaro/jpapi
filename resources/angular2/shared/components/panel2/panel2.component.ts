@@ -2,7 +2,6 @@ import {
     Component,
     ContentChild,
     AfterContentInit,
-    AfterViewInit,
     HostBinding,
     Output,
     EventEmitter,
@@ -28,7 +27,7 @@ export interface PanelToggle {
         // MD_GRID_LIST_DIRECTIVES
     ]
 })
-export class PanelComponent implements AfterViewInit, PanelToggle {
+export class PanelComponent implements AfterContentInit, PanelToggle {
     private _expanded: boolean = false;
 
     @HostBinding('class.expanded') private get expandedClass() { return this.expanded; }
@@ -48,14 +47,8 @@ export class PanelComponent implements AfterViewInit, PanelToggle {
     }
     ngAfterContentInit() {
         this.bar.onToggle.subscribe(e => {
-
-            console.log('Panel2Component saw its bar toggle', e);
-
             this.expanded = !this.expanded;
             this.onToggle.emit(this.expanded);
         });
-    }
-    ngAfterViewInit() {
-        console.log('Panel2Component View Initialized', this);
     }
 }

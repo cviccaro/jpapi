@@ -12,138 +12,106 @@ var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/map');
 var auth_service_1 = require('./auth.service');
+var xhr_1 = require('./xhr');
 var angular2_jwt_1 = require('angular2-jwt');
 var ProjectService = (function () {
-    function ProjectService(http, authHttp, authService) {
+    function ProjectService(http, authHttp, authService, xhr) {
         this.http = http;
         this.authHttp = authHttp;
+        this.authService = authService;
+        this.xhr = xhr;
         this.http = http;
         this.authToken = authService.getToken();
     }
     ProjectService.prototype.all = function (params) {
+        var _this = this;
         if (params === void 0) { params = {}; }
         var query = new http_1.URLSearchParams();
         for (var key in params) {
             var param = params[key];
             query.set(key, param);
         }
+        this.xhr.started();
         return this.http.get('/projects/paged', { search: query })
-            .map(function (res) { return res.json(); });
-    };
-    ProjectService.prototype.setList = function (res) {
-        this.list = res;
-        return this;
-    };
-    ProjectService.prototype.getList = function () {
-        return this.list;
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     ProjectService.prototype.find = function (id, cached) {
-        if (cached && this.byId[id] !== undefined) {
-            return this.byId[id];
-        }
-        return this.http.get('/projects/' + id)
-            .map(function (res) { return res.json(); });
-    };
-    ProjectService.prototype.cache = function (project) {
-        this.byId[project.id] = project;
-        return this;
+        var _this = this;
+        this.xhr.started();
+        return this.http.get("/projects/" + id)
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     ProjectService.prototype.destroy = function (id) {
-        return this.http.delete('/projects/' + id);
+        var _this = this;
+        this.xhr.started();
+        return this.http.delete("/projects/" + id)
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     ProjectService.prototype.update = function (id, attributes) {
-        var url = window.location.protocol + '//' + window.location.hostname + '/projects/update/' + id;
+        var _this = this;
+        var form = this.createFormData(attributes);
+        this.xhr.started();
+        return this.http.post("/projects/update/" + id, form)
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
+    };
+    ProjectService.prototype.create = function (attributes) {
+        var _this = this;
+        var form = this.createFormData(attributes);
+        this.xhr.started();
+        return this.http.post('/projects', form)
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
+    };
+    ProjectService.prototype.createFormData = function (attributes) {
         var form = new FormData();
-        var _form = {};
-        Object.keys(attributes).forEach(function (key) {
+        var _loop_1 = function(key) {
             var val = attributes[key];
             switch (key) {
+                case 'client':
+                    break;
                 case 'images':
                     val.forEach(function (item, i) {
-                        Object.keys(item).forEach(function (k) {
-                            var v = item[k];
-                            form.append(key + "[" + i + "][" + k + "]", v);
-                            _form[(key + "[" + i + "][" + k + "]")] = v;
-                        });
+                        for (var k in item) {
+                            form.append(key + "[" + i + "][" + k + "]", item[k]);
+                        }
                     });
                     break;
                 case 'image':
                     if (val === '') {
                         form.append(key, val);
-                        _form[key] = val;
                     }
                     else if (!!val && val._file) {
                         form.append(key, val._file);
-                        _form[key] = val._file;
                     }
-                    break;
-                case 'client':
                     break;
                 default:
                     if (val !== undefined && val !== null) {
-                        console.log('appending to form ', { key: key, val: val });
                         form.append(key, val);
-                        _form[key] = val;
-                    }
-                    else {
-                        console.log('skipping appending ' + key + ' to form because its undefined/null: ', val);
                     }
             }
-        });
-        console.debug('ProjectService is sending POST request to ' + url + ' with form ', _form);
-        return this.http.post(url, form)
-            .map(function (res) { return res.json(); });
-    };
-    ProjectService.prototype.getCookie = function (name) {
-        var value = "; " + document.cookie;
-        var parts = value.split("; " + name + "=");
-        if (parts.length == 2) {
-            return parts.pop().split(";").shift();
+        };
+        for (var key in attributes) {
+            _loop_1(key);
         }
-        return false;
-    };
-    ProjectService.prototype.create = function (attributes) {
-        var url = window.location.protocol + '//' + window.location.hostname + '/projects';
-        var form = new FormData();
-        var _form = {};
-        Object.keys(attributes).forEach(function (key) {
-            var val = attributes[key];
-            switch (key) {
-                case 'images':
-                    val.forEach(function (item, i) {
-                        Object.keys(item).forEach(function (k) {
-                            var v = item[k];
-                            form.append(key + "[" + i + "][" + k + "]", v);
-                            _form[(key + "[" + i + "][" + k + "]")] = v;
-                        });
-                    });
-                    break;
-                case 'image':
-                    if (!!val && val._file) {
-                        form.append(key, val._file);
-                        _form[key] = val._file;
-                    }
-                    break;
-                case 'client':
-                    break;
-                default:
-                    if (val !== undefined && val !== null) {
-                        console.log('appending to form ', { key: key, val: val });
-                        form.append(key, val);
-                        _form[key] = val;
-                    }
-                    else {
-                        console.log('skipping appending ' + key + ' to form because its undefined/null: ', val);
-                    }
-            }
-        });
-        console.log("Created a form to upload to project create", _form);
-        return this.http.post(url, form)
-            .map(function (res) { return res.json(); });
+        return form;
     };
     ProjectService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http, angular2_jwt_1.AuthHttp, auth_service_1.AuthService])
+        __metadata('design:paramtypes', [http_1.Http, angular2_jwt_1.AuthHttp, auth_service_1.AuthService, xhr_1.XhrService])
     ], ProjectService);
     return ProjectService;
 }());

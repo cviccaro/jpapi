@@ -21,9 +21,6 @@ var ListComponent = (function () {
         this.listItemAdd = new core_1.EventEmitter();
         this.onPageChange = new core_1.EventEmitter();
     }
-    ListComponent.prototype.ngOnInit = function () {
-        console.log('ListComponent initialized.', this);
-    };
     ListComponent.prototype.add = function () {
         this.listItemAdd.emit({});
     };

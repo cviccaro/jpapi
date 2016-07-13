@@ -55,7 +55,6 @@ var JpaModal = (function () {
             throw new Error("No Modal Containers have been initialized to receive modals.");
         }
         this._openModal.next(this._config);
-        console.log('Opened modal with config', this._config);
         return Rx_1.Observable.create(function (observer) { return _this.buttonClicked = observer; });
     };
     JpaModal = __decorate([

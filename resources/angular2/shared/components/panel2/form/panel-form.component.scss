@@ -3,7 +3,6 @@
 :host {
     .jpa-panel {
         &.ng-dirty {
-
             jpa-panel2-bar-title,
             jpa-panel2-bar-subtitle {
                 color: $accent;
@@ -53,11 +52,11 @@
                 flex: 1 1 auto;
             }
         }
-        // &.type-dnd {
-        //     .panel-content-spacer {
-        //         display: none;
-        //     }
-        // }
+        &.type-dnd {
+            .panel-content-spacer {
+                display: none;
+            }
+        }
 
         jpa-panel2-content {
             display: flex;

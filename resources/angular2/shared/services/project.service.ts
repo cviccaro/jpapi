@@ -3,18 +3,16 @@ import { Http, URLSearchParams, Headers } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 
-import {AuthService} from './auth.service';
+import { AuthService } from './auth.service';
+import { XhrService  } from './xhr';
 
-import {AuthHttp} from 'angular2-jwt';
+import { AuthHttp } from 'angular2-jwt';
 
 @Injectable()
 export class ProjectService {
-	private list: any;
-	private byId: any[];
-
 	public authToken: string;
 
-	constructor(public http: Http, public authHttp: AuthHttp, authService: AuthService) {
+	constructor(public http: Http, public authHttp: AuthHttp, public authService: AuthService, public xhr: XhrService) {
 		this.http = http;
 		this.authToken = authService.getToken();
 	}
@@ -27,130 +25,90 @@ export class ProjectService {
 			query.set(key, param);
 		}
 
+		this.xhr.started();
+
 	    return this.http.get('/projects/paged', {search: query})
-	        .map((res) => res.json());
-	}
-
-	setList(res) {
-	    this.list = res;
-	    return this;
-	}
-
-	getList() {
-	    return this.list;
+	        .map(res => {
+	            this.xhr.finished();
+	            return res.json()
+	        });
 	}
 
 	find(id: number, cached?: boolean) {
-        if (cached && this.byId[id] !== undefined) {
-            return this.byId[id];
-        }
+		this.xhr.started();
 
-        return this.http.get('/projects/' + id)
-            .map(res => res.json());
-	}
-
-	cache(project) {
-        this.byId[project.id] = project;
-        return this;
+        return this.http.get(`/projects/${id}`)
+            .map(res => {
+                this.xhr.finished();
+                return res.json()
+            });
 	}
 
 	destroy(id: number) {
-	    return this.http.delete('/projects/' + id);
+		this.xhr.started();
+
+	    return this.http.delete(`/projects/${id}`)
+		    .map(res => {
+		        this.xhr.finished();
+		        return res.json()
+		    });
 	}
 
 	update(id, attributes) {
-		let url = window.location.protocol + '//' + window.location.hostname + '/projects/update/' + id;
+		let form = this.createFormData(attributes);
 
+		this.xhr.started();
+
+		return this.http.post(`/projects/update/${id}`, form)
+		    .map(res => {
+		        this.xhr.finished();
+		        return res.json()
+		    });
+	}
+
+	create(attributes) {
+		let form = this.createFormData(attributes);
+
+		this.xhr.started();
+
+		return this.http.post('/projects', form)
+		    .map(res => {
+		        this.xhr.finished();
+		        return res.json()
+		    });
+	}
+
+	private createFormData(attributes) {
 		let form = new FormData();
-		let _form = {};
-		Object.keys(attributes).forEach(key => {
+
+		for (let key in attributes) {
+
 			let val = attributes[key];
+
 			switch(key) {
+				case 'client':
+					break;
 				case 'images':
 					val.forEach((item,i) => {
-						Object.keys(item).forEach(k => {
-							let v = item[k];
-							form.append(`${key}[${i}][${k}]`, v);
-							_form[`${key}[${i}][${k}]`] = v;
-						});
+						for (let k in item) {
+							form.append(`${key}[${i}][${k}]`, item[k]);
+						}
 					});
 					break;
 				case 'image':
 					if (val === '') {
 						form.append(key, val);
-						_form[key] = val;
 					} else if (!!val && val._file) {
 						form.append(key, val._file);
-						_form[key] = val._file;
 					}
-					break;
-				case 'client':
 					break;
 				default:
 					if (val !== undefined && val !== null) {
-						console.log('appending to form ', { key: key, val: val });
 						form.append(key, val);
-						_form[key] = val;
-					} else {
-						console.log('skipping appending ' + key + ' to form because its undefined/null: ', val);
 					}
 			}
-		});
+		}
 
-		console.debug('ProjectService is sending POST request to ' + url + ' with form ', _form);
-		return this.http.post(url, form)
-			.map(res => res.json());
-	}
-
-	private getCookie(name: string): any {
-	    let value = "; " + document.cookie;
-	    let parts = value.split("; " + name + "=");
-	    if (parts.length == 2) {
-	        return parts.pop().split(";").shift();
-	    }
-
-	    return false;
-	}
-
-	create(attributes) {
-		let url = window.location.protocol + '//' + window.location.hostname + '/projects';
-
-		let form = new FormData();
-		let _form = {};
-		Object.keys(attributes).forEach(key => {
-			let val = attributes[key];
-			switch(key) {
-				case 'images':
-					val.forEach((item,i) => {
-						Object.keys(item).forEach(k => {
-							let v = item[k];
-							form.append(`${key}[${i}][${k}]`, v);
-							_form[`${key}[${i}][${k}]`] = v;
-						});
-					});
-					break;
-				case 'image':
-					if (!!val && val._file) {
-						form.append(key, val._file);
-						_form[key] = val._file;
-					}
-					break;
-				case 'client':
-					break;
-				default:
-					if (val !== undefined && val !== null) {
-						console.log('appending to form ', { key: key, val: val });
-						form.append(key, val);
-						_form[key] = val;
-					} else {
-						console.log('skipping appending ' + key + ' to form because its undefined/null: ', val);
-					}
-			}
-		});
-
-		console.log("Created a form to upload to project create", _form);
-
-		return this.http.post(url, form)
-			.map(res => res.json());
+		return form;
 	}
 }

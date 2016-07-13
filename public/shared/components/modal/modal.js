@@ -25,11 +25,7 @@ var ModalComponent = (function () {
         enumerable: true,
         configurable: true
     });
-    ModalComponent.prototype.ngAfterViewInit = function () {
-        console.log('ModalComponent View Initialized.', this);
-    };
     ModalComponent.prototype.action = function (type, config, event) {
-        console.log(type + ' button clicked.', event);
         event.preventDefault();
         event.stopPropagation();
         this._actionEmitter.emit({ type: type, config: config, event: event });
@@ -38,10 +34,6 @@ var ModalComponent = (function () {
         this._actionEmitter.emit({ type: 'submit', config: this.config, event: null });
     };
     ModalComponent.prototype.handleChange = function (col, e) {
-        console.log('handle change in modal', {
-            col: col,
-            e: e
-        });
         if (col.type === 'file') {
             col.value = e.target['files'];
         }

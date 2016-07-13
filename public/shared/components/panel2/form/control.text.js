@@ -14,7 +14,9 @@ var PanelFormControlTextfield = (function (_super) {
     }
     Object.defineProperty(PanelFormControlTextfield.prototype, "empty", {
         get: function () {
-            return this.value === '';
+            if (typeof this.value === 'undefined')
+                return true;
+            return this.value === null || this.value === undefined || this.value === '';
         },
         enumerable: true,
         configurable: true

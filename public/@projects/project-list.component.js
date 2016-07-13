@@ -13,11 +13,12 @@ var router_1 = require('@angular/router');
 var index_1 = require('../shared/index');
 var angular2_toaster_1 = require('angular2-toaster');
 var ProjectListComponent = (function () {
-    function ProjectListComponent(projectService, router, modal, toaster) {
+    function ProjectListComponent(projectService, router, modal, toaster, cache) {
         this.projectService = projectService;
         this.router = router;
         this.modal = modal;
         this.toaster = toaster;
+        this.cache = cache;
         this.listData = [];
         this.listConfig = {
             sortOptions: [
@@ -39,13 +40,11 @@ var ProjectListComponent = (function () {
                 lastPage: 0,
                 perPage: 15
             },
-            emptyText: 'Looks like no project items have been created yet.'
+            emptyText: 'Looks like no projects have been created yet.'
         };
-        console.log('ProjectListComponent', this);
     }
     ProjectListComponent.prototype.ngOnInit = function () {
-        var list = this.projectService.getList();
-        this.parseList(list);
+        this.parseList(this.cache.get('projectList'));
     };
     ProjectListComponent.prototype.parseList = function (json) {
         this.listData = json.data.map(this.mapList);
@@ -128,7 +127,7 @@ var ProjectListComponent = (function () {
                 index_1.ListComponent
             ]
         }), 
-        __metadata('design:paramtypes', [index_1.ProjectService, router_1.Router, index_1.JpaModal, angular2_toaster_1.ToasterService])
+        __metadata('design:paramtypes', [index_1.ProjectService, router_1.Router, index_1.JpaModal, angular2_toaster_1.ToasterService, index_1.JpaCache])
     ], ProjectListComponent);
     return ProjectListComponent;
 }());

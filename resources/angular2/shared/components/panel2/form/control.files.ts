@@ -17,7 +17,7 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
 
     get empty(): boolean {
         if (typeof this.value === 'undefined') return true;
-        
+
         return !this.value || this.value.length === 0;
     }
 
@@ -32,23 +32,10 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
       if (this.type === 'file' && this.editIcon === 'panorama') {
           this.editIcon = 'attachment';
       }
-
-      console.warn('PanelFormControlFiles constructed', {
-          this: this,
-          config: config
-      });
     }
 
     summary(panelExpanded: boolean): { text: any, icon: string|boolean } {
         let val: any = this.value;
-
-        //@todo: make observable so can use distinctuntilchanged
-
-        // console.log('get summary for files ', {
-        //     this: this,
-        //     panelExpanded: panelExpanded,
-        //     val: val,
-        // });
 
         if (this.multiple) {
             let arr = val === '' ? [] : this.value;
@@ -84,44 +71,4 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
             }
         }
     }
-
-    // summary(panelExpanded: boolean): Observable<{ text: any, icon: string|boolean }> {
-    //     return Observable.create(observer => {
-    //         let val: any = this.value;
-
-    //         console.log('PanelFormControlFiles# get summary for files ', {
-    //             this: this,
-    //             panelExpanded: panelExpanded,
-    //             val: val,
-    //         });
-
-    //         let summary = {};
-
-    //         if (this.multiple) {
-    //             let arr = val === '' ? [] : this.value;
-
-    //             let map = arr.reduce((carry, item) => {
-    //                 if (item['id'] !== undefined) {
-    //                     carry.current++;
-    //                 } else {
-    //                     carry.queue++;
-    //                 }
-
-    //                 return carry;
-    //             }, { queue: 0, current: 0 });
-
-    //             let text = `${map.current} ${this.filesLabel} | ${map.queue} in queue`;
-
-    //             summary = { text: text, icon: this.editIcon };
-    //         } else {
-    //             let text = `${val.filename} | ${Math.round(val.size/10)/100}kb | ${val.width} x ${val.height} px`;
-
-    //             summary = { text: text, icon: this.editIcon };
-    //         }
-
-    //         console.log('PanelFormControlFiles# summary() returning ', summary);
-
-    //         observer.next(summary);
-    //     });
-    // }
 }

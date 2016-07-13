@@ -1,11 +1,11 @@
 import {
+    OnInit,
     Component,
     Input,
     Output,
     EventEmitter,
     forwardRef,
     Provider,
-    AfterViewInit,
     ViewChild,
     ElementRef
 } from '@angular/core';
@@ -13,7 +13,7 @@ import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 import { ChipComponent } from '../../../chip/index';
 
 import { Observable } from 'rxjs/Rx';
-
+import { MATERIAL_DIRECTIVES } from '../../../../libs/angular2-material';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NgModel } from '@angular/forms';
 
 export const DND_FORM_CONTROL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
@@ -27,10 +27,10 @@ const noop = () => { };
     selector: 'jpa-dnd-form-control',
     templateUrl: './dnd-form-control.component.html',
     styleUrls: ['./dnd-form-control.component.css'],
-    directives: [ DND_DIRECTIVES, ChipComponent, NgModel],
+    directives: [ DND_DIRECTIVES, ChipComponent, NgModel, MATERIAL_DIRECTIVES],
     providers: [ DND_FORM_CONTROL_VALUE_ACCESSOR ]
 })
-export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit {
+export class DragnDropFormControl implements ControlValueAccessor, OnInit {
     private _focused: boolean = false;
     private _value: any = [];
     private _valueString: any = [];
@@ -43,19 +43,12 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
     /** Callback registered via registerOnChange (ControlValueAccessor) */
     private _onChangeCallback: (_: any) => void = noop;
 
-    get debug() {
-        return {
-            value: this.value,
-            _value: this._value,
-            _valueString: this._valueString
-        };
-    }
-
     @Output() change = new EventEmitter();
 
     @Input() name: string;
     @Input() required: boolean = false;
     @Input() options: { label: string, value: any }[];
+    @Input() placeholder: string;
 
     @ViewChild('input') private _inputElement: ElementRef;
 
@@ -63,11 +56,11 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
 
     get value() { return this._value; }
     @Input() set value(v: any) {
-        console.debug('DNDFormControl set value ', v);
         if (v !== this._value) {
-            console.log('DNDFormControl set value confirmed', v);
             this._value = v;
+
             let _v = v.length === 0 ? '' : v;
+
             this._onChangeCallback(_v);
             this.change.emit(v);
         }
@@ -77,8 +70,8 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
      * Implemented as part of ControlValueAccessor.
      */
     writeValue(value: any) {
-        console.log('DNDFormControl WriteValue', value);
         this._value = value;
+
         if (value !== null) this.setOptions();
     }
     registerOnChange(fn: any) {
@@ -88,16 +81,18 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
         this._onTouchedCallback = fn;
     }
 
-    ngAfterViewInit() {
+    ngOnInit() {
+        this.placeholder = this.placeholder || 'Add a ' + this.name;
+
         this._originalOptions = this.options;
-        this.value = this._inputElement.nativeElement.value;
-        console.log('DNDFormControl ngAfterViewInit', this);
     }
 
     setOptions() {
         this._valueString = this.value.length === 0 ? null : JSON.stringify(this.value);
+
         if (this.options) {
-            let ids = this.value.map(item => item.value);
+            let ids = this.value.map(item => item.id);
+
             this.options = this._originalOptions.filter(option => {
                 return ids.indexOf(option.id) === -1;
             });
@@ -108,23 +103,23 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
         this._dropzone = index;
     }
 
-    add(e) {
+    onDropSuccess(e) {
         if (e.dragData.hasOwnProperty('preventAdd') && e.dragData.preventAdd === true) {
-            console.log('preventing add from already added chip.');
             return;
         }
 
-        console.log('Multiselect drop!!!!', e);
+        this.pushValue(e.dragData.option);
+    }
 
-        let data = e.dragData;
+    pushValue(value) {
         let val = this.value.slice(0);
 
-        val.push(data.option);
+        val.push(value);
+
         this.value = val;
+
         this.setOptions();
-        // this._onChangeCallback(this.value);
         this._onTouchedCallback();
-        //this._valueChanged = true;
     }
 
     reorder(e: any) {
@@ -141,12 +136,9 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
             value[old_index] = target;
 
             this.value = value;
-
-            //console.log('Multiselect reorder from ' + old_index + ' to ' + new_index);
         }
 
         this._onTouchedCallback();
-        //this._valueChanged = true;
     }
 
     remove(id) {
@@ -157,16 +149,14 @@ export class DragnDropFormControl implements ControlValueAccessor, AfterViewInit
         if (filtered && filtered.length) {
             let index = this.value.indexOf(filtered[0]);
             let value = this.value.slice(0);
+
             value.splice(index, 1);
             this.value = value;
-            //console.log('set value to ', value);
+
             this.setOptions();
-            // this._onChangeCallback(this.value);
-            // this._onTouchedCallback();
         }
 
         this._onTouchedCallback();
-        //this._valueChanged = true;
     }
 
 }

@@ -16,7 +16,6 @@ export class ContextMenuFocusTrap {
     @Output('clickOutside') get onClickOutside(): Observable<any> { return this._clickOutsideEmitter.asObservable(); }
 
 	clickedOutside(e) {
-        console.log('focus trap destroy', e);
 		this._clickOutsideEmitter.emit('');
 	}
 }

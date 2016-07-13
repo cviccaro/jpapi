@@ -18,15 +18,13 @@ class DivisionController extends Controller
 
     /**
      * Display the divisions in a format consumable
-     * by HTMLOptionElements
+     * by HTMLOptionElement
      *
      * @return Response
      */
     public function options(Request $request)
     {
-        $list = Division::select('id', 'name')->get()->map(function ($division) {
-            return ['label' => $division->name, 'value' => $division->id];
-        });
+        $list = Division::select('id', 'name')->get();
         return $this->respond('done', $list);
     }
 

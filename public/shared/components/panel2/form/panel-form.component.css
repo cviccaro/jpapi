@@ -99,6 +99,9 @@
   -ms-flex: 1 1 auto;
   flex: 1 1 auto; }
 
+:host .jpa-panel.type-dnd .panel-content-spacer {
+  display: none; }
+
 :host .jpa-panel jpa-panel2-content {
   display: -ms-flexbox;
   display: flex;

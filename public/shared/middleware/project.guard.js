@@ -20,11 +20,8 @@ var ProjectGuard = (function () {
         this.cache = cache;
         this.subs = [];
     }
-    ProjectGuard.prototype.ngOnInit = function () {
-    };
     ProjectGuard.prototype.canActivate = function () {
         var _this = this;
-        console.log('ProjectGuard can activate called', this);
         return Rx_1.Observable.create(function (observer) {
             var _sub = _this.clientService.options().subscribe(function (res) {
                 _this.cache.store('clients', res);

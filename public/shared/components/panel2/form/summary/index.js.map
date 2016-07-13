@@ -1,1 +1,1 @@
-{"version":3,"sources":["shared/components/panel2/form/summary/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,qBAAqB,CAAC,EAAA","file":"shared/components/panel2/form/summary/index.js","sourcesContent":["export * from './summary.component';\n"],"sourceRoot":"/source/"}
+{"version":3,"sources":["shared/components/panel2/form/summary/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,qBAAqB,CAAC,EAAA","file":"shared/components/panel2/form/summary/index.js","sourcesContent":["export * from './summary.component';\r\n"],"sourceRoot":"/source/"}

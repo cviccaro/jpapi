@@ -6,9 +6,13 @@
     display: flex;
     .drop-area,
     .chips.available {
-        width: 50%;
+        width: 48%;
+    }
+    .available {
+        margin-left: 1%;
     }
     .drop-area {
+        margin-right: 1%;
         display: flex;
         flex-direction: row;
         justify-content: space-around;
@@ -19,28 +23,15 @@
         }
         jpa-chip {
             background: $grey_400;
-            //color: #fff;
-            button {
-                // background: $blue_400;
-                // color: #fff;
-            }
         }
     }
 
     jpa-chip {
         cursor: pointer;
+        margin-right: 12px;
+        margin-bottom: 12px;
     }
     .chip-wrapper {
         display: inline-block;
     }
-    // .drop-area-wrapper {
-    //     justify-content: flex-start;
-    //     flex: 1 1 auto;
-    //     display: flex;
-    // }
-    // .chips {
-    //     justify-content: center;
-    //     flex: 1 1 auto;
-    //     display: flex;
-    // }
 }

@@ -32,6 +32,16 @@ export class TooltipDirective {
 		clearTimeout(this._openTimer);
 		if (this._hasRef) {
 			this._cmpRef.destroy();
+		} else {
+			//@todo: figure out why sometimes the tooltip component
+			// is shown but the component doesn't get set
+
+			if ( document ) {
+				setTimeout(() => {
+					let tooltips = document.querySelectorAll('jpa-tooltip');
+					if (tooltips.length) tooltips['forEach'](el => el.remove());
+				},500)
+			}
 		}
 	}
 }

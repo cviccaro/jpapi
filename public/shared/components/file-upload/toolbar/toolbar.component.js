@@ -22,33 +22,26 @@ var FileUploadToolbar = (function () {
         this.onRemoveFile = new core_1.EventEmitter();
         this.onReplaceFile = new core_1.EventEmitter();
     }
-    FileUploadToolbar.prototype.ngAfterViewInit = function () {
-        console.log('FileUploadToolbar AFter View Init', this);
-    };
     FileUploadToolbar.prototype.removeFile = function (evt) {
         evt.preventDefault();
         evt.stopPropagation();
         this.onRemoveFile.emit(evt);
-        console.log('remove file! ', evt);
     };
     FileUploadToolbar.prototype.replaceFile = function (evt) {
         evt.preventDefault();
         evt.stopPropagation();
         this._newFileInput.nativeElement.dispatchEvent(new Event('click'));
-        console.log('replace file! ', evt);
     };
     FileUploadToolbar.prototype.fileReplaced = function (evt) {
         evt.preventDefault();
         evt.stopPropagation();
         evt.stopImmediatePropagation();
-        console.log('file replaced! ');
         this.onReplaceFile.emit(evt.target['files'][0]);
     };
     FileUploadToolbar.prototype.fileDescriptionChanged = function (evt) {
         evt.preventDefault();
         evt.stopPropagation();
         evt.stopImmediatePropagation();
-        console.log('FileDescriptionChanged!', evt);
     };
     __decorate([
         core_1.Input(), 

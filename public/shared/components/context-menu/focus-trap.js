@@ -20,7 +20,6 @@ var ContextMenuFocusTrap = (function () {
         configurable: true
     });
     ContextMenuFocusTrap.prototype.clickedOutside = function (e) {
-        console.log('focus trap destroy', e);
         this._clickOutsideEmitter.emit('');
     };
     __decorate([

@@ -90,7 +90,6 @@ var DivisionComponent = (function () {
             templateUrl: './division.component.html',
             styleUrls: ['./division.component.css'],
             directives: [
-                index_1.PANEL_DIRECTIVES,
                 angular2_material_1.MATERIAL_DIRECTIVES,
                 common_1.NgSwitch,
                 common_1.NgSwitchCase,

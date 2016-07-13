@@ -61,7 +61,6 @@ export class JpaModal {
         }
 
         this._openModal.next(this._config);
-        console.log('Opened modal with config', this._config);
 
         return Observable.create(observer => this.buttonClicked = observer);
     }

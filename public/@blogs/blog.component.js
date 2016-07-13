@@ -25,6 +25,11 @@ var BlogComponent = (function () {
         this.saving = false;
         this._blog = new index_1.Blog();
     }
+    Object.defineProperty(BlogComponent.prototype, "isNewClass", {
+        get: function () { return this.isNew; },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(BlogComponent.prototype, "blog", {
         get: function () { return this._blog; },
         set: function (v) {
@@ -59,7 +64,8 @@ var BlogComponent = (function () {
             new index_1.PanelFormControlDragnDrop({
                 name: 'tags',
                 required: true,
-                options: this.tags
+                options: this.tags,
+                placeholder: 'Add a tag'
             }),
             new index_1.PanelFormControlDragnDrop({
                 name: 'divisions',
@@ -78,12 +84,12 @@ var BlogComponent = (function () {
             }),
             new index_1.PanelFormControlTextfield({
                 name: 'author',
-                required: true
+                required: false
             }),
             new index_1.PanelFormControlFiles({
                 name: 'image',
                 label: 'Cover Image',
-                required: true,
+                required: false,
                 multiple: false,
                 type: 'image'
             })
@@ -103,9 +109,10 @@ var BlogComponent = (function () {
                     console.log("Navigating to /blogs/" + res.id);
                     _this.router.navigate(['/blogs', res.id]);
                     _this.reset();
-                }, 2000);
+                }, 1000);
             }, function (err) {
                 console.log('Error when saving blog: ', err);
+                _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
             });
         }
@@ -119,13 +126,18 @@ var BlogComponent = (function () {
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
             }, function (err) {
                 console.log('Error when saving blog: ', err);
+                _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
             });
         }
     };
     BlogComponent.prototype.setup = function () {
+        var _this = this;
         this._originalTitle = this._blog.title;
         this.isNew = this.blog.id === undefined;
+        setTimeout(function () {
+            _this.ckEditors = _this._formCmp._ckEditors;
+        });
         console.info('BlogComponent.setup()', this);
     };
     BlogComponent.prototype.reset = function (e) {
@@ -135,9 +147,18 @@ var BlogComponent = (function () {
             e.stopPropagation();
         }
         console.info('BlogComponent.reset()', this);
+        this.saving = false;
         this.ready = false;
         setTimeout(function () { _this.ready = true; }, 0);
     };
+    __decorate([
+        core_1.HostBinding('class.new'), 
+        __metadata('design:type', Object)
+    ], BlogComponent.prototype, "isNewClass", null);
+    __decorate([
+        core_1.ViewChild(index_1.PanelFormComponent), 
+        __metadata('design:type', index_1.PanelFormComponent)
+    ], BlogComponent.prototype, "_formCmp", void 0);
     BlogComponent = __decorate([
         core_1.Component({
             moduleId: module.id,

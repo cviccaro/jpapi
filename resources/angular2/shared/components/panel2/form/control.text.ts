@@ -9,7 +9,9 @@ export class PanelFormControlTextfield extends PanelFormControl<string> {
     type: string;
 
     get empty(): boolean {
-        return this.value === '';
+        if (typeof this.value === 'undefined') return true;
+
+        return this.value === null || this.value === undefined || this.value === '';
     }
 
     constructor(config: TextfieldConfig) {

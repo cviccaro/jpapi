@@ -3,38 +3,42 @@ import { Http, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map';
 
 import { JpClient } from '../models/client';
+import { XhrService } from './xhr';
 
 @Injectable()
 export class ClientService {
 	private _cached: string[];
 
-	constructor(public http: Http) {
+	constructor(public http: Http, private xhr: XhrService) {
 		this.http = http;
 	}
 
     all(params: {} = {}) {
         let query = new URLSearchParams();
+
         for (var key in params) {
             const param: string = params[key];
             query.set(key, param);
         }
 
+        this.xhr.started();
+
         return this.http.get('/clients/paged', {search: query})
-            .map(res => res.json());
+            .map(res => {
+                this.xhr.finished();
+                return res.json()
+            });
     }
 
 	options() {
+        this.xhr.started();
+
 		return this.http.get('/options/clients')
-			.map(res => res.json());
+			.map(res => {
+                this.xhr.finished();
+                return res.json()
+            });
 	}
-
-    cache(v: string[]) {
-        this._cached = v;
-    }
-
-    cached() : string[] {
-        return this._cached;
-    }
 
     update(id, values: any[]) {
         let form = new FormData();
@@ -71,7 +75,13 @@ export class ClientService {
             _form: _form
         });
 
-        return this.http.post('/clients/update/' + id, form).map(res => res.json());
+        this.xhr.started();
+
+        return this.http.post('/clients/update/' + id, form)
+            .map(res => {
+                this.xhr.finished();
+                return res.json()
+            });
     }
 
     create(values: any[]) {
@@ -109,10 +119,22 @@ export class ClientService {
             _form: _form
         });
 
-        return this.http.post('/clients', form).map(res => res.json());
+        this.xhr.started();
+
+        return this.http.post('/clients', form)
+            .map(res => {
+                this.xhr.finished();
+                return res.json()
+            });
     }
 
     destroy(id: number) {
-        return this.http.delete('/clients/' + id);
+        this.xhr.started();
+
+        return this.http.delete('/clients/' + id)
+            .map(res => {
+                this.xhr.finished();
+                return res.json()
+            });
     }
 }

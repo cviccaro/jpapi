@@ -137,9 +137,6 @@
       :host md-toolbar .md-toolbar-layout md-toolbar-row {
         min-height: 40px;
         height: 40px; }
-    :host md-toolbar .filler {
-      -ms-flex: 1 1 auto;
-      flex: 1 1 auto; }
     :host md-toolbar button {
       color: rgba(0, 0, 0, 0.54); }
       :host md-toolbar button md-icon {

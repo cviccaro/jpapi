@@ -14,7 +14,7 @@ export class PanelFormControlTextarea extends PanelFormControl<string> {
 
     get empty(): boolean {
         if (typeof this.value === 'undefined') return true;
-        
+
         return this.value === '';
     }
 
@@ -32,14 +32,4 @@ export class PanelFormControlTextarea extends PanelFormControl<string> {
         return { text: this.value.length + ' characters', icon: false};
       }
     }
-
-    // summary(panelExpanded: boolean): Observable<{ text: any, icon: string|boolean }> {
-    //     return Observable.create(observer => {
-    //       if (panelExpanded || this.empty) {
-    //         observer.next({ text: this.editText, icon: this.editIcon });
-    //       } else {
-    //         observer.next({ text: this.value.length + ' characters', icon: false});
-    //       }
-    //     });
-    // }
 }

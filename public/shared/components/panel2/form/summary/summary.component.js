@@ -28,9 +28,6 @@ var PanelFormControlSummary = (function () {
         enumerable: true,
         configurable: true
     });
-    PanelFormControlSummary.prototype.ngAfterViewInit = function () {
-        console.debug('PanelFormControlSummary View Initialized', this);
-    };
     __decorate([
         core_1.Input(), 
         __metadata('design:type', control_1.PanelFormControl)
@@ -44,7 +41,7 @@ var PanelFormControlSummary = (function () {
             moduleId: module.id,
             selector: 'jpa-panel2-form-control-summary',
             templateUrl: './summary.component.html',
-            directives: [angular2_material_1.MATERIAL_DIRECTIVES],
+            directives: [angular2_material_1.MATERIAL_DIRECTIVES]
         }), 
         __metadata('design:paramtypes', [])
     ], PanelFormControlSummary);

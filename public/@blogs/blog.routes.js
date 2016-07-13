@@ -11,7 +11,7 @@ exports.BlogRoutes = [
         path: 'blogs',
         component: index_1.BlogIndexComponent,
         children: [
-            { path: ':id', component: index_1.BlogComponent, canActivate: [index_2.BlogGuard] },
+            { path: ':id', component: index_1.BlogComponent, canActivate: [index_2.BlogGuard], canDeactivate: [index_2.CkEditorGuard] },
             { path: '', component: index_1.BlogListComponent, canActivate: [index_2.BlogListGuard] }
         ],
         canActivate: [index_2.AuthGuard]

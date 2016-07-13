@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
 
-import { BlogService } from '../services/index';
+import { BlogService, JpaCache } from '../services/index';
 
 import { Observable } from 'rxjs/Rx';
 
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs/Rx';
 export class BlogListGuard implements CanActivate, OnDestroy {
     private sub: any;
 
-    constructor(private blogService: BlogService) {}
+    constructor(private blogService: BlogService, private cache: JpaCache) {}
 
     canActivate() {
         return Observable.create(observer => {
@@ -19,7 +19,7 @@ export class BlogListGuard implements CanActivate, OnDestroy {
                order_by: 'updated_at',
                descending: true
            }).subscribe(res => {
-               this.blogService.setList(res);
+               this.cache.store('blogList', res);
                observer.complete(true);
            });
         });

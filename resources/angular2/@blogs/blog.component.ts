@@ -1,9 +1,9 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, ViewChild, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
 import { ToasterService } from 'angular2-toaster';
-
+import { CKEditor } from 'ng2-ckeditor';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import {
     BlogService,
@@ -13,6 +13,7 @@ import {
     TagService,
     JpaCache,
     PANEL2_DIRECTIVES,
+    PanelFormComponent,
     PanelFormControl,
     PanelFormControlTextfield,
     PanelFormControlSelect,
@@ -31,8 +32,8 @@ import {
     ]
 })
 export class BlogComponent implements OnInit {
-    public divisions: { label: string, value: any }[];
-    public tags: { label: string, value: any }[];
+    public divisions: { id: number, name: string }[];
+    public tags: { id: number, name: string }[];
 
     public isNew: boolean = false;
     public ready: boolean = false;
@@ -42,6 +43,11 @@ export class BlogComponent implements OnInit {
     private _blog: Blog = new Blog();
 
     public controls: PanelFormControl<any>[];
+
+    @HostBinding('class.new') get isNewClass() { return this.isNew; }
+
+    @ViewChild(PanelFormComponent) public _formCmp: PanelFormComponent;
+    public ckEditors: QueryList<CKEditor>;
 
     get blog(): Blog { return this._blog; }
     set blog(v: Blog) {
@@ -83,7 +89,8 @@ export class BlogComponent implements OnInit {
           new PanelFormControlDragnDrop({
               name: 'tags',
               required: true,
-              options: this.tags
+              options: this.tags,
+              placeholder: 'Add a tag'
           }),
           new PanelFormControlDragnDrop({
               name: 'divisions',
@@ -102,12 +109,12 @@ export class BlogComponent implements OnInit {
           }),
           new PanelFormControlTextfield({
             name: 'author',
-            required: true
+            required: false
           }),
           new PanelFormControlFiles({
               name: 'image',
               label: 'Cover Image',
-              required: true,
+              required: false,
               multiple: false,
               type: 'image'
           })
@@ -129,9 +136,10 @@ export class BlogComponent implements OnInit {
                         console.log("Navigating to /blogs/" + res.id);
                         this.router.navigate(['/blogs', res.id]);
                         this.reset();
-                    }, 2000);
+                    }, 1000);
                 }, err => {
                     console.log('Error when saving blog: ', err);
+                    this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
         } else {
@@ -144,6 +152,7 @@ export class BlogComponent implements OnInit {
                     this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
                 }, err => {
                     console.log('Error when saving blog: ', err);
+                    this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
         }
@@ -152,7 +161,9 @@ export class BlogComponent implements OnInit {
     private setup() {
         this._originalTitle = this._blog.title;
         this.isNew = this.blog.id === undefined;
-
+        setTimeout(() => {
+          this.ckEditors = this._formCmp._ckEditors;
+        });
         console.info('BlogComponent.setup()', this);
     }
 
@@ -162,6 +173,8 @@ export class BlogComponent implements OnInit {
             e.stopPropagation();
         }
         console.info('BlogComponent.reset()', this);
+
+        this.saving = false;
 
         // Temporary workaround until angular2 implements
         // a proper form reset

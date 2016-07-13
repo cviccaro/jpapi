@@ -16,12 +16,13 @@ var angular2_material_1 = require('./shared/libs/angular2-material');
 var sidenav_1 = require('@angular2-material/sidenav');
 var index_1 = require('./shared/index');
 var AppComponent = (function () {
-    function AppComponent(router, authService, contextMenu, tooltip, container) {
+    function AppComponent(router, authService, contextMenu, tooltip, container, progress) {
         this.router = router;
         this.authService = authService;
         this.contextMenu = contextMenu;
         this.tooltip = tooltip;
         this.container = container;
+        this.progress = progress;
         this.loggedIn = false;
         this._routeDepth = 0;
         this._routeUrl = '';
@@ -35,8 +36,8 @@ var AppComponent = (function () {
     }
     AppComponent.prototype.ngOnInit = function () {
         var _this = this;
-        var _sub1 = this.authService.whenAuthorized.subscribe(function (authorized) { return _this.loggedIn = authorized; });
-        var _sub2 = this.router.events.subscribe(function (evt) {
+        var sub1 = this.authService.whenAuthorized.subscribe(function (authorized) { return _this.loggedIn = authorized; });
+        var sub2 = this.router.events.subscribe(function (evt) {
             if (evt.toString().match('^NavigationEnd')) {
                 _this._sidenav.close();
                 _this._routeDepth = evt.url.split('/').length - 1;
@@ -47,7 +48,9 @@ var AppComponent = (function () {
                 _this.loading = true;
             }
         });
-        this.subscriptions = [_sub1, _sub2];
+        var sub3 = this.progress.start.subscribe(function (e) { return _this.loading = true; });
+        var sub4 = this.progress.done.subscribe(function (e) { return _this.loading = false; });
+        this.subscriptions = [sub1, sub2, sub3, sub4];
     };
     AppComponent.prototype.back = function () {
         var parentRoute = this._routeUrl.split('/')[1];
@@ -96,7 +99,7 @@ var AppComponent = (function () {
                 index_1.TooltipDirective
             ]
         }), 
-        __metadata('design:paramtypes', [router_1.Router, index_1.AuthService, index_1.JpaContextMenu, index_1.JpaTooltip, core_1.ViewContainerRef])
+        __metadata('design:paramtypes', [router_1.Router, index_1.AuthService, index_1.JpaContextMenu, index_1.JpaTooltip, core_1.ViewContainerRef, index_1.XhrService])
     ], AppComponent);
     return AppComponent;
 }());

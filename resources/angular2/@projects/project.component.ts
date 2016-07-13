@@ -1,15 +1,16 @@
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, ViewChild, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs/Rx';
 import { ToasterService } from 'angular2-toaster';
-
+import { CKEditor } from 'ng2-ckeditor';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import {
     ProjectService,
     Project,
     JpaCache,
     PANEL2_DIRECTIVES,
+    PanelFormComponent,
     PanelFormControl,
     PanelFormControlTextfield,
     PanelFormControlSelect,
@@ -39,6 +40,9 @@ export class ProjectComponent implements OnInit {
     public controls: PanelFormControl<any>[];
 
     @HostBinding('class.new') get isNewClass() { return this.isNew; }
+
+    @ViewChild(PanelFormComponent) public _formCmp: PanelFormComponent;
+    public ckEditors: QueryList<CKEditor>;
 
     constructor(
         private route: ActivatedRoute,
@@ -117,11 +121,10 @@ export class ProjectComponent implements OnInit {
                     this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
                         this.project = res;
-                        this.saving = false;
                         console.log("Navigating to /projects/" + res.id);
                         this.router.navigate(['/projects', res.id]);
                         this.reset();
-                    }, 2000);
+                    }, 1000);
                 },err => {
                     console.log('Error when saving project: ', err);
                     this.saving = false;
@@ -133,7 +136,6 @@ export class ProjectComponent implements OnInit {
                 .subscribe(res => {
                     console.log('response from update: ', res);
                     this.project = res;
-                    this.saving = false;
                     this.reset();
                     this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
                 }, err => {
@@ -147,6 +149,9 @@ export class ProjectComponent implements OnInit {
     private setup() {
         this._originalTitle = this._project.title;
         this.isNew = this.project.id === undefined;
+        setTimeout(() => {
+          this.ckEditors = this._formCmp._ckEditors;
+        });
         console.info('ProjectComponent.setup()', this);
     }
 
@@ -156,6 +161,8 @@ export class ProjectComponent implements OnInit {
             e.stopPropagation();
         }
         console.info('ProjectComponent.reset()', this);
+
+        this.saving = false;
 
         // Temporary workaround until angular2 implements
         // a proper form reset

@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
 
-import { ProjectService } from '../services/index';
+import { ProjectService, JpaCache } from '../services/index';
 
 import { Observable } from 'rxjs/Rx';
 
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs/Rx';
 export class ProjectListGuard implements CanActivate, OnDestroy {
     private sub: any;
 
-    constructor(private projectService: ProjectService) {}
+    constructor(private projectService: ProjectService, private cache: JpaCache) {}
 
     canActivate() {
         return Observable.create(observer => {
@@ -19,7 +19,7 @@ export class ProjectListGuard implements CanActivate, OnDestroy {
                order_by: 'updated_at',
                descending: true
            }).subscribe(res => {
-               this.projectService.setList(res);
+               this.cache.store('projectList', res);
                observer.complete(true);
            });
         });

@@ -1,0 +1,17 @@
+<div class="autocomplete-wrapper">
+    <md-input #input
+        [name]="name"
+        [(ngModel)]="workingValue"
+        (change)="_handleChange($event)"
+        [required]="required">
+    </md-input>
+    <div class="chips-wrapper">
+        <div *ngFor="let option of value; let index = index;" class="chip-wrapper">
+          <jpa-chip
+            [id]="option.id"
+            [name]="option.name"
+            (onRemove)="remove($event)">
+          </jpa-chip>
+        </div>
+    </div>
+</div>

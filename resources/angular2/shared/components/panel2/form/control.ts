@@ -1,5 +1,3 @@
-import { FormControl, Validators } from '@angular/forms';
-
 export interface PanelFormControlCondition {
     target: string;
     condition: (source: PanelFormControl<any>, target: PanelFormControl<any>) => boolean;
@@ -48,10 +46,10 @@ export class PanelFormControl<T> {
 
     constructor(config: PanelFormControlConfig) {
         if (!config.label) {
-            // @todo: drop label property?
             config.label = config.name.substr(0,1).toUpperCase() + config.name.substr(1,config.name.length-1);
-            config.placeholder = config.label;
         }
+
+        config.placeholder = config.placeholder || config.label;
 
         config.editText = config.editText || 'Edit ' + config.label;
         config.emptyText = config.emptyText || 'Add ' + config.label;
@@ -61,25 +59,14 @@ export class PanelFormControl<T> {
         }
 
         Object.assign(this, config);
-
-        console.log('PanelFormControl constructed....', this);
     }
 
+    //@todo: make observable so can use distinctuntilchanged
     summary(panelExpanded: boolean): { text: any, icon: string|boolean } {
         if (panelExpanded || this.empty) return { text: this.editableText, icon: this.editIcon };
 
         return { text: this.value, icon: false };
     }
-
-    // summary(panelExpanded: boolean): Observable<{ text: any, icon: string|boolean }> {
-    //     return Observable.create(observer => {
-    //         if (panelExpanded || this.empty) {
-    //             observer.next({ text: this.editText, icon: this.editIcon });
-    //         } else {
-    //             observer.next({ text: this.value, icon: false });
-    //         }
-    //     });
-    // }
 
     evaluateConditions(inputs: PanelFormControl<any>[]) {
         if (this.conditions) {
@@ -101,8 +88,6 @@ export class PanelFormControl<T> {
                             this.required = result;
                             break;
                     }
-                } else {
-                    console.warn(`No target field "${condition.target}" was found while checking condition for source field ${this.name}`);
                 }
             });
         }

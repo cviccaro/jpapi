@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges } from '@angular/core';
 import { MATERIAL_DIRECTIVES }  from '../../libs/angular2-material';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
@@ -11,7 +11,7 @@ import { ModalConfig, ModalInput, ModalFormField, ModalAction } from './modal.in
     styleUrls: ['./modal.css'],
     directives: [MATERIAL_DIRECTIVES, NgSwitch, NgSwitchCase, NgSwitchDefault]
 })
-export class ModalComponent implements AfterViewInit, OnChanges {
+export class ModalComponent implements OnChanges {
     private _actionEmitter: EventEmitter<ModalAction> = new EventEmitter<ModalAction>();
 
     private _files: { [key: string] : FileList } = {};
@@ -22,12 +22,7 @@ export class ModalComponent implements AfterViewInit, OnChanges {
         return this._actionEmitter.asObservable();
     }
 
-    ngAfterViewInit() {
-        console.log('ModalComponent View Initialized.', this);
-    }
-
     action(type, config, event) {
-        console.log(type + ' button clicked.', event);
         event.preventDefault();
         event.stopPropagation();
 
@@ -39,10 +34,6 @@ export class ModalComponent implements AfterViewInit, OnChanges {
     }
 
     handleChange(col: ModalFormField, e: Event) {
-        console.log('handle change in modal', {
-            col: col,
-            e: e
-        });
         if (col.type === 'file') {
             col.value = e.target['files'];
         }

@@ -32,6 +32,15 @@ var TooltipDirective = (function () {
         if (this._hasRef) {
             this._cmpRef.destroy();
         }
+        else {
+            if (document) {
+                setTimeout(function () {
+                    var tooltips = document.querySelectorAll('jpa-tooltip');
+                    if (tooltips.length)
+                        tooltips['forEach'](function (el) { return el.remove(); });
+                }, 500);
+            }
+        }
     };
     __decorate([
         core_1.Input(), 

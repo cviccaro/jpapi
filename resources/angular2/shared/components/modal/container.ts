@@ -2,7 +2,6 @@ import {
     Component,
     ElementRef,
     ViewChild,
-    AfterViewInit,
     ChangeDetectorRef,
     OnInit,
     OnDestroy,
@@ -52,21 +51,14 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.registerSubscribers();
-        console.log('ModalContainerComponent initialized.', this);
-    }
-
-    ngAfterViewInit() {
-        console.log('ModalContainerComponent View Initialized', this);
     }
 
     private registerSubscribers() {
         this.openModalSubscriber = this.service.openModal.subscribe((config: ModalConfig) => {
-            console.log('open modal!', config);
             this.config = config;
             this.opened = true;
         });
         this.actionSubscriber = this.modal.onAction.subscribe((e) => {
-            console.log('modal button clicked', e);
             this.opened = false;
             this.service.buttonClicked.next(e);
         });

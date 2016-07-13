@@ -97,11 +97,10 @@ var ProjectComponent = (function () {
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                 setTimeout(function () {
                     _this.project = res;
-                    _this.saving = false;
                     console.log("Navigating to /projects/" + res.id);
                     _this.router.navigate(['/projects', res.id]);
                     _this.reset();
-                }, 2000);
+                }, 1000);
             }, function (err) {
                 console.log('Error when saving project: ', err);
                 _this.saving = false;
@@ -114,7 +113,6 @@ var ProjectComponent = (function () {
                 .subscribe(function (res) {
                 console.log('response from update: ', res);
                 _this.project = res;
-                _this.saving = false;
                 _this.reset();
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
             }, function (err) {
@@ -125,8 +123,12 @@ var ProjectComponent = (function () {
         }
     };
     ProjectComponent.prototype.setup = function () {
+        var _this = this;
         this._originalTitle = this._project.title;
         this.isNew = this.project.id === undefined;
+        setTimeout(function () {
+            _this.ckEditors = _this._formCmp._ckEditors;
+        });
         console.info('ProjectComponent.setup()', this);
     };
     ProjectComponent.prototype.reset = function (e) {
@@ -136,6 +138,7 @@ var ProjectComponent = (function () {
             e.stopPropagation();
         }
         console.info('ProjectComponent.reset()', this);
+        this.saving = false;
         this.ready = false;
         setTimeout(function () { _this.ready = true; }, 0);
     };
@@ -143,6 +146,10 @@ var ProjectComponent = (function () {
         core_1.HostBinding('class.new'), 
         __metadata('design:type', Object)
     ], ProjectComponent.prototype, "isNewClass", null);
+    __decorate([
+        core_1.ViewChild(index_1.PanelFormComponent), 
+        __metadata('design:type', index_1.PanelFormComponent)
+    ], ProjectComponent.prototype, "_formCmp", void 0);
     ProjectComponent = __decorate([
         core_1.Component({
             moduleId: module.id,

@@ -17,15 +17,10 @@ var PagerComponent = (function () {
     PagerComponent.prototype.ngOnInit = function () {
         this.pages = new Array(this.pagerData.lastPage);
     };
-    PagerComponent.prototype.ngAfterViewInit = function () {
-        console.log('PagerComponent AfterViewInit', this);
-    };
     PagerComponent.prototype.previous = function () {
-        console.log('pager previous from ' + this.pagerData.currentPage + ' to ' + (this.pagerData.currentPage - 1));
         this.changePage(this.pagerData.currentPage - 1);
     };
     PagerComponent.prototype.next = function () {
-        console.log('pager next from ' + this.pagerData.currentPage + ' to ' + (this.pagerData.currentPage + 1));
         this.changePage(this.pagerData.currentPage + 1);
     };
     PagerComponent.prototype.changePage = function (page) {
@@ -35,7 +30,6 @@ var PagerComponent = (function () {
         this.pageChanged.emit(page);
     };
     PagerComponent.prototype.ngOnChanges = function (changes) {
-        console.log('PagerComponent changed :', changes);
         if (changes.hasOwnProperty('pagerData')) {
             this.pages = new Array(this.pagerData.lastPage);
         }

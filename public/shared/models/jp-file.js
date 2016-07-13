@@ -20,7 +20,6 @@ var ManagedFile = (function () {
                 this.webkitRelativePath = file['webkitRelativePath'];
             }
         }
-        console.warn('ManagedFile constructed ...', this);
     }
     ManagedFile.prototype.date = function () {
         return this.created_at || this.last_modified;
@@ -47,30 +46,22 @@ var ManagedImage = (function (_super) {
     __extends(ManagedImage, _super);
     function ManagedImage(attributes, idx) {
         _super.call(this, attributes, idx);
-        console.warn('ManagedImage constructed ...', this);
     }
     ManagedImage.prototype.read = function () {
         var file = this._file;
-        console.info('ManagedImage # read file: start', file);
         var filename = file.name;
         return Rx_1.Observable.create(function (observer) {
-            console.debug('ManagedImage # read file: working', file);
             var reader = new FileReader();
-            reader.onload = function (readerEvt) {
-                console.debug('ManagedImage # read file: complete');
-                observer.next(reader.result);
-            };
+            reader.onload = function (readerEvt) { return observer.next(reader.result); };
             setTimeout(function () { return reader.readAsDataURL(file); }, 50);
         });
     };
     ManagedImage.prototype.load = function (imageEl) {
-        console.debug('ManagedImage.load start');
         return Rx_1.Observable.create(function (observer) {
-            console.debug('ManagedImage.load subscription start');
-            imageEl.onload = function (e) {
-                console.debug('ManagedImage.load on load returned ', e);
-                observer.next({ width: imageEl.naturalWidth, height: imageEl.naturalHeight });
-            };
+            imageEl.onload = function (e) { return observer.next({
+                width: imageEl.naturalWidth,
+                height: imageEl.naturalHeight
+            }); };
         });
     };
     ManagedImage.prototype.watchForDimensions = function (imageEl) {
@@ -78,7 +69,6 @@ var ManagedImage = (function (_super) {
         this.load(imageEl).subscribe(function (e) {
             _this.width = e.width;
             _this.height = e.height;
-            console.debug('ManagedImage.load subscription done', _this);
         });
     };
     ManagedImage.prototype.megapixels = function () {

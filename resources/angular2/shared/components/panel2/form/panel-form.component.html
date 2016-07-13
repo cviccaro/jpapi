@@ -26,7 +26,7 @@
                     <jpa-file-upload
                         [multiple]="control.multiple"
                         [name]="control.name"
-                        [formControlName]="control.name" 
+                        [formControlName]="control.name"
                         [type]="control.type"
                         [icon]="control.editIcon"
                         [control]="control"
@@ -57,9 +57,17 @@
                         [formControlName]="control.name"
                         [name]="control.name"
                         [options]="control.options"
-                        [required]="control.required"
+                        [placeholder]="control.placeholder"
                         (change)="handleChange(control, $event)">
                     </jpa-dnd-form-control>
+                </template>
+                <template [ngSwitchCase]="'autocomplete'">
+                    <jpa-autocomplete-form-control
+                        [formControlName]="control.name"
+                        [name]="control.name"
+                        [options]="control.options"
+                        (change)="handleChange(control, $event)">
+                    </jpa-autocomplete-form-control>
                 </template>
                 <template [ngSwitchCase]="'select'">
                     <div class="psuedo-md-input-wrapper">
@@ -88,7 +96,7 @@
         </jpa-panel2>
     </jpa-panel2-group>
     <div class="panel-form-actions">
-        <button md-raised-button class="submit" type="submit" [disabled]="!panelForm.valid || saving" [ngSwitch]="saving" color="secondary">
+        <button md-raised-button class="submit" type="submit" [disabled]="!panelForm.valid || saving || panelForm.pristine" [ngSwitch]="saving" color="secondary">
             <template [ngSwitchCase]="true">
                 <md-icon class="spin">update</md-icon> {{ savingText }}
             </template>

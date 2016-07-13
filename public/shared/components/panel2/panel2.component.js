@@ -40,13 +40,9 @@ var PanelComponent = (function () {
     PanelComponent.prototype.ngAfterContentInit = function () {
         var _this = this;
         this.bar.onToggle.subscribe(function (e) {
-            console.log('Panel2Component saw its bar toggle', e);
             _this.expanded = !_this.expanded;
             _this.onToggle.emit(_this.expanded);
         });
-    };
-    PanelComponent.prototype.ngAfterViewInit = function () {
-        console.log('Panel2Component View Initialized', this);
     };
     __decorate([
         core_1.HostBinding('class.expanded'), 

@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {Subscription} from 'rxjs/Rx';
-import {Blog, BlogService, ListComponent, ListConfig, JpaModal, ModalAction} from '../shared/index';
+import {Blog, BlogService, ListComponent, ListConfig, JpaModal, ModalAction, JpaCache} from '../shared/index';
 import { ToasterService } from 'angular2-toaster';
 
 /**
@@ -27,7 +27,8 @@ export class BlogListComponent implements OnInit, OnDestroy {
         public blogService: BlogService,
         private router: Router,
         private modal: JpaModal,
-        public toaster: ToasterService
+        public toaster: ToasterService,
+        private cache: JpaCache
     ) {
         this.listConfig = {
             sortOptions: [
@@ -53,9 +54,7 @@ export class BlogListComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-        var json = this.blogService.getList();
-
-        this.parseList(json);
+        this.parseList(this.cache.get('blogList'));
 	}
 
     mapList(blog: any) {

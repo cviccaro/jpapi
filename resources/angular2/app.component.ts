@@ -6,7 +6,7 @@ import { MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS } from './shared/libs/angular2-
 import { MdSidenav} from '@angular2-material/sidenav';
 import { Subscription } from 'rxjs/Subscription';
 
-import { AuthService, MODAL_DIRECTIVES, JpaModal, JpaContextMenu, TooltipDirective, JpaTooltip } from './shared/index';
+import { AuthService, MODAL_DIRECTIVES, JpaModal, JpaContextMenu, TooltipDirective, JpaTooltip, XhrService } from './shared/index';
 
 @Component({
     selector: 'jpa-app',
@@ -39,7 +39,8 @@ export class AppComponent implements OnInit, OnDestroy {
         private authService: AuthService,
         private contextMenu: JpaContextMenu,
         private tooltip: JpaTooltip,
-        private container: ViewContainerRef
+        private container: ViewContainerRef,
+        private progress: XhrService
     ) {
         this.tooltip.registerContainer(container);
         this.contextMenu.registerContainer(container);
@@ -50,8 +51,8 @@ export class AppComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        let _sub1 = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
-        let _sub2 = this.router.events.subscribe(evt => {
+        let sub1 = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
+        let sub2 = this.router.events.subscribe(evt => {
             //console.warn(evt.toString());
             if (evt.toString().match('^NavigationEnd')) {
                 this._sidenav.close();
@@ -62,7 +63,9 @@ export class AppComponent implements OnInit, OnDestroy {
                 this.loading = true;
             }
         });
-        this.subscriptions = [_sub1, _sub2];
+        let sub3 = this.progress.start.subscribe(e => this.loading = true);
+        let sub4 = this.progress.done.subscribe(e => this.loading = false);
+        this.subscriptions = [sub1, sub2, sub3, sub4];
     }
 
     back() {

@@ -29,9 +29,6 @@ var GridImage = (function () {
             _this.imageLoaded.emit({ event: e, config: _this.imageConfig });
         });
     };
-    GridImage.prototype.ngAfterViewInit = function () {
-        console.log('GridImage View Initialized', this);
-    };
     GridImage.prototype.remove = function () {
         this.clickedRemove.emit({ config: this.imageConfig, index: this.index });
     };

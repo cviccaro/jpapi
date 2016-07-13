@@ -25,11 +25,11 @@ var PanelFormComponent = (function () {
         this.builder = builder;
         this.ready = true;
         this.panelToggleStates = {};
+        this._controlPanels = {};
         this.formSubmit = new core_1.EventEmitter();
         this.saving = false;
         this.savingText = 'Saving...';
         this.submitText = 'Submit';
-        this._controlPanels = {};
     }
     PanelFormComponent.prototype.ngOnInit = function () {
         var _this = this;
@@ -44,20 +44,11 @@ var PanelFormComponent = (function () {
             }
             group[control.name] = [control.value, validators];
             _this.panelToggleStates[control.name] = false;
-            console.log('Just set value for control ' + control.name + ' to ' + control.value, {
-                model: _this.model,
-                control: control
-            });
         });
         this.panelForm = this.builder.group(group);
-        console.log('PanelForm', this.panelForm);
-    };
-    PanelFormComponent.prototype.ngAfterContentInit = function () {
-        console.log('PanelFormComponent AfterContentInit', this);
     };
     PanelFormComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
-        console.log('PanelFormComponent AfterViewInit', this);
         this.controls.forEach(function (control) {
             var panel = _this.getPanel(control);
             panel.onToggle.subscribe(function (expanded) {
@@ -65,8 +56,10 @@ var PanelFormComponent = (function () {
             });
             _this._controlPanels[control.name] = panel;
         });
+        if (this.controls.length !== this._formControls.length) {
+            console.warn(this.controls.length + " PanelFormControlsControls passed\n                in but could only find " + this._formControls.length + " ngFormControls");
+        }
         this._formControls.forEach(function (formControl) {
-            console.warn('Subscribing to status Changes on form control: ', formControl);
             formControl.valueChanges.debounceTime(250).subscribe(function (e) {
                 var panel = _this._controlPanels[formControl.name];
                 var el = panel.el.nativeElement;
@@ -86,12 +79,11 @@ var PanelFormComponent = (function () {
                     el.classList.add('ng-pristine');
                     el.classList.remove('ng-dirty');
                 }
-                console.log('form control ' + formControl.name + ' value change', e);
             });
         });
+        console.log('PanelFormComponent afterViewInit', this);
     };
     PanelFormComponent.prototype.getPanel = function (control) {
-        console.debug("Get Panel for control: ", control);
         var panels = this.panels.filter(function (panel) {
             return panel.el.nativeElement.classList.contains("control-" + control.name);
         });
@@ -104,8 +96,19 @@ var PanelFormComponent = (function () {
         setTimeout(function () { _this.model[control.name] = control.value = _this.panelForm.value[control.name]; });
     };
     PanelFormComponent.prototype.submit = function () {
-        console.log('submit!', this.panelForm.value);
         this.formSubmit.emit(this.panelForm.value);
+    };
+    PanelFormComponent.prototype.ngOnDestroy = function () {
+        if (this._ckEditors.length) {
+            console.log({
+                instances: CKEDITOR.instances,
+                CKEDITOR: CKEDITOR,
+                instance1: this._ckEditors.first
+            });
+            for (name in CKEDITOR.instances) {
+                CKEDITOR.instances[name].destroy();
+            }
+        }
     };
     __decorate([
         core_1.Output(), 
@@ -151,6 +154,10 @@ var PanelFormComponent = (function () {
         core_1.ContentChildren(forms_1.FormControl), 
         __metadata('design:type', core_1.QueryList)
     ], PanelFormComponent.prototype, "_formControlsContent", void 0);
+    __decorate([
+        core_1.ViewChildren(ng2_ckeditor_1.CKEditor), 
+        __metadata('design:type', core_1.QueryList)
+    ], PanelFormComponent.prototype, "_ckEditors", void 0);
     PanelFormComponent = __decorate([
         core_1.Component({
             moduleId: module.id,

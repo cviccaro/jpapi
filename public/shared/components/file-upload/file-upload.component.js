@@ -22,7 +22,6 @@ var jp_file_1 = require('../../models/jp-file');
 var index_2 = require('./toolbar/index');
 var index_3 = require('./file-card/index');
 var index_4 = require('./file-icon/index');
-var auth_service_1 = require('../../services/auth.service');
 var noop = function () { };
 var nextUniqueId = 0;
 exports.IMAGE_UPLOAD_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCESSOR, {
@@ -30,7 +29,7 @@ exports.IMAGE_UPLOAD_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCES
     multi: true
 });
 var FileUploadComponent = (function () {
-    function FileUploadComponent(authService) {
+    function FileUploadComponent() {
         this.isDragOver = false;
         this.isLoading = false;
         this._imagesLoaded = 0;
@@ -95,12 +94,9 @@ var FileUploadComponent = (function () {
     Object.defineProperty(FileUploadComponent.prototype, "value", {
         get: function () { return this._value; },
         set: function (v) {
-            console.debug('FileUploadComponent#set value() to ', v);
             v = this.convertValueForInputType(v);
-            console.log('FileUploadComponent#set value() CONVERTED: ', v);
             if (v !== this._value) {
                 this._value = v;
-                console.warn('emitting change', v);
                 this.change.emit(v);
                 if (this.multiple) {
                     var ngModelValue = (Array.isArray(v) && v.length === 0) ? '' : v;
@@ -111,9 +107,6 @@ var FileUploadComponent = (function () {
                 }
                 this._onTouchedCallback();
             }
-            else {
-                console.debug('FileUploadComponent#set value(): not emitting change events');
-            }
         },
         enumerable: true,
         configurable: true
@@ -123,7 +116,6 @@ var FileUploadComponent = (function () {
         if (this.type === 'image' && this.accept === '*') {
             this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
         }
-        console.debug('FileUploadComponent Initialized! ', this);
     };
     FileUploadComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
@@ -139,7 +131,6 @@ var FileUploadComponent = (function () {
     FileUploadComponent.prototype.registerImageWatcher = function (imageEl) {
         var _this = this;
         imageEl.addEventListener('load', function (event) {
-            console.debug('FileUploadComponent.imageLoad() ....  Image loaded!', event);
             var val = _this.value;
             val.width = imageEl.naturalWidth;
             val.height = imageEl.naturalHeight;
@@ -149,13 +140,17 @@ var FileUploadComponent = (function () {
             }
         });
     };
+    FileUploadComponent.prototype.registerOnChange = function (fn) {
+        this._onChangeCallback = fn;
+    };
+    FileUploadComponent.prototype.registerOnTouched = function (fn) {
+        this._onTouchedCallback = fn;
+    };
     FileUploadComponent.prototype.writeValue = function (value) {
         this._value = this.convertValueForInputType(value);
-        console.debug("FileUploadComponent." + (this.multiple ? 'multiple' : 'single') + "." + this.type + "." + this.name + "#writeValue: ", { value: this._value });
     };
     FileUploadComponent.prototype.convertValueForInputType = function (value) {
         var _this = this;
-        console.log('FileUploadComponent#convertValueForInputType', value);
         if (!this.multiple) {
             if (!value)
                 return '';
@@ -176,12 +171,6 @@ var FileUploadComponent = (function () {
                 return new jp_file_1.ManagedFile(value, idx);
         }
         return value;
-    };
-    FileUploadComponent.prototype.registerOnChange = function (fn) {
-        this._onChangeCallback = fn;
-    };
-    FileUploadComponent.prototype.registerOnTouched = function (fn) {
-        this._onTouchedCallback = fn;
     };
     FileUploadComponent.prototype._stopEvent = function (e) {
         event.preventDefault();
@@ -210,19 +199,12 @@ var FileUploadComponent = (function () {
             this.isLoading = false;
             e._hasNew = true;
         }
-        else {
-            var id = e.config.id;
-            if (++this._imagesLoaded === this.value.length) {
-                this.isLoading = false;
-            }
+        else if (++this._imagesLoaded === this.value.length) {
+            this.isLoading = false;
         }
         this.imageLoaded.emit(e);
     };
     FileUploadComponent.prototype.handleClickedRemove = function (e) {
-        console.debug('FileUploadComponent.handleClickedRemove', {
-            e: e,
-            value: this.value
-        });
         var value = this.value.slice(0);
         value.splice(e.index, 1);
         this.value = value;
@@ -249,17 +231,14 @@ var FileUploadComponent = (function () {
         this.isDragOver = false;
     };
     FileUploadComponent.prototype.fileDragStart = function (e) {
-        console.log('FileUploadComponent#fileDragStart', e);
         this._dragging = true;
     };
     FileUploadComponent.prototype.onDragEnd = function (e) {
-        console.debug('onDragEnd');
         this._stopEvent(e);
         this._dragging = false;
     };
     FileUploadComponent.prototype.add = function (event) {
         if (this._dragging) {
-            console.log('add cancelling because we are dragging image.');
             this._dragging = false;
             this.isDragOver = false;
             return;
@@ -268,10 +247,6 @@ var FileUploadComponent = (function () {
         this._stopEvent(event);
         this.isDragOver = false;
         this.readFiles(files);
-        console.log('FileUploadComponent#add', {
-            event: event,
-            this: this
-        });
     };
     FileUploadComponent.prototype.readFiles = function (files) {
         var _this = this;
@@ -304,7 +279,6 @@ var FileUploadComponent = (function () {
         }
     };
     FileUploadComponent.prototype.addToGrid = function (file) {
-        console.log('Loaded new image: ', file);
         this.pushValue(file);
         this.fileAdded.emit(file);
     };
@@ -316,31 +290,24 @@ var FileUploadComponent = (function () {
     FileUploadComponent.prototype.reorder = function (event, new_index) {
         var old_index = event.dragData;
         this._stopEvent(event.mouseEvent);
-        console.info('FileUploadComponent#reorder', {
-            old_index: old_index,
-            new_index: new_index,
-            event: event
-        });
         this._dragging = false;
         if (old_index !== new_index) {
-            this.moveImage(old_index, new_index);
+            this.moveFile(old_index, new_index);
         }
     };
-    FileUploadComponent.prototype.moveImage = function (old_index, new_index) {
-        var images = this.value;
-        var source = images[old_index];
-        var target = images[new_index];
-        images[new_index] = source;
-        images[old_index] = target;
-        this.value = images;
-        console.log('Just dropped image from drop zone ' + old_index + ' to drop zone ' + new_index);
+    FileUploadComponent.prototype.moveFile = function (old_index, new_index) {
+        var files = this.value;
+        var source = files[old_index];
+        var target = files[new_index];
+        files[new_index] = source;
+        files[old_index] = target;
+        this.value = files;
     };
     ;
     FileUploadComponent.prototype.reset = function () {
         console.log('FileUploadComponent.reset()', this);
     };
     FileUploadComponent.prototype.handleSingleFileAttach = function (e) {
-        console.log('handle single file attach ', e);
         this._stopEvent(e);
         var file;
         if (e instanceof File) {
@@ -360,19 +327,14 @@ var FileUploadComponent = (function () {
         }
     };
     FileUploadComponent.prototype.attachSingleFile = function (file) {
-        console.log('Attach Single File: ', file);
         var managedFile = new jp_file_1.ManagedFile({ _file: file }, 0);
-        console.log('attachSingleFile created new ManagedFile ', managedFile);
         this.value = managedFile;
     };
     FileUploadComponent.prototype.attachSingleImage = function (file) {
         var _this = this;
-        console.log('Attach Single Image: ', file);
         var image = new jp_file_1.ManagedImage({ _file: file }, 0);
-        console.log('attachSingleImage created new ManagedImage ', image);
         this.isLoading = true;
         image.read().subscribe(function (e) {
-            console.log('image read finished');
             image.url = e;
             _this.value = image;
             var imageEl = _this._currentImageEl.nativeElement;
@@ -502,7 +464,7 @@ var FileUploadComponent = (function () {
             ],
             providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR]
         }), 
-        __metadata('design:paramtypes', [auth_service_1.AuthService])
+        __metadata('design:paramtypes', [])
     ], FileUploadComponent);
     return FileUploadComponent;
 }());

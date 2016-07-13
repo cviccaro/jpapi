@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import {TimeAgoPipe, CalendarPipe} from 'angular2-moment';
 
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
@@ -17,7 +17,7 @@ import { PagerComponent, PagerData } from './pager/index';
     ],
     pipes: [TimeAgoPipe, CalendarPipe]
 })
-export class ListComponent implements OnInit {
+export class ListComponent {
 
     @Input() listTitle: string;
     @Input() listConfig: any;
@@ -29,10 +29,6 @@ export class ListComponent implements OnInit {
     @Output() listItemAdd = new EventEmitter();
 
     @Output() onPageChange = new EventEmitter();
-
-    ngOnInit() {
-        console.log('ListComponent initialized.', this);
-    }
 
     add() {
         this.listItemAdd.emit({});

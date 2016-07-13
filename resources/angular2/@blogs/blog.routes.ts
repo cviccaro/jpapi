@@ -1,6 +1,6 @@
 import { BlogIndexComponent, BlogListComponent, BlogComponent } from './index';
 
-import { AuthGuard, BlogListGuard, BlogGuard } from '../shared/index';
+import { AuthGuard, BlogListGuard, BlogGuard, CkEditorGuard } from '../shared/index';
 
 export const BlogRoutes = [
     {
@@ -12,7 +12,7 @@ export const BlogRoutes = [
         path: 'blogs',
         component: BlogIndexComponent,
         children: [
-            { path: ':id', component: BlogComponent, canActivate: [BlogGuard] },
+            { path: ':id', component: BlogComponent, canActivate: [BlogGuard], canDeactivate: [ CkEditorGuard ] },
             { path: '', component: BlogListComponent, canActivate: [BlogListGuard] }
         ],
         canActivate: [AuthGuard]

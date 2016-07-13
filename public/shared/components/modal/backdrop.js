@@ -14,9 +14,6 @@ var ModalBackdropComponent = (function () {
         this.el = el;
         this.bdClass = true;
     }
-    ModalBackdropComponent.prototype.ngAfterViewInit = function () {
-        console.log('ModalBackdropComponent View Initialized', this);
-    };
     __decorate([
         core_1.HostBinding('class.backdrop'), 
         __metadata('design:type', Object)

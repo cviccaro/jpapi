@@ -11,7 +11,7 @@ exports.ProjectRoutes = [
         path: 'projects',
         component: index_1.ProjectIndexComponent,
         children: [
-            { path: ':id', component: index_1.ProjectComponent, canActivate: [index_2.ProjectGuard] },
+            { path: ':id', component: index_1.ProjectComponent, canActivate: [index_2.ProjectGuard], canDeactivate: [index_2.CkEditorGuard] },
             { path: '', component: index_1.ProjectListComponent, canActivate: [index_2.ProjectListGuard] }
         ],
         canActivate: [index_2.AuthGuard]

@@ -11,32 +11,39 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/map');
+var xhr_1 = require('./xhr');
 var ClientService = (function () {
-    function ClientService(http) {
+    function ClientService(http, xhr) {
         this.http = http;
+        this.xhr = xhr;
         this.http = http;
     }
     ClientService.prototype.all = function (params) {
+        var _this = this;
         if (params === void 0) { params = {}; }
         var query = new http_1.URLSearchParams();
         for (var key in params) {
             var param = params[key];
             query.set(key, param);
         }
+        this.xhr.started();
         return this.http.get('/clients/paged', { search: query })
-            .map(function (res) { return res.json(); });
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     ClientService.prototype.options = function () {
+        var _this = this;
+        this.xhr.started();
         return this.http.get('/options/clients')
-            .map(function (res) { return res.json(); });
-    };
-    ClientService.prototype.cache = function (v) {
-        this._cached = v;
-    };
-    ClientService.prototype.cached = function () {
-        return this._cached;
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     ClientService.prototype.update = function (id, values) {
+        var _this = this;
         var form = new FormData();
         var _form = {};
         values.forEach(function (col) {
@@ -67,9 +74,15 @@ var ClientService = (function () {
             form: form,
             _form: _form
         });
-        return this.http.post('/clients/update/' + id, form).map(function (res) { return res.json(); });
+        this.xhr.started();
+        return this.http.post('/clients/update/' + id, form)
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     ClientService.prototype.create = function (values) {
+        var _this = this;
         var form = new FormData();
         var _form = {};
         values.forEach(function (col) {
@@ -100,14 +113,25 @@ var ClientService = (function () {
             form: form,
             _form: _form
         });
-        return this.http.post('/clients', form).map(function (res) { return res.json(); });
+        this.xhr.started();
+        return this.http.post('/clients', form)
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     ClientService.prototype.destroy = function (id) {
-        return this.http.delete('/clients/' + id);
+        var _this = this;
+        this.xhr.started();
+        return this.http.delete('/clients/' + id)
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     ClientService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
+        __metadata('design:paramtypes', [http_1.Http, xhr_1.XhrService])
     ], ClientService);
     return ClientService;
 }());

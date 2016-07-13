@@ -15,9 +15,6 @@ var ChipComponent = (function () {
         this.removeEnabled = true;
         this.onRemove = new core_1.EventEmitter();
     }
-    ChipComponent.prototype.ngAfterViewInit = function () {
-        console.log('ChipComponent View Initialized', this);
-    };
     ChipComponent.prototype.remove = function (e) {
         e.preventDefault();
         e.stopPropagation();

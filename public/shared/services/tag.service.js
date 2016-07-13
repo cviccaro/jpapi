@@ -11,24 +11,25 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/map');
+var xhr_1 = require('./xhr');
 var TagService = (function () {
-    function TagService(http) {
+    function TagService(http, xhr) {
         this.http = http;
+        this.xhr = xhr;
         this.http = http;
     }
     TagService.prototype.options = function () {
+        var _this = this;
+        this.xhr.started();
         return this.http.get('/options/tags')
-            .map(function (res) { return res.json(); });
-    };
-    TagService.prototype.cache = function (v) {
-        this._cached = v;
-    };
-    TagService.prototype.cached = function () {
-        return this._cached;
+            .map(function (res) {
+            _this.xhr.finished();
+            return res.json();
+        });
     };
     TagService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http])
+        __metadata('design:paramtypes', [http_1.Http, xhr_1.XhrService])
     ], TagService);
     return TagService;
 }());

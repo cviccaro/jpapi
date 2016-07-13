@@ -5,9 +5,8 @@ import {
     Output,
     EventEmitter,
     ElementRef,
-    AfterContentInit,
-    AfterViewInit,
     QueryList,
+    AfterContentInit,
     HostListener
 } from '@angular/core';
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
@@ -17,15 +16,12 @@ import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
     selector: 'jpa-panel2-bar-title',
     template: '<ng-content></ng-content>'
 })
-export class PanelBarTitleComponent implements AfterViewInit {
+export class PanelBarTitleComponent {
     @Output() onClick = new EventEmitter();
 
     @HostListener('click', ['$event'])
     _onClick(evt: Event) {
         this.onClick.emit(evt);
-    }
-    ngAfterViewInit() {
-        console.log('PanelBarTitle View Initialized', this);
     }
 }
 
@@ -43,7 +39,7 @@ export class PanelBarSubtitleComponent extends PanelBarTitleComponent { }
     styleUrls: ['./panel-bar.component.css'],
     directives: [ MATERIAL_DIRECTIVES, PanelBarTitleComponent, PanelBarSubtitleComponent ]
 })
-export class PanelBarComponent implements AfterContentInit, AfterViewInit {
+export class PanelBarComponent implements AfterContentInit {
     @Output() onToggle = new EventEmitter();
 
     @ContentChildren(PanelBarTitleComponent) titleCmps : QueryList<PanelBarTitleComponent>;
@@ -51,20 +47,15 @@ export class PanelBarComponent implements AfterContentInit, AfterViewInit {
 
     ngAfterContentInit() {
         let titles = this.titleCmps.toArray().concat(this.subTitleCmps.toArray());
+
         titles.forEach(titleCmp => {
             titleCmp.onClick.subscribe(evt => {
                 this.toggle(evt);
             });
         })
-        console.log('PanelBarComponent Content Initialized ', this);
-    }
-
-    ngAfterViewInit() {
-        console.log('PanelBarComponent View Initialized ', this);
     }
 
     toggle(evt: Event) {
-        console.log('PanelBarComponent toggle ', evt);
         evt.preventDefault();
         evt.stopPropagation();
         this.onToggle.emit(evt);

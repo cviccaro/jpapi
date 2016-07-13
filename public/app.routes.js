@@ -18,7 +18,8 @@ exports.APP_ROUTER_PROVIDERS = [
     index_7.ProjectGuard,
     index_7.ClientsGuard,
     index_7.DivisionsGuard,
-    index_7.DivisionGuard
+    index_7.DivisionGuard,
+    index_7.CkEditorGuard
 ];
 
 //# sourceMappingURL=app.routes.js.map
