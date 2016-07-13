@@ -5,6 +5,7 @@ import {
 	ComponentRef,
 	ViewContainerRef,
 	Output,
+	OnDestroy,
 	EventEmitter
 } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
@@ -12,7 +13,7 @@ import { ContextMenuComponent } from './context-menu.component';
 import { ContextMenuFocusTrap } from './focus-trap';
 
 @Injectable()
-export class JpaContextMenu {
+export class JpaContextMenu implements OnDestroy {
 	private viewContainer: ViewContainerRef;
 	private _focusTrapRef: ComponentRef<any>;
 	private _closeEmitter: EventEmitter<any> = new EventEmitter<any>();

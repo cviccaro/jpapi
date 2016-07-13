@@ -22,15 +22,19 @@ var GridImage = (function () {
     GridImage.prototype.onMouseLeave = function (e) {
         this.hovering = false;
     };
+    GridImage.prototype.remove = function () {
+        this.clickedRemove.emit({ config: this.imageConfig, index: this.index });
+    };
     GridImage.prototype.ngOnInit = function () {
         var _this = this;
         this._imageEl.nativeElement.src = this.imageConfig.url;
-        this._imageEl.nativeElement.addEventListener('load', function (e) {
+        this._listener = this._imageEl.nativeElement.addEventListener('load', function (e) {
             _this.imageLoaded.emit({ event: e, config: _this.imageConfig });
         });
     };
-    GridImage.prototype.remove = function () {
-        this.clickedRemove.emit({ config: this.imageConfig, index: this.index });
+    GridImage.prototype.ngOnDestroy = function () {
+        if (this._listener)
+            this._imageEl.nativeElement.removeEventListener('load', this._listener);
     };
     __decorate([
         core_1.ViewChild('image'), 
@@ -53,13 +57,13 @@ var GridImage = (function () {
         __metadata('design:type', Object)
     ], GridImage.prototype, "imageLoaded", void 0);
     __decorate([
-        core_1.HostListener('mouseenter', ['$event.target']), 
+        core_1.HostListener('mouseenter'), 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [Object]), 
         __metadata('design:returntype', void 0)
     ], GridImage.prototype, "onMouseEnter", null);
     __decorate([
-        core_1.HostListener('mouseleave', ['$event.target']), 
+        core_1.HostListener('mouseleave'), 
         __metadata('design:type', Function), 
         __metadata('design:paramtypes', [Object]), 
         __metadata('design:returntype', void 0)

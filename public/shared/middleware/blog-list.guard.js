@@ -31,7 +31,8 @@ var BlogListGuard = (function () {
         });
     };
     BlogListGuard.prototype.ngOnDestroy = function () {
-        this.sub.unsubscribe();
+        if (this.sub)
+            this.sub.unsubscribe();
     };
     BlogListGuard = __decorate([
         core_1.Injectable(), 

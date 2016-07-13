@@ -1,7 +1,7 @@
-import { Component, HostBinding, OnInit, ViewChild, QueryList } from '@angular/core';
+import { Component, HostBinding, OnInit, OnDestroy, ViewChild, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subscription } from 'rxjs/Rx';
 import { ToasterService } from 'angular2-toaster';
 import { CKEditor } from 'ng2-ckeditor';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
@@ -28,16 +28,17 @@ import {
         PANEL2_DIRECTIVES
     ]
 })
-export class ProjectComponent implements OnInit {
+export class ProjectComponent implements OnInit, OnDestroy {
     public clients: { label: string, value: any }[];
+    public controls: PanelFormControl<any>[];
+
     public isNew: boolean = false;
     public ready: boolean = false;
     public saving: boolean = false;
 
     private _originalTitle: string;
     private _project: Project = new Project();
-
-    public controls: PanelFormControl<any>[];
+    private _subscriptions: Subscription[] = [];
 
     @HostBinding('class.new') get isNewClass() { return this.isNew; }
 
@@ -64,15 +65,19 @@ export class ProjectComponent implements OnInit {
         if (this.route.snapshot.params['id'] === 'new') {
             this.ready = true;
             this.isNew = true;
-        } else {
-            // this.project = this.cache.get('project');
-            // this.ready = true;
-
-            this.service.find(+this.route.snapshot.params['id']).subscribe(res => {
-                this.project = res;
-                console.debug('setting project model to ', res);
-                this.ready = true;
+            setTimeout(() => {
+              this.ckEditors = this._formCmp._ckEditors;
             });
+        } else {
+            let sub = this.service.find(+this.route.snapshot.params['id']).subscribe(res => {
+                this.project = res;
+                this.ready = true;
+                setTimeout(() => {
+                  this.ckEditors = this._formCmp._ckEditors;
+                });
+            });
+
+            this._subscriptions.push(sub);
         }
 
         this.controls = [
@@ -116,7 +121,8 @@ export class ProjectComponent implements OnInit {
 
         if (this.isNew) {
             console.log('Save NEW project. ', model);
-            this.service.create(model)
+
+            let sub = this.service.create(model)
                 .subscribe(res => {
                     this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
@@ -130,9 +136,12 @@ export class ProjectComponent implements OnInit {
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
                 });
+
+            this._subscriptions.push(sub);
         } else {
             console.log('Save UPDATED project. ', model);
-            this.service.update(this.project.id, model)
+
+            let sub = this.service.update(this.project.id, model)
                 .subscribe(res => {
                     console.log('response from update: ', res);
                     this.project = res;
@@ -143,16 +152,14 @@ export class ProjectComponent implements OnInit {
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
                 });
+
+            this._subscriptions.push(sub);
         }
     }
 
     private setup() {
         this._originalTitle = this._project.title;
         this.isNew = this.project.id === undefined;
-        setTimeout(() => {
-          this.ckEditors = this._formCmp._ckEditors;
-        });
-        console.info('ProjectComponent.setup()', this);
     }
 
     private reset(e?:Event) {
@@ -167,7 +174,25 @@ export class ProjectComponent implements OnInit {
         // Temporary workaround until angular2 implements
         // a proper form reset
         this.ready = false;
+        if (this.ckEditors.length) {
+          this._formCmp._ckEditors.forEach(editor => editor.instance.destroy());
+        }
 
-        setTimeout(() => { this.ready = true; },0);
+        setTimeout(() => { 
+          this.ready = true; 
+          setTimeout(() => {
+            this.ckEditors = this._formCmp._ckEditors;
+          });
+        });
+    }
+
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
     }
 }

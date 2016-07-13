@@ -5,8 +5,10 @@ import {
     HostBinding,
     Output,
     EventEmitter,
-    ElementRef
+    ElementRef,
+    OnDestroy
 } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { PanelContentComponent } from './content/index';
 import { PanelBarComponent } from './bar/index';
@@ -27,8 +29,9 @@ export interface PanelToggle {
         // MD_GRID_LIST_DIRECTIVES
     ]
 })
-export class PanelComponent implements AfterContentInit, PanelToggle {
+export class PanelComponent implements AfterContentInit, PanelToggle, OnDestroy {
     private _expanded: boolean = false;
+    private _toggleSub: Subscription;
 
     @HostBinding('class.expanded') private get expandedClass() { return this.expanded; }
     @HostBinding('class.jpa-panel') private get jpapanelClass() { return true; }
@@ -46,9 +49,17 @@ export class PanelComponent implements AfterContentInit, PanelToggle {
         this.content.hidden = !v;
     }
     ngAfterContentInit() {
-        this.bar.onToggle.subscribe(e => {
+        this._toggleSub = this.bar.onToggle.subscribe(e => {
             this.expanded = !this.expanded;
             this.onToggle.emit(this.expanded);
         });
+    }
+
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        if (this._toggleSub) this._toggleSub.unsubscribe();
     }
 }

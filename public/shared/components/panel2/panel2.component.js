@@ -39,10 +39,14 @@ var PanelComponent = (function () {
     });
     PanelComponent.prototype.ngAfterContentInit = function () {
         var _this = this;
-        this.bar.onToggle.subscribe(function (e) {
+        this._toggleSub = this.bar.onToggle.subscribe(function (e) {
             _this.expanded = !_this.expanded;
             _this.onToggle.emit(_this.expanded);
         });
+    };
+    PanelComponent.prototype.ngOnDestroy = function () {
+        if (this._toggleSub)
+            this._toggleSub.unsubscribe();
     };
     __decorate([
         core_1.HostBinding('class.expanded'), 

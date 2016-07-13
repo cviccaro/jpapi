@@ -24,6 +24,7 @@ var ProjectComponent = (function () {
         this.ready = false;
         this.saving = false;
         this._project = new index_1.Project();
+        this._subscriptions = [];
     }
     Object.defineProperty(ProjectComponent.prototype, "isNewClass", {
         get: function () { return this.isNew; },
@@ -45,13 +46,19 @@ var ProjectComponent = (function () {
         if (this.route.snapshot.params['id'] === 'new') {
             this.ready = true;
             this.isNew = true;
+            setTimeout(function () {
+                _this.ckEditors = _this._formCmp._ckEditors;
+            });
         }
         else {
-            this.service.find(+this.route.snapshot.params['id']).subscribe(function (res) {
+            var sub = this.service.find(+this.route.snapshot.params['id']).subscribe(function (res) {
                 _this.project = res;
-                console.debug('setting project model to ', res);
                 _this.ready = true;
+                setTimeout(function () {
+                    _this.ckEditors = _this._formCmp._ckEditors;
+                });
             });
+            this._subscriptions.push(sub);
         }
         this.controls = [
             new index_1.PanelFormControlTextfield({
@@ -92,7 +99,7 @@ var ProjectComponent = (function () {
         this.saving = true;
         if (this.isNew) {
             console.log('Save NEW project. ', model);
-            this.service.create(model)
+            var sub = this.service.create(model)
                 .subscribe(function (res) {
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                 setTimeout(function () {
@@ -106,10 +113,11 @@ var ProjectComponent = (function () {
                 _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
             });
+            this._subscriptions.push(sub);
         }
         else {
             console.log('Save UPDATED project. ', model);
-            this.service.update(this.project.id, model)
+            var sub = this.service.update(this.project.id, model)
                 .subscribe(function (res) {
                 console.log('response from update: ', res);
                 _this.project = res;
@@ -120,16 +128,12 @@ var ProjectComponent = (function () {
                 _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
             });
+            this._subscriptions.push(sub);
         }
     };
     ProjectComponent.prototype.setup = function () {
-        var _this = this;
         this._originalTitle = this._project.title;
         this.isNew = this.project.id === undefined;
-        setTimeout(function () {
-            _this.ckEditors = _this._formCmp._ckEditors;
-        });
-        console.info('ProjectComponent.setup()', this);
     };
     ProjectComponent.prototype.reset = function (e) {
         var _this = this;
@@ -140,7 +144,21 @@ var ProjectComponent = (function () {
         console.info('ProjectComponent.reset()', this);
         this.saving = false;
         this.ready = false;
-        setTimeout(function () { _this.ready = true; }, 0);
+        if (this.ckEditors.length) {
+            this._formCmp._ckEditors.forEach(function (editor) { return editor.instance.destroy(); });
+        }
+        setTimeout(function () {
+            _this.ready = true;
+            setTimeout(function () {
+                _this.ckEditors = _this._formCmp._ckEditors;
+            });
+        });
+    };
+    ProjectComponent.prototype.ngOnDestroy = function () {
+        this._subscriptions.forEach(function (sub) {
+            if (sub)
+                sub.unsubscribe();
+        });
     };
     __decorate([
         core_1.HostBinding('class.new'), 

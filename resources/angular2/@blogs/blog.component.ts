@@ -1,7 +1,7 @@
-import { Component, HostBinding, OnInit, ViewChild, QueryList } from '@angular/core';
+import { Component, HostBinding, OnInit, ViewChild, QueryList, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormControl } from '@angular/forms';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subscription } from 'rxjs/Rx';
 import { ToasterService } from 'angular2-toaster';
 import { CKEditor } from 'ng2-ckeditor';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
@@ -31,9 +31,10 @@ import {
         PANEL2_DIRECTIVES
     ]
 })
-export class BlogComponent implements OnInit {
+export class BlogComponent implements OnInit, OnDestroy {
     public divisions: { id: number, name: string }[];
     public tags: { id: number, name: string }[];
+    public controls: PanelFormControl<any>[];
 
     public isNew: boolean = false;
     public ready: boolean = false;
@@ -41,8 +42,7 @@ export class BlogComponent implements OnInit {
 
     private _originalTitle: string;
     private _blog: Blog = new Blog();
-
-    public controls: PanelFormControl<any>[];
+    private _subscriptions: Subscription[] = [];
 
     @HostBinding('class.new') get isNewClass() { return this.isNew; }
 
@@ -72,12 +72,19 @@ export class BlogComponent implements OnInit {
         if (id === 'new') {
             this.ready = true;
             this.isNew = true;
-        } else {
-            this.service.find(+id).subscribe(res => {
-                this.blog = res;
-                console.debug('setting blog model to ', res);
-                this.ready = true;
+            setTimeout(() => {
+              this.ckEditors = this._formCmp._ckEditors;
             });
+        } else {
+            let sub = this.service.find(+id).subscribe(res => {
+                this.blog = res;
+                this.ready = true;
+                setTimeout(() => {
+                  this.ckEditors = this._formCmp._ckEditors;
+                });
+            });
+
+            this._subscriptions.push(sub);
         }
 
         this.controls = [
@@ -128,7 +135,7 @@ export class BlogComponent implements OnInit {
 
         if (this.isNew) {
             console.log('Save NEW blog. ', model);
-            this.service.create(model)
+            let sub = this.service.create(model)
                 .subscribe(res => {
                     this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
@@ -142,9 +149,11 @@ export class BlogComponent implements OnInit {
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
+            this._subscriptions.push(sub);
         } else {
             console.log('Save UPDATED blog. ', model);
-            this.service.update(this.blog.id, model)
+
+            let sub = this.service.update(this.blog.id, model)
                 .subscribe(res => {
                     console.log('response from update: ', res);
                     this.blog = res;
@@ -155,16 +164,14 @@ export class BlogComponent implements OnInit {
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
+
+            this._subscriptions.push(sub);
         }
     }
 
     private setup() {
         this._originalTitle = this._blog.title;
         this.isNew = this.blog.id === undefined;
-        setTimeout(() => {
-          this.ckEditors = this._formCmp._ckEditors;
-        });
-        console.info('BlogComponent.setup()', this);
     }
 
     private reset(e?: Event) {
@@ -175,11 +182,29 @@ export class BlogComponent implements OnInit {
         console.info('BlogComponent.reset()', this);
 
         this.saving = false;
-
+        
         // Temporary workaround until angular2 implements
         // a proper form reset
         this.ready = false;
+        if (this.ckEditors.length) {
+          this._formCmp._ckEditors.forEach(editor => editor.instance.destroy());
+        }
 
-        setTimeout(() => { this.ready = true; }, 0);
+        setTimeout(() => { 
+          this.ready = true; 
+          setTimeout(() => {
+            this.ckEditors = this._formCmp._ckEditors;
+          });
+        });
+    }
+
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
     }
 }

@@ -15,7 +15,7 @@ import {
 import { Subscription } from 'rxjs/Rx';
 import { FromUnixPipe, DateFormatPipe } from 'angular2-moment';
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
-import { ManagedFile, ManagedImage } from '../../../models/jp-file';
+import { ManagedFile, ManagedImage } from '../../../models/file';
 import { FileIconComponent } from '../file-icon/index';
 
 @Directive({

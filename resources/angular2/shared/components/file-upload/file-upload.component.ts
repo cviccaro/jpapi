@@ -6,6 +6,7 @@ import {
     AfterContentInit,
     SimpleChange,
     OnChanges,
+    OnDestroy,
     Input,
     Output,
     HostListener,
@@ -20,7 +21,7 @@ import {
 } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { NgModel, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subscription } from 'rxjs/Rx';
 
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
 import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-list';
@@ -30,7 +31,7 @@ import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
 import { GridImage } from './grid-image/index';
-import { ManagedFile, ManagedImage } from '../../models/jp-file';
+import { ManagedFile, ManagedImage } from '../../models/file';
 import { FileUploadToolbar } from './toolbar/index';
 import { FileCardComponent } from './file-card/index';
 import { FileIconComponent } from './file-icon/index';
@@ -64,9 +65,10 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     ],
     providers: [IMAGE_UPLOAD_VALUE_ACCESSOR]
 })
-export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterViewInit {
+export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
     public isDragOver: boolean = false;
     public isLoading: boolean = false;
+    private listener: EventListener;
     private _imagesLoaded: number = 0;
     private _value: any;
     private _rows: any[] = [];
@@ -77,23 +79,19 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     private _droppedImage: any;
     private _onTouchedCallback: () => void = noop;
     private _onChangeCallback: (_: any) => void = noop;
+    private _subscriptions: Subscription[] = [];
 
     public new_file: File;
 
-    /**
-     * Content directives
-     */
-    @ViewChildren(GridImage) private _gridImages: QueryList<GridImage>;
-    @ViewChild(MdGridList) private _gridList: MdGridList;
+    public get empty() {
+        return this.value === undefined || this.value === null || Array.isArray(this.value) && this.value.length === 0 || Object.keys(this.value).length === 0;
+    }
 
+    @ViewChildren(GridImage) private _gridImages: QueryList<GridImage>;
     @ViewChild('currentImage') private _currentImageEl: ElementRef;
 
     @HostBinding('class') get typeClass() {
         return `file-upload-${this.type} file-upload-${this.multiple ? 'multiple' : 'single'}`;
-    }
-
-    public get empty() {
-        return this.value === undefined || this.value === null || Array.isArray(this.value) && this.value.length === 0 || Object.keys(this.value).length === 0;
     }
 
     /**
@@ -186,7 +184,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     }
 
     registerImageWatcher(imageEl: HTMLImageElement) {
-        imageEl.addEventListener('load', (event: Event) => {
+        this.listener = (event: Event) => {
             let val = this.value;
 
             val.width = imageEl.naturalWidth;
@@ -197,7 +195,8 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
             if (this.control) {
                 this.control.value = this.value;
             }
-        });
+        };
+        imageEl.addEventListener('load', this.listener);
     }
 
     registerOnChange(fn: any) {
@@ -353,13 +352,15 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
                 case 'image':
                     let managedImage = new ManagedImage({_file: file}, i);
 
-                    managedImage.read().subscribe(e => {
+                    let sub = managedImage.read().subscribe(e => {
                         managedImage.url = e;
 
                         this.addToGrid(managedImage);
 
                         this.isLoading = false;
                     });
+
+                    this._subscriptions.push(sub);
 
                     break;
                 default:
@@ -457,7 +458,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
 
         this.isLoading = true;
 
-        image.read().subscribe(e => {
+        let sub = image.read().subscribe(e => {
             image.url = e;
 
             this.value = image;
@@ -466,7 +467,9 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
             imageEl.src = e;
 
             this.isLoading = false;
-        })
+        });
+
+        this._subscriptions.push(sub);
     }
 
     /**
@@ -474,5 +477,19 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
      */
     removeFile(e: any) {
         this.value = '';
+    }
+
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
+
+        if (this._currentImageEl && this.listener) {
+            (<HTMLImageElement>this._currentImageEl.nativeElement).removeEventListener('load', this.listener);
+        }
     }
 }

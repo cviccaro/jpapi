@@ -1,4 +1,4 @@
-import {JpFile} from './jp-file';
+import {JpFile} from './file';
 import {Tag} from './tag';
 import {Division} from './division';
 

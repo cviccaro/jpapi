@@ -16,7 +16,7 @@ import { ToasterService } from 'angular2-toaster';
         ListComponent
 	]
 })
-export class ProjectListComponent implements OnInit {
+export class ProjectListComponent implements OnInit, OnDestroy {
 
     listData: any[] = [];
     listConfig: ListConfig;

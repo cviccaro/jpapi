@@ -1,4 +1,4 @@
-import { Component, Input, Output, ViewChild, ElementRef, EventEmitter, HostListener } from '@angular/core';
+import { Component, Input, Output, ViewChild, ElementRef, EventEmitter, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { MdIcon } from '@angular2-material/icon';
 
 import { JpFile } from '../../../index';
@@ -12,8 +12,9 @@ import { JpFile } from '../../../index';
         MdIcon
     ]
 })
-export class GridImage {
+export class GridImage implements OnInit, OnDestroy {
     public hovering = false;
+    private _listener: any;
 
     @ViewChild('image') public _imageEl: ElementRef;
 
@@ -23,24 +24,36 @@ export class GridImage {
     @Output() clickedRemove = new EventEmitter();
     @Output() imageLoaded = new EventEmitter();
 
-    @HostListener('mouseenter', ['$event.target'])
+    @HostListener('mouseenter')
     onMouseEnter(e) {
         this.hovering = true;
     }
-    @HostListener('mouseleave', ['$event.target'])
+    @HostListener('mouseleave')
     onMouseLeave(e) {
         this.hovering = false;
     }
 
+    remove() {
+        this.clickedRemove.emit({ config: this.imageConfig, index: this.index });
+    }
+
+    /**
+     * Initialize the directive/component after Angular initializes 
+     * the data-bound input properties.
+     */
     ngOnInit() {
         this._imageEl.nativeElement.src = this.imageConfig.url;
 
-        (<HTMLImageElement>this._imageEl.nativeElement).addEventListener('load', e => {
+        this._listener = (<HTMLImageElement>this._imageEl.nativeElement).addEventListener('load', e => {
             this.imageLoaded.emit({event: e, config: this.imageConfig});
         });
     }
 
-    remove() {
-        this.clickedRemove.emit({ config: this.imageConfig, index: this.index });
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        if (this._listener) (<HTMLImageElement>this._imageEl.nativeElement).removeEventListener('load', this._listener);
     }
 }

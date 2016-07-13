@@ -3,11 +3,11 @@ import { CanActivate } from '@angular/router';
 
 import { BlogService, JpaCache } from '../services/index';
 
-import { Observable } from 'rxjs/Rx';
+import { Observable, Subscription } from 'rxjs/Rx';
 
 @Injectable()
 export class BlogListGuard implements CanActivate, OnDestroy {
-    private sub: any;
+    private sub: Subscription;
 
     constructor(private blogService: BlogService, private cache: JpaCache) {}
 
@@ -26,6 +26,6 @@ export class BlogListGuard implements CanActivate, OnDestroy {
     }
 
     ngOnDestroy() {
-        this.sub.unsubscribe();
+        if (this.sub) this.sub.unsubscribe();
     }
 }

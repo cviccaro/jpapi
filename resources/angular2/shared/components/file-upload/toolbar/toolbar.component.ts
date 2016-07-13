@@ -4,7 +4,7 @@ import { NgSwitch, NgSwitchCase } from '@angular/common';
 import { DateFormatPipe } from 'angular2-moment';
 
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
-import { ManagedImage, ManagedFile, JpFile } from '../../../models/jp-file';
+import { ManagedImage, ManagedFile, JpFile } from '../../../models/file';
 import { TooltipDirective } from '../../tooltip/index';
 
 @Component({

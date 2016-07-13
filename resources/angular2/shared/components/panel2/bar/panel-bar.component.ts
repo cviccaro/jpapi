@@ -7,9 +7,11 @@ import {
     ElementRef,
     QueryList,
     AfterContentInit,
-    HostListener
+    HostListener,
+    OnDestroy
 } from '@angular/core';
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     moduleId: module.id,
@@ -39,7 +41,9 @@ export class PanelBarSubtitleComponent extends PanelBarTitleComponent { }
     styleUrls: ['./panel-bar.component.css'],
     directives: [ MATERIAL_DIRECTIVES, PanelBarTitleComponent, PanelBarSubtitleComponent ]
 })
-export class PanelBarComponent implements AfterContentInit {
+export class PanelBarComponent implements AfterContentInit, OnDestroy {
+    private _subscriptions: Subscription[] = [];
+
     @Output() onToggle = new EventEmitter();
 
     @ContentChildren(PanelBarTitleComponent) titleCmps : QueryList<PanelBarTitleComponent>;
@@ -49,9 +53,11 @@ export class PanelBarComponent implements AfterContentInit {
         let titles = this.titleCmps.toArray().concat(this.subTitleCmps.toArray());
 
         titles.forEach(titleCmp => {
-            titleCmp.onClick.subscribe(evt => {
+            let sub = titleCmp.onClick.subscribe(evt => {
                 this.toggle(evt);
             });
+
+            this._subscriptions.push(sub);
         })
     }
 
@@ -59,5 +65,15 @@ export class PanelBarComponent implements AfterContentInit {
         evt.preventDefault();
         evt.stopPropagation();
         this.onToggle.emit(evt);
+    }
+    
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
     }
 }

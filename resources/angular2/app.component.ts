@@ -82,11 +82,6 @@ export class AppComponent implements OnInit, OnDestroy {
         this.router.navigate(['/login']);
     }
 
-    ngOnDestroy() {
-        // clean up
-        this.subscriptions.forEach(s => s.unsubscribe());
-    }
-
     routeIs(url: any, strict: boolean = false): boolean {
         if (strict) return this._routeUrl === url;
         return !!this._routeUrl.match(url);
@@ -100,5 +95,9 @@ export class AppComponent implements OnInit, OnDestroy {
         if (this._sidenav.opened) {
             this._sidenav.close();
         }
+    }
+
+    ngOnDestroy() {
+        this.subscriptions.forEach(sub => sub.unsubscribe());
     }
 }

@@ -1,6 +1,17 @@
-import { Input, Component, OnInit, OnDestroy, AfterViewInit, QueryList, ViewChildren, ContentChildren, Output, EventEmitter } from '@angular/core';
+import { 
+    Input,
+    Component,
+    OnInit,
+    OnDestroy,
+    AfterViewInit,
+    QueryList,
+    ViewChildren,
+    Output,
+    EventEmitter 
+} from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
-import { NgModel, REACTIVE_FORM_DIRECTIVES, NgControl, FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { REACTIVE_FORM_DIRECTIVES, NgControl, FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Subscription } from 'rxjs/Subscription';
 import { CKEditor } from 'ng2-ckeditor';
 
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
@@ -46,8 +57,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
     ready: boolean = true;
     panelToggleStates: { [key: string] : boolean } = {};
     private _controlPanels: { [key: string]: PanelComponent } = {};
-
-    @Output() formSubmit = new EventEmitter();
+    private _subscriptions: Subscription[] = [];
 
     @Input() controls: PanelFormControl<any>[];
     @Input() model: any;
@@ -55,13 +65,17 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
     @Input() saving: boolean = false;
     @Input() savingText: string = 'Saving...';
     @Input() submitText: string = 'Submit';
+    
+    @Output() formSubmit = new EventEmitter();
 
-    @ViewChildren(PanelComponent) panels: QueryList<PanelComponent>;
-    @ViewChildren(NgModel) _models: QueryList<NgModel>;
+    @ViewChildren(PanelComponent) _panels: QueryList<PanelComponent>;
     @ViewChildren(NgControl) _formControls: QueryList<NgControl>;
-    @ContentChildren(FormControl) _formControlsContent: QueryList<FormControl>;
     @ViewChildren(CKEditor) _ckEditors: QueryList<CKEditor>;
 
+    /**
+     * Initialize the directive/component after Angular initializes 
+     * the data-bound input properties.
+     */
     ngOnInit() {
         let group = {};
 
@@ -84,13 +98,18 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
         this.panelForm = this.builder.group(group);
     }
 
+    /**
+     * After Angular creates the component's view(s).
+     */
     ngAfterViewInit() {
         this.controls.forEach(control => {
             let panel = this.getPanel(control);
 
-            panel.onToggle.subscribe((expanded: boolean) => {
+            let sub = panel.onToggle.subscribe((expanded: boolean) => {
                 this.panelToggleStates[control.name] = expanded;
             });
+
+            this._subscriptions.push(sub);
 
             this._controlPanels[control.name] = panel;
         });
@@ -101,7 +120,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
         }
 
         this._formControls.forEach(formControl => {
-            formControl.valueChanges.debounceTime(250).subscribe(e => {
+            let sub = formControl.valueChanges.debounceTime(250).subscribe(e => {
                let panel = this._controlPanels[formControl.name];
 
                let el: HTMLElement = panel.el.nativeElement;
@@ -122,13 +141,21 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
                     el.classList.remove('ng-dirty');
                 }
             });
+
+            this._subscriptions.push(sub);
         });
 
         console.log('PanelFormComponent afterViewInit', this);
     }
 
+    /**
+     * Get the PanelComponent housing a PanelFormControl
+     * 
+     * @param  {PanelFormControl<any>}
+     * @return {PanelComponent}
+     */
     getPanel(control: PanelFormControl<any>): PanelComponent {
-        let panels = this.panels.filter(panel => {
+        let panels = this._panels.filter(panel => {
             return panel.el.nativeElement.classList.contains(`control-${control.name}`);
         });
 
@@ -137,33 +164,31 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
         return panels[0];
     }
 
-    handleChange(control: PanelFormControl<any>, e: any) {
+    /**
+     * Handle change events from elements housing PanelFormControls
+     * 
+     * @param {PanelFormControl<any>}
+     * @param {Event}
+     * @return void
+     */
+    handleChange(control: PanelFormControl<any>, e: any): void {
         setTimeout(() => { this.model[control.name] = control.value = this.panelForm.value[control.name]; });
-
     }
 
-    submit() {
+    /**
+     * Callback to form ngSubmit()
+     */
+    submit(): void {
         this.formSubmit.emit(this.panelForm.value);
     }
 
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * observables and detach event handlers to avoid memory leaks.
+     */
     ngOnDestroy() {
-        if (this._ckEditors.length) {
-            console.log({
-                instances: CKEDITOR.instances,
-                CKEDITOR: CKEDITOR,
-                instance1: this._ckEditors.first
-            })
-            for(name in CKEDITOR.instances)
-            {
-                CKEDITOR.instances[name].destroy()
-            }
-            // this._ckEditors.forEach((ckeditor: CKEditor) => {
-            //     console.log({
-            //         ckeditor: ckeditor,
-            //         instnace: ckeditor.instance
-            //     });
-            //     ckeditor.instance.destroy();
-            // });
-        }
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
     }
 }

@@ -1,6 +1,6 @@
 import { Component, Input, AfterViewInit } from '@angular/core';
 
-import { ManagedFile, ManagedImage } from '../../../models/jp-file';
+import { ManagedFile, ManagedImage } from '../../../models/file';
 
 @Component({
 	moduleId: module.id,

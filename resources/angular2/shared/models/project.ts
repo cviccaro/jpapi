@@ -1,5 +1,5 @@
 import { JpClient } from './client';
-import { JpFile } from './jp-file';
+import { JpFile } from './file';
 
 export class Project {
 	id: any = undefined;

@@ -18,7 +18,7 @@ var progress_bar_1 = require('@angular2-material/progress-bar');
 var icon_1 = require('@angular2-material/icon');
 var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
 var index_1 = require('./grid-image/index');
-var jp_file_1 = require('../../models/jp-file');
+var file_1 = require('../../models/file');
 var index_2 = require('./toolbar/index');
 var index_3 = require('./file-card/index');
 var index_4 = require('./file-icon/index');
@@ -38,6 +38,7 @@ var FileUploadComponent = (function () {
         this._dragging = false;
         this._onTouchedCallback = noop;
         this._onChangeCallback = noop;
+        this._subscriptions = [];
         this.multiple = false;
         this.type = 'file';
         this.icon = 'panorama';
@@ -57,16 +58,16 @@ var FileUploadComponent = (function () {
         this._blurEmitter = new core_1.EventEmitter();
         this._focusEmitter = new core_1.EventEmitter();
     }
-    Object.defineProperty(FileUploadComponent.prototype, "typeClass", {
+    Object.defineProperty(FileUploadComponent.prototype, "empty", {
         get: function () {
-            return "file-upload-" + this.type + " file-upload-" + (this.multiple ? 'multiple' : 'single');
+            return this.value === undefined || this.value === null || Array.isArray(this.value) && this.value.length === 0 || Object.keys(this.value).length === 0;
         },
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(FileUploadComponent.prototype, "empty", {
+    Object.defineProperty(FileUploadComponent.prototype, "typeClass", {
         get: function () {
-            return this.value === undefined || this.value === null || Array.isArray(this.value) && this.value.length === 0 || Object.keys(this.value).length === 0;
+            return "file-upload-" + this.type + " file-upload-" + (this.multiple ? 'multiple' : 'single');
         },
         enumerable: true,
         configurable: true
@@ -130,7 +131,7 @@ var FileUploadComponent = (function () {
     };
     FileUploadComponent.prototype.registerImageWatcher = function (imageEl) {
         var _this = this;
-        imageEl.addEventListener('load', function (event) {
+        this.listener = function (event) {
             var val = _this.value;
             val.width = imageEl.naturalWidth;
             val.height = imageEl.naturalHeight;
@@ -138,7 +139,8 @@ var FileUploadComponent = (function () {
             if (_this.control) {
                 _this.control.value = _this.value;
             }
-        });
+        };
+        imageEl.addEventListener('load', this.listener);
     };
     FileUploadComponent.prototype.registerOnChange = function (fn) {
         this._onChangeCallback = fn;
@@ -165,10 +167,10 @@ var FileUploadComponent = (function () {
     FileUploadComponent.prototype.managedFile = function (type, value, idx) {
         if (idx === void 0) { idx = 0; }
         switch (type) {
-            case 'image': if (!(value instanceof jp_file_1.ManagedImage))
-                return new jp_file_1.ManagedImage(value, idx);
-            case 'file': if (!(value instanceof jp_file_1.ManagedFile))
-                return new jp_file_1.ManagedFile(value, idx);
+            case 'image': if (!(value instanceof file_1.ManagedImage))
+                return new file_1.ManagedImage(value, idx);
+            case 'file': if (!(value instanceof file_1.ManagedFile))
+                return new file_1.ManagedFile(value, idx);
         }
         return value;
     };
@@ -259,15 +261,16 @@ var FileUploadComponent = (function () {
             var file = files[i];
             switch (this_1.type) {
                 case 'image':
-                    var managedImage_1 = new jp_file_1.ManagedImage({ _file: file }, i);
-                    managedImage_1.read().subscribe(function (e) {
+                    var managedImage_1 = new file_1.ManagedImage({ _file: file }, i);
+                    var sub = managedImage_1.read().subscribe(function (e) {
                         managedImage_1.url = e;
                         _this.addToGrid(managedImage_1);
                         _this.isLoading = false;
                     });
+                    this_1._subscriptions.push(sub);
                     break;
                 default:
-                    var managedFile = new jp_file_1.ManagedFile({ _file: file }, i);
+                    var managedFile = new file_1.ManagedFile({ _file: file }, i);
                     this_1.addToGrid(managedFile);
                     this_1.isLoading = false;
                     break;
@@ -327,32 +330,38 @@ var FileUploadComponent = (function () {
         }
     };
     FileUploadComponent.prototype.attachSingleFile = function (file) {
-        var managedFile = new jp_file_1.ManagedFile({ _file: file }, 0);
+        var managedFile = new file_1.ManagedFile({ _file: file }, 0);
         this.value = managedFile;
     };
     FileUploadComponent.prototype.attachSingleImage = function (file) {
         var _this = this;
-        var image = new jp_file_1.ManagedImage({ _file: file }, 0);
+        var image = new file_1.ManagedImage({ _file: file }, 0);
         this.isLoading = true;
-        image.read().subscribe(function (e) {
+        var sub = image.read().subscribe(function (e) {
             image.url = e;
             _this.value = image;
             var imageEl = _this._currentImageEl.nativeElement;
             imageEl.src = e;
             _this.isLoading = false;
         });
+        this._subscriptions.push(sub);
     };
     FileUploadComponent.prototype.removeFile = function (e) {
         this.value = '';
+    };
+    FileUploadComponent.prototype.ngOnDestroy = function () {
+        this._subscriptions.forEach(function (sub) {
+            if (sub)
+                sub.unsubscribe();
+        });
+        if (this._currentImageEl && this.listener) {
+            this._currentImageEl.nativeElement.removeEventListener('load', this.listener);
+        }
     };
     __decorate([
         core_1.ViewChildren(index_1.GridImage), 
         __metadata('design:type', core_1.QueryList)
     ], FileUploadComponent.prototype, "_gridImages", void 0);
-    __decorate([
-        core_1.ViewChild(grid_list_1.MdGridList), 
-        __metadata('design:type', grid_list_1.MdGridList)
-    ], FileUploadComponent.prototype, "_gridList", void 0);
     __decorate([
         core_1.ViewChild('currentImage'), 
         __metadata('design:type', core_1.ElementRef)

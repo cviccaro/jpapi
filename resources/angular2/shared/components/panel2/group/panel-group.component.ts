@@ -1,5 +1,5 @@
-import { Component, AfterViewInit, AfterContentInit, ContentChildren, QueryList, HostBinding } from '@angular/core';
-
+import { Component, AfterViewInit, AfterContentInit, ContentChildren, QueryList, HostBinding, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs/Subscription';
 import { PanelComponent } from '../panel2.component';
 
 @Component({
@@ -9,7 +9,9 @@ import { PanelComponent } from '../panel2.component';
     styleUrls: ['./panel-group.component.css'],
     directives: [PanelComponent]
 })
-export class PanelGroupComponent implements AfterContentInit {
+export class PanelGroupComponent implements AfterContentInit, OnDestroy {
+    private _subscriptions: Subscription[] = [];
+
     @HostBinding('class.child-expanded') get expandedClass() { return this.childExpanded; }
 
     childExpanded: boolean = false;
@@ -18,9 +20,20 @@ export class PanelGroupComponent implements AfterContentInit {
 
     ngAfterContentInit() {
         this._panelChildren.forEach(panel => {
-            panel.onToggle.subscribe((expanded: boolean) => {
+            let sub = panel.onToggle.subscribe((expanded: boolean) => {
                 this.childExpanded = !!this._panelChildren.filter(panel => panel.expanded).length
             });
-        })
+            this._subscriptions.push(sub);
+        });
+    }
+
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
     }
 }

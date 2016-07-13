@@ -61,21 +61,29 @@ var PanelBarSubtitleComponent = (function (_super) {
 exports.PanelBarSubtitleComponent = PanelBarSubtitleComponent;
 var PanelBarComponent = (function () {
     function PanelBarComponent() {
+        this._subscriptions = [];
         this.onToggle = new core_1.EventEmitter();
     }
     PanelBarComponent.prototype.ngAfterContentInit = function () {
         var _this = this;
         var titles = this.titleCmps.toArray().concat(this.subTitleCmps.toArray());
         titles.forEach(function (titleCmp) {
-            titleCmp.onClick.subscribe(function (evt) {
+            var sub = titleCmp.onClick.subscribe(function (evt) {
                 _this.toggle(evt);
             });
+            _this._subscriptions.push(sub);
         });
     };
     PanelBarComponent.prototype.toggle = function (evt) {
         evt.preventDefault();
         evt.stopPropagation();
         this.onToggle.emit(evt);
+    };
+    PanelBarComponent.prototype.ngOnDestroy = function () {
+        this._subscriptions.forEach(function (sub) {
+            if (sub)
+                sub.unsubscribe();
+        });
     };
     __decorate([
         core_1.Output(), 

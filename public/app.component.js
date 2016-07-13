@@ -63,9 +63,6 @@ var AppComponent = (function () {
         this.authService.reset();
         this.router.navigate(['/login']);
     };
-    AppComponent.prototype.ngOnDestroy = function () {
-        this.subscriptions.forEach(function (s) { return s.unsubscribe(); });
-    };
     AppComponent.prototype.routeIs = function (url, strict) {
         if (strict === void 0) { strict = false; }
         if (strict)
@@ -79,6 +76,9 @@ var AppComponent = (function () {
         if (this._sidenav.opened) {
             this._sidenav.close();
         }
+    };
+    AppComponent.prototype.ngOnDestroy = function () {
+        this.subscriptions.forEach(function (sub) { return sub.unsubscribe(); });
     };
     __decorate([
         core_1.ViewChild(sidenav_1.MdSidenav), 

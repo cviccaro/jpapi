@@ -24,6 +24,7 @@ var BlogComponent = (function () {
         this.ready = false;
         this.saving = false;
         this._blog = new index_1.Blog();
+        this._subscriptions = [];
     }
     Object.defineProperty(BlogComponent.prototype, "isNewClass", {
         get: function () { return this.isNew; },
@@ -47,13 +48,19 @@ var BlogComponent = (function () {
         if (id === 'new') {
             this.ready = true;
             this.isNew = true;
+            setTimeout(function () {
+                _this.ckEditors = _this._formCmp._ckEditors;
+            });
         }
         else {
-            this.service.find(+id).subscribe(function (res) {
+            var sub = this.service.find(+id).subscribe(function (res) {
                 _this.blog = res;
-                console.debug('setting blog model to ', res);
                 _this.ready = true;
+                setTimeout(function () {
+                    _this.ckEditors = _this._formCmp._ckEditors;
+                });
             });
+            this._subscriptions.push(sub);
         }
         this.controls = [
             new index_1.PanelFormControlTextfield({
@@ -101,7 +108,7 @@ var BlogComponent = (function () {
         this.saving = true;
         if (this.isNew) {
             console.log('Save NEW blog. ', model);
-            this.service.create(model)
+            var sub = this.service.create(model)
                 .subscribe(function (res) {
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                 setTimeout(function () {
@@ -115,10 +122,11 @@ var BlogComponent = (function () {
                 _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
             });
+            this._subscriptions.push(sub);
         }
         else {
             console.log('Save UPDATED blog. ', model);
-            this.service.update(this.blog.id, model)
+            var sub = this.service.update(this.blog.id, model)
                 .subscribe(function (res) {
                 console.log('response from update: ', res);
                 _this.blog = res;
@@ -129,16 +137,12 @@ var BlogComponent = (function () {
                 _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
             });
+            this._subscriptions.push(sub);
         }
     };
     BlogComponent.prototype.setup = function () {
-        var _this = this;
         this._originalTitle = this._blog.title;
         this.isNew = this.blog.id === undefined;
-        setTimeout(function () {
-            _this.ckEditors = _this._formCmp._ckEditors;
-        });
-        console.info('BlogComponent.setup()', this);
     };
     BlogComponent.prototype.reset = function (e) {
         var _this = this;
@@ -149,7 +153,21 @@ var BlogComponent = (function () {
         console.info('BlogComponent.reset()', this);
         this.saving = false;
         this.ready = false;
-        setTimeout(function () { _this.ready = true; }, 0);
+        if (this.ckEditors.length) {
+            this._formCmp._ckEditors.forEach(function (editor) { return editor.instance.destroy(); });
+        }
+        setTimeout(function () {
+            _this.ready = true;
+            setTimeout(function () {
+                _this.ckEditors = _this._formCmp._ckEditors;
+            });
+        });
+    };
+    BlogComponent.prototype.ngOnDestroy = function () {
+        this._subscriptions.forEach(function (sub) {
+            if (sub)
+                sub.unsubscribe();
+        });
     };
     __decorate([
         core_1.HostBinding('class.new'), 

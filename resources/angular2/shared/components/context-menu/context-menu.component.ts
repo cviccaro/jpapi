@@ -65,7 +65,11 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 		this._leftPos = (e.clientX+10) + 'px';
 		this.opened = true;
 	}
-
+	
+	/**
+	 * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+	 * observables and detach event handlers to avoid memory leaks.
+	 */
 	ngOnDestroy() {
 		if (this.closeSubscriber) this.closeSubscriber.unsubscribe();
 		if (this.backdropSubscription) this.backdropSubscription.unsubscribe();

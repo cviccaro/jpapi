@@ -12,6 +12,7 @@ var core_1 = require('@angular/core');
 var panel2_component_1 = require('../panel2.component');
 var PanelGroupComponent = (function () {
     function PanelGroupComponent() {
+        this._subscriptions = [];
         this.childExpanded = false;
     }
     Object.defineProperty(PanelGroupComponent.prototype, "expandedClass", {
@@ -22,9 +23,16 @@ var PanelGroupComponent = (function () {
     PanelGroupComponent.prototype.ngAfterContentInit = function () {
         var _this = this;
         this._panelChildren.forEach(function (panel) {
-            panel.onToggle.subscribe(function (expanded) {
+            var sub = panel.onToggle.subscribe(function (expanded) {
                 _this.childExpanded = !!_this._panelChildren.filter(function (panel) { return panel.expanded; }).length;
             });
+            _this._subscriptions.push(sub);
+        });
+    };
+    PanelGroupComponent.prototype.ngOnDestroy = function () {
+        this._subscriptions.forEach(function (sub) {
+            if (sub)
+                sub.unsubscribe();
         });
     };
     __decorate([
