@@ -11,11 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/map');
+var logger_service_1 = require('./logger.service');
 var xhr_1 = require('./xhr');
 var ClientService = (function () {
-    function ClientService(http, xhr) {
+    function ClientService(http, xhr, log) {
         this.http = http;
         this.xhr = xhr;
+        this.log = log;
         this.http = http;
     }
     ClientService.prototype.all = function (params) {
@@ -69,7 +71,7 @@ var ClientService = (function () {
                     }
             }
         });
-        console.log('update client with data: ', {
+        this.log.log('update client with data: ', {
             values: values,
             form: form,
             _form: _form
@@ -108,7 +110,7 @@ var ClientService = (function () {
                     }
             }
         });
-        console.log('create client with data: ', {
+        this.log.log('create client with data: ', {
             values: values,
             form: form,
             _form: _form
@@ -131,7 +133,7 @@ var ClientService = (function () {
     };
     ClientService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http, xhr_1.XhrService])
+        __metadata('design:paramtypes', [http_1.Http, xhr_1.XhrService, logger_service_1.LoggerService])
     ], ClientService);
     return ClientService;
 }());

@@ -22,9 +22,6 @@ var FileIconComponent = (function () {
         enumerable: true,
         configurable: true
     });
-    FileIconComponent.prototype.ngAfterViewInit = function () {
-        console.debug('FileIconComponent view initialized. ', this);
-    };
     __decorate([
         core_1.Input(), 
         __metadata('design:type', String)

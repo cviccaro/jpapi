@@ -30,6 +30,7 @@ import { MD_ICON_DIRECTIVES } from '@angular2-material/icon';
 
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
+import { LoggerService } from '../../services/logger.service';
 import { GridImage } from './grid-image/index';
 import { ManagedFile, ManagedImage } from '../../models/file';
 import { FileUploadToolbar } from './toolbar/index';
@@ -66,6 +67,8 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     providers: [IMAGE_UPLOAD_VALUE_ACCESSOR]
 })
 export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
+    constructor(private log: LoggerService) { }
+
     public isDragOver: boolean = false;
     public isLoading: boolean = false;
     private listener: EventListener;
@@ -138,12 +141,12 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
 
     /** @internal */
     handleFocus(event: FocusEvent) {
-        console.log('FileUploadComponent#handleFocus', event);
+        this.log.log('FileUploadComponent#handleFocus', event);
     }
 
     /** @internal */
     handleBlur(event: FocusEvent) {
-        console.log('FileUploadComponent#handleBlur', event);
+        this.log.log('FileUploadComponent#handleBlur', event);
     }
 
     get value(): any { return this._value; };
@@ -418,7 +421,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
      * Form reset
      */
     reset() {
-        console.log('FileUploadComponent.reset()', this);
+        this.log.log('FileUploadComponent.reset()', this);
     }
 
     /**

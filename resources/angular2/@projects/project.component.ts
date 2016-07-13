@@ -8,7 +8,7 @@ import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import {
     ProjectService,
     Project,
-    JpaCache,
+    CacheService,
     PANEL2_DIRECTIVES,
     PanelFormComponent,
     PanelFormControl,
@@ -16,7 +16,8 @@ import {
     PanelFormControlSelect,
     PanelFormControlTextarea,
     PanelFormControlDragnDrop,
-    PanelFormControlFiles
+    PanelFormControlFiles,
+    LoggerService
 } from '../shared/index';
 
 @Component({
@@ -50,7 +51,8 @@ export class ProjectComponent implements OnInit, OnDestroy {
         private service: ProjectService,
         private toasterService: ToasterService,
         private router: Router,
-        private cache: JpaCache
+        private cache: CacheService,
+        private log: LoggerService
     ) { }
 
     get project(): Project { return this._project; }
@@ -113,42 +115,42 @@ export class ProjectComponent implements OnInit, OnDestroy {
           })
         ];
 
-        console.info('ProjectComponent#'+(this.isNew?'create':'edit')+' initialized.', this);
+        this.log.info('ProjectComponent#'+(this.isNew?'create':'edit')+' initialized.', this);
     }
 
     onSubmit(model) {
         this.saving = true;
 
         if (this.isNew) {
-            console.log('Save NEW project. ', model);
+            this.log.log('Save NEW project. ', model);
 
             let sub = this.service.create(model)
                 .subscribe(res => {
                     this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
                         this.project = res;
-                        console.log("Navigating to /projects/" + res.id);
+                        this.log.log("Navigating to /projects/" + res.id);
                         this.router.navigate(['/projects', res.id]);
                         this.reset();
                     }, 1000);
                 },err => {
-                    console.log('Error when saving project: ', err);
+                    this.log.log('Error when saving project: ', err);
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
                 });
 
             this._subscriptions.push(sub);
         } else {
-            console.log('Save UPDATED project. ', model);
+            this.log.log('Save UPDATED project. ', model);
 
             let sub = this.service.update(this.project.id, model)
                 .subscribe(res => {
-                    console.log('response from update: ', res);
+                    this.log.log('response from update: ', res);
                     this.project = res;
                     this.reset();
                     this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
                 }, err => {
-                    console.log('Error when saving projet: ', err);
+                    this.log.log('Error when saving projet: ', err);
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
                 });
@@ -167,7 +169,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
             e.preventDefault();
             e.stopPropagation();
         }
-        console.info('ProjectComponent.reset()', this);
+        this.log.info('ProjectComponent.reset()', this);
 
         this.saving = false;
 

@@ -30,7 +30,7 @@ var ClientsGuard = (function () {
     };
     ClientsGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.ClientService, index_1.JpaCache])
+        __metadata('design:paramtypes', [index_1.ClientService, index_1.CacheService])
     ], ClientsGuard);
     return ClientsGuard;
 }());

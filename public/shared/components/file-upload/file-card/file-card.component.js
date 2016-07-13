@@ -81,12 +81,8 @@ var FileCardComponent = (function () {
     FileCardComponent.prototype.remove = function (e) {
         this.clickedRemove.emit(e);
     };
-    FileCardComponent.prototype.ngOnInit = function () {
-        console.log('FileCardComponent initialized', this);
-    };
     FileCardComponent.prototype.ngAfterViewInit = function () {
         var _this = this;
-        console.log('FileCardComponent VIEW initialized', this);
         if (this.actionDelegate) {
             this.hoverSub = this.actionDelegate.hover.subscribe(function (e) { return _this.hovering = true; });
             this.hoverOutSub = this.actionDelegate.hoverOut.subscribe(function (e) { return _this.hovering = false; });

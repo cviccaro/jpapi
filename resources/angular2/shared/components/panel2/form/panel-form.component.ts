@@ -16,6 +16,7 @@ import { CKEditor } from 'ng2-ckeditor';
 
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
 
+import { LoggerService } from '../../../services/logger.service';
 import { PanelComponent } from '../panel2.component';
 import { PanelBarComponent, PanelBarTitleComponent, PanelBarSubtitleComponent } from '../bar/index';
 import { PanelContentComponent } from '../content/index';
@@ -51,7 +52,7 @@ declare var CKEDITOR: any;
     viewProviders: [NgControl]
 })
 export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
-    constructor(public builder: FormBuilder) { }
+    constructor(public builder: FormBuilder, private log: LoggerService) { }
 
     panelForm: FormGroup;
     ready: boolean = true;
@@ -115,7 +116,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
         });
 
         if (this.controls.length !== this._formControls.length) {
-            console.warn(`${this.controls.length} PanelFormControlsControls passed
+            this.log.warn(`${this.controls.length} PanelFormControlsControls passed
                 in but could only find ${this._formControls.length} ngFormControls`);
         }
 
@@ -145,7 +146,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
             this._subscriptions.push(sub);
         });
 
-        console.log('PanelFormComponent afterViewInit', this);
+        this.log.log('PanelFormComponent afterViewInit', this);
     }
 
     /**

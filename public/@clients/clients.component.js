@@ -13,12 +13,13 @@ var angular2_toaster_1 = require('angular2-toaster');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var ClientsComponent = (function () {
-    function ClientsComponent(service, cache, modal, toaster, menu) {
+    function ClientsComponent(service, cache, modal, toaster, menu, log) {
         this.service = service;
         this.cache = cache;
         this.modal = modal;
         this.toaster = toaster;
         this.menu = menu;
+        this.log = log;
         this.state = this.cache.get('clients');
         this.state.sortOptions = [
             { name: 'Updated At', value: 'updated_at' },
@@ -34,7 +35,7 @@ var ClientsComponent = (function () {
         this.clients = this.state.data;
     }
     ClientsComponent.prototype.ngAfterViewInit = function () {
-        console.log('ClientsComponent View Initialized.', this);
+        this.log.log('ClientsComponent View Initialized.', this);
     };
     ClientsComponent.prototype.add = function () {
         var _this = this;
@@ -50,14 +51,15 @@ var ClientsComponent = (function () {
         }).subscribe(function (action) {
             if (action.type === 'submit') {
                 var form = action.config.inputs;
-                console.log('We can now save our client with this data: ', {
+                _this.log.log('We can now save our client with this data: ', {
                     form: form
                 });
-                _this.service.create(form)
+                var sub = _this.service.create(form)
                     .subscribe(function (res) {
                     _this.toaster.pop('success', 'Success!', res.name + ' has been created.');
                     setTimeout(function () { _this.fetch(); }, 0);
                 });
+                _this.subs.push(sub);
             }
         });
     };
@@ -89,39 +91,49 @@ var ClientsComponent = (function () {
             modalConfig.inputs[4]['label'] = 'Add an image';
             modalConfig.inputs.splice(3, 1);
         }
-        this.modal.open(modalConfig).subscribe(function (action) {
+        var sub = this.modal.open(modalConfig).subscribe(function (action) {
             if (action.type === 'submit') {
                 var form = action.config.inputs;
-                console.log('We can now save our client with this data: ', {
+                _this.log.log('We can now save our client with this data: ', {
                     form: form
                 });
-                _this.service.update(client.id, form)
+                var _sub = _this.service.update(client.id, form)
                     .subscribe(function (res) {
                     _this.toaster.pop('success', 'Success!', res.name + ' has been edited.');
                     setTimeout(function () { _this.fetch(); }, 0);
                 });
+                _this.subs.push(_sub);
             }
         });
+        this.subs.push(sub);
     };
     ClientsComponent.prototype.remove = function (client) {
         var _this = this;
         this.menu.close();
         var name = client.name;
-        this.modal.open({ message: 'Discard client?', okText: 'Discard' })
+        var sub = this.modal.open({ message: 'Discard client?', okText: 'Discard' })
             .subscribe(function (action) {
             if (action.type === 'ok') {
-                _this.service.destroy(client.id)
+                var _sub = _this.service.destroy(client.id)
                     .subscribe(function (res) {
                     _this.toaster.pop('success', 'Success!', name + ' has been obliterated.');
                     setTimeout(function () { _this.fetch(); }, 0);
                 });
+                _this.subs.push(_sub);
             }
         });
+        this.subs.push(sub);
     };
     ClientsComponent.prototype.fetch = function () {
         var _this = this;
         this.service.all().subscribe(function (res) {
             _this.clients = res.data;
+        });
+    };
+    ClientsComponent.prototype.ngOnDestroy = function () {
+        this.subs.forEach(function (sub) {
+            if (sub)
+                sub.unsubscribe();
         });
     };
     ClientsComponent = __decorate([
@@ -132,7 +144,7 @@ var ClientsComponent = (function () {
             styleUrls: ['./clients.component.css'],
             directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.CONTEXT_MENU_DIRECTIVES, index_1.TooltipDirective]
         }), 
-        __metadata('design:paramtypes', [index_1.ClientService, index_1.JpaCache, index_1.JpaModal, angular2_toaster_1.ToasterService, index_1.JpaContextMenu])
+        __metadata('design:paramtypes', [index_1.ClientService, index_1.CacheService, index_1.JpaModal, angular2_toaster_1.ToasterService, index_1.JpaContextMenu, index_1.LoggerService])
     ], ClientsComponent);
     return ClientsComponent;
 }());

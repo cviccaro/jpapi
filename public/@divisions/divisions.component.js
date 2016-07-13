@@ -14,22 +14,23 @@ var angular2_toaster_1 = require('angular2-toaster');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var DivisionsComponent = (function () {
-    function DivisionsComponent(service, cache, modal, toaster, router) {
+    function DivisionsComponent(service, cache, modal, toaster, router, log) {
         this.service = service;
         this.cache = cache;
         this.modal = modal;
         this.toaster = toaster;
         this.router = router;
+        this.log = log;
         this.divisions = [];
         this.state = this.cache.get('divisions');
         this.divisions = this.state.data;
     }
     DivisionsComponent.prototype.ngAfterViewInit = function () {
-        console.log('DivisionComponent AfterViewInit', this);
+        this.log.log('DivisionComponent AfterViewInit', this);
     };
     DivisionsComponent.prototype.edit = function (division) {
         var command = ['/divisions', division.id];
-        console.log('Route to ', command);
+        this.log.log('Route to ', command);
         this.router.navigate(command);
     };
     DivisionsComponent = __decorate([
@@ -40,7 +41,7 @@ var DivisionsComponent = (function () {
             styleUrls: ['./divisions.component.css'],
             directives: [angular2_material_1.MATERIAL_DIRECTIVES, index_1.TooltipDirective]
         }), 
-        __metadata('design:paramtypes', [index_1.DivisionService, index_1.JpaCache, index_1.JpaModal, angular2_toaster_1.ToasterService, router_1.Router])
+        __metadata('design:paramtypes', [index_1.DivisionService, index_1.CacheService, index_1.JpaModal, angular2_toaster_1.ToasterService, router_1.Router, index_1.LoggerService])
     ], DivisionsComponent);
     return DivisionsComponent;
 }());

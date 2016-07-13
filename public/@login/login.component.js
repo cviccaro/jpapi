@@ -11,32 +11,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var router_1 = require('@angular/router');
 var forms_1 = require('@angular/forms');
-var angular2_material_1 = require('../shared/libs/angular2-material');
 var angular2_toaster_1 = require('angular2-toaster');
+var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var LoginComponent = (function () {
-    function LoginComponent(router, service, toaster) {
+    function LoginComponent(router, service, toaster, log) {
         this.router = router;
         this.service = service;
         this.toaster = toaster;
+        this.log = log;
         this.submitted = false;
         this.working = false;
     }
     LoginComponent.prototype.ngOnInit = function () {
         var _this = this;
-        console.log('LoginComponent initialized.', this);
-        this.service.whenAuthorized.subscribe(function (authorized) { return _this.router.navigate(['']); });
+        this.log.log('LoginComponent initialized.', this);
+        var sub = this.service.whenAuthorized.subscribe(function (authorized) { return _this.router.navigate(['']); });
+        this.subs.push(sub);
     };
     LoginComponent.prototype.onSubmit = function () {
         var _this = this;
         this.working = true;
         this.submitted = true;
-        this.service.login(this.email, this.password)
+        var sub = this.service.login(this.email, this.password)
             .subscribe(function (res) { return _this.success(res); }, function (error) { return _this.fail(error); });
+        this.subs.push(sub);
     };
     LoginComponent.prototype.success = function (res) {
         var _this = this;
-        console.log('Authservice returned successfully: ', res);
+        this.log.log('Authservice returned successfully: ', res);
         this.working = false;
         this.toaster.pop('success', 'Success!', 'Logging you in now.');
         setTimeout(function () { return _this.router.navigate(['']); }, 500);
@@ -44,6 +47,12 @@ var LoginComponent = (function () {
     LoginComponent.prototype.fail = function (error) {
         this.working = false;
         this.toaster.pop('error', error.title, error.message);
+    };
+    LoginComponent.prototype.ngOnDestroy = function () {
+        this.subs.forEach(function (sub) {
+            if (sub)
+                sub.unsubscribe();
+        });
     };
     LoginComponent = __decorate([
         core_1.Component({
@@ -54,7 +63,7 @@ var LoginComponent = (function () {
             directives: [angular2_material_1.MATERIAL_DIRECTIVES],
             providers: [forms_1.NgForm]
         }), 
-        __metadata('design:paramtypes', [router_1.Router, index_1.AuthService, angular2_toaster_1.ToasterService])
+        __metadata('design:paramtypes', [router_1.Router, index_1.AuthService, angular2_toaster_1.ToasterService, index_1.LoggerService])
     ], LoginComponent);
     return LoginComponent;
 }());

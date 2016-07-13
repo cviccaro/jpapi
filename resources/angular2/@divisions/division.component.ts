@@ -4,7 +4,7 @@ import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 
 import { ToasterService } from 'angular2-toaster';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { JpaCache, Division, DivisionService, JpFile } from '../shared/index';
+import { CacheService, Division, DivisionService, JpFile, LoggerService } from '../shared/index';
 
 @Component({
 	moduleId: module.id,
@@ -44,10 +44,11 @@ export class DivisionComponent implements OnInit, AfterViewInit {
 	}
 
 	constructor(
-		private cache: JpaCache,
+		private cache: CacheService,
 		private route: ActivatedRoute,
 		private service: DivisionService,
-		private toaster: ToasterService
+		private toaster: ToasterService,
+		private log: LoggerService
 	) {
 		this.division = this.cache.get('division');
 	}
@@ -61,14 +62,14 @@ export class DivisionComponent implements OnInit, AfterViewInit {
 		} else {
 		    this.service.find(+id).subscribe(res => {
 		        this.division = res;
-		        console.debug('setting division model to ', res);
+		        this.log.debug('setting division model to ', res);
 		        this.ready = true;
 		    });
 		}
 	}
 
 	ngAfterViewInit() {
-		console.log('Division Component View Initialized', this);
+		this.log.log('Division Component View Initialized', this);
 	}
 
 	onSubmit() {
@@ -79,23 +80,23 @@ export class DivisionComponent implements OnInit, AfterViewInit {
 	    //             this.toasterService.pop('success', 'Success!', this.blog.title + ' has been created.  Redirecting to its page.');
 	    //             setTimeout(() => {
 	    //                 this.blog = res;
-	    //                 console.log("Navigating to /blogs/" + res.id);
+	    //                 this.log.log("Navigating to /blogs/" + res.id);
 	    //                 this.router.navigate(['/blogs', res.id]);
 	    //                 this.reset();
 	    //             }, 2000);
 	    //         },err => {
-	    //             console.log('Error when saving blog: ', err);
+	    //             this.log.log('Error when saving blog: ', err);
 	    //             this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
 	    //         });
 	    // } else {
 	        this.service.update(this.division.id, this.division)
 	            .subscribe(res => {
-	                console.log('response from update: ', res);
+	                this.log.log('response from update: ', res);
 	                this.division = res;
 	                this.reset();
 	                this.toaster.pop('success', 'Success!', this.division.name + ' has been saved.');
 	            }, err => {
-	                console.log('Error when saving: ', err);
+	                this.log.log('Error when saving: ', err);
 	                this.toaster.pop('error', 'Uh oh.', 'Something went wrong when saving this division.  Sorry.  Try again later and/or alert the developer!');
 	            });
 	    // }

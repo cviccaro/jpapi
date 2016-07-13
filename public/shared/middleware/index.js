@@ -10,7 +10,6 @@ __export(require('./project.guard'));
 __export(require('./project-list.guard'));
 __export(require('./clients.guard'));
 __export(require('./divisions.guard'));
-__export(require('./division.guard'));
 __export(require('./ckeditor.guard'));
 
 //# sourceMappingURL=index.js.map

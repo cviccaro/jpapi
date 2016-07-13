@@ -13,12 +13,13 @@ var router_1 = require('@angular/router');
 var index_1 = require('../shared/index');
 var angular2_toaster_1 = require('angular2-toaster');
 var ProjectListComponent = (function () {
-    function ProjectListComponent(projectService, router, modal, toaster, cache) {
+    function ProjectListComponent(projectService, router, modal, toaster, cache, log) {
         this.projectService = projectService;
         this.router = router;
         this.modal = modal;
         this.toaster = toaster;
         this.cache = cache;
+        this.log = log;
         this.listData = [];
         this.listConfig = {
             sortOptions: [
@@ -89,7 +90,7 @@ var ProjectListComponent = (function () {
     };
     ProjectListComponent.prototype.destroy = function (project) {
         var _this = this;
-        console.log('delete this item: ', project);
+        this.log.log('delete this item: ', project);
         if (this.modalSub) {
             this.modalSub.unsubscribe();
         }
@@ -97,7 +98,7 @@ var ProjectListComponent = (function () {
         this.modalSub = this.modal.open({ message: 'Discard project?', okText: 'Discard' })
             .subscribe(function (action) {
             if (action.type === 'ok') {
-                console.log('lets kill this project!', project);
+                _this.log.log('lets kill this project!', project);
                 _this.projectService.destroy(project.id)
                     .subscribe(function (res) {
                     _this.toaster.pop('success', 'Success!', title + ' has been obliterated.');
@@ -127,7 +128,7 @@ var ProjectListComponent = (function () {
                 index_1.ListComponent
             ]
         }), 
-        __metadata('design:paramtypes', [index_1.ProjectService, router_1.Router, index_1.JpaModal, angular2_toaster_1.ToasterService, index_1.JpaCache])
+        __metadata('design:paramtypes', [index_1.ProjectService, router_1.Router, index_1.JpaModal, angular2_toaster_1.ToasterService, index_1.CacheService, index_1.LoggerService])
     ], ProjectListComponent);
     return ProjectListComponent;
 }());

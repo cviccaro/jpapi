@@ -1,4 +1,4 @@
-import { Component, Input, AfterViewInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 import { ManagedFile, ManagedImage } from '../../../models/file';
 
@@ -16,9 +16,5 @@ export class FileIconComponent {
 		return this.extension ?
 			`/libs/Free-file-icons-master/${this.size}px/${this.extension}.png`
 			: '';
-	}
-
-	ngAfterViewInit() {
-		console.debug('FileIconComponent view initialized. ', this);
 	}
 }

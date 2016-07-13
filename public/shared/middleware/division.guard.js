@@ -33,7 +33,7 @@ var DivisionGuard = (function () {
     };
     DivisionGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [router_1.Router, index_1.DivisionService, index_1.JpaCache])
+        __metadata('design:paramtypes', [router_1.Router, index_1.DivisionService, index_1.CacheService])
     ], DivisionGuard);
     return DivisionGuard;
 }());

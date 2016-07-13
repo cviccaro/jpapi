@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable()
-export class JpaCache {
+export class CacheService {
     private _cache = {};
 
     public get cache() { return this._cache; }

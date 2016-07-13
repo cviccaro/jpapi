@@ -30,7 +30,7 @@ var DivisionsGuard = (function () {
     };
     DivisionsGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.DivisionService, index_1.JpaCache])
+        __metadata('design:paramtypes', [index_1.DivisionService, index_1.CacheService])
     ], DivisionsGuard);
     return DivisionsGuard;
 }());

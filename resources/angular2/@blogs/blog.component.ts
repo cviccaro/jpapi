@@ -11,7 +11,7 @@ import {
     DivisionService,
     Tag,
     TagService,
-    JpaCache,
+    CacheService,
     PANEL2_DIRECTIVES,
     PanelFormComponent,
     PanelFormControl,
@@ -19,7 +19,8 @@ import {
     PanelFormControlSelect,
     PanelFormControlTextarea,
     PanelFormControlDragnDrop,
-    PanelFormControlFiles
+    PanelFormControlFiles,
+    LoggerService
 } from '../shared/index';
 
 @Component({
@@ -58,9 +59,10 @@ export class BlogComponent implements OnInit, OnDestroy {
     constructor(
         private route: ActivatedRoute,
         private service: BlogService,
-        private cache: JpaCache,
+        private cache: CacheService,
         private toasterService: ToasterService,
-        private router: Router
+        private router: Router,
+        private log: LoggerService
     ) { }
 
     ngOnInit() {
@@ -127,40 +129,40 @@ export class BlogComponent implements OnInit, OnDestroy {
           })
         ];
 
-        console.info('BlogComponent#' + (this.isNew ? 'create' : 'edit') + ' initialized.', this);
+        this.log.info('BlogComponent#' + (this.isNew ? 'create' : 'edit') + ' initialized.', this);
     }
 
     onSubmit(model) {
         this.saving = true;
 
         if (this.isNew) {
-            console.log('Save NEW blog. ', model);
+            this.log.log('Save NEW blog. ', model);
             let sub = this.service.create(model)
                 .subscribe(res => {
                     this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
                         this.blog = res;
-                        console.log("Navigating to /blogs/" + res.id);
+                        this.log.log("Navigating to /blogs/" + res.id);
                         this.router.navigate(['/blogs', res.id]);
                         this.reset();
                     }, 1000);
                 }, err => {
-                    console.log('Error when saving blog: ', err);
+                    this.log.log('Error when saving blog: ', err);
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
             this._subscriptions.push(sub);
         } else {
-            console.log('Save UPDATED blog. ', model);
+            this.log.log('Save UPDATED blog. ', model);
 
             let sub = this.service.update(this.blog.id, model)
                 .subscribe(res => {
-                    console.log('response from update: ', res);
+                    this.log.log('response from update: ', res);
                     this.blog = res;
                     this.reset();
                     this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
                 }, err => {
-                    console.log('Error when saving blog: ', err);
+                    this.log.log('Error when saving blog: ', err);
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
@@ -179,7 +181,7 @@ export class BlogComponent implements OnInit, OnDestroy {
             e.preventDefault();
             e.stopPropagation();
         }
-        console.info('BlogComponent.reset()', this);
+        this.log.info('BlogComponent.reset()', this);
 
         this.saving = false;
         

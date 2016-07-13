@@ -1,7 +1,9 @@
 import { Component, AfterViewInit } from '@angular/core';
 import { ToasterService } from 'angular2-toaster';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { JpaCache, JpClient, JpaContextMenu, CONTEXT_MENU_DIRECTIVES, JpaModal, ModalAction, ClientService, TooltipDirective } from '../shared/index';
+import { CacheService, JpClient, JpaContextMenu, CONTEXT_MENU_DIRECTIVES, JpaModal, ModalAction, ClientService, TooltipDirective, LoggerService } from '../shared/index';
+
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
     moduleId: module.id,
@@ -13,13 +15,15 @@ import { JpaCache, JpClient, JpaContextMenu, CONTEXT_MENU_DIRECTIVES, JpaModal, 
 export class ClientsComponent implements AfterViewInit {
     public state: any;
     public clients: JpClient[];
+    private subs: Subscription[];
 
     constructor(
         private service: ClientService,
-        private cache: JpaCache,
+        private cache: CacheService,
         private modal: JpaModal,
         private toaster: ToasterService,
-        private menu: JpaContextMenu
+        private menu: JpaContextMenu,
+        private log: LoggerService
     ) {
         this.state = this.cache.get('clients');
 
@@ -38,7 +42,7 @@ export class ClientsComponent implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        console.log('ClientsComponent View Initialized.', this);
+        this.log.log('ClientsComponent View Initialized.', this);
     }
 
     add() {
@@ -55,14 +59,16 @@ export class ClientsComponent implements AfterViewInit {
             if (action.type === 'submit') {
                 let form = action.config.inputs;
 
-                console.log('We can now save our client with this data: ', {
+                this.log.log('We can now save our client with this data: ', {
                     form: form
                 });
-                this.service.create(form)
+                let sub = this.service.create(form)
                     .subscribe(res => {
                         this.toaster.pop('success', 'Success!', res.name + ' has been created.');
                         setTimeout(() => { this.fetch() },0);
                     })
+
+                this.subs.push(sub);
             }
         });
     }
@@ -96,40 +102,54 @@ export class ClientsComponent implements AfterViewInit {
             modalConfig.inputs.splice(3, 1);
         }
 
-        this.modal.open(modalConfig).subscribe((action: ModalAction) => {
+        let sub = this.modal.open(modalConfig).subscribe((action: ModalAction) => {
             if (action.type === 'submit') {
                 let form = action.config.inputs;
 
-                console.log('We can now save our client with this data: ', {
+                this.log.log('We can now save our client with this data: ', {
                     form: form
                 });
-                this.service.update(client.id, form)
+                let _sub = this.service.update(client.id, form)
                     .subscribe(res => {
                         this.toaster.pop('success', 'Success!', res.name + ' has been edited.');
                         setTimeout(() => { this.fetch() },0);
                     })
+
+                this.subs.push(_sub);
             }
         });
+
+        this.subs.push(sub);
     }
 
     remove(client: JpClient) {
         this.menu.close();
         let name = client.name;
-        this.modal.open({message: 'Discard client?', okText: 'Discard'})
+        let sub = this.modal.open({message: 'Discard client?', okText: 'Discard'})
             .subscribe((action: ModalAction) => {
                 if (action.type === 'ok') {
-                    this.service.destroy(client.id)
+                    let _sub = this.service.destroy(client.id)
                         .subscribe(res => {
                             this.toaster.pop('success', 'Success!', name + ' has been obliterated.');
                             setTimeout(() => { this.fetch() },0);
                         })
+
+                    this.subs.push(_sub);
                 }
             })
+
+        this.subs.push(sub);
     }
 
     fetch() {
         this.service.all().subscribe(res => {
             this.clients = res.data;
+        });
+    }
+
+    ngOnDestroy() {
+        this.subs.forEach(sub => {
+            if (sub) sub.unsubscribe();
         });
     }
 }

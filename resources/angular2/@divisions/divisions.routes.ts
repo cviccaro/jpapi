@@ -1,6 +1,6 @@
 import { DivisionsIndexComponent, DivisionsComponent, DivisionComponent } from './index';
 
-import { AuthGuard, DivisionGuard, DivisionsGuard } from '../shared/index';
+import { AuthGuard, DivisionsGuard } from '../shared/index';
 
 export const DivisionRoutes = [
     {

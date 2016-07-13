@@ -7,7 +7,7 @@ import { ProjectRoutes } from './@projects/index';
 import { ClientRoutes } from './@clients/index';
 import { DivisionRoutes } from './@divisions/index';
 
-import { AuthGuard, LoginGuard, BlogListGuard, BlogGuard, ProjectGuard, ProjectListGuard, ClientsGuard, DivisionsGuard, DivisionGuard, CkEditorGuard } from './shared/index';
+import { AuthGuard, LoginGuard, BlogListGuard, BlogGuard, ProjectGuard, ProjectListGuard, ClientsGuard, DivisionsGuard, CkEditorGuard } from './shared/index';
 
 const routes: RouterConfig = [
     ...LoginRoutes,
@@ -28,6 +28,5 @@ export const APP_ROUTER_PROVIDERS = [
     ProjectGuard,
     ClientsGuard,
     DivisionsGuard,
-    DivisionGuard,
     CkEditorGuard
 ];

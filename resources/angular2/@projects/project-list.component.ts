@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {Subscription} from 'rxjs/Rx';
-import {Project, ProjectService, ListComponent, ListConfig, JpaModal, ModalAction, JpaCache} from '../shared/index';
+import {Project, ProjectService, ListComponent, ListConfig, JpaModal, ModalAction, CacheService, LoggerService} from '../shared/index';
 import { ToasterService } from 'angular2-toaster';
 
 /**
@@ -28,7 +28,8 @@ export class ProjectListComponent implements OnInit, OnDestroy {
         private router: Router,
         private modal: JpaModal,
         public toaster: ToasterService,
-        private cache: JpaCache
+        private cache: CacheService,
+        private log: LoggerService
     ) {
         this.listConfig = {
             sortOptions: [
@@ -104,7 +105,7 @@ export class ProjectListComponent implements OnInit, OnDestroy {
     }
 
     destroy(project: Project) {
-        console.log('delete this item: ', project);
+        this.log.log('delete this item: ', project);
         if (this.modalSub) {
             this.modalSub.unsubscribe();
         }
@@ -114,7 +115,7 @@ export class ProjectListComponent implements OnInit, OnDestroy {
         this.modalSub = this.modal.open({message: 'Discard project?', okText: 'Discard'})
             .subscribe((action:ModalAction) => {
                if (action.type === 'ok') {
-                   console.log('lets kill this project!', project);
+                   this.log.log('lets kill this project!', project);
                    this.projectService.destroy(project.id)
                        .subscribe(res => {
                            this.toaster.pop('success', 'Success!', title + ' has been obliterated.');

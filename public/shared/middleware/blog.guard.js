@@ -46,7 +46,7 @@ var BlogGuard = (function () {
     };
     BlogGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.JpaCache, index_1.TagService, index_1.DivisionService, router_1.ActivatedRoute])
+        __metadata('design:paramtypes', [index_1.CacheService, index_1.TagService, index_1.DivisionService, router_1.ActivatedRoute])
     ], BlogGuard);
     return BlogGuard;
 }());

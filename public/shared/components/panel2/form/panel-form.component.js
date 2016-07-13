@@ -13,6 +13,7 @@ var common_1 = require('@angular/common');
 var forms_1 = require('@angular/forms');
 var ng2_ckeditor_1 = require('ng2-ckeditor');
 var angular2_material_1 = require('../../../libs/angular2-material');
+var logger_service_1 = require('../../../services/logger.service');
 var panel2_component_1 = require('../panel2.component');
 var index_1 = require('../bar/index');
 var index_2 = require('../content/index');
@@ -21,8 +22,9 @@ var dnd_form_control_component_1 = require('./dnd/dnd-form-control.component');
 var file_upload_component_1 = require('../../file-upload/file-upload.component');
 var summary_component_1 = require('./summary/summary.component');
 var PanelFormComponent = (function () {
-    function PanelFormComponent(builder) {
+    function PanelFormComponent(builder, log) {
         this.builder = builder;
+        this.log = log;
         this.ready = true;
         this.panelToggleStates = {};
         this._controlPanels = {};
@@ -59,7 +61,7 @@ var PanelFormComponent = (function () {
             _this._controlPanels[control.name] = panel;
         });
         if (this.controls.length !== this._formControls.length) {
-            console.warn(this.controls.length + " PanelFormControlsControls passed\n                in but could only find " + this._formControls.length + " ngFormControls");
+            this.log.warn(this.controls.length + " PanelFormControlsControls passed\n                in but could only find " + this._formControls.length + " ngFormControls");
         }
         this._formControls.forEach(function (formControl) {
             var sub = formControl.valueChanges.debounceTime(250).subscribe(function (e) {
@@ -84,7 +86,7 @@ var PanelFormComponent = (function () {
             });
             _this._subscriptions.push(sub);
         });
-        console.log('PanelFormComponent afterViewInit', this);
+        this.log.log('PanelFormComponent afterViewInit', this);
     };
     PanelFormComponent.prototype.getPanel = function (control) {
         var panels = this._panels.filter(function (panel) {
@@ -171,7 +173,7 @@ var PanelFormComponent = (function () {
             ],
             viewProviders: [forms_1.NgControl]
         }), 
-        __metadata('design:paramtypes', [forms_1.FormBuilder])
+        __metadata('design:paramtypes', [forms_1.FormBuilder, logger_service_1.LoggerService])
     ], PanelFormComponent);
     return PanelFormComponent;
 }());

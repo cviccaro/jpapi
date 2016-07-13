@@ -13,11 +13,14 @@ var http_1 = require('@angular/http');
 var Rx_1 = require('rxjs/Rx');
 var angular2_jwt_1 = require('angular2-jwt');
 var ReplaySubject_1 = require('rxjs/ReplaySubject');
+var logger_service_1 = require('./logger.service');
 var AuthService = (function () {
-    function AuthService(http, authHttp, helper) {
+    function AuthService(http, authHttp, helper, log) {
+        var _this = this;
         this.http = http;
         this.authHttp = authHttp;
         this.helper = helper;
+        this.log = log;
         this._authorized = false;
         this.hasStorage = !(localStorage === undefined);
         this.token = '';
@@ -25,7 +28,33 @@ var AuthService = (function () {
         this.authToken$ = this._authTokenSource.asObservable();
         this._authorizedSource = new ReplaySubject_1.ReplaySubject(1);
         this.whenAuthorized = this._authorizedSource.asObservable();
-        this.ngOnInit();
+        if (this.hasStorage) {
+            ['token', 'expires'].forEach(function (key) {
+                var val = localStorage.getItem("id_" + key);
+                if (val)
+                    _this[key] = val;
+            });
+        }
+        else {
+            this.log.warn('authService#local storage is not supported.');
+        }
+        if (this.token != '') {
+            this.log.log('authService#Found authorization token in localStorage.  Checking expiration date...');
+            if (this.expires !== undefined && this.timeLeft(this.expires) > 0) {
+                this.authorized = true;
+            }
+            else {
+                this.log.log('authService#FAIL: Authorization token expired on ', this.expires);
+                this.refresh()
+                    .subscribe(function (res) {
+                    _this.log.log('refresh response to subscription receiver', res);
+                });
+            }
+        }
+        else {
+            this.log.log('authService#no token found in storage.');
+        }
+        this.log.log('authService#init END', this);
     }
     Object.defineProperty(AuthService.prototype, "authorized", {
         get: function () { return this._authorized; },
@@ -36,37 +65,6 @@ var AuthService = (function () {
         enumerable: true,
         configurable: true
     });
-    AuthService.prototype.ngOnInit = function () {
-        var _this = this;
-        if (this.hasStorage) {
-            ['token', 'expires'].forEach(function (key) {
-                var val = localStorage.getItem("id_" + key);
-                if (val)
-                    _this[key] = val;
-            });
-        }
-        else {
-            console.warn('authService#local storage is not supported.');
-        }
-        if (this.token != '') {
-            console.log('authService#Found authorization token in localStorage.  Checking expiration date...');
-            if (this.expires !== undefined && this.timeLeft(this.expires) > 0) {
-                this.authorized = true;
-                console.log('authService#PASS: Authorization token is still valid for ' + this.timeLeft(this.expires) + ' seconds.');
-            }
-            else {
-                console.log('authService#FAIL: Authorization token expired on ', this.expires);
-                this.refresh()
-                    .subscribe(function (res) {
-                    console.log('refresh response to subscription receiver', res);
-                });
-            }
-        }
-        else {
-            console.log('authService#no token found in storage.');
-        }
-        console.log('authService#init END', this);
-    };
     AuthService.prototype.timeLeft = function (expires) {
         return expires - (new Date().getTime() / 1000);
     };
@@ -93,7 +91,7 @@ var AuthService = (function () {
     };
     AuthService.prototype.login = function (email, password) {
         var _this = this;
-        console.log('authService#login: ', email, password);
+        this.log.log('authService#login: ', email, password);
         return Rx_1.Observable.create(function (observer) {
             _this.http.post('authenticate', { email: email, password: password })
                 .map(function (res) { return res.json(); })
@@ -107,19 +105,19 @@ var AuthService = (function () {
     };
     AuthService.prototype.refresh = function () {
         var _this = this;
-        console.log('authService#refresh');
+        this.log.log('authService#refresh');
         return Rx_1.Observable.create(function (observer) {
             var headers = new http_1.Headers({ 'Authorization': 'Bearer ' + _this.token });
             _this.http.get('authenticate/refresh', { headers: headers })
                 .map(function (res) { return res.json(); })
                 .subscribe(function (res) {
-                console.log('authService#refresh Success', res);
+                _this.log.log('authService#refresh Success', res);
                 _this.setToken(res.token);
                 _this.setExpires(res.expires);
                 _this.authorized = true;
                 observer.next(res);
             }, function (error) {
-                console.log('error in jwt refresh ', error);
+                _this.log.log('error in jwt refresh ', error);
                 observer.error(error);
             });
         });
@@ -148,7 +146,7 @@ var AuthService = (function () {
                     title = 'Login failed';
             }
             catch (e) {
-                console.log('authService#parseError couldnt parse the json: ', {
+                this.log.log('authService#parseError couldnt parse the json: ', {
                     error: error,
                     reason: e
                 });
@@ -158,7 +156,7 @@ var AuthService = (function () {
     };
     AuthService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http, angular2_jwt_1.AuthHttp, angular2_jwt_1.JwtHelper])
+        __metadata('design:paramtypes', [http_1.Http, angular2_jwt_1.AuthHttp, angular2_jwt_1.JwtHelper, logger_service_1.LoggerService])
     ], AuthService);
     return AuthService;
 }());

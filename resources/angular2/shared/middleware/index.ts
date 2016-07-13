@@ -6,5 +6,4 @@ export * from './project.guard';
 export * from './project-list.guard';
 export * from './clients.guard';
 export * from './divisions.guard';
-export * from './division.guard';
 export * from './ckeditor.guard';

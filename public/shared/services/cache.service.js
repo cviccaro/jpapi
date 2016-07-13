@@ -9,23 +9,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var core_1 = require('@angular/core');
-var CkEditorGuard = (function () {
-    function CkEditorGuard() {
+var CacheService = (function () {
+    function CacheService() {
+        this._cache = {};
     }
-    CkEditorGuard.prototype.canDeactivate = function (component, next, state) {
-        if (component['ckEditors']) {
-            component['ckEditors'].forEach(function (ckeditor) {
-                ckeditor.instance.destroy();
-            });
-        }
-        return true;
+    Object.defineProperty(CacheService.prototype, "cache", {
+        get: function () { return this._cache; },
+        enumerable: true,
+        configurable: true
+    });
+    CacheService.prototype.get = function (name) { return this.has(name) ? this.cache[name] : null; };
+    CacheService.prototype.store = function (name, data) {
+        this._cache[name] = data;
+        return this;
     };
-    CkEditorGuard = __decorate([
+    CacheService.prototype.has = function (name) {
+        return this._cache.hasOwnProperty(name);
+    };
+    CacheService = __decorate([
         core_1.Injectable(), 
         __metadata('design:paramtypes', [])
-    ], CkEditorGuard);
-    return CkEditorGuard;
+    ], CacheService);
+    return CacheService;
 }());
-exports.CkEditorGuard = CkEditorGuard;
+exports.CacheService = CacheService;
 
-//# sourceMappingURL=ckeditor.guard.js.map
+//# sourceMappingURL=cache.service.js.map

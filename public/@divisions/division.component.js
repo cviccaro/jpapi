@@ -15,11 +15,12 @@ var angular2_toaster_1 = require('angular2-toaster');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var DivisionComponent = (function () {
-    function DivisionComponent(cache, route, service, toaster) {
+    function DivisionComponent(cache, route, service, toaster, log) {
         this.cache = cache;
         this.route = route;
         this.service = service;
         this.toaster = toaster;
+        this.log = log;
         this.ready = false;
         this.isNew = false;
         this.submitted = false;
@@ -52,25 +53,25 @@ var DivisionComponent = (function () {
         else {
             this.service.find(+id).subscribe(function (res) {
                 _this.division = res;
-                console.debug('setting division model to ', res);
+                _this.log.debug('setting division model to ', res);
                 _this.ready = true;
             });
         }
     };
     DivisionComponent.prototype.ngAfterViewInit = function () {
-        console.log('Division Component View Initialized', this);
+        this.log.log('Division Component View Initialized', this);
     };
     DivisionComponent.prototype.onSubmit = function () {
         var _this = this;
         this.submitted = true;
         this.service.update(this.division.id, this.division)
             .subscribe(function (res) {
-            console.log('response from update: ', res);
+            _this.log.log('response from update: ', res);
             _this.division = res;
             _this.reset();
             _this.toaster.pop('success', 'Success!', _this.division.name + ' has been saved.');
         }, function (err) {
-            console.log('Error when saving: ', err);
+            _this.log.log('Error when saving: ', err);
             _this.toaster.pop('error', 'Uh oh.', 'Something went wrong when saving this division.  Sorry.  Try again later and/or alert the developer!');
         });
     };
@@ -96,7 +97,7 @@ var DivisionComponent = (function () {
                 common_1.NgSwitchDefault
             ]
         }), 
-        __metadata('design:paramtypes', [index_1.JpaCache, router_1.ActivatedRoute, index_1.DivisionService, angular2_toaster_1.ToasterService])
+        __metadata('design:paramtypes', [index_1.CacheService, router_1.ActivatedRoute, index_1.DivisionService, angular2_toaster_1.ToasterService, index_1.LoggerService])
     ], DivisionComponent);
     return DivisionComponent;
 }());

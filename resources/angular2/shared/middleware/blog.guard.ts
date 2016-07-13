@@ -2,7 +2,7 @@ import { Injectable, OnDestroy, OnInit } from '@angular/core';
 import { CanActivate, ActivatedRoute, Params } from '@angular/router';
 import { Observable, Observer, Subscription } from 'rxjs/Rx';
 
-import { BlogService, TagService, DivisionService, JpaCache } from '../services/index';
+import { BlogService, TagService, DivisionService, CacheService } from '../services/index';
 
 
 @Injectable()
@@ -11,7 +11,7 @@ export class BlogGuard implements CanActivate, OnDestroy {
   private tagsSub: Subscription;
 
   constructor(
-    private cache: JpaCache,
+    private cache: CacheService,
     private tagService: TagService,
     private divisionService: DivisionService,
     private route: ActivatedRoute

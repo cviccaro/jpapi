@@ -4,19 +4,21 @@ function __export(m) {
 }
 __export(require('./auth.service'));
 __export(require('./blog.service'));
+__export(require('./cache.service'));
 __export(require('./client.service'));
 __export(require('./division.service'));
+__export(require('./logger.service'));
 __export(require('./project.service'));
 __export(require('./tag.service'));
-__export(require('./cache'));
 __export(require('./xhr'));
 var auth_service_2 = require('./auth.service');
 var blog_service_2 = require('./blog.service');
+var cache_service_2 = require('./cache.service');
 var client_service_2 = require('./client.service');
 var division_service_2 = require('./division.service');
+var logger_service_2 = require('./logger.service');
 var project_service_2 = require('./project.service');
 var tag_service_2 = require('./tag.service');
-var cache_2 = require('./cache');
 var xhr_2 = require('./xhr');
 exports.APP_SERVICES = [
     auth_service_2.AuthService,
@@ -25,8 +27,9 @@ exports.APP_SERVICES = [
     division_service_2.DivisionService,
     tag_service_2.TagService,
     project_service_2.ProjectService,
-    cache_2.JpaCache,
-    xhr_2.XhrService
+    cache_service_2.CacheService,
+    xhr_2.XhrService,
+    logger_service_2.LoggerService
 ];
 
 //# sourceMappingURL=index.js.map

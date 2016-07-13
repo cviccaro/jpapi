@@ -35,7 +35,7 @@ var ProjectGuard = (function () {
     };
     ProjectGuard = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [index_1.ProjectService, index_1.ClientService, router_1.ActivatedRoute, index_1.JpaCache])
+        __metadata('design:paramtypes', [index_1.ProjectService, index_1.ClientService, router_1.ActivatedRoute, index_1.CacheService])
     ], ProjectGuard);
     return ProjectGuard;
 }());

@@ -1,8 +1,8 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {Router} from '@angular/router';
-import {Subscription} from 'rxjs/Rx';
-import {Blog, BlogService, ListComponent, ListConfig, JpaModal, ModalAction, JpaCache} from '../shared/index';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs/Rx';
 import { ToasterService } from 'angular2-toaster';
+import { Blog, BlogService, ListComponent, ListConfig, JpaModal, ModalAction, CacheService, LoggerService } from '../shared/index';
 
 /**
  * This class represents the lazy loaded BlogsComponent.
@@ -22,13 +22,15 @@ export class BlogListComponent implements OnInit, OnDestroy {
     listConfig: ListConfig;
     sub: Subscription;
     modalSub: Subscription;
+    destroySub: Subscription;
 
 	constructor(
         public blogService: BlogService,
         private router: Router,
         private modal: JpaModal,
         public toaster: ToasterService,
-        private cache: JpaCache
+        private cache: CacheService,
+        private log: LoggerService
     ) {
         this.listConfig = {
             sortOptions: [
@@ -104,7 +106,8 @@ export class BlogListComponent implements OnInit, OnDestroy {
     }
 
     destroy(blog: Blog) {
-        console.log('delete this item: ', blog);
+        this.log.log('delete this item: ', blog);
+
         if (this.modalSub) {
             this.modalSub.unsubscribe();
         }
@@ -114,8 +117,7 @@ export class BlogListComponent implements OnInit, OnDestroy {
         this.modalSub = this.modal.open({message: 'Discard blog?', okText: 'Discard'})
             .subscribe((action:ModalAction) => {
                if (action.type === 'ok') {
-                   console.log('lets kill this blog!', blog);
-                   this.blogService.destroy(blog.id)
+                   this.destroySub = this.blogService.destroy(blog.id)
                        .subscribe(res => {
                            this.toaster.pop('success', 'Success!', title + ' has been obliterated.');
                            setTimeout(() => { this.fetch() },0);
@@ -134,5 +136,6 @@ export class BlogListComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         if (this.sub) this.sub.unsubscribe();
         if (this.modalSub) this.modalSub.unsubscribe();
+        if (this.destroySub) this.destroySub.unsubscribe();
     }
 }

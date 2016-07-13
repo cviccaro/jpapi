@@ -51,7 +51,7 @@ export class ActionDelegate {
     directives: [ MATERIAL_DIRECTIVES, FileIconComponent, ActionDelegate ],
     pipes: [ DateFormatPipe ]
 })
-export class FileCardComponent implements OnInit, AfterViewInit, OnDestroy {
+export class FileCardComponent implements AfterViewInit, OnDestroy {
     public hovering = false;
 
     private hoverSub: Subscription;
@@ -70,16 +70,7 @@ export class FileCardComponent implements OnInit, AfterViewInit, OnDestroy {
         this.clickedRemove.emit(e);
     }
 
-    ngOnInit() {
-        // if ( !(this.file instanceof ManagedFile) && !(this.file instanceof ManagedImage) ) {
-
-        // }
-        console.log('FileCardComponent initialized', this);
-    }
-
     ngAfterViewInit() {
-        console.log('FileCardComponent VIEW initialized', this);
-
         if (this.actionDelegate) {
             this.hoverSub = this.actionDelegate.hover.subscribe(e => this.hovering = true);
             this.hoverOutSub = this.actionDelegate.hoverOut.subscribe(e => this.hovering = false);

@@ -4,6 +4,7 @@ var __extends = (this && this.__extends) || function (d, b) {
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
+var logger_service_1 = require('../../services/logger.service');
 var GenericFormField = (function () {
     function GenericFormField() {
         this.type = 'text';
@@ -17,6 +18,7 @@ var ModalFormField = (function (_super) {
     __extends(ModalFormField, _super);
     function ModalFormField(column) {
         _super.call(this);
+        this.log = new logger_service_1.LoggerService();
         if (!column.label) {
             column.label = column.name.substr(0, 1).toUpperCase() + column.name.substr(1, column.name.length - 1);
             column.placeholder = column.label;
@@ -44,7 +46,7 @@ var ModalFormField = (function (_super) {
                     }
                 }
                 else {
-                    console.warn("No target field \"" + condition.target + "\" was found while checking condition for source field " + _this.name);
+                    _this.log.warn("No target field \"" + condition.target + "\" was found while checking condition for source field " + _this.name);
                 }
             });
         }

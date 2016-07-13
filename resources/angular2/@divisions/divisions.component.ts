@@ -2,7 +2,7 @@ import { Component, AfterViewInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ToasterService } from 'angular2-toaster';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
-import { DivisionService, JpaCache, JpaModal, Division, TooltipDirective } from '../shared/index';
+import { DivisionService, CacheService, JpaModal, Division, TooltipDirective, LoggerService } from '../shared/index';
 
 @Component({
 	moduleId: module.id,
@@ -17,21 +17,22 @@ export class DivisionsComponent implements AfterViewInit {
 
 	constructor(
 		private service: DivisionService, 
-		private cache: JpaCache, 
+		private cache: CacheService, 
 		private modal: JpaModal, 
 		private toaster: ToasterService, 
-		private router: Router
+		private router: Router,
+		private log: LoggerService
 	) {
 		this.state = this.cache.get('divisions');
 		this.divisions = this.state.data;
 	}
 	ngAfterViewInit() {
-		console.log('DivisionComponent AfterViewInit', this);
+		this.log.log('DivisionComponent AfterViewInit', this);
 	}
 
 	edit(division: Division) {
 		let command = ['/divisions', division.id];
-		console.log('Route to ', command);
+		this.log.log('Route to ', command);
 		this.router.navigate(command);
 	}
 }

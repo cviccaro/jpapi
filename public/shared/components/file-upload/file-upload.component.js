@@ -17,6 +17,7 @@ var grid_list_1 = require('@angular2-material/grid-list');
 var progress_bar_1 = require('@angular2-material/progress-bar');
 var icon_1 = require('@angular2-material/icon');
 var ng2_dnd_1 = require('ng2-dnd/ng2-dnd');
+var logger_service_1 = require('../../services/logger.service');
 var index_1 = require('./grid-image/index');
 var file_1 = require('../../models/file');
 var index_2 = require('./toolbar/index');
@@ -29,7 +30,8 @@ exports.IMAGE_UPLOAD_VALUE_ACCESSOR = new core_1.Provider(forms_1.NG_VALUE_ACCES
     multi: true
 });
 var FileUploadComponent = (function () {
-    function FileUploadComponent() {
+    function FileUploadComponent(log) {
+        this.log = log;
         this.isDragOver = false;
         this.isLoading = false;
         this._imagesLoaded = 0;
@@ -87,10 +89,10 @@ var FileUploadComponent = (function () {
         configurable: true
     });
     FileUploadComponent.prototype.handleFocus = function (event) {
-        console.log('FileUploadComponent#handleFocus', event);
+        this.log.log('FileUploadComponent#handleFocus', event);
     };
     FileUploadComponent.prototype.handleBlur = function (event) {
-        console.log('FileUploadComponent#handleBlur', event);
+        this.log.log('FileUploadComponent#handleBlur', event);
     };
     Object.defineProperty(FileUploadComponent.prototype, "value", {
         get: function () { return this._value; },
@@ -308,7 +310,7 @@ var FileUploadComponent = (function () {
     };
     ;
     FileUploadComponent.prototype.reset = function () {
-        console.log('FileUploadComponent.reset()', this);
+        this.log.log('FileUploadComponent.reset()', this);
     };
     FileUploadComponent.prototype.handleSingleFileAttach = function (e) {
         this._stopEvent(e);
@@ -473,7 +475,7 @@ var FileUploadComponent = (function () {
             ],
             providers: [exports.IMAGE_UPLOAD_VALUE_ACCESSOR]
         }), 
-        __metadata('design:paramtypes', [])
+        __metadata('design:paramtypes', [logger_service_1.LoggerService])
     ], FileUploadComponent);
     return FileUploadComponent;
 }());

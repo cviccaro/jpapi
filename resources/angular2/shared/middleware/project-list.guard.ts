@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
 
-import { ProjectService, JpaCache } from '../services/index';
+import { ProjectService, CacheService } from '../services/index';
 
 import { Observable } from 'rxjs/Rx';
 
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs/Rx';
 export class ProjectListGuard implements CanActivate, OnDestroy {
     private sub: any;
 
-    constructor(private projectService: ProjectService, private cache: JpaCache) {}
+    constructor(private projectService: ProjectService, private cache: CacheService) {}
 
     canActivate() {
         return Observable.create(observer => {

@@ -3,13 +3,12 @@ import { Http, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map';
 
 import { Division } from '../models/division';
+import { LoggerService } from './logger.service';
 import { XhrService } from './xhr';
 
 @Injectable()
 export class DivisionService {
-	private _cached: string[];
-
-	constructor(public http: Http, public xhr: XhrService) {
+	constructor(public http: Http, public xhr: XhrService, private log: LoggerService) {
 		this.http = http;
 	}
 
@@ -68,7 +67,7 @@ export class DivisionService {
 	        }
 	    });
 
-	    console.debug('DivisionService is sending POST update request with form ', _form);
+	    this.log.debug('DivisionService is sending POST update request with form ', _form);
 
 	    this.xhr.started();
 

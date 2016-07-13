@@ -14,12 +14,13 @@ var angular2_toaster_1 = require('angular2-toaster');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var ProjectComponent = (function () {
-    function ProjectComponent(route, service, toasterService, router, cache) {
+    function ProjectComponent(route, service, toasterService, router, cache, log) {
         this.route = route;
         this.service = service;
         this.toasterService = toasterService;
         this.router = router;
         this.cache = cache;
+        this.log = log;
         this.isNew = false;
         this.ready = false;
         this.saving = false;
@@ -92,39 +93,39 @@ var ProjectComponent = (function () {
                 type: 'image'
             })
         ];
-        console.info('ProjectComponent#' + (this.isNew ? 'create' : 'edit') + ' initialized.', this);
+        this.log.info('ProjectComponent#' + (this.isNew ? 'create' : 'edit') + ' initialized.', this);
     };
     ProjectComponent.prototype.onSubmit = function (model) {
         var _this = this;
         this.saving = true;
         if (this.isNew) {
-            console.log('Save NEW project. ', model);
+            this.log.log('Save NEW project. ', model);
             var sub = this.service.create(model)
                 .subscribe(function (res) {
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                 setTimeout(function () {
                     _this.project = res;
-                    console.log("Navigating to /projects/" + res.id);
+                    _this.log.log("Navigating to /projects/" + res.id);
                     _this.router.navigate(['/projects', res.id]);
                     _this.reset();
                 }, 1000);
             }, function (err) {
-                console.log('Error when saving project: ', err);
+                _this.log.log('Error when saving project: ', err);
                 _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
             });
             this._subscriptions.push(sub);
         }
         else {
-            console.log('Save UPDATED project. ', model);
+            this.log.log('Save UPDATED project. ', model);
             var sub = this.service.update(this.project.id, model)
                 .subscribe(function (res) {
-                console.log('response from update: ', res);
+                _this.log.log('response from update: ', res);
                 _this.project = res;
                 _this.reset();
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
             }, function (err) {
-                console.log('Error when saving projet: ', err);
+                _this.log.log('Error when saving projet: ', err);
                 _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
             });
@@ -141,7 +142,7 @@ var ProjectComponent = (function () {
             e.preventDefault();
             e.stopPropagation();
         }
-        console.info('ProjectComponent.reset()', this);
+        this.log.info('ProjectComponent.reset()', this);
         this.saving = false;
         this.ready = false;
         if (this.ckEditors.length) {
@@ -178,7 +179,7 @@ var ProjectComponent = (function () {
                 index_1.PANEL2_DIRECTIVES
             ]
         }), 
-        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.ProjectService, angular2_toaster_1.ToasterService, router_1.Router, index_1.JpaCache])
+        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.ProjectService, angular2_toaster_1.ToasterService, router_1.Router, index_1.CacheService, index_1.LoggerService])
     ], ProjectComponent);
     return ProjectComponent;
 }());

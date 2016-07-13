@@ -3,13 +3,12 @@ import { Http, URLSearchParams } from '@angular/http';
 import 'rxjs/add/operator/map';
 
 import { JpClient } from '../models/client';
+import { LoggerService } from './logger.service';
 import { XhrService } from './xhr';
 
 @Injectable()
 export class ClientService {
-	private _cached: string[];
-
-	constructor(public http: Http, private xhr: XhrService) {
+	constructor(public http: Http, private xhr: XhrService, private log: LoggerService) {
 		this.http = http;
 	}
 
@@ -69,7 +68,7 @@ export class ClientService {
             }
         });
 
-        console.log('update client with data: ', {
+        this.log.log('update client with data: ', {
             values: values,
             form: form,
             _form: _form
@@ -113,7 +112,7 @@ export class ClientService {
             }
         });
 
-        console.log('create client with data: ', {
+        this.log.log('create client with data: ', {
             values: values,
             form: form,
             _form: _form

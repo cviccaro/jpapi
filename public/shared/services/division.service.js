@@ -11,11 +11,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var core_1 = require('@angular/core');
 var http_1 = require('@angular/http');
 require('rxjs/add/operator/map');
+var logger_service_1 = require('./logger.service');
 var xhr_1 = require('./xhr');
 var DivisionService = (function () {
-    function DivisionService(http, xhr) {
+    function DivisionService(http, xhr, log) {
         this.http = http;
         this.xhr = xhr;
+        this.log = log;
         this.http = http;
     }
     DivisionService.prototype.all = function (params) {
@@ -69,7 +71,7 @@ var DivisionService = (function () {
                     }
             }
         });
-        console.debug('DivisionService is sending POST update request with form ', _form);
+        this.log.debug('DivisionService is sending POST update request with form ', _form);
         this.xhr.started();
         return this.http.post('/divisions/' + id, form)
             .map(function (res) {
@@ -79,7 +81,7 @@ var DivisionService = (function () {
     };
     DivisionService = __decorate([
         core_1.Injectable(), 
-        __metadata('design:paramtypes', [http_1.Http, xhr_1.XhrService])
+        __metadata('design:paramtypes', [http_1.Http, xhr_1.XhrService, logger_service_1.LoggerService])
     ], DivisionService);
     return DivisionService;
 }());

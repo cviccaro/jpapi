@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
 
-import { ClientService, JpaCache } from '../services/index';
+import { ClientService, CacheService } from '../services/index';
 
 import { Observable, Subscription } from 'rxjs/Rx';
 
@@ -9,7 +9,7 @@ import { Observable, Subscription } from 'rxjs/Rx';
 export class ClientsGuard implements CanActivate, OnDestroy {
     private sub: Subscription;
 
-    constructor(private service: ClientService, private cache: JpaCache) { }
+    constructor(private service: ClientService, private cache: CacheService) { }
 
     canActivate() {
         return Observable.create(observer => {

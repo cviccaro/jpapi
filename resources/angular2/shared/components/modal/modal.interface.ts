@@ -1,3 +1,5 @@
+import { LoggerService } from '../../services/logger.service';
+
 export interface ModalConfig {
     mode?: string;
     title?: string;
@@ -47,6 +49,8 @@ export class GenericFormField implements ModalInput {
 }
 
 export class ModalFormField extends GenericFormField {
+    private log: LoggerService = new LoggerService();
+
     constructor(column: any) {
         super();
 
@@ -79,7 +83,7 @@ export class ModalFormField extends GenericFormField {
                             break;
                     }
                 } else {
-                    console.warn(`No target field "${condition.target}" was found while checking condition for source field ${this.name}`);
+                    this.log.warn(`No target field "${condition.target}" was found while checking condition for source field ${this.name}`);
                 }
             });
         }

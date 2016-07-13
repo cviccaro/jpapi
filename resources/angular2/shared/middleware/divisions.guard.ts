@@ -1,7 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
 
-import { DivisionService, JpaCache } from '../services/index';
+import { DivisionService, CacheService } from '../services/index';
 
 import { Observable } from 'rxjs/Rx';
 
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs/Rx';
 export class DivisionsGuard implements CanActivate, OnDestroy {
     private sub: any;
 
-    constructor(private service: DivisionService, private cache: JpaCache) { }
+    constructor(private service: DivisionService, private cache: CacheService) { }
 
     canActivate() {
         return Observable.create(observer => {

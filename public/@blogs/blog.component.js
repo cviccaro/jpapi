@@ -14,12 +14,13 @@ var angular2_toaster_1 = require('angular2-toaster');
 var angular2_material_1 = require('../shared/libs/angular2-material');
 var index_1 = require('../shared/index');
 var BlogComponent = (function () {
-    function BlogComponent(route, service, cache, toasterService, router) {
+    function BlogComponent(route, service, cache, toasterService, router, log) {
         this.route = route;
         this.service = service;
         this.cache = cache;
         this.toasterService = toasterService;
         this.router = router;
+        this.log = log;
         this.isNew = false;
         this.ready = false;
         this.saving = false;
@@ -101,39 +102,39 @@ var BlogComponent = (function () {
                 type: 'image'
             })
         ];
-        console.info('BlogComponent#' + (this.isNew ? 'create' : 'edit') + ' initialized.', this);
+        this.log.info('BlogComponent#' + (this.isNew ? 'create' : 'edit') + ' initialized.', this);
     };
     BlogComponent.prototype.onSubmit = function (model) {
         var _this = this;
         this.saving = true;
         if (this.isNew) {
-            console.log('Save NEW blog. ', model);
+            this.log.log('Save NEW blog. ', model);
             var sub = this.service.create(model)
                 .subscribe(function (res) {
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                 setTimeout(function () {
                     _this.blog = res;
-                    console.log("Navigating to /blogs/" + res.id);
+                    _this.log.log("Navigating to /blogs/" + res.id);
                     _this.router.navigate(['/blogs', res.id]);
                     _this.reset();
                 }, 1000);
             }, function (err) {
-                console.log('Error when saving blog: ', err);
+                _this.log.log('Error when saving blog: ', err);
                 _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
             });
             this._subscriptions.push(sub);
         }
         else {
-            console.log('Save UPDATED blog. ', model);
+            this.log.log('Save UPDATED blog. ', model);
             var sub = this.service.update(this.blog.id, model)
                 .subscribe(function (res) {
-                console.log('response from update: ', res);
+                _this.log.log('response from update: ', res);
                 _this.blog = res;
                 _this.reset();
                 _this.toasterService.pop('success', 'Success!', res.title + ' has been saved.');
             }, function (err) {
-                console.log('Error when saving blog: ', err);
+                _this.log.log('Error when saving blog: ', err);
                 _this.saving = false;
                 _this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
             });
@@ -150,7 +151,7 @@ var BlogComponent = (function () {
             e.preventDefault();
             e.stopPropagation();
         }
-        console.info('BlogComponent.reset()', this);
+        this.log.info('BlogComponent.reset()', this);
         this.saving = false;
         this.ready = false;
         if (this.ckEditors.length) {
@@ -187,7 +188,7 @@ var BlogComponent = (function () {
                 index_1.PANEL2_DIRECTIVES
             ]
         }), 
-        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.BlogService, index_1.JpaCache, angular2_toaster_1.ToasterService, router_1.Router])
+        __metadata('design:paramtypes', [router_1.ActivatedRoute, index_1.BlogService, index_1.CacheService, angular2_toaster_1.ToasterService, router_1.Router, index_1.LoggerService])
     ], BlogComponent);
     return BlogComponent;
 }());
