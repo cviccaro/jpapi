@@ -6,7 +6,7 @@
     <md-grid-tile *ngFor="let division of divisions">
         <div class="actions">
           <!-- <button class="remove" md-icon-button title="Remove" (click)="remove(division)"><md-icon>delete</md-icon></button> -->
-          <button class="edit" md-icon-button title="Edit" (click)="edit(division)"><md-icon>mode_edit</md-icon></button>
+          <!-- <button class="edit" md-icon-button title="Edit" (click)="edit(division)"><md-icon>mode_edit</md-icon></button> -->
         </div>
         <img *ngIf="division.image_id" [src]="division.image.url" [title]="division.name" />
         <h4 class="division-name">{{ division.name }}</h4>

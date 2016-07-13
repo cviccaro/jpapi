@@ -29,18 +29,15 @@ var TooltipDirective = (function () {
     };
     TooltipDirective.prototype.onMouseLeave = function (e) {
         clearTimeout(this._openTimer);
+        this.destroyElement();
+    };
+    TooltipDirective.prototype.destroyElement = function () {
         if (this._hasRef) {
             this._cmpRef.destroy();
         }
-        else {
-            if (document) {
-                setTimeout(function () {
-                    var tooltips = document.querySelectorAll('jpa-tooltip');
-                    if (tooltips.length)
-                        tooltips['forEach'](function (el) { return el.remove(); });
-                }, 500);
-            }
-        }
+    };
+    TooltipDirective.prototype.ngOnDestroy = function () {
+        this.destroyElement();
     };
     __decorate([
         core_1.Input(), 

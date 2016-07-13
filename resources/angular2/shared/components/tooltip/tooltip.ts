@@ -1,11 +1,11 @@
-import { Directive, HostListener, Input, ElementRef, ComponentRef } from '@angular/core';
+import { Directive, HostListener, Input, ElementRef, ComponentRef, OnDestroy } from '@angular/core';
 
 import { JpaTooltip, TooltipComponent } from './index';
 
 @Directive({
 	selector: '[jpa-tooltip]'
 })
-export class TooltipDirective {
+export class TooltipDirective implements OnDestroy {
 	constructor(public el: ElementRef, public provider: JpaTooltip) { }
 
 	private _cmpRef: ComponentRef<TooltipComponent>;
@@ -30,18 +30,16 @@ export class TooltipDirective {
 	@HostListener('mouseleave')
 	onMouseLeave(e: any) {
 		clearTimeout(this._openTimer);
+		this.destroyElement();
+	}
+
+	destroyElement() {
 		if (this._hasRef) {
 			this._cmpRef.destroy();
-		} else {
-			//@todo: figure out why sometimes the tooltip component
-			// is shown but the component doesn't get set
-
-			if ( document ) {
-				setTimeout(() => {
-					let tooltips = document.querySelectorAll('jpa-tooltip');
-					if (tooltips.length) tooltips['forEach'](el => el.remove());
-				},500)
-			}
 		}
+	}
+
+	ngOnDestroy() {
+		this.destroyElement();
 	}
 }
