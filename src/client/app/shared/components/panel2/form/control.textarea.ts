@@ -1,7 +1,5 @@
 import { PanelFormControl, PanelFormControlConfig } from './control';
 
-import { Observable } from 'rxjs/Rx';
-
 export interface TextareaConfig extends PanelFormControlConfig {
   ckeditor?: boolean;
   ckeditorConfig?: { [key: string] : any };

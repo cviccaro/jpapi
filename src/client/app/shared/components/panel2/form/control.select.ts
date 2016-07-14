@@ -1,7 +1,5 @@
 import { PanelFormControl, PanelFormControlConfig } from './control';
 
-import { Observable } from 'rxjs/Rx';
-
 export interface SelectConfig extends PanelFormControlConfig {
     options: {label: any, value: any}[];
 }

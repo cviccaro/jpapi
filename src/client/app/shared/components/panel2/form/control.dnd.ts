@@ -1,7 +1,5 @@
 import { PanelFormControl, PanelFormControlConfig } from './control';
 
-import { Observable } from 'rxjs/Rx';
-
 export interface DragnDropConfig extends PanelFormControlConfig {
     options: {id: number, name: string}[];
 }
@@ -23,7 +21,7 @@ export class PanelFormControlDragnDrop extends PanelFormControl<Array<any>> {
     }
 
     summary(panelExpanded: boolean) {
-        if (panelExpanded) {
+        if (panelExpanded || this.empty) {
             return { text: this.editableText, icon: this.editIcon };
         }
 
@@ -34,7 +32,7 @@ export class PanelFormControlDragnDrop extends PanelFormControl<Array<any>> {
             let text: string = val.shift().name;
 
             if (val.length) {
-                text = val.reduce((carry, item) => { return carry += ', ' + item.name }, text);
+                text = val.reduce((carry, item) => { return carry += ', ' + item.name; }, text);
             }
 
             return { text: text, icon: false};
