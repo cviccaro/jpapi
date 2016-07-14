@@ -1,1 +1,0 @@
-{"version":3,"sources":["panel-content.component.css"],"names":[],"mappings":"AAAA;EACE,aAAa;EACb,kBAAkB,EAAE;EACpB;IACE,eAAe;IACf,UAAU,EAAE","file":"shared/components/panel2/content/panel-content.component.css","sourcesContent":[":host {\n  height: auto;\n  padding-top: 16px; }\n  :host .hidden {\n    padding-top: 0;\n    height: 0; }\n"],"sourceRoot":"/source/"}

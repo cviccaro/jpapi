@@ -47,7 +47,7 @@ class ClientController extends Controller
         $created_at = 0;
 
         $current_page = $request->input('current_page', 1) - 1;
-        $length = $request->input('length', 15);
+        $length = $request->input('length', 50);
         $order_by = $request->input('order_by', 'name');
         $descending = $request->input('descending', 'false') === 'true';
 

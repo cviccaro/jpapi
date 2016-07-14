@@ -1,8 +1,0 @@
-<div *ngFor="let row of _rows" class="drop-zone-row">
-	<drop-zone-cell class="drop-zone-cell"
-        *ngFor="let col of _cols"
-        [cols]="cols"
-        dnd-droppable
-        (onDropSuccess)="onDropSuccess($event)">
-	</drop-zone-cell>
-</div>

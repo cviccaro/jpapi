@@ -1,1 +1,0 @@
-{"version":3,"sources":["shared/components/list/pager/index.ts"],"names":[],"mappings":";;;;AACA,iBAAc,mBAAmB,CAAC,EAAA","file":"shared/components/list/pager/index.js","sourcesContent":["export * from './pager-data';\nexport * from './pager.component';\n"],"sourceRoot":"/source/"}

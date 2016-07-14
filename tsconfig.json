@@ -11,17 +11,19 @@
     "pretty": true,
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
     "noFallthroughCasesInSwitch": false
   },
   "exclude": [
     "node_modules",
+    "dist",
     "public",
+    "vendor",
     "typings/index.d.ts",
     "typings/modules",
-    "resources/typescript"
+    "src"
   ],
   "compileOnSave": false
 }

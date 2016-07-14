@@ -1,0 +1,52 @@
+:host {
+    display: block;
+    z-index: 10;
+    .md-card-header-text {
+        order: 2;
+        md-card-subtitle {
+            justify-content: space-between;
+            display: flex;
+            flex-direction: row;
+            span {
+                float: left;
+            }
+        }
+    }
+
+    .shade {
+        transition: all $transition_duration $transition_ease;
+        display: block;
+        background: transparent;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+    .new {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        color: $accent;
+    }
+    .remove {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        md-icon {
+            color: $white;
+        }
+        cursor: pointer;
+    }
+    &.actions-hovering {
+        .shade {
+            background: $black_54;
+        }
+    }
+    img {
+        max-width: 100%;
+    }
+    &.dnd-drag-start {
+        border: 2px dashed $black;
+    }
+}

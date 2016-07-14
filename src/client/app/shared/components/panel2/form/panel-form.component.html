@@ -1,0 +1,110 @@
+<form *ngIf="ready" [formGroup]="panelForm" (ngSubmit)="submit()" [class]="formClass">
+    <jpa-panel2-group>
+        <jpa-panel2 *ngFor="let control of controls; let rowIndex = index; let odd = odd; let even = even;"
+        [hidden]="control.hidden" class="panel-form-control type-{{ control.controlType }} control-{{ control.name }}">
+            <jpa-panel2-bar>
+                <jpa-panel2-bar-title (click)="expandPanel($event)">
+                    <span>{{ control.label }}</span><span *ngIf="control.required" class="required">*</span>
+                </jpa-panel2-bar-title>
+                <jpa-panel2-bar-subtitle>
+                    <jpa-panel2-form-control-summary [control]="control" [expanded]="panelToggleStates[control.name]"></jpa-panel2-form-control-summary>
+                </jpa-panel2-bar-subtitle>
+            </jpa-panel2-bar>
+            <jpa-panel2-content
+                [ngSwitch]="control.controlType"
+                [class.single-file]="control.controlType === 'files' && control.multiple === false">
+                <div class="panel-content-spacer"></div>
+                <template [ngSwitchCase]="'checkbox'">
+                    <md-checkbox [name]="control.name" [formControlName]="control.name" (change)="handleChange(control, $event)">
+                        {{ control.label }}
+                    </md-checkbox>
+                </template>
+                <template [ngSwitchCase]="'toggle'">
+                    <md-slide-toggle [name]="control.name" [formControlName]="control.name" (change)="handleChange(control, $event)">
+                        {{ control.label }}
+                    </md-slide-toggle>
+                </template>
+                <template [ngSwitchCase]="'files'">
+                    <jpa-file-upload
+                        [multiple]="control.multiple"
+                        [name]="control.name"
+                        [formControlName]="control.name"
+                        [type]="control.type"
+                        [icon]="control.editIcon"
+                        [control]="control"
+                        [accept]="control.accept"
+                        (change)="handleChange(control, $event)">
+                    </jpa-file-upload>
+                </template>
+                <template [ngSwitchCase]="'textarea'">
+                    <div class="textarea-infix" [ngSwitch]="control.ckeditor">
+                        <template [ngSwitchCase]="true">
+                            <ckeditor #textarea
+                                [formControlName]="control.name"
+                                debounce="250"
+                                (change)="handleChange(control, $event)">
+                            </ckeditor>
+                        </template>
+                        <template ngSwitchDefault>
+                            <textarea #textarea
+                                [name]="control.name"
+                                [formControlName]="control.name"
+                                (change)="handleChange(control, $event)">
+                            </textarea>
+                        </template>
+                    </div>
+                </template>
+                <template [ngSwitchCase]="'dnd'">
+                    <jpa-dnd-form-control
+                        [formControlName]="control.name"
+                        [name]="control.name"
+                        [options]="control.options"
+                        [placeholder]="control.placeholder"
+                        (change)="handleChange(control, $event)">
+                    </jpa-dnd-form-control>
+                </template>
+                <template [ngSwitchCase]="'autocomplete'">
+                    <jpa-autocomplete-form-control
+                        [formControlName]="control.name"
+                        [name]="control.name"
+                        [options]="control.options"
+                        (change)="handleChange(control, $event)">
+                    </jpa-autocomplete-form-control>
+                </template>
+                <template [ngSwitchCase]="'select'">
+                    <div class="psuedo-md-input-wrapper">
+                        <div class="psuedo-md-input-table">
+                            <div class="psuedo-md-input-infix">
+                                <select #select (focus)="control.focused = true" (blur)="control.focused = false" [name]="control.name" [formControlName]="control.name" (change)="handleChange(control, $event)">
+                                    <option *ngFor="let opt of control.options" [value]="opt.value">{{opt.label}}</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="psuedo-md-input-underline">
+                            <span class="psuedo-md-input-ripple" [class.md-focused]="control.focused"></span>
+                        </div>
+                    </div>
+                </template>
+                <template ngSwitchDefault>
+                    <md-input
+                        [type]="control.type"
+                        [name]="control.name"
+                        [placeholder]="control.placeholder"
+                        [formControlName]="control.name"
+                        (change)="handleChange(control, $event)">
+                    </md-input>
+                </template>
+            </jpa-panel2-content>
+        </jpa-panel2>
+    </jpa-panel2-group>
+    <div class="panel-form-actions">
+        <button md-raised-button class="submit" type="submit" [disabled]="!panelForm.valid || saving || panelForm.pristine" [ngSwitch]="saving" color="secondary">
+            <template [ngSwitchCase]="true">
+                <md-icon class="spin">update</md-icon> {{ savingText }}
+            </template>
+            <template ngSwitchDefault>
+                <md-icon>save</md-icon> {{ submitText }}
+            </template>
+        </button>
+    </div>
+</form>

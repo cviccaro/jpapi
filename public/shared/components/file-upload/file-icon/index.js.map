@@ -1,1 +1,0 @@
-{"version":3,"sources":["shared/components/file-upload/file-icon/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,uBAAuB,CAAC,EAAA","file":"shared/components/file-upload/file-icon/index.js","sourcesContent":["export * from './file-icon.component';\n"],"sourceRoot":"/source/"}

@@ -1,1 +1,0 @@
-{"version":3,"sources":["@home/panel2/index.ts"],"names":[],"mappings":";;;;AAAA,iBAAc,uBAAuB,CAAC,EAAA;AACtC,iBAAc,2BAA2B,CAAC,EAAA;AAC1C,iBAAc,oBAAoB,CAAC,EAAA","file":"@home/panel2/index.js","sourcesContent":["export * from './panel-bar.component';\r\nexport * from './panel-content.component';\r\nexport * from './panel2.component';"],"sourceRoot":"/source/"}

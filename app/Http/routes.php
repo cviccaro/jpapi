@@ -26,15 +26,6 @@ Route::get('/admin/{page}/{subpage}', function () {
     return view('angular');
 });
 
-// Route::resource("blogs","BlogController");
-// Route::resource("projects","ProjectController");
-// Route::resource("clients","ClientController");
-// Route::resource("divisions","DivisionController");
-// Route::resource("staff","StaffController");
-// Route::resource("tags","TagController");
-// Route::resource("images","ImageController");
-
-
 Route::get('blogs', 'BlogController@all');
 Route::get('blogs/paged', 'BlogController@paged');
 Route::get('blogs/recent', 'BlogController@recent');
@@ -48,7 +39,6 @@ Route::get('staff/{id}', 'StaffController@get');
 Route::get('clients', 'ClientController@all');
 Route::get('clients/paged', 'ClientController@paged');
 Route::get('clients/featured', 'ClientController@featured');
-// Route::get('clients/{id}', 'ClientController@get');
 
 Route::get('divisions/paged', 'DivisionController@paged');
 Route::get('divisions/{id}', 'DivisionController@get');
@@ -64,8 +54,6 @@ Route::get('projects/uri/{uri}', 'ProjectController@getFromSlug');
 Route::get('projects/{id}', 'ProjectController@get');
 
 Route::get('img/{model}/{name}', 'ImageController@getPublic');
-
-
 
 /*
 |--------------------------------------------------------------------------

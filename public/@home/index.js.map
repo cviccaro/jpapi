@@ -1,1 +1,0 @@
-{"version":3,"sources":["@home/index.ts"],"names":[],"mappings":";;;;AAGA,iBAAc,kBAAkB,CAAC,EAAA;AACjC,iBAAc,eAAe,CAAC,EAAA","file":"@home/index.js","sourcesContent":["/**\n * This barrel file provides the export for the lazy loaded HomeComponent.\n */\nexport * from './home.component';\nexport * from './home.routes';\n"],"sourceRoot":"/source/"}

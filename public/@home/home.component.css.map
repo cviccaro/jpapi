@@ -1,1 +1,0 @@
-{"version":3,"sources":["home.component.css"],"names":[],"mappings":"AAAA;EACE,eAAe;EACf,gBAAgB,EAAE","file":"@home/home.component.css","sourcesContent":[":host {\n  display: block;\n  padding: 0 16px; }\n"],"sourceRoot":"/source/"}

@@ -1,0 +1,192 @@
+:host {
+    display: block;
+    height: 100%;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    flex: 1;
+    position: relative;
+    md-sidenav-layout {
+      &.opened {
+        z-index: 2;
+      }
+      & > md-content {
+        height: 100%;
+      }
+    }
+
+    md-nav-list {
+      padding-top: 0;
+    }
+
+    .app-sidenav {
+      padding: 0;
+      width: 280px;
+      z-index: 2;
+      .title {
+        .md-list-item {
+          height:65px;
+          margin-bottom: 24px;
+          &:hover {
+            cursor: default;
+            background: initial;
+          }
+          span {
+            line-height: 64px;
+            font-size: 20px;
+          }
+        }
+      }
+      a {
+        &:hover {
+          .md-list-text,md-icon { color: initial; }
+        }
+        &.active {
+          .md-list-text,md-icon { color: $accent; }
+        }
+        &:active {
+          .md-list-item {
+            background-color: rgba(0, 0, 0, 0.0992157);
+          }
+        }
+        md-icon {
+          box-sizing: content-box;
+        }
+        .md-list-item {
+          padding: 12px 0 12px 26px;
+        }
+      }
+    }
+
+    .app-sidebar {
+      position: fixed;
+      top: 64px;
+      left: 0px;
+      bottom: 0;
+      width: 80px;
+      height: 100%;
+      padding-top: 24px;
+      display: flex;
+      flex-direction: column;
+      z-index: 1;
+      &[hidden] {
+        display: none;
+      }
+      .sidebar-button {
+        width: 48px;
+        height: 48px;
+        text-align: center;
+        margin: 0 auto;
+        [md-icon-button] {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          text-align: center;
+          outline: none;
+          .md-button-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+          }
+          md-icon {
+            position: relative;
+          }
+        }
+        &.active,
+        &:hover {
+          color: $accent;
+        }
+      }
+    }
+
+    .app-progress {
+      height: 2px;
+      margin-left: 0;
+      &[hidden] {
+        display: none;
+      }
+    }
+
+    .app-content {
+      padding: 0 104px 100px 80px;
+      height: 100%;
+      .container-fluid {
+        padding: 0;
+      }
+      md-checkbox {
+        margin: 10px;
+      }
+    }
+
+    .app-toolbar {
+      padding: 0 10px 0 14px;
+      background: $white;
+    }
+
+    .app-toolbar-filler {
+      flex: 1 1 auto;
+    }
+
+    .app-icon-button {
+      margin: 8px 18px 8px 0;
+      color: $black_54;
+      width: 48px;
+      height: 48px;
+      text-align: center;
+      &[hidden] {
+        display: none;
+      }
+      .app-toolbar-menu {
+        top: 50%;
+        position: relative;
+      }
+    }
+
+    .app-action {
+      display: inline-block;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+    }
+
+    .app-spinner {
+      height: 30px;
+      width: 30px;
+      display: inline-block;
+    }
+
+    .app-input-icon {
+      font-size: 16px;
+    }
+
+    .app-list {
+      border: 1px solid rgba(0,0,0,0.12);
+      width: 350px;
+      margin: 20px;
+    }
+
+  /**
+   * Buttons, Icons
+   */
+  md-icon-button,
+  [md-icon-button] {
+      &:not(.small),
+      &:not(.nofocus) {
+          &:active,&:focus {
+            background-color: rgba(0,0,0,0.12);
+          }
+      }
+      &.md-24 {
+          @extend .md-24;
+          md-icon {
+              @extend .md-24;
+          }
+      }
+  }
+}
