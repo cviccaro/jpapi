@@ -10,6 +10,9 @@ export class TagService {
 		this.http = http;
 	}
 
+    /**
+     * Return options as list consumable by SELECT OPtions
+     */
 	options() {
         this.xhr.started();
 
@@ -20,6 +23,11 @@ export class TagService {
             });
 	}
 
+    /**
+     * Destroy a project by ID
+     * @param {number}  id 
+     * @return Observable<any>
+     */
     destroy(id: number) {
         this.xhr.started();
 

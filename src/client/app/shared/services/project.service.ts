@@ -16,8 +16,12 @@ export class ProjectService {
 		this.http = http;
 		this.authToken = authService.getToken();
 	}
-
-	all(params: {} = {}) {
+	/**
+	 * Get all projects with filters and sorts
+	 * @param {number}  id 
+	 * @return Observable<any>
+	 */
+	all(params: {} = {}): Observable<any> {
 		let query = new URLSearchParams();
 
 		for (var key in params) {
@@ -34,7 +38,12 @@ export class ProjectService {
 	        });
 	}
 
-	find(id: number, cached?: boolean) {
+	/**
+	 * Find a project by ID
+	 * @param {number}  id 
+	 * @return Observable<any>
+	 */
+	find(id: number) : Observable<any> {
 		this.xhr.started();
 
         return this.http.get(`/projects/${id}`)
@@ -44,7 +53,12 @@ export class ProjectService {
             });
 	}
 
-    destroy(id: number) {
+	/**
+	 * Destroy a project by ID
+	 * @param {number}  id 
+	 * @return Observable<any>
+	 */
+    destroy(id: number): Observable<any> {
         this.xhr.started();
 
         return Observable.create(observer => {
@@ -57,7 +71,12 @@ export class ProjectService {
         });
     }
 
-	update(id, attributes) {
+	/**
+	 * Update an existing project
+	 * @param {[type]} id         [description]
+	 * @param {[type]} attributes [description]
+	 */
+	update(id: number, attributes: { [key: string] : any}): Observable<any> {
 		let form = this.createFormData(attributes);
 
 		this.xhr.started();
@@ -69,7 +88,11 @@ export class ProjectService {
 		    });
 	}
 
-	create(attributes) {
+	/**
+	 * Create a new project
+	 * @param {[type]} attributes [description]
+	 */
+	create(attributes: {[key: string] : any}): Observable<any> {
 		let form = this.createFormData(attributes);
 
 		this.xhr.started();
@@ -81,7 +104,12 @@ export class ProjectService {
 		    });
 	}
 
-	private createFormData(attributes) {
+	/**
+	 * [createFormData description]
+	 * @param {[key: string] : any} attributes [description]
+	 * @return FormData
+	 */
+	private createFormData(attributes: {[key: string] : any}): FormData {
 		let form = new FormData();
 
 		for (let key in attributes) {
@@ -109,6 +137,7 @@ export class ProjectService {
 					if (val !== undefined && val !== null) {
 						form.append(key, val);
 					}
+					break;
 			}
 		}
 

@@ -11,8 +11,12 @@ export class DivisionService {
 	constructor(public http: Http, public xhr: XhrService, private log: LoggerService) {
 		this.http = http;
 	}
-
-	all(params: {} = {}) {
+	/**
+	 * Get all divisions with filters and sorts
+	 * @param {params}
+	 * @return Observable<any>
+	 */
+	all(params: {} = {}): Observable<any> {
 	    let query = new URLSearchParams();
 
 	    for (var key in params) {
@@ -29,7 +33,10 @@ export class DivisionService {
 	        });
 	}
 
-	options() {
+	/**
+	 * Return options as list consumable by SELECT OPtions
+	 */
+	options(): Observable<any> {
 		this.xhr.started();
 
 		return this.http.get('/options/divisions')
@@ -39,7 +46,12 @@ export class DivisionService {
 			});
 	}
 
-	find(id: number) {
+	/**
+	 * Find a Division by ID
+	 * @param {number}  id 
+	 * @return Observable<any>
+	 */
+	find(id: number): Observable<any> {
 		this.xhr.started();
 
         return this.http.get('/divisions/' + id)
@@ -49,7 +61,12 @@ export class DivisionService {
             });
 	}
 
-	update(id, attributes) {
+	/**
+	 * Update an existing division
+	 * @param {[type]} id         [description]
+	 * @param {[type]} attributes [description]
+	 */
+	update(id: number, attributes): Observable<any> {
 	    let form = new FormData();
 	    let _form = {};
 	    Object.keys(attributes).forEach(key => {
@@ -78,7 +95,12 @@ export class DivisionService {
 	        });
 	}
 
-	destroy(id: number) {
+	/**
+	 * Destroy a Division by ID
+	 * @param {number}  id 
+	 * @return Observable<any>
+	 */
+	destroy(id: number): Observable<any> {
 	    this.xhr.started();
 
 	    return Observable.create(observer => {

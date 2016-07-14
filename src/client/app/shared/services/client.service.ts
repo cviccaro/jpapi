@@ -12,6 +12,11 @@ export class ClientService {
 		this.http = http;
 	}
 
+    /**
+     * Get all clients with filters and sorts
+     * @param {params}
+     * @return Observable<any>
+     */
     all(params: {} = {}) {
         let query = new URLSearchParams();
 
@@ -29,6 +34,9 @@ export class ClientService {
             });
     }
 
+    /**
+     * Return options as list consumable by SELECT OPtions
+     */
 	options() {
         this.xhr.started();
 
@@ -39,7 +47,12 @@ export class ClientService {
             });
 	}
 
-    update(id, values: any[]) {
+    /**
+     * Update an existing client
+     * @param {[type]} id         [description]
+     * @param {[type]} attributes [description]
+     */
+    update(id: number, values: any[]): Observable<any> {
         let form = new FormData();
         let _form = {};
 
@@ -83,7 +96,11 @@ export class ClientService {
             });
     }
 
-    create(values: any[]) {
+    /**
+     * Create new project
+     * @param {[type]} values [description]
+     */
+    create(values: any[]): Observable<any> {
         let form = new FormData();
         let _form = {};
 
