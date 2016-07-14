@@ -1,45 +1,33 @@
 :host {
-	md-grid-tile figure {
-	    flex-direction: column;
-	    justify-content: space-around;
-	    -webkit-justify-content: space-around;
-	    p {
-	        margin-top: 8px;
-	    }
+  md-grid-tile figure {
+    flex-direction: column;
+    justify-content: space-around;
+    -webkit-justify-content: space-around;
 
-	    .actions {
-	      position: absolute;
-	      top: 0;
-	      right: 0;
-	      display: none;
-	      flex-direction: column;
-	      button {
-	        color: $black_54;
-	        height: 24px;
-	        width: 24px;
-	        &.remove {
-	          color: $danger;
-	        }
-	      }
-	    }
-	}
-	md-grid-tile:hover {
-	  figure {
-	    .actions {
-	      display: flex;
-	    }
-	  }
-	}
-	/**
-	 * Toolbar
-	 */
-	md-toolbar {
-	    background: none;
-	    padding: 0;
-	    margin-bottom: 24px;
-	    button[md-button],
-	    button[md-raised-button] {
-	        height: 36px;
-	    }
-	}
+    p {
+      margin-top: 8px;
+    }
+  }
+
+  md-grid-tile:hover {
+    figure {
+      .actions {
+        display: flex;
+      }
+    }
+  }
+
+  /**
+  * Toolbar
+  */
+  md-toolbar {
+    background: none;
+    padding: 0;
+    margin-bottom: 24px;
+
+    button[md-button],
+    button[md-raised-button] {
+      height: 36px;
+    }
+  }
 }

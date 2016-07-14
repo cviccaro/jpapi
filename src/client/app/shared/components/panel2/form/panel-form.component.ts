@@ -192,7 +192,13 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
      * @return void
      */
     handleChange(control: PanelFormControl<any>, e: any): void {
-        setTimeout(() => { this.model[control.name] = control.value = this.panelForm.value[control.name]; });
+        setTimeout(() => { 
+            this.model[control.name] = control.value = this.panelForm.value[control.name]; 
+            let panel = this._controlPanels[control.name].panel;
+            let summary = this._controlPanels[control.name].summary;
+
+            summary.updateSummary(panel.expanded);
+        });
     }
 
     /**
@@ -206,6 +212,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
      * Callback to form ngSubmit()
      */
     submit(): void {
+        this.log.log('Submitting form ', this.panelForm.value);
         this.formSubmit.emit(this.panelForm.value);
     }
 

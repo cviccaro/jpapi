@@ -78,7 +78,7 @@ Route::group([], function () {
     Route::post('blogs/update/{id}', 'BlogController@update');
     Route::delete('blogs/{id}', 'BlogController@remove');
 
-    Route::post('divisions/update/{id}', 'DivisionController@update');
+    Route::post('divisions/{id}', 'DivisionController@update');
 
     Route::post('staff', 'StaffController@add');
     Route::put('staff/{id}', 'StaffController@put');

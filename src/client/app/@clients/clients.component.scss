@@ -1,71 +1,58 @@
 :host {
-    md-grid-tile figure {
-        flex-direction: column;
-        justify-content: space-around;
-        -webkit-justify-content: space-around;
-        p {
-            margin-top: 8px;
+  md-grid-tile figure {
+    flex-direction: column;
+    justify-content: space-around;
+    -webkit-justify-content: space-around;
+
+    p {
+      margin-top: 8px;
+    }
+  }
+
+  /**
+   * Toolbar
+   */
+  md-toolbar {
+    background: none;
+    padding: 0;
+    margin-bottom: 24px;
+
+    button[md-button],
+    button[md-raised-button] {
+      height: 36px;
+    }
+
+    .list-info {
+      padding-left: 0.5em;
+      border-left: 1px solid #ccc;
+      line-height: normal;
+    }
+
+    .list-title {
+      padding-right: 0.5em;
+      margin: 0 0 0 1.25em;
+      line-height: normal;
+    }
+
+    .list-toolbar-actions {
+      margin-left: 1em;
+    }
+
+    .sorts {
+      justify-content: space-between;
+
+      md-input-container {
+        flex-direction: row;
+
+        label {
+          font-size: 14px;
         }
 
-        .actions {
-          position: relative;
-          opacity: 0;
-          display: flex;
-          flex-direction: row;
-          justify-content: flex-end;
-          transition: all $transition_duration $transition_ease;
-          width: 100%;
-        }
-    }
-    md-grid-tile:hover {
-      figure {
-        .actions {
-            opacity: 1;
+        select {
+          font-size: 14px;
+          min-width: 120px;
         }
       }
     }
-    // md-grid-tile.featured figure {
-    //   .toggle-featured {
-    //     color: $yellow_500;
-    //     border: none;
-    //   }
-    // }
-    /**
-     * Toolbar
-     */
-    md-toolbar {
-        background: none;
-        padding: 0;
-        margin-bottom: 24px;
-        button[md-button],
-        button[md-raised-button] {
-            height: 36px;
-        }
-        .list-info {
-          padding-left: 0.5em;
-          border-left: 1px solid #ccc;
-          line-height: normal;
-        }
-        .list-title {
-          padding-right: 0.5em;
-          margin: 0 0 0 1.25em;
-          line-height: normal;
-        }
-        .list-toolbar-actions {
-          margin-left: 1em;
-        }
-        .sorts {
-          justify-content: space-between;
-          md-input-container {
-            flex-direction:row;
-            label {
-              font-size: 14px;
-            }
-            select {
-              font-size: 14px;
-              min-width: 120px;
-            }
-          }
-        }
-    }
+  }
 }

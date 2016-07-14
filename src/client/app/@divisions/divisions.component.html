@@ -3,10 +3,17 @@
     <!-- <button md-icon-button (click)="add($event)" class="menu-btn" jpaTooltip tooltip="Create"><md-icon>add</md-icon></button> -->
 </md-toolbar>
 <md-grid-list cols="3" rowHeight="150px" gutterSize="8px">
-    <md-grid-tile *ngFor="let division of divisions">
+    <md-grid-tile *ngFor="let division of divisions" class="with-actions">
         <div class="actions">
-          <!-- <button class="remove" md-icon-button title="Remove" (click)="remove(division)"><md-icon>delete</md-icon></button> -->
-          <!-- <button class="edit" md-icon-button title="Edit" (click)="edit(division)"><md-icon>mode_edit</md-icon></button> -->
+            <jpa-context-menu #menu>
+                <jpa-context-menu-item>
+                      <button md-button (click)="edit(division)"><md-icon>mode_edit</md-icon>Edit</button>
+                </jpa-context-menu-item>
+<!--                 <jpa-context-menu-item>
+                    <button md-button (click)="remove(division)"><md-icon>delete</md-icon>Delete</button>
+                </jpa-context-menu-item> -->
+            </jpa-context-menu>
+            <button class="item-actions" md-icon-button jpaTooltip tooltip="Manage" (click)="menu.open($event)"><md-icon>more_vert</md-icon></button> 
         </div>
         <img *ngIf="division.image_id" [src]="division.image.url" [title]="division.name" />
         <h4 class="division-name">{{ division.name }}</h4>

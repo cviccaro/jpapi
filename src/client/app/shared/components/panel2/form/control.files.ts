@@ -1,4 +1,5 @@
 import { PanelFormControl, PanelFormControlConfig, PanelFormControlSummary } from './control';
+import { ManagedImage, ManagedFile } from '../../../index';
 
 export interface PanelFormControlFilesConfig extends PanelFormControlConfig {
     multiple?: boolean;
@@ -36,6 +37,14 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
 
     summary(panelExpanded: boolean): PanelFormControlSummary {
         let val: any = this.value;
+
+        if ( !( val instanceof ManagedImage || val instanceof ManagedFile ) ) {
+            switch(this.type) {
+                case 'image': val = new ManagedImage(val, val.idx); break;
+                case 'file': val = new ManagedFile(val, val.idx); break;
+            }
+        }
+
         let summary: PanelFormControlSummary;
 
         if (this.multiple) {
@@ -64,12 +73,25 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
             if (val) {
                 let text = '';
 
+                console.log('Summary for files control', {
+                    this: this,
+                    val: val
+                });
+
                 if (this.type === 'image') {
-                    text = `${val.filename} | ${val.filesize()}kb`;
+                    text = `${val.filename}`;
+
+                    if (val instanceof ManagedImage || val instanceof ManagedFile) {
+                        text += ` | ${val.filesize()}kb`;
+                    }
 
                     if (val.width && val.height) text += ` | ${val.width} x ${val.height} px`;
                 } else {
-                    text = `${val.filename} | ${val.filesize()}kb | ${val.mimetype}`;
+                    text = `${val.filename}`;
+                    if (val instanceof ManagedImage || val instanceof ManagedFile) {
+                        text += ` | ${val.filesize()}kb`;
+                    }
+                    text += ` | ${val.mimetype}`;
                 }
 
                 summary = { text: text, icon: this.editIcon };

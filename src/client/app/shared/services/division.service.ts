@@ -65,26 +65,12 @@ export class DivisionService {
 	 * Update an existing division
 	 * @param {[type]} id         [description]
 	 * @param {[type]} attributes [description]
+	 * @return Observable<any>
 	 */
-	update(id: number, attributes): Observable<any> {
-	    let form = new FormData();
-	    let _form = {};
-	    Object.keys(attributes).forEach(key => {
-	        let val = attributes[key];
-	        switch(key) {
-	            case 'image':
-	                form.append(key, val);
-	                _form[key] = val;
-	                break;
-	            default:
-	                if (val !== undefined && val !== null) {
-	                    form.append(key, val);
-	                    _form[key] = val;
-	                }
-	        }
-	    });
+	update(id: number, attributes: { [key: string] : any }): Observable<any> {
+	    let form = this.createFormData(attributes);
 
-	    this.log.debug('DivisionService is sending POST update request with form ', _form);
+	    this.log.debug('DivisionService is sending POST update request with form ', form.toString());
 
 	    this.xhr.started();
 
@@ -111,5 +97,32 @@ export class DivisionService {
 	                observer.complete();
 	            });
 	    });
+	}
+
+	/**
+	 * [createFormData description]
+	 * @param {[key: string] : any} attributes [description]
+	 * @return FormData
+	 */
+	private createFormData(attributes: { [key: string] : any }): FormData {
+	    let form = new FormData();
+
+	    for (let key in attributes) {
+	        let val = attributes[key];
+
+	        switch(key) {
+	            case 'image':
+	                if (val === '') {
+	                    form.append(key, val);
+	                } else if (!!val && val._file) {
+	                    form.append(key, val._file);
+	                }
+	                break;
+	            default:
+	                if (val !== undefined && val !== null) form.append(key, val);
+	        }
+	    }
+
+	    return form;
 	}
 }
