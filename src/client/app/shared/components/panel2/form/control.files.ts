@@ -1,4 +1,4 @@
-import { PanelFormControl, PanelFormControlConfig } from './control';
+import { PanelFormControl, PanelFormControlConfig, PanelFormControlSummary } from './control';
 
 export interface PanelFormControlFilesConfig extends PanelFormControlConfig {
     multiple?: boolean;
@@ -10,7 +10,7 @@ export interface PanelFormControlFilesConfig extends PanelFormControlConfig {
 export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
     controlType = 'files';
     multiple: boolean;
-    editIcon: string|boolean = 'panorama';
+    editIcon: string | boolean = 'panorama';
     filesLabel: string;
     type: string;
     accept: string;
@@ -22,53 +22,62 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
     }
 
     constructor(config: PanelFormControlFilesConfig) {
-      super(config);
+        super(config);
 
-      this.multiple = config.multiple === undefined ? true : config.multiple;
-      this.filesLabel = config.filesLabel || 'files';
-      this.type = config.type || 'file';
-      this.accept = config.accept || '*';
+        this.multiple = config.multiple === undefined ? true : config.multiple;
+        this.filesLabel = config.filesLabel || 'files';
+        this.type = config.type || 'file';
+        this.accept = config.accept || '*';
 
-      if (this.type === 'file' && this.editIcon === 'panorama') {
-          this.editIcon = 'attachment';
-      }
+        if (this.type === 'file' && this.editIcon === 'panorama') {
+            this.editIcon = 'attachment';
+        }
     }
 
-    summary(panelExpanded: boolean): { text: any, icon: string|boolean } {
+    summary(panelExpanded: boolean): PanelFormControlSummary {
         let val: any = this.value;
+        let summary: PanelFormControlSummary;
 
         if (this.multiple) {
-            let arr = val === '' ? [] : this.value;
+            let text: string;
 
-            let map = arr.reduce((carry, item) => {
-                if (item['id'] !== undefined) {
-                    carry.current++;
-                } else {
-                    carry.queue++;
-                }
+            if (val !== '') {
+                let map = val.reduce((carry, item) => {
+                    if (item['id'] !== undefined) {
+                        carry.current++;
+                    } else {
+                        carry.queue++;
+                    }
 
-                return carry;
-            }, { queue: 0, current: 0 });
+                    return carry;
+                }, { queue: 0, current: 0 });
 
-            let text = `${map.current} ${this.filesLabel} | ${map.queue} in queue`;
+                text = `${map.current} ${this.filesLabel} | ${map.queue} in queue`;
+            } else {
+                text = `0 ${this.filesLabel} | 0 in queue`;
+            }
 
-            return { text: text, icon: this.editIcon };
+            summary = { text: text, icon: this.editIcon };
         } else {
+            summary = { text: this.editableText, icon: this.editIcon };
+
             if (val) {
                 let text = '';
+
                 if (this.type === 'image') {
-                    text = `${val.filename} | ${Math.round(val.size/10)/100}kb`;
-                    if (val.width && val.height) {
-                        text += ` | ${val.width} x ${val.height} px`;
-                    }
+                    text = `${val.filename} | ${val.filesize()}kb`;
+
+                    if (val.width && val.height) text += ` | ${val.width} x ${val.height} px`;
                 } else {
-                    text = `${val.filename} | ${Math.round(val.size/10)/100}kb | ${val.mimetype}`;
+                    text = `${val.filename} | ${val.filesize()}kb | ${val.mimetype}`;
                 }
 
-                return { text: text, icon: this.editIcon };
-            } else {
-                return { text: this.editableText, icon: this.editIcon };
+                summary = { text: text, icon: this.editIcon };
             }
         }
+
+        this.summaryObservable = summary;
+
+        return summary;
     }
 }

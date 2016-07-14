@@ -12,6 +12,8 @@ import { ModalConfig, ModalFormField, ModalAction } from './modal.interface';
     directives: [MATERIAL_DIRECTIVES, NgSwitch, NgSwitchCase, NgSwitchDefault]
 })
 export class ModalComponent implements OnChanges {
+    _files: any[] = [];
+
     @Input() config: ModalConfig;
     @Output('action') get onAction(): Observable<ModalAction> {
         return this._actionEmitter.asObservable();

@@ -119,6 +119,8 @@ export class ClientsComponent implements OnDestroy, RegistersSubscribers {
             modalConfig.inputs.splice(3, 1);
         }
 
+        console.log('ClientsComponent edit', modalConfig);
+
         let sub = this.modal.open(modalConfig).subscribe((action: ModalAction) => {
             if (action.type === 'submit') {
                 let form = action.config.inputs;

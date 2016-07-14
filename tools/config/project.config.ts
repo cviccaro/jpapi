@@ -33,7 +33,9 @@ export class ProjectConfig extends SeedConfig {
             // {src: `${this.CSS_SRC}/path-to-lib/test-lib.css`, inject: true, vendor: false},
         ];
 
-        this.PROD_DEST = `${this.DIST_DIR}/public`;
+        this.PROD_DEST = `public`;
+
+        this.SYSTEM_BUILDER_CONFIG.packageConfigPaths.push(join(this.PROJECT_ROOT, 'node_modules', '@angular2-material', '*', 'package.json'));
 
         this.SYSTEM_BUILDER_CONFIG.packages['moment'] = {
             main: 'min/moment-with-locales.min.js',

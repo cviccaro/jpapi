@@ -85,9 +85,8 @@ export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers
 
         this.controls = [
           new PanelFormControlTextfield({
-            name: 'title',
-            required: true,
-            order: 3
+              name: 'title',
+              required: true
           }),
           new PanelFormControlSelect({
               name: 'client_id',

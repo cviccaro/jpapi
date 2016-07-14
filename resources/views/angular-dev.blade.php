@@ -7,9 +7,11 @@
   <title>JP API Administration</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/favicon.ico">
   <!-- inject:css -->
   <link href="https://fonts.googleapis.com/css?family=Roboto|Lato" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="/node_modules/angular2-toaster/lib/toaster.css?1468524698704">
   <link rel="stylesheet" href="/css/main.css">
   <!-- endinject -->
 </head>

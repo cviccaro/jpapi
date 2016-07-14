@@ -17,6 +17,7 @@ export class AuthService {
         this._authorized = v;
         this._authorizedSource.next(v);
     }
+
     // Observable sources
     public _authorizedSource = new ReplaySubject<boolean>(1);
     public _authTokenSource = new ReplaySubject<string>(1);
@@ -24,7 +25,6 @@ export class AuthService {
     // Observable streams
     public authToken$ = this._authTokenSource.asObservable();
     public whenAuthorized = this._authorizedSource.asObservable();
-
 
     private _authorized = false;
 

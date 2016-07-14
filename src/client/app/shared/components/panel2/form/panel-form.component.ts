@@ -68,10 +68,11 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
     @Output() formSubmit = new EventEmitter();
 
     @ViewChildren(PanelComponent) _panels: QueryList<PanelComponent>;
+    @ViewChildren(PanelFormControlSummaryComponent) _summaries: QueryList<PanelFormControlSummaryComponent>;
     @ViewChildren(NgControl) _formControls: QueryList<NgControl>;
     @ViewChildren(CKEditor) _ckEditors: QueryList<CKEditor>;
 
-    private _controlPanels: { [key: string]: PanelComponent } = {};
+    private _controlPanels: { [key: string]: { panel: PanelComponent, summary: PanelFormControlSummaryComponent } } = {};
 
     constructor(public builder: FormBuilder, private log: LoggerService) { }
 
@@ -80,14 +81,15 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
      * the data-bound input properties.
      */
     ngOnInit(): void {
-        let group = {};
+        let group: {[key: string] : any} = {};
 
         this.formClass = 'panel-form' + (this.formClass ? ' ' + this.formClass : '');
         this.controls = this.controls.sort((a, b) => a.order - b.order);
+
         this.controls.forEach(control => {
             control.value = this.model[control.name];
 
-            let validators = [];
+            let validators: any[] = [];
 
             if (control.required) {
                 validators.push(Validators.required);
@@ -114,7 +116,9 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
 
             this.registerSubscriber(sub);
 
-            this._controlPanels[control.name] = panel;
+            let summary:PanelFormControlSummaryComponent[] = this._summaries.filter(cmp => cmp.control.name === control.name);
+
+            this._controlPanels[control.name] = { panel: panel, summary: summary[0] };
         });
 
         if (this.controls.length !== this._formControls.length) {
@@ -124,7 +128,10 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
 
         this._formControls.forEach(formControl => {
             let sub = formControl.valueChanges.debounceTime(250).subscribe(e => {
-               let panel = this._controlPanels[formControl.name];
+               let panel = this._controlPanels[formControl.name].panel;
+               let summary = this._controlPanels[formControl.name].summary;
+
+               summary.updateSummary(panel.expanded);
 
                let el: HTMLElement = panel.el.nativeElement;
 
@@ -148,7 +155,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
             this.registerSubscriber(sub);
         });
 
-        this.log.log('PanelFormComponent afterViewInit', this);
+        this.log.log('PanelFormComponent View Initialized.', this);
     }
 
     /**

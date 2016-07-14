@@ -1,3 +1,11 @@
+import { LoggerService } from '../../../index';
+import { ReplaySubject } from 'rxjs/Rx';
+
+export interface PanelFormControlSummary {
+    text: any;
+    icon: string | boolean;
+}
+
 export interface PanelFormControlCondition {
     target: string;
     condition: (source: PanelFormControl<any>, target: PanelFormControl<any>) => boolean;
@@ -12,25 +20,31 @@ export interface PanelFormControlConfig {
     placeholder?: string;
     editText?: string;
     emptyText?: string;
-    editIcon?: string|boolean;
+    editIcon?: string | boolean;
     hidden?: boolean;
     conditions?: PanelFormControlCondition[];
 }
+
+let uniqueId = 0;
 
 export class PanelFormControl<T> {
     value: T;
     controlType: string;
     hidden: boolean;
-
     name: string;
     required: boolean = false;
-    order: number;
+    order: number = uniqueId++;
     label: string;
     placeholder: string;
-    editIcon: string|boolean;
+    editIcon: string | boolean;
     editText: string;
     emptyText: string;
     conditions: PanelFormControlCondition[];
+
+    public _summarySource = new ReplaySubject<PanelFormControlSummary>(1); // Observable source
+    public summary$ = this._summarySource.asObservable(); // Observable stream
+    protected _summary: PanelFormControlSummary;
+    protected log = new LoggerService();
 
     get empty(): boolean {
         if (typeof this.value === 'undefined') return true;
@@ -46,7 +60,7 @@ export class PanelFormControl<T> {
 
     constructor(config: PanelFormControlConfig) {
         if (!config.label) {
-            config.label = config.name.substr(0,1).toUpperCase() + config.name.substr(1,config.name.length-1);
+            config.label = config.name.substr(0, 1).toUpperCase() + config.name.substr(1, config.name.length - 1);
         }
 
         config.placeholder = config.placeholder || config.label;
@@ -59,19 +73,38 @@ export class PanelFormControl<T> {
         }
 
         Object.assign(this, config);
+
+        if (uniqueId > 1 && config.order !== undefined) {
+            uniqueId = config.order + 1;
+        }
     }
 
     //@todo: make observable so can use distinctuntilchanged
-    summary(panelExpanded: boolean): { text: any, icon: string|boolean } {
-        if (panelExpanded || this.empty) return { text: this.editableText, icon: this.editIcon };
+    summary(panelExpanded: boolean): PanelFormControlSummary {
+        let summary: any;
 
-        return { text: this.value, icon: false };
+        if (panelExpanded || this.empty) {
+            summary = { text: this.editableText, icon: this.editIcon };
+        } else {
+            summary = { text: this.value, icon: false };
+        }
+
+        this.summaryObservable = summary;
+
+        return summary;
     }
+
+    get summaryObservable() { return this._summary; }
+    set summaryObservable(v: PanelFormControlSummary) {
+        this._summary = v;
+        this._summarySource.next(v);
+    }
+
 
     evaluateConditions(inputs: PanelFormControl<any>[]) {
         if (this.conditions) {
             this.conditions.forEach((condition: PanelFormControlCondition) => {
-                let target:any = false;
+                let target: any = false;
 
                 inputs.forEach((input: PanelFormControl<any>) => {
                     if (input.name === condition.target) target = input;
@@ -80,7 +113,7 @@ export class PanelFormControl<T> {
                 if (target) {
                     let result = condition.condition.apply(this, [this, target]);
 
-                    switch(condition.action) {
+                    switch (condition.action) {
                         case 'hidden':
                             this.hidden = result;
                             break;

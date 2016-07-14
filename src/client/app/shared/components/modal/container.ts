@@ -2,7 +2,6 @@ import {
     Component,
     ElementRef,
     ViewChild,
-    ChangeDetectorRef,
     OnInit,
     OnDestroy,
     HostBinding
@@ -41,7 +40,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy, RegistersSubs
 
     @ViewChild('modal') private modal: ModalComponent;
 
-    constructor(public el: ElementRef, private service: JpaModal, private ref : ChangeDetectorRef) { }
+    constructor(public el: ElementRef, private service: JpaModal) { }
 
     /**
      * Initialize the directive/component after Angular initializes
@@ -49,6 +48,7 @@ export class ModalContainerComponent implements OnInit, OnDestroy, RegistersSubs
      */
     ngOnInit(): void {
         let sub = this.service.openModal.subscribe((config: ModalConfig) => {
+            console.log('Open modal config', config);
             this.config = config;
             this.opened = true;
         });

@@ -3,7 +3,7 @@ import { HTTP_PROVIDERS } from '@angular/http';
 import { ROUTER_DIRECTIVES, Router } from '@angular/router';
 import { ToasterContainerComponent, ToasterService, ToasterConfig } from 'angular2-toaster/angular2-toaster';
 import { MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS } from './shared/libs/angular2-material';
-import { MdSidenav} from '@angular2-material/sidenav/sidenav';
+import { MdSidenav } from '@angular2-material/sidenav/sidenav';
 import { Subscription } from 'rxjs/Subscription';
 
 import {
