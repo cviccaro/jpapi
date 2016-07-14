@@ -3,17 +3,20 @@ import { Directive, HostListener, Input, ElementRef, ComponentRef, OnDestroy } f
 import { JpaTooltip, TooltipComponent } from './index';
 
 @Directive({
-	selector: '[jpa-tooltip]'
+	selector: '[jpaTooltip]'
 })
 export class TooltipDirective implements OnDestroy {
-	constructor(public el: ElementRef, public provider: JpaTooltip) { }
+
+	@Input() tooltip: string;
+	@Input() tooltipAlign: string;
 
 	private _cmpRef: ComponentRef<TooltipComponent>;
 	private _openTimer: any;
 	private _hasRef = false;
 
-	@Input() tooltip: string;
-	@Input() tooltipAlign: string;
+	constructor(public el: ElementRef, public provider: JpaTooltip) { }
+
+
 
 	@HostListener('mouseenter')
 	onMouseEnter(e: any) {

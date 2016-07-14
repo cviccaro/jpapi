@@ -3,7 +3,7 @@ import {TimeAgoPipe, CalendarPipe} from 'angular2-moment';
 
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { TooltipDirective } from '../tooltip/index';
-import { PagerComponent, PagerData } from './pager/index';
+import { PagerComponent } from './pager/index';
 
 @Component({
     selector: 'jpa-list',
@@ -30,14 +30,25 @@ export class ListComponent {
 
     @Output() onPageChange = new EventEmitter();
 
+    /**
+     * Handle add-to-list button click
+     */
     add() {
         this.listItemAdd.emit({});
     }
 
+    /**
+     * Handle any fetch call
+     */
     fetch() {
         this.listUpdate.emit({});
     }
 
+    /**
+     * Handle edit button click
+     * @param {[type]} item   [description]
+     * @param {[type]} $event [description]
+     */
     edit(item, $event) {
         this.listItemEdit.emit(item);
     }

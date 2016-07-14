@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { ContextMenuComponent } from './context-menu.component';
-import { ContextMenuFocusTrap } from './focus-trap';
+import { ContextMenuFocusTrapComponent } from './focus-trap';
 
 @Injectable()
 export class JpaContextMenu implements OnDestroy {
@@ -35,17 +35,17 @@ export class JpaContextMenu implements OnDestroy {
 			document.body.appendChild(component.element.nativeElement);
 
 			// Resolve the ContextMenuComponent, and build it
-			this._cr.resolveComponent(ContextMenuFocusTrap).then((cmpFactory: ComponentFactory<any>) => {
+			this._cr.resolveComponent(ContextMenuFocusTrapComponent).then((cmpFactory: ComponentFactory<any>) => {
 				// Create the component, outputs a promise...
 				return this.viewContainer.createComponent(cmpFactory, this.viewContainer.length);
-			}).then((cmpRef: ComponentRef<ContextMenuFocusTrap>) => {
+			}).then((cmpRef: ComponentRef<ContextMenuFocusTrapComponent>) => {
 				// Store reference to FocusTrap component
 				this._focusTrapRef = cmpRef;
 
 				// Subscribe to focus trap's event
-				(<ContextMenuFocusTrap>this._focusTrapRef.instance).onClickOutside.subscribe(e => {
+				(<ContextMenuFocusTrapComponent>this._focusTrapRef.instance).onClickOutside.subscribe(e => {
 					this.close();
-				})
+				});
 
 				// Append it to DOM
 				this.viewContainer.element.nativeElement.appendChild(cmpRef.location.nativeElement);

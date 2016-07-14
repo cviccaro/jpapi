@@ -1,7 +1,6 @@
 import { Component, HostBinding, OnInit, OnDestroy, ViewChild, QueryList } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Subscription } from 'rxjs/Rx';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { CKEditor } from 'ng2-ckeditor';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
@@ -15,9 +14,9 @@ import {
     PanelFormControlTextfield,
     PanelFormControlSelect,
     PanelFormControlTextarea,
-    PanelFormControlDragnDrop,
     PanelFormControlFiles,
-    LoggerService
+    LoggerService,
+    RegistersSubscribers
 } from '../shared/index';
 
 @Component({
@@ -29,31 +28,21 @@ import {
         PANEL2_DIRECTIVES
     ]
 })
-export class ProjectComponent implements OnInit, OnDestroy {
-    public clients: { label: string, value: any }[];
-    public controls: PanelFormControl<any>[];
+export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers {
+    _subscriptions: Subscription[] = [];
+    ckEditors: QueryList<CKEditor>;
+    clients: { label: string, value: any }[];
+    controls: PanelFormControl<any>[];
+    isNew: boolean = false;
+    originalTitle: string;
+    ready: boolean = false;
+    saving: boolean = false;
 
-    public isNew: boolean = false;
-    public ready: boolean = false;
-    public saving: boolean = false;
-
-    private _originalTitle: string;
     private _project: Project = new Project();
-    private _subscriptions: Subscription[] = [];
 
     @HostBinding('class.new') get isNewClass() { return this.isNew; }
 
-    @ViewChild(PanelFormComponent) public _formCmp: PanelFormComponent;
-    public ckEditors: QueryList<CKEditor>;
-
-    constructor(
-        private route: ActivatedRoute,
-        private service: ProjectService,
-        private toasterService: ToasterService,
-        private router: Router,
-        private cache: CacheService,
-        private log: LoggerService
-    ) { }
+    @ViewChild(PanelFormComponent) private _formCmp: PanelFormComponent;
 
     get project(): Project { return this._project; }
     set project(v: Project) {
@@ -61,6 +50,18 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.setup();
     }
 
+    constructor(
+        public route: ActivatedRoute,
+        public service: ProjectService,
+        public toasterService: ToasterService,
+        public router: Router,
+        public cache: CacheService,
+        public log: LoggerService
+    ) { }
+
+    /**
+     * Initialize the directive/component after Angular initializes the data-bound input properties.
+     */
     ngOnInit() {
         this.clients = this.cache.get('clients');
 
@@ -79,7 +80,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                 });
             });
 
-            this._subscriptions.push(sub);
+            this.registerSubscriber(sub);
         }
 
         this.controls = [
@@ -118,7 +119,11 @@ export class ProjectComponent implements OnInit, OnDestroy {
         this.log.info('ProjectComponent#'+(this.isNew?'create':'edit')+' initialized.', this);
     }
 
-    onSubmit(model) {
+    /**
+     * Form submission
+     * @param {Project} model
+     */
+    onSubmit(model: Project) {
         this.saving = true;
 
         if (this.isNew) {
@@ -129,7 +134,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
                         this.project = res;
-                        this.log.log("Navigating to /projects/" + res.id);
+                        this.log.log('Navigating to /projects/' + res.id);
                         this.router.navigate(['/projects', res.id]);
                         this.reset();
                     }, 1000);
@@ -139,7 +144,7 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
                 });
 
-            this._subscriptions.push(sub);
+            this.registerSubscriber(sub);
         } else {
             this.log.log('Save UPDATED project. ', model);
 
@@ -155,21 +160,37 @@ export class ProjectComponent implements OnInit, OnDestroy {
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
                 });
 
-            this._subscriptions.push(sub);
+            this.registerSubscriber(sub);
         }
     }
 
-    private setup() {
-        this._originalTitle = this._project.title;
-        this.isNew = this.project.id === undefined;
+    /**
+     * Register a subscriber to be unsubscribed on ngOnDestroy
+     */
+    registerSubscriber(sub: Subscription) {
+        this._subscriptions.push(sub);
     }
 
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
+    }
+
+    /**
+     * Reset the form
+     */
     private reset(e?:Event) {
         if (e) {
             e.preventDefault();
             e.stopPropagation();
         }
-        this.log.info('ProjectComponent.reset()', this);
+
+        this.log.debug('ProjectComponent.reset()', this);
 
         this.saving = false;
 
@@ -189,12 +210,10 @@ export class ProjectComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Cleanup just before Angular destroys the directive/component. Unsubscribe
-     * observables and detach event handlers to avoid memory leaks.
+     * Cache the original title and the new/edit flag
      */
-    ngOnDestroy() {
-        this._subscriptions.forEach(sub => {
-            if (sub) sub.unsubscribe();
-        });
+    private setup() {
+        this.originalTitle = this.project.title;
+        this.isNew = this.project.id === undefined;
     }
 }

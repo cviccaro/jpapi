@@ -1,4 +1,4 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import {
@@ -11,7 +11,8 @@ import {
     ModalAction,
     TooltipDirective,
     LoggerService,
-    ModalConfig
+    ModalConfig,
+    RegistersSubscribers
 } from '../shared/index';
 
 import { Subscription } from 'rxjs/Subscription';
@@ -23,41 +24,40 @@ import { Subscription } from 'rxjs/Subscription';
     styleUrls: ['./clients.component.css'],
     directives: [ MATERIAL_DIRECTIVES, CONTEXT_MENU_DIRECTIVES, TooltipDirective ]
 })
-export class ClientsComponent implements AfterViewInit {
-    public state: any;
-    public clients: JpClient[];
-    private subs: Subscription[] = [];
+export class ClientsComponent implements OnDestroy, RegistersSubscribers {
+    state: any;
+    clients: JpClient[];
+    _subscriptions: Subscription[] = [];
 
     constructor(
-        private service: ClientService,
-        private cache: CacheService,
-        private modal: JpaModal,
-        private toaster: ToasterService,
-        private menu: JpaContextMenu,
-        private log: LoggerService
+        public service: ClientService,
+        public cache: CacheService,
+        public modal: JpaModal,
+        public toaster: ToasterService,
+        public menu: JpaContextMenu,
+        public log: LoggerService
     ) {
         this.state = this.cache.get('clients');
 
+        this.clients = this.state.data;
+        this.state.per_pageOptions = [5, 10, 15, 25, 50, 100];
+        this.state.sort = {
+            by: 'name',
+            descending: false
+        };
         this.state.sortOptions = [
             { name: 'Updated At', value: 'updated_at' },
             { name: 'Created At', value: 'created_at' },
             { name: 'Name', value: 'name' },
             { name: 'Projects', value: 'projects' }
         ];
-        this.state.perPageOptions = [5, 10, 15, 25, 50, 100];
-        this.state.sort = {
-            by: 'name',
-            descending: false
-        };
-        this.clients = this.state.data;
     }
 
-    ngAfterViewInit() {
-        this.log.log('ClientsComponent View Initialized.', this);
-    }
-
-    add() {
-        this.modal.open({
+    /**
+     * Open a model to create a new JP Client
+     */
+    add(): void {
+        let sub = this.modal.open({
             mode: 'form',
             inputs: [
                 { name: 'name', required: true },
@@ -79,12 +79,18 @@ export class ClientsComponent implements AfterViewInit {
                         setTimeout(() => { this.fetch(); },0);
                     });
 
-                this.subs.push(sub);
+                this.registerSubscriber(sub);
             }
         });
+
+        this.registerSubscriber(sub);
     }
 
-    edit(client: JpClient) {
+    /**
+     * Open a model to edit a JP Client
+     * @param {JpClient} client
+     */
+    edit(client: JpClient): void {
         this.menu.close();
         let modalConfig: ModalConfig = {
             mode: 'form',
@@ -126,14 +132,18 @@ export class ClientsComponent implements AfterViewInit {
                         setTimeout(() => { this.fetch(); },0);
                     });
 
-                this.subs.push(_sub);
+                this._subscriptions.push(_sub);
             }
         });
 
-        this.subs.push(sub);
+        this.registerSubscriber(sub);
     }
 
-    remove(client: JpClient) {
+    /**
+     * Destroy a JP Client
+     * @param {JpClient} client
+     */
+    remove(client: JpClient): void {
         this.menu.close();
         let name = client.name;
         let sub = this.modal.open({message: 'Discard client?', okText: 'Discard'})
@@ -145,25 +155,39 @@ export class ClientsComponent implements AfterViewInit {
                             setTimeout(() => { this.fetch(); },0);
                         });
 
-                    this.subs.push(_sub);
+                    this.registerSubscriber(_sub);
                 }
             });
 
-        this.subs.push(sub);
+        this.registerSubscriber(sub);
     }
 
-    fetch() {
-        this.service.all().subscribe(res => {
+    /**
+     * Fetch from service
+     */
+    fetch(): void {
+        let sub = this.service.all().subscribe(res => {
             this.clients = res.data;
         });
+
+        this.registerSubscriber(sub);
     }
 
-    ngOnDestroy() {
-        this.subs.forEach(sub => {
-            if (sub) {
-                this.log.log('whoaa unsubscribing yo ', sub);
-                sub.unsubscribe();
-            }
+    /**
+     * Implemented as part of RegisterSubscribers
+     * @param {Subscription} sub
+     */
+    registerSubscriber(sub: Subscription): void {
+        this._subscriptions.push(sub);
+    }
+
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy(): void {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
         });
     }
 }

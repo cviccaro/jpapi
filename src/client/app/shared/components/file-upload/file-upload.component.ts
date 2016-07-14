@@ -3,20 +3,13 @@ import {
     Component,
     OnInit,
     AfterViewInit,
-    AfterContentInit,
-    SimpleChange,
-    OnChanges,
     OnDestroy,
     Input,
     Output,
-    HostListener,
     HostBinding,
     EventEmitter,
     ViewChild,
-    ViewChildren,
-    ContentChildren,
     Provider,
-    QueryList,
     ElementRef
 } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
@@ -24,16 +17,16 @@ import { NgModel, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms
 import { Observable, Subscription } from 'rxjs/Rx';
 
 import { BooleanFieldValue } from '@angular2-material/core/annotations/field-value';
-import { MD_GRID_LIST_DIRECTIVES, MdGridList } from '@angular2-material/grid-list/grid-list';
+import { MD_GRID_LIST_DIRECTIVES } from '@angular2-material/grid-list/grid-list';
 import { MD_PROGRESS_BAR_DIRECTIVES } from '@angular2-material/progress-bar/progress-bar';
 import { MD_ICON_DIRECTIVES } from '@angular2-material/icon/icon';
 
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 
 import { LoggerService } from '../../services/logger.service';
-import { GridImage } from './grid-image/index';
+import { GridImageComponent } from './grid-image/index';
 import { ManagedFile, ManagedImage } from '../../models/file';
-import { FileUploadToolbar } from './toolbar/index';
+import { FileUploadToolbarComponent } from './toolbar/index';
 import { FileCardComponent } from './file-card/index';
 import { FileIconComponent } from './file-icon/index';
 
@@ -55,9 +48,9 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
         MD_PROGRESS_BAR_DIRECTIVES,
         MD_ICON_DIRECTIVES,
         NgModel,
-        GridImage,
+        GridImageComponent,
         DND_DIRECTIVES,
-        FileUploadToolbar,
+        FileUploadToolbarComponent,
         FileCardComponent,
         FileIconComponent,
         NgSwitch,
@@ -67,35 +60,9 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     providers: [IMAGE_UPLOAD_VALUE_ACCESSOR]
 })
 export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
-    constructor(private log: LoggerService) { }
-
     public isDragOver: boolean = false;
     public isLoading: boolean = false;
-    private listener: EventListener;
-    private _imagesLoaded: number = 0;
-    private _value: any;
-    private _rows: any[] = [];
-    private _cols: any[] = [];
-    private _dragging: boolean = false;
-    private _dragImage: any;
-    private _dropZoneStart: number;
-    private _droppedImage: any;
-    private _onTouchedCallback: () => void = noop;
-    private _onChangeCallback: (_: any) => void = noop;
-    private _subscriptions: Subscription[] = [];
-
     public new_file: File;
-
-    public get empty() {
-        return this.value === undefined || this.value === null || Array.isArray(this.value) && this.value.length === 0 || Object.keys(this.value).length === 0;
-    }
-
-    @ViewChildren(GridImage) private _gridImages: QueryList<GridImage>;
-    @ViewChild('currentImage') private _currentImageEl: ElementRef;
-
-    @HostBinding('class') get typeClass() {
-        return `file-upload-${this.type} file-upload-${this.multiple ? 'multiple' : 'single'}`;
-    }
 
     /**
      * Inputs
@@ -113,7 +80,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     @Input() tabIndex: number = null;
 
     // MdGridList
-    @Input() gutterSize: string = "8px";
+    @Input() gutterSize: string = '8px';
     @Input() cols: number = 4;
     @Input() rowHeight: any = '16:9';
 
@@ -125,9 +92,30 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     @Output() fileAdded = new EventEmitter<ManagedFile|ManagedImage>();
     @Output() change = new EventEmitter();
 
-    /** element  outputs **/
+    /**
+     * View/Content Children
+     */
+    @ViewChild('currentImage') private _currentImageEl: ElementRef;
+
+    /**
+     * Private variables
+     */
+    private listener: EventListener;
+    private _imagesLoaded: number = 0;
+    private _value: any;
+    private _dragging: boolean = false;
+    private _onTouchedCallback: () => void = noop;
+    private _onChangeCallback: (_: any) => void = noop;
+    private _subscriptions: Subscription[] = [];
+
     private _blurEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
     private _focusEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
+
+    constructor(private log: LoggerService) { }
+
+    @HostBinding('class') get typeClass() {
+        return `file-upload-${this.type} file-upload-${this.multiple ? 'multiple' : 'single'}`;
+    }
 
     @Output('blur')
     get onBlur(): Observable<FocusEvent> {
@@ -147,6 +135,11 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     /** @internal */
     handleBlur(event: FocusEvent) {
         this.log.log('FileUploadComponent#handleBlur', event);
+    }
+
+    get empty() {
+        return this.value === undefined || this.value === null ||
+            Array.isArray(this.value) && this.value.length === 0 || Object.keys(this.value).length === 0;
     }
 
     get value(): any { return this._value; };
@@ -169,9 +162,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     }
 
     ngOnInit() {
-        if (this.type === 'image' && this.accept === '*') {
-            this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
-        }
+        if (this.type === 'image' && this.accept === '*') this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
     }
 
     ngAfterViewInit() {
@@ -225,7 +216,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
      *
      * @param {any} value [description]
      */
-    private convertValueForInputType(value: any): any {
+    convertValueForInputType(value: any): any {
         if (!this.multiple) {
             if ( !value ) return '';
 
@@ -237,7 +228,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         }
     }
 
-    private managedFile(type: string, value: any, idx: number = 0) {
+    managedFile(type: string, value: any, idx: number = 0) {
         switch(type) {
             case 'image': if (!(value instanceof ManagedImage)) return new ManagedImage(value, idx);
             case 'file': if (!(value instanceof ManagedFile)) return new ManagedFile(value, idx);
@@ -246,16 +237,16 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         return value;
     }
 
-    private _stopEvent(e: Event) {
+    _stopEvent(e: Event) {
         event.preventDefault();
         event.stopPropagation();
     }
 
-    private _getTransfer(event: any): any {
+    _getTransfer(event: any): any {
         return event.dataTransfer ? event.dataTransfer : event.originalEvent.dataTransfer;
     }
 
-    private _haveFiles(types: any): any {
+    _haveFiles(types: any): any {
         if (!types) {
             return false;
         }

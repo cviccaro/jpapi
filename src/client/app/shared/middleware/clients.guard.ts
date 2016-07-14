@@ -1,9 +1,8 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
+import { Observable, Subscription } from 'rxjs/Rx';
 
 import { ClientService, CacheService } from '../services/index';
-
-import { Observable, Subscription } from 'rxjs/Rx';
 
 @Injectable()
 export class ClientsGuard implements CanActivate, OnDestroy {
@@ -11,7 +10,11 @@ export class ClientsGuard implements CanActivate, OnDestroy {
 
     constructor(private service: ClientService, private cache: CacheService) { }
 
-    canActivate() {
+    /**
+     * Implemented as part of CanActivate
+     * @return {Observable<any>}
+     */
+    canActivate(): Observable<any> {
         return Observable.create(observer => {
             this.sub = this.service.all().subscribe(res => {
                this.cache.store('clients', res);
@@ -20,6 +23,10 @@ export class ClientsGuard implements CanActivate, OnDestroy {
         });
     }
 
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe
+     * observables and detach event handlers to avoid memory leaks.
+     */
     ngOnDestroy() {
         this.sub.unsubscribe();
     }

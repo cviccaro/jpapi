@@ -1,8 +1,12 @@
 export interface PagerData {
-    currentPage: number;
+    current_page: number;
     from: number;
     to: number;
     total: number;
-    lastPage: number;
-    perPage: number;
+    last_page: number;
+    per_page: number;
+}
+
+export interface PagerJSONData extends PagerData {
+	data: { [key: string] : any }[];
 }

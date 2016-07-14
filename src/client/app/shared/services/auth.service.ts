@@ -1,32 +1,32 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Http, URLSearchParams, Headers } from '@angular/http';
+import { Injectable } from '@angular/core';
+import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
 import { AuthHttp, JwtHelper } from 'angular2-jwt/angular2-jwt';
 
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { LoggerService } from './logger.service';
 
-// import {LocalStorageService} from "angular2-localstorage/LocalStorageEmitter";
-// import {LocalStorage, SessionStorage} from "angular2-localstorage/WebStorage";
-
 @Injectable()
 export class AuthService {
-    private _authorized = false;
     hasStorage = !(localStorage === undefined);
-   // @LocalStorage() public token: string = '';
-    private token = '';
-    private expires: number;
+    token = '';
+    expires: number;
 
-    // Observable source
-    private _authTokenSource = new ReplaySubject<string>(1);
-    // Observable stream
+    get authorized() { return this._authorized; }
+    set authorized(v: boolean) {
+        this._authorized = v;
+        this._authorizedSource.next(v);
+    }
+    // Observable sources
+    public _authorizedSource = new ReplaySubject<boolean>(1);
+    public _authTokenSource = new ReplaySubject<string>(1);
+
+    // Observable streams
     public authToken$ = this._authTokenSource.asObservable();
-
-    // source
-    private _authorizedSource = new ReplaySubject<boolean>(1);
-
-    // stream
     public whenAuthorized = this._authorizedSource.asObservable();
+
+
+    private _authorized = false;
 
     constructor(private http: Http, private authHttp: AuthHttp, private helper: JwtHelper, private log: LoggerService) {
         if (this.hasStorage) {
@@ -39,7 +39,7 @@ export class AuthService {
         }
 
         // @todo: check token.
-        if (this.token != '') {
+        if (this.token !== '') {
             this.log.log('authService#Found authorization token in localStorage.  Checking expiration date...');
             if (this.expires !== undefined && this.timeLeft(this.expires) > 0) {
                 this.authorized = true;
@@ -58,39 +58,63 @@ export class AuthService {
         this.log.log('authService#init END', this);
     }
 
-    get authorized() { return this._authorized; }
-    set authorized(v: boolean) {
-        this._authorized = v;
-        this._authorizedSource.next(v);
-    }
-
-    timeLeft(expires) {
-        return expires - (new Date().getTime() / 1000);
-    }
-
-    setToken(token) {
+    /**
+     * Set the authorization token
+     * @param  {string} token string
+     * @return {AuthService} this 
+     */
+    setToken(token: string): AuthService {
         if (this.hasStorage) localStorage.setItem('id_token', token);
         this.token = token;
-        this.informObservers(token);
+        this.emitAuthorizationToken(token);
         return this;
     }
 
-    getToken() {
+    /**
+     * Get the authorization token
+     * @return {string} token string
+     */
+    getToken(): string {
         return this.token;
     }
 
-    informObservers(token?:string) {
+    /**
+     * Emit Authorization token
+     * @param {string} token token string
+     */
+    emitAuthorizationToken(token?:string): void {
         if (token === undefined) token = this.token;
 
         this._authTokenSource.next(token);
     }
+    /**
+     * Set the time remaining on the authorization token
+     * @param {number} expires
+     * @return {AuthService} this
+     */
+    setExpires(expires: number): AuthService {
+        if (this.hasStorage) localStorage.setItem('id_expires', expires.toString());
 
-    setExpires(expires) {
-        if (this.hasStorage) localStorage.setItem('id_expires', expires);
         this.expires = expires;
+
         return this;
     }
 
+    /**
+     * Get the time remaining from an expires timestamp
+     * @param {number} expires
+     * @return {number} time remaining
+     */
+    timeLeft(expires: number): number {
+        return expires - (new Date().getTime() / 1000);
+    }
+
+    /**
+     * Login with an email and password
+     * @param  {string}          email    
+     * @param  {string}          password 
+     * @return {Observable<any>}        
+     */
     login(email: string, password: string) : Observable<any> {
         this.log.log('authService#login: ', email, password);
         return Observable.create(observer => {
@@ -103,12 +127,16 @@ export class AuthService {
                         this.authorized = true;
                         observer.next(res);
                     },
-                    error => observer.error(this.parseError(error))
+                    error => observer.error(this.parseErrorFromResponse(error))
                 );
         });
     }
 
-    refresh() {
+    /**
+     * Refresh the current token
+     * @return {Observable<any>}
+     */
+    refresh(): Observable<any> {
         this.log.log('authService#refresh');
         return Observable.create(observer => {
             let headers = new Headers({'Authorization': 'Bearer ' + this.token});
@@ -125,14 +153,17 @@ export class AuthService {
                     error => {
                         this.log.log('error in jwt refresh ', error);
                         observer.error(error);
-                        //observer.error(this.parseError(error)
+                        //observer.error(this.parseErrorFromResponse(error)
                     }
                 );
         });
 
     }
 
-    reset() {
+    /**
+     * Reset the service
+     */
+    reset(): void {
         this.authorized = false;
 
         this.token = '';
@@ -142,21 +173,26 @@ export class AuthService {
         if (this.hasStorage) localStorage.removeItem('id_expires');
     }
 
-    parseError(error) : {title: string, message: string} {
+    /**
+     * Parse an error that authService encountered
+     * @param {Response} error
+     * @return {obj} object with title, message properties
+     */
+    parseErrorFromResponse(error: Response) : {title: string, message: string} {
         let title = 'Error';
-        let message = "Something went wrong and I'm not sure what.  Try again later.";
+        let message = 'Something went wrong and I\'m not sure what.  Try again later.';
 
         if (error.status === 500) {
             title = 'Server Error';
             message = 'An error occured on the server.  Come back later and try again.';
         } else {
             try {
-                let json = JSON.parse(error._body);
+                let json = JSON.parse(error['_body']);
                 message = json.errorText || json.error;
 
                 if (json.error === 'invalid_credentials') title = 'Login failed';
             } catch (e) {
-                this.log.log('authService#parseError couldnt parse the json: ', {
+                this.log.log('authService#parseErrorFromResponse couldnt parse the json: ', {
                     error: error,
                     reason: e
                 });

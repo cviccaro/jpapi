@@ -1,4 +1,4 @@
-import { Component, Input, ElementRef, HostBinding } from '@angular/core';
+import { Component, HostBinding } from '@angular/core';
 
 import { TooltipData } from './index';
 
@@ -21,13 +21,13 @@ export class TooltipComponent {
 		let boundingRect = this.data.el.nativeElement.getBoundingClientRect();
 
 		this._top = boundingRect.top + (boundingRect.height / 4);
-		
+
 		if (data.align === 'left') {
 			this._left = boundingRect.left - (this.data.text.length * 10);
 		} else {
 			this._left = boundingRect.left + boundingRect.width + 12;
 		}
-		
+
 		this.text = this.data.text;
-	} 
+	}
 }

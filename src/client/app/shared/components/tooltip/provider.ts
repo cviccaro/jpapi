@@ -1,4 +1,4 @@
-import { 
+import {
 	ComponentRef,
 	ComponentResolver,
 	ComponentFactory,

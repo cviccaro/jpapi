@@ -1,6 +1,14 @@
-import { Component, AfterViewInit, AfterContentInit, ContentChildren, QueryList, HostBinding, OnDestroy } from '@angular/core';
+import {
+    Component,
+    AfterContentInit,
+    ContentChildren,
+    QueryList,
+    HostBinding,
+    OnDestroy
+} from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { PanelComponent } from '../panel2.component';
+import { RegistersSubscribers } from '../../../index';
 
 @Component({
     moduleId: module.id,
@@ -9,19 +17,18 @@ import { PanelComponent } from '../panel2.component';
     styleUrls: ['./panel-group.component.css'],
     directives: [PanelComponent]
 })
-export class PanelGroupComponent implements AfterContentInit, OnDestroy {
-    private _subscriptions: Subscription[] = [];
+export class PanelGroupComponent implements AfterContentInit, OnDestroy, RegistersSubscribers {
+    public childExpanded: boolean = false;
+    public _subscriptions: Subscription[] = [];
 
     @HostBinding('class.child-expanded') get expandedClass() { return this.childExpanded; }
-
-    childExpanded: boolean = false;
 
     @ContentChildren(PanelComponent) private _panelChildren : QueryList<PanelComponent>;
 
     ngAfterContentInit() {
         this._panelChildren.forEach(panel => {
             let sub = panel.onToggle.subscribe((expanded: boolean) => {
-                this.childExpanded = !!this._panelChildren.filter(panel => panel.expanded).length
+                this.childExpanded = !!this._panelChildren.filter(panel => panel.expanded).length;
             });
             this._subscriptions.push(sub);
         });

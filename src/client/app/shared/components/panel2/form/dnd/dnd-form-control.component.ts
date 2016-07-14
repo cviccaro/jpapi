@@ -5,19 +5,16 @@ import {
     Output,
     EventEmitter,
     forwardRef,
-    Provider,
-    ViewChild,
-    ElementRef
+    Provider
 } from '@angular/core';
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
 import { ChipComponent } from '../../../chip/index';
 
-import { Observable } from 'rxjs/Rx';
 import { MATERIAL_DIRECTIVES } from '../../../../libs/angular2-material';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NgModel } from '@angular/forms';
 
 export const DND_FORM_CONTROL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
-    useExisting: forwardRef(() => DragnDropFormControl),
+    useExisting: forwardRef(() => DragnDropFormControlComponent),
     multi: true
 });
 const noop = () => { };
@@ -30,18 +27,9 @@ const noop = () => { };
     directives: [ DND_DIRECTIVES, ChipComponent, NgModel, MATERIAL_DIRECTIVES],
     providers: [ DND_FORM_CONTROL_VALUE_ACCESSOR ]
 })
-export class DragnDropFormControl implements ControlValueAccessor, OnInit {
-    private _focused: boolean = false;
-    private _value: any = [];
-    private _valueString: any = [];
-    private _dropzone: number;
-
-    private _originalOptions: any[];
-
-    /** Callback registered via registerOnTouched (ControlValueAccessor) */
-    private _onTouchedCallback: () => void = noop;
-    /** Callback registered via registerOnChange (ControlValueAccessor) */
-    private _onChangeCallback: (_: any) => void = noop;
+export class DragnDropFormControlComponent implements ControlValueAccessor, OnInit {
+    public _dropzone: number;
+    public _originalOptions: any[];
 
     @Output() change = new EventEmitter();
 
@@ -50,7 +38,10 @@ export class DragnDropFormControl implements ControlValueAccessor, OnInit {
     @Input() options: { label: string, value: any }[];
     @Input() placeholder: string;
 
-    @ViewChild('input') private _inputElement: ElementRef;
+    private _value: any = [];
+
+    private _onTouchedCallback: () => void = noop;
+    private _onChangeCallback: (_: any) => void = noop;
 
     get empty() { return this.value !== null && this.value !== ''; }
 
@@ -81,15 +72,21 @@ export class DragnDropFormControl implements ControlValueAccessor, OnInit {
         this._onTouchedCallback = fn;
     }
 
-    ngOnInit() {
+
+    /**
+     * Initialize the directive/component after Angular initializes the data-bound input properties.
+     */
+    ngOnInit(): void {
         this.placeholder = this.placeholder || 'Add a ' + this.name;
 
         this._originalOptions = this.options;
     }
 
-    setOptions() {
-        this._valueString = this.value.length === 0 ? null : JSON.stringify(this.value);
-
+    /**
+     * Set the available options by filtering out 
+     * current ones
+     */
+    setOptions(): void {
         if (this.options) {
             let ids = this.value.map(item => item.id);
 
@@ -99,11 +96,20 @@ export class DragnDropFormControl implements ControlValueAccessor, OnInit {
         }
     }
 
-    onDragEnter(event: any, index: number) {
+    /**
+     * Set the dropzone last dragged-over
+     * @param {Event}    event
+     * @param {number} index
+     */
+    onDragEnter(event: any, index: number): void {
         this._dropzone = index;
     }
 
-    onDropSuccess(e) {
+    /**
+     * Handle chips dragged from available to current value pool
+     * @param {Event} e
+     */
+    onDropSuccess(e: { dragData: { preventAdd?: boolean, option: any }}): void {
         if (e.dragData.hasOwnProperty('preventAdd') && e.dragData.preventAdd === true) {
             return;
         }
@@ -111,7 +117,11 @@ export class DragnDropFormControl implements ControlValueAccessor, OnInit {
         this.pushValue(e.dragData.option);
     }
 
-    pushValue(value) {
+    /**
+     * Push a new value onto the value array
+     * @param {any} value
+     */
+    pushValue(value: any): void {
         let val = this.value.slice(0);
 
         val.push(value);
@@ -122,7 +132,11 @@ export class DragnDropFormControl implements ControlValueAccessor, OnInit {
         this._onTouchedCallback();
     }
 
-    reorder(e: any) {
+    /**
+     * Reorder after a drag n drop
+     * @param {Event} e
+     */
+    reorderFromDrag(e: { dragData: { index: number } }): void {
         let new_index = this._dropzone;
         let old_index = e.dragData.index;
 
@@ -141,10 +155,14 @@ export class DragnDropFormControl implements ControlValueAccessor, OnInit {
         this._onTouchedCallback();
     }
 
-    remove(id) {
+    /**
+     * Remove an item from the selected values
+     * @param {number} id
+     */
+    remove(id: number): void {
         let filtered = this.value.filter(item => {
-            return item.id === id
-        })
+            return item.id === id;
+        });
 
         if (filtered && filtered.length) {
             let index = this.value.indexOf(filtered[0]);
@@ -158,5 +176,4 @@ export class DragnDropFormControl implements ControlValueAccessor, OnInit {
 
         this._onTouchedCallback();
     }
-
 }

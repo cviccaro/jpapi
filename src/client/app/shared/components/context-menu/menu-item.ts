@@ -6,4 +6,4 @@ import { Component } from '@angular/core';
 	template: '<ng-content></ng-content>',
 	styleUrls: ['./menu-item.css']
 })
-export class ContextMenuItem { }
+export class ContextMenuItemComponent { }

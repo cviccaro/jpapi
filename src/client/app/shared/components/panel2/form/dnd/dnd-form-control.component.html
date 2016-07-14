@@ -5,7 +5,7 @@
         dnd-droppable
         (onDragEnter)="onDragEnter($event, index)"
         [dropEnabled]="true"
-        (onDropSuccess)="reorder($event, index)">
+        (onDropSuccess)="reorderFromDrag($event, index)">
       <jpa-chip
         [id]="option.id"
         [name]="option.name"

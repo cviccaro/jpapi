@@ -9,7 +9,7 @@ import { PanelFormControl } from '../control';
     templateUrl: './summary.component.html',
     directives: [ MATERIAL_DIRECTIVES ]
 })
-export class PanelFormControlSummary {
+export class PanelFormControlSummaryComponent {
     @Input() control: PanelFormControl<any>;
     @Input() expanded: boolean;
 

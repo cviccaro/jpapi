@@ -3,7 +3,7 @@
     <h2 class="list-title">{{ listTitle }}</h2>
     <h4 class="list-info">Showing {{ listConfig.page.from }} - {{ listConfig.page.to }} of {{ listConfig.page.total }}</h4>
     <div class="list-toolbar-actions">
-      <button md-mini-fab color="secondary" (click)="add()" jpa-tooltip tooltip="Create">
+      <button md-mini-fab color="secondary" (click)="add()" jpaTooltip tooltip="Create">
         <md-icon class="md-24">add</md-icon>
       </button>
     </div>
@@ -11,8 +11,8 @@
   <div layout="row" layout-align="end center" flex="50" class="sorts" [hidden]="!listData.length">
     <md-input-container>
       <label>Per Page</label>
-      <select [(ngModel)]="listConfig.page.perPage" (ngModelChange)="fetch()">
-        <option *ngFor="let option of listConfig.perPageOptions" [value]="option">{{ option }}</option>
+      <select [(ngModel)]="listConfig.page.per_page" (ngModelChange)="fetch()">
+        <option *ngFor="let option of listConfig.per_pageOptions" [value]="option">{{ option }}</option>
       </select>
     </md-input-container>
     <md-input-container>
@@ -39,10 +39,10 @@
               <p md-line>Last updated {{ line.dates.updated_at | amTimeAgo }} | Created {{ line.dates.created_at | amCalendar }}</p>
             </div>
             <div class="actions" layout="row" flex="30" layout-align="end center">
-              <button md-icon-button (click)="edit(line, $event)" jpa-tooltip tooltip="Edit" tooltipAlign="left">
+              <button md-icon-button (click)="edit(line, $event)" jpaTooltip tooltip="Edit" tooltipAlign="left">
                   <md-icon class="md-24">edit</md-icon>
               </button>
-              <button md-fab color="danger" (click)="delete(line, $event)" jpa-tooltip tooltip="Delete">
+              <button md-fab color="danger" (click)="delete(line, $event)" jpaTooltip tooltip="Delete">
                   <md-icon class="md-24">delete</md-icon>
               </button>
             </div>

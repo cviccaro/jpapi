@@ -1,7 +1,7 @@
 <div class="container-fluid">
     <h2 class="page-title form-title" [ngSwitch]="isNew">
       <span *ngSwitchCase="true">Create Blog</span>
-      <span *ngSwitchDefault>Edit Blog {{ _originalTitle }}</span>
+      <span *ngSwitchDefault>Edit Blog {{ originalTitle }}</span>
     </h2>
     <jpa-panel2-form *ngIf="ready" [controls]="controls" [model]="blog" submitText="Save" (formSubmit)="onSubmit($event)" [saving]="saving">
     </jpa-panel2-form>

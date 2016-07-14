@@ -1,26 +1,22 @@
 import { Component, HostBinding, OnInit, ViewChild, QueryList, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Subscription } from 'rxjs/Rx';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { CKEditor } from 'ng2-ckeditor';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import {
     BlogService,
     Blog,
-    DivisionService,
-    Tag,
-    TagService,
     CacheService,
     PANEL2_DIRECTIVES,
     PanelFormComponent,
     PanelFormControl,
     PanelFormControlTextfield,
-    PanelFormControlSelect,
     PanelFormControlTextarea,
     PanelFormControlDragnDrop,
     PanelFormControlFiles,
-    LoggerService
+    LoggerService,
+    RegistersSubscribers
 } from '../shared/index';
 
 @Component({
@@ -32,23 +28,22 @@ import {
         PANEL2_DIRECTIVES
     ]
 })
-export class BlogComponent implements OnInit, OnDestroy {
-    public divisions: { id: number, name: string }[];
-    public tags: { id: number, name: string }[];
-    public controls: PanelFormControl<any>[];
+export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
+    _subscriptions: Subscription[] = [];
+    ckEditors: QueryList<CKEditor>;
+    controls: PanelFormControl<any>[];
+    divisions: { id: number, name: string }[];
+    isNew: boolean = false;
+    originalTitle: string;
+    ready: boolean = false;
+    saving: boolean = false;
+    tags: { id: number, name: string }[];
 
-    public isNew: boolean = false;
-    public ready: boolean = false;
-    public saving: boolean = false;
-
-    private _originalTitle: string;
     private _blog: Blog = new Blog();
-    private _subscriptions: Subscription[] = [];
 
     @HostBinding('class.new') get isNewClass() { return this.isNew; }
 
-    @ViewChild(PanelFormComponent) public _formCmp: PanelFormComponent;
-    public ckEditors: QueryList<CKEditor>;
+    @ViewChild(PanelFormComponent) private _formCmp: PanelFormComponent;
 
     get blog(): Blog { return this._blog; }
     set blog(v: Blog) {
@@ -65,6 +60,9 @@ export class BlogComponent implements OnInit, OnDestroy {
         private log: LoggerService
     ) { }
 
+    /**
+     * Initialize the directive/component after Angular initializes the data-bound input properties.
+     */
     ngOnInit() {
         this.tags = this.cache.get('tags');
         this.divisions = this.cache.get('divisions');
@@ -86,7 +84,7 @@ export class BlogComponent implements OnInit, OnDestroy {
                 });
             });
 
-            this._subscriptions.push(sub);
+            this.registerSubscriber(sub);
         }
 
         this.controls = [
@@ -132,7 +130,11 @@ export class BlogComponent implements OnInit, OnDestroy {
         this.log.info('BlogComponent#' + (this.isNew ? 'create' : 'edit') + ' initialized.', this);
     }
 
-    onSubmit(model) {
+    /**
+     * Form submission
+     * @param {Blog} model
+     */
+    onSubmit(model: Blog) {
         this.saving = true;
 
         if (this.isNew) {
@@ -142,7 +144,7 @@ export class BlogComponent implements OnInit, OnDestroy {
                     this.toasterService.pop('success', 'Success!', res.title + ' has been created.  Redirecting to its page.');
                     setTimeout(() => {
                         this.blog = res;
-                        this.log.log("Navigating to /blogs/" + res.id);
+                        this.log.log('Navigating to /blogs/' + res.id);
                         this.router.navigate(['/blogs', res.id]);
                         this.reset();
                     }, 1000);
@@ -151,7 +153,7 @@ export class BlogComponent implements OnInit, OnDestroy {
                     this.saving = false;
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
-            this._subscriptions.push(sub);
+            this.registerSubscriber(sub);
         } else {
             this.log.log('Save UPDATED blog. ', model);
 
@@ -167,15 +169,30 @@ export class BlogComponent implements OnInit, OnDestroy {
                     this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
                 });
 
-            this._subscriptions.push(sub);
+            this.registerSubscriber(sub);
         }
     }
 
-    private setup() {
-        this._originalTitle = this._blog.title;
-        this.isNew = this.blog.id === undefined;
+    /**
+     * Register a subscriber to be unsubscribed on ngOnDestroy
+     */
+    registerSubscriber(sub: Subscription) {
+        this._subscriptions.push(sub);
     }
 
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy() {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
+    }
+
+    /**
+     * Reset the form
+     */
     private reset(e?: Event) {
         if (e) {
             e.preventDefault();
@@ -201,12 +218,10 @@ export class BlogComponent implements OnInit, OnDestroy {
     }
 
     /**
-     * Cleanup just before Angular destroys the directive/component. Unsubscribe
-     * observables and detach event handlers to avoid memory leaks.
+     * Cache the original title and the new/edit flag
      */
-    ngOnDestroy() {
-        this._subscriptions.forEach(sub => {
-            if (sub) sub.unsubscribe();
-        });
+    private setup() {
+        this.originalTitle = this._blog.title;
+        this.isNew = this.blog.id === undefined;
     }
 }

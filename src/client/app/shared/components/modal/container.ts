@@ -14,6 +14,7 @@ import { ModalBackdropComponent } from './backdrop';
 import { ModalComponent } from './modal';
 import { JpaModal } from './provider';
 import { ModalConfig } from './modal.interface';
+import { RegistersSubscribers } from '../../index';
 
 @Component({
     moduleId: module.id,
@@ -22,14 +23,10 @@ import { ModalConfig } from './modal.interface';
     styleUrls: ['./container.css'],
     directives: [ ModalBackdropComponent, ModalComponent ]
 })
-export class ModalContainerComponent implements OnInit, OnDestroy {
-
-    public config: ModalConfig;
-    private opened = false;
-
-    private openModalSubscriber: Subscription;
-    private actionSubscriber: Subscription;
-    private okModalSubscriber: Subscription;
+export class ModalContainerComponent implements OnInit, OnDestroy, RegistersSubscribers {
+    config: ModalConfig;
+    opened = false;
+    _subscriptions: Subscription[] = [];
 
     public get classList() {
         let cl = 'jpa-modal-wrapper';
@@ -42,30 +39,46 @@ export class ModalContainerComponent implements OnInit, OnDestroy {
 
     @HostBinding('attr.hidden') get hiddenAttr() { return this.opened ? null : true; }
 
-    @ViewChild('backdrop') private backdrop: ModalBackdropComponent;
     @ViewChild('modal') private modal: ModalComponent;
 
-    constructor(public el: ElementRef, private service: JpaModal, private ref : ChangeDetectorRef) {
+    constructor(public el: ElementRef, private service: JpaModal, private ref : ChangeDetectorRef) { }
 
-    }
-
-    ngOnInit() {
-        this.registerSubscribers();
-    }
-
-    private registerSubscribers() {
-        this.openModalSubscriber = this.service.openModal.subscribe((config: ModalConfig) => {
+    /**
+     * Initialize the directive/component after Angular initializes
+     * the data-bound input properties.
+     */
+    ngOnInit(): void {
+        let sub = this.service.openModal.subscribe((config: ModalConfig) => {
             this.config = config;
             this.opened = true;
         });
-        this.actionSubscriber = this.modal.onAction.subscribe((e) => {
+
+        this.registerSubscriber(sub);
+
+        let sub2 = this.modal.onAction.subscribe((e) => {
             this.opened = false;
             this.service.buttonClicked.next(e);
         });
+
+        this.registerSubscriber(sub2);
     }
 
-    ngOnDestroy() {
-        if (this.openModalSubscriber) this.openModalSubscriber.unsubscribe();
-        if (this.okModalSubscriber) this.okModalSubscriber.unsubscribe();
+    /**
+     * Register a subscriber to be unsubscribed when component
+     * is destroyed
+     * @param {Subscription} sub
+     */
+    registerSubscriber(sub: Subscription): void {
+        this._subscriptions.push(sub);
+    }
+
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy(): void {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
     }
 }

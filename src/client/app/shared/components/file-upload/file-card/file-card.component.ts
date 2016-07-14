@@ -2,7 +2,6 @@ import {
     Component,
     Directive,
     Input,
-    OnInit,
     AfterViewInit,
     ViewChild,
     ElementRef,
@@ -13,20 +12,20 @@ import {
     OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
-import { FromUnixPipe, DateFormatPipe } from 'angular2-moment';
+import { DateFormatPipe } from 'angular2-moment';
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
 import { ManagedFile, ManagedImage } from '../../../models/file';
 import { FileIconComponent } from '../file-icon/index';
 
 @Directive({
-    selector: '[jpa-action-delegate]',
+    selector: '[jpaActionDelegateDirective]',
 })
-export class ActionDelegate {
-    constructor(public el: ElementRef) { }
-
+export class ActionDelegateDirective {
     @Output() clicked = new EventEmitter();
     @Output() hover = new EventEmitter();
     @Output() hoverOut = new EventEmitter();
+
+    constructor(public el: ElementRef) { }
 
     @HostListener('click')
     onClick(e: Event) {
@@ -48,23 +47,23 @@ export class ActionDelegate {
     selector: 'jpa-file-card',
     templateUrl: './file-card.component.html',
     styleUrls: [ './file-card.component.css' ],
-    directives: [ MATERIAL_DIRECTIVES, FileIconComponent, ActionDelegate ],
+    directives: [ MATERIAL_DIRECTIVES, FileIconComponent, ActionDelegateDirective ],
     pipes: [ DateFormatPipe ]
 })
 export class FileCardComponent implements AfterViewInit, OnDestroy {
     public hovering = false;
 
-    private hoverSub: Subscription;
-    private hoverOutSub: Subscription;
-
-    @Input() file: ManagedFile|ManagedImage
+    @Input() file: ManagedFile|ManagedImage;
     @Input() actions: boolean = true;
 
     @Output() clickedRemove = new EventEmitter();
 
-    @ViewChild(ActionDelegate) actionDelegate : ActionDelegate;
+    @ViewChild(ActionDelegateDirective) actionDelegate : ActionDelegateDirective;
 
     @HostBinding('class.actions-hovering') get actionsHoveringClass() { return this.hovering; }
+
+    private hoverSub: Subscription;
+    private hoverOutSub: Subscription;
 
     remove(e: Event) {
         this.clickedRemove.emit(e);

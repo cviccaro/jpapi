@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges } from
 import { MATERIAL_DIRECTIVES }  from '../../libs/angular2-material';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
-import { ModalConfig, ModalInput, ModalFormField, ModalAction } from './modal.interface';
+import { ModalConfig, ModalFormField, ModalAction } from './modal.interface';
 
 @Component({
     moduleId: module.id,
@@ -12,17 +12,14 @@ import { ModalConfig, ModalInput, ModalFormField, ModalAction } from './modal.in
     directives: [MATERIAL_DIRECTIVES, NgSwitch, NgSwitchCase, NgSwitchDefault]
 })
 export class ModalComponent implements OnChanges {
-    private _actionEmitter: EventEmitter<ModalAction> = new EventEmitter<ModalAction>();
-
-    private _files: { [key: string] : FileList } = {};
-
     @Input() config: ModalConfig;
-
     @Output('action') get onAction(): Observable<ModalAction> {
         return this._actionEmitter.asObservable();
     }
 
-    action(type, config, event) {
+    private _actionEmitter: EventEmitter<ModalAction> = new EventEmitter<ModalAction>();
+
+    action(type: string, config: ModalConfig, event: any) {
         event.preventDefault();
         event.stopPropagation();
 
@@ -35,7 +32,7 @@ export class ModalComponent implements OnChanges {
 
     handleChange(col: ModalFormField, e: Event) {
         if (col.type === 'file') {
-            col.value = e.target['files'];
+            col.value = (<HTMLInputElement>e.target).files;
         }
 
         let inputs = <ModalFormField[]>this.config.inputs;
@@ -49,7 +46,7 @@ export class ModalComponent implements OnChanges {
 
             if (currentValue) {
                 switch (currentValue.mode) {
-                    case "form":
+                    case 'form':
                         this.config.inputs = this.config.inputs.map(input => new ModalFormField(input));
                         break;
                 }

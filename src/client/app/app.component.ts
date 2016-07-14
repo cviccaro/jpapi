@@ -6,7 +6,16 @@ import { MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS } from './shared/libs/angular2-
 import { MdSidenav} from '@angular2-material/sidenav/sidenav';
 import { Subscription } from 'rxjs/Subscription';
 
-import { AuthService, MODAL_DIRECTIVES, JpaModal, JpaContextMenu, TooltipDirective, JpaTooltip, XhrService } from './shared/index';
+import {
+    AuthService,
+    MODAL_DIRECTIVES,
+    JpaModal,
+    JpaContextMenu,
+    TooltipDirective,
+    JpaTooltip,
+    XhrService,
+    RegistersSubscribers
+} from './shared/index';
 
 @Component({
     selector: 'jpa-app',
@@ -22,25 +31,25 @@ import { AuthService, MODAL_DIRECTIVES, JpaModal, JpaContextMenu, TooltipDirecti
         TooltipDirective
     ]
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, RegistersSubscribers {
     toasterConfig: ToasterConfig;
+    loading = true;
     loggedIn = false;
+
+    _subscriptions: Subscription[] = [];
 
     private _routeDepth: number = 0;
     private _routeUrl: string = '';
-    private subscriptions: Subscription[];
-
-    private loading = true;
 
     @ViewChild(MdSidenav) private _sidenav: MdSidenav;
 
     constructor(
         public router: Router,
-        private authService: AuthService,
-        private contextMenu: JpaContextMenu,
-        private tooltip: JpaTooltip,
-        private container: ViewContainerRef,
-        private progress: XhrService
+        public authService: AuthService,
+        public contextMenu: JpaContextMenu,
+        public tooltip: JpaTooltip,
+        public container: ViewContainerRef,
+        public progress: XhrService
     ) {
         this.tooltip.registerContainer(container);
         this.contextMenu.registerContainer(container);
@@ -50,7 +59,10 @@ export class AppComponent implements OnInit, OnDestroy {
         this.loggedIn = this.authService.authorized;
     }
 
-    ngOnInit() {
+    /**
+     * Initialize the directive/component after Angular initializes the data-bound input properties.
+     */
+    ngOnInit(): void {
         let sub1 = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
         let sub2 = this.router.events.subscribe(evt => {
             if (evt.toString().match('^NavigationEnd')) {
@@ -64,39 +76,60 @@ export class AppComponent implements OnInit, OnDestroy {
         });
         let sub3 = this.progress.start.subscribe(e => this.loading = true);
         let sub4 = this.progress.done.subscribe(e => this.loading = false);
-        this.subscriptions = [sub1, sub2, sub3, sub4];
+        this._subscriptions = [sub1, sub2, sub3, sub4];
     }
 
-    back() {
+    /**
+     * Navigate up one level in the route tree
+     */
+    back(): void {
         let parentRoute = this._routeUrl.split('/')[1];
         this.router.navigate(['/'+parentRoute]);
     }
 
-    navigateTo(link) {
-        this.router.navigate(link);
-    }
-
-    logout() {
+    /**
+     * Logout of the app
+     */
+    logout(): void {
         this.authService.reset();
         this.router.navigate(['/login']);
     }
 
-    routeIs(url: any, strict: boolean = false): boolean {
+    /**
+     * Determine if the route matches a URL string
+     * @param  {string} URL 
+     * @param  {boolean} strict 
+     * @return {boolean}
+     */
+    routeIs(url: string, strict: boolean = false): boolean {
         if (strict) return this._routeUrl === url;
         return !!this._routeUrl.match(url);
     }
 
+    /**
+     * Determine if the current route is a certain depth
+     * with the route tree
+     * @param  {boolean} strict 
+     * @return {boolean}
+     */
     routeDepthIs(num: number): boolean {
         return this._routeDepth === num;
     }
 
-    closeSidebarIfOpen() {
+    /**
+     * Close the sidebar if opened
+     */
+    closeSidebarIfOpen(): void {
         if (this._sidenav.opened) {
             this._sidenav.close();
         }
     }
 
-    ngOnDestroy() {
-        this.subscriptions.forEach(sub => sub.unsubscribe());
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe
+     * observables and detach event handlers to avoid memory leaks.
+     */
+    ngOnDestroy(): void {
+        this._subscriptions.forEach(sub => sub.unsubscribe());
     }
 }

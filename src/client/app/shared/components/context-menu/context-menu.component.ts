@@ -1,32 +1,28 @@
 import { Component, AfterViewInit, OnDestroy, Input, HostBinding, ComponentRef, ElementRef } from '@angular/core';
-
-import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
-
-import { ContextMenuItem } from './menu-item';
-import { ContextMenuFocusTrap } from './focus-trap';
-import { JpaContextMenu } from './context-menu';
-
 import { Subscription } from 'rxjs/Rx';
+import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
+import { ContextMenuItemComponent } from './menu-item';
+import { ContextMenuFocusTrapComponent } from './focus-trap';
+import { JpaContextMenu } from './context-menu';
+import { RegistersSubscribers }from '../../index';
 
 @Component({
 	moduleId: module.id,
 	selector: 'jpa-context-menu',
 	templateUrl: './context-menu.component.html',
 	styleUrls: ['./context-menu.component.css'],
-	directives: [ MATERIAL_DIRECTIVES, ContextMenuItem, ContextMenuFocusTrap ]
+	directives: [ MATERIAL_DIRECTIVES, ContextMenuItemComponent, ContextMenuFocusTrapComponent ]
 })
-export class ContextMenuComponent implements AfterViewInit, OnDestroy {
-	public opened = false;
-	public element: ElementRef;
+export class ContextMenuComponent implements AfterViewInit, OnDestroy, RegistersSubscribers {
+	backdrop: ComponentRef<ContextMenuFocusTrapComponent>;
+	opened = false;
+	element: ElementRef;
+	_subscriptions: Subscription[] = [];
+
+	@Input() showOnHover: boolean = false;
 
 	private _topPos = '0px';
 	private _leftPos = '0px';
-
-	private backdrop: ComponentRef<ContextMenuFocusTrap>;
-	private backdropSubscription: Subscription;
-	private closeSubscriber: Subscription;
-
-	@Input() showOnHover: boolean = false;
 
 	@HostBinding('style.top') get topPos() { return this._topPos; }
 	@HostBinding('style.left') get leftPos() { return this._leftPos; }
@@ -37,19 +33,31 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 		this.element = element;
 	}
 
+	/**
+	 * After Angular creates the component's view(s).
+	 */
 	ngAfterViewInit() {
-		this.registerSubscribers();
-	}
-
-	registerSubscribers() {
-		this.closeSubscriber = this.service.onClose.subscribe(e => {
+		let sub = this.service.onClose.subscribe(e => {
 			if (this.backdrop) this.backdrop.destroy();
 			this.opened = false;
 			this.element.nativeElement.remove();
 		});
+		this.registerSubscriber(sub);
 	}
 
-	open(e: any) {
+	/**
+	 * Implemented as part of RegistersSubscribers
+	 * @param {Subscription} sub
+	 */
+	registerSubscriber(sub: Subscription) {
+		this._subscriptions.push(sub);
+	}
+
+	/**
+	 * Open context menu
+	 * @param {MouseEvent} e
+	 */
+	open(e: MouseEvent) {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -57,22 +65,24 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy {
 			return;
 		}
 
-		this.backdropSubscription = this.service.resolveBackdrop(this).subscribe((cmpRef: ComponentRef<ContextMenuFocusTrap>) => {
+		let sub = this.service.resolveBackdrop(this).subscribe((cmpRef: ComponentRef<ContextMenuFocusTrapComponent>) => {
 			this.backdrop = cmpRef;
 		});
+		this.registerSubscriber(sub);
 
 		this._topPos = (e.clientY+10) + 'px';
 		this._leftPos = (e.clientX+10) + 'px';
 		this.opened = true;
 	}
-	
+
 	/**
 	 * Cleanup just before Angular destroys the directive/component. Unsubscribe 
 	 * observables and detach event handlers to avoid memory leaks.
 	 */
 	ngOnDestroy() {
-		if (this.closeSubscriber) this.closeSubscriber.unsubscribe();
-		if (this.backdropSubscription) this.backdropSubscription.unsubscribe();
+		this._subscriptions.forEach(sub => {
+			if (sub) sub.unsubscribe();
+		});
 		if (this.backdrop) this.backdrop.destroy();
 	}
 }

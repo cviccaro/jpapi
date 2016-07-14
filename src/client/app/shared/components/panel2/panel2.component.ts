@@ -24,22 +24,20 @@ export interface PanelToggle {
     styleUrls: ['./panel2.component.css'],
     directives: [
         MATERIAL_DIRECTIVES,
-        PanelContentComponent,
-        // FILE_UPLOAD_DIRECTIVES,
-        // MD_GRID_LIST_DIRECTIVES
+        PanelContentComponent
     ]
 })
 export class PanelComponent implements AfterContentInit, PanelToggle, OnDestroy {
-    private _expanded: boolean = false;
-    private _toggleSub: Subscription;
-
-    @HostBinding('class.expanded') private get expandedClass() { return this.expanded; }
-    @HostBinding('class.jpa-panel') private get jpapanelClass() { return true; }
-
     @ContentChild(PanelContentComponent) content : PanelContentComponent;
     @ContentChild(PanelBarComponent) bar : PanelBarComponent;
 
     @Output() onToggle = new EventEmitter<boolean>();
+
+    @HostBinding('class.expanded') private get expandedClass() { return this.expanded; }
+    @HostBinding('class.jpa-panel') private get jpapanelClass() { return true; }
+
+    private _expanded: boolean = false;
+    private _toggleSub: Subscription;
 
     constructor(public el: ElementRef) { }
 

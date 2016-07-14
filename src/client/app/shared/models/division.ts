@@ -1,11 +1,11 @@
 import {JpFile} from './file';
 
-export interface Division {
+export class Division {
 	id: number;
     name: string;
-    image_id?: number;
+    image_id: number = null;
     image: JpFile;
-    description?: string;
-    created_at?: any;
-    updated_at?: any;
+    description: string;
+    created_at: any;
+    updated_at: any;
 }

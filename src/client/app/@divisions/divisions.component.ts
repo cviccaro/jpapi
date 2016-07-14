@@ -12,24 +12,33 @@ import { DivisionService, CacheService, JpaModal, Division, TooltipDirective, Lo
 	directives: [ MATERIAL_DIRECTIVES, TooltipDirective ]
 })
 export class DivisionsComponent implements AfterViewInit {
-	private state: any;
 	public divisions: Division[] = [];
 
+	private state: any;
+
 	constructor(
-		private service: DivisionService,
-		private cache: CacheService,
-		private modal: JpaModal,
-		private toaster: ToasterService,
-		private router: Router,
-		private log: LoggerService
+		public service: DivisionService,
+		public cache: CacheService,
+		public modal: JpaModal,
+		public toaster: ToasterService,
+		public router: Router,
+		public log: LoggerService
 	) {
 		this.state = this.cache.get('divisions');
 		this.divisions = this.state.data;
 	}
+
+	/**
+	 *  After Angular creates the component's view(s).
+	 */
 	ngAfterViewInit() {
 		this.log.log('DivisionComponent AfterViewInit', this);
 	}
 
+	/**
+	 * Navigate to the edit page
+	 * @param {Division} division
+	 */
 	edit(division: Division) {
 		let command = ['/divisions', division.id];
 		this.log.log('Route to ', command);

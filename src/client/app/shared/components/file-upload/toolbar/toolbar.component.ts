@@ -4,7 +4,7 @@ import { NgSwitch, NgSwitchCase } from '@angular/common';
 import { DateFormatPipe } from 'angular2-moment';
 
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
-import { ManagedImage, ManagedFile, JpFile } from '../../../models/file';
+import { ManagedImage, ManagedFile } from '../../../models/file';
 import { TooltipDirective } from '../../tooltip/index';
 
 @Component({
@@ -15,7 +15,7 @@ import { TooltipDirective } from '../../tooltip/index';
     directives: [ MATERIAL_DIRECTIVES, NgSwitch, NgSwitchCase, TooltipDirective ],
     pipes: [ DateFormatPipe ]
 })
-export class FileUploadToolbar {
+export class FileUploadToolbarComponent {
     new_file: any = '';
 
     @Input() file: ManagedImage|ManagedFile;
@@ -28,26 +28,40 @@ export class FileUploadToolbar {
 
     @ViewChild('newFile') private _newFileInput : ElementRef;
 
-    removeFile(evt: Event) {
+    /**
+     * Handle the remove file button being clicked
+     * @param {Event} evt
+     */
+    removeFile(evt: Event): void {
     	evt.preventDefault();
     	evt.stopPropagation();
 
     	this.onRemoveFile.emit(evt);
     }
 
-    replaceFile(evt: Event) {
+    /**
+     * Handle the replace file button being clicked
+     * @param {Event} evt
+     */
+    replaceFile(evt: Event): void {
     	evt.preventDefault();
     	evt.stopPropagation();
 
     	this._newFileInput.nativeElement.dispatchEvent(new Event('click'));
     }
 
-    fileReplaced(evt: Event) {
+    /**
+     * Handle a new file being chosen
+     * @param {Event} evt
+     */
+    fileReplaced(evt: Event): void {
     	evt.preventDefault();
     	evt.stopPropagation();
         evt.stopImmediatePropagation();
 
-    	this.onReplaceFile.emit(evt.target['files'][0]);
+        let files: FileList = (<HTMLInputElement>evt.target).files;
+
+    	this.onReplaceFile.emit(files[0]);
     }
 
     fileDescriptionChanged(evt: Event) {

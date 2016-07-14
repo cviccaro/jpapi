@@ -1,17 +1,16 @@
 import {
     Component,
     ContentChildren,
-    ViewChildren,
     Output,
     EventEmitter,
     QueryList,
     AfterContentInit,
-    HostListener,
     OnDestroy
 } from '@angular/core';
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
 import { Subscription } from 'rxjs/Subscription';
 
+import { RegistersSubscribers } from '../../../index';
 import { PanelBarTitleComponent, PanelBarSubtitleComponent } from './panel-bar-title.component';
 
 @Component({
@@ -21,15 +20,18 @@ import { PanelBarTitleComponent, PanelBarSubtitleComponent } from './panel-bar-t
     styleUrls: ['./panel-bar.component.css'],
     directives: [ MATERIAL_DIRECTIVES, PanelBarTitleComponent, PanelBarSubtitleComponent ]
 })
-export class PanelBarComponent implements AfterContentInit, OnDestroy {
-    private _subscriptions: Subscription[] = [];
+export class PanelBarComponent implements AfterContentInit, OnDestroy, RegistersSubscribers {
+    public _subscriptions: Subscription[] = [];
 
     @Output() onToggle = new EventEmitter();
 
     @ContentChildren(PanelBarTitleComponent) titleCmps : QueryList<PanelBarTitleComponent>;
     @ContentChildren(PanelBarSubtitleComponent) subTitleCmps : QueryList<PanelBarSubtitleComponent>;
 
-    ngAfterContentInit() {
+    /**
+     * After Angular checks the bindings of the external content that it projected into its view
+     */
+    ngAfterContentInit(): void {
         let titles = this.titleCmps.toArray().concat(this.subTitleCmps.toArray());
 
         titles.forEach(titleCmp => {
@@ -38,10 +40,14 @@ export class PanelBarComponent implements AfterContentInit, OnDestroy {
             });
 
             this._subscriptions.push(sub);
-        })
+        });
     }
 
-    toggle(evt: Event) {
+    /**
+     * Toggle the panel
+     * @param {Event} evt
+     */
+    toggle(evt: Event): void {
         evt.preventDefault();
         evt.stopPropagation();
         this.onToggle.emit(evt);
@@ -51,7 +57,7 @@ export class PanelBarComponent implements AfterContentInit, OnDestroy {
      * Cleanup just before Angular destroys the directive/component. Unsubscribe
      * observables and detach event handlers to avoid memory leaks.
      */
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this._subscriptions.forEach(sub => {
             if (sub) sub.unsubscribe();
         });

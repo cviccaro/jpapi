@@ -19,19 +19,19 @@ export class PagerComponent implements OnInit, OnChanges {
     @Output() pageChanged = new EventEmitter();
 
     ngOnInit() {
-        this.pages = new Array(this.pagerData.lastPage);
+        this.pages = new Array(this.pagerData.last_page);
     }
 
     previous() {
-        this.changePage(this.pagerData.currentPage - 1);
+        this.changePage(this.pagerData.current_page - 1);
     }
 
     next() {
-        this.changePage(this.pagerData.currentPage + 1);
+        this.changePage(this.pagerData.current_page + 1);
     }
 
     changePage(page: number) {
-        if (page === this.pagerData.currentPage) {
+        if (page === this.pagerData.current_page) {
             return;
         }
 
@@ -40,7 +40,7 @@ export class PagerComponent implements OnInit, OnChanges {
 
     ngOnChanges(changes: SimpleChanges) {
         if (changes.hasOwnProperty('pagerData')) {
-            this.pages = new Array(this.pagerData.lastPage);
+            this.pages = new Array(this.pagerData.last_page);
         }
     }
 }

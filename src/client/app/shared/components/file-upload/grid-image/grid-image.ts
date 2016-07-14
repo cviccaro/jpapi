@@ -12,9 +12,9 @@ import { JpFile } from '../../../index';
         MdIcon
     ]
 })
-export class GridImage implements OnInit, OnDestroy {
+export class GridImageComponent implements OnInit, OnDestroy {
     public hovering = false;
-    private _listener: any;
+    public _listener: any;
 
     @ViewChild('image') public _imageEl: ElementRef;
 
@@ -33,7 +33,10 @@ export class GridImage implements OnInit, OnDestroy {
         this.hovering = false;
     }
 
-    remove() {
+    /**
+     * Handle remove button being clicked
+     */
+    remove(): void {
         this.clickedRemove.emit({ config: this.imageConfig, index: this.index });
     }
 
@@ -41,7 +44,7 @@ export class GridImage implements OnInit, OnDestroy {
      * Initialize the directive/component after Angular initializes
      * the data-bound input properties.
      */
-    ngOnInit() {
+    ngOnInit(): void {
         this._imageEl.nativeElement.src = this.imageConfig.url;
 
         this._listener = (<HTMLImageElement>this._imageEl.nativeElement).addEventListener('load', e => {
@@ -53,7 +56,7 @@ export class GridImage implements OnInit, OnDestroy {
      * Cleanup just before Angular destroys the directive/component. Unsubscribe
      * observables and detach event handlers to avoid memory leaks.
      */
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         if (this._listener) (<HTMLImageElement>this._imageEl.nativeElement).removeEventListener('load', this._listener);
     }
 }

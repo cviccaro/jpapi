@@ -1,5 +1,8 @@
 import { Observable } from 'rxjs/Rx';
 
+/**
+ * Generic managed file configuration
+ */
 export interface JpFile {
     alias?: string;
     alt?: string;
@@ -7,7 +10,7 @@ export interface JpFile {
     extension?: string;
     filename?: string;
     id?: any;
-    idx?: number,
+    idx?: number;
     isNew?: boolean;
     last_modified?: any;
     mimetype?: string;
@@ -25,6 +28,9 @@ export interface JpFile {
     map?(mapFn: (key: string, val: any) => any): any;
 }
 
+/**
+ * A managed file
+ */
 export class ManagedFile implements JpFile {
     alias: string;
     alt: string;
@@ -65,11 +71,19 @@ export class ManagedFile implements JpFile {
         }
     }
 
+    /**
+     * Return the available date property
+     */
     date() {
         return this.created_at || this.last_modified;
     }
 
-    filesize(units: string = 'kb') {
+    /**
+     * Calculate the fileize with a unit base
+     * @param  {string = 'kb'}
+     * @return {number}
+     */
+    filesize(units: string = 'kb'): number {
         let divisor = 10;
 
         switch(units) {
@@ -81,13 +95,20 @@ export class ManagedFile implements JpFile {
         return Math.round(this.size / divisor) / 100;
     }
 
-    map(mapFn: (key: string, val: any) => any) {
+    /**
+     * Run a map function on the internal properties of this class
+     * @param {any) => any} mapFn [description]
+     */
+    map(mapFn: (key: string, val: any) => any): void {
         let keys = Object.keys(this);
 
         keys.forEach(key => mapFn.apply(this, [key, this[key]]));
     }
 }
 
+/**
+ * A managed image
+ */
 export class ManagedImage extends ManagedFile {
     width: number;
     height: number;
@@ -96,10 +117,12 @@ export class ManagedImage extends ManagedFile {
         super(attributes, idx);
     }
 
+    /**
+     * Read a File
+     * @return {Observable<any>} [description]
+     */
     read() : Observable<any> {
         let file = this._file;
-
-        const filename = file.name;
 
         return Observable.create(observer => {
             let reader = new FileReader();
@@ -110,23 +133,36 @@ export class ManagedImage extends ManagedFile {
         });
     }
 
+    /**
+     * Track the progress of an HTML Image Load
+     * @param  {HTMLImageElement} imageEl 
+     * @return {Observable<any>}         
+     */
     load(imageEl: HTMLImageElement) : Observable<any> {
         return Observable.create(observer => {
             imageEl.onload = (e) => observer.next({
                 width: imageEl.naturalWidth,
                 height: imageEl.naturalHeight
             });
-        })
+        });
     }
 
-    watchForDimensions(imageEl: HTMLImageElement) {
+    /**
+     * Tell the ManagedImage to watch an image load
+     * @param {HTMLImageElement} imageEl [description]
+     */
+    watchForDimensions(imageEl: HTMLImageElement): void {
         this.load(imageEl).subscribe(e => {
             this.width = e.width;
             this.height = e.height;
-        })
+        });
     }
 
-    megapixels() {
+    /**
+     * Calculate the megapixels for this image
+     * @return {number}
+     */
+    megapixels(): number {
         return Math.round((this.width * this.height) / 10000) / 100;
     }
 }

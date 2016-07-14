@@ -11,6 +11,10 @@ export class BlogListGuard implements CanActivate, OnDestroy {
 
     constructor(private blogService: BlogService, private cache: CacheService) {}
 
+    /**
+     * Implemented as part of CanActivate
+     * @return {Observable<any>}
+     */
     canActivate() {
         return Observable.create(observer => {
             this.sub = this.blogService.all({
@@ -25,6 +29,10 @@ export class BlogListGuard implements CanActivate, OnDestroy {
         });
     }
 
+    /**
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe
+     * observables and detach event handlers to avoid memory leaks.
+     */
     ngOnDestroy() {
         if (this.sub) this.sub.unsubscribe();
     }

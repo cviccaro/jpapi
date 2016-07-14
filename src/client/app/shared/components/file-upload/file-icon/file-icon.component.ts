@@ -1,7 +1,5 @@
 import { Component, Input } from '@angular/core';
 
-import { ManagedFile, ManagedImage } from '../../../models/file';
-
 @Component({
 	moduleId: module.id,
 	selector: 'jpa-file-icon',
@@ -14,7 +12,7 @@ export class FileIconComponent {
 
 	get iconUrl() {
 		return this.extension ?
-			`/libs/Free-file-icons-master/${this.size}px/${this.extension}.png`
+			`/assets/Free-file-icons-master/${this.size}px/${this.extension}.png`
 			: '';
 	}
 }

@@ -10,21 +10,22 @@ import {
     EventEmitter
 } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
-import { REACTIVE_FORM_DIRECTIVES, NgControl, FormControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { REACTIVE_FORM_DIRECTIVES, NgControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/Subscription';
 import { CKEditor } from 'ng2-ckeditor';
 
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
 
+import { RegistersSubscribers } from '../../../index';
 import { LoggerService } from '../../../services/logger.service';
 import { PanelComponent } from '../panel2.component';
-import { PanelBarComponent, PanelBarTitleComponent, PanelBarSubtitleComponent } from '../bar/index';
+import { PanelBarComponent, PanelBarSubtitleComponent } from '../bar/index';
 import { PanelContentComponent } from '../content/index';
 import { PanelGroupComponent } from '../group/index';
 import { PanelFormControl } from './control';
-import { DragnDropFormControl } from './dnd/dnd-form-control.component';
+import { DragnDropFormControlComponent } from './dnd/dnd-form-control.component';
 import { FileUploadComponent } from '../../file-upload/file-upload.component';
-import { PanelFormControlSummary } from './summary/summary.component';
+import { PanelFormControlSummaryComponent } from './summary/summary.component';
 
 declare var CKEDITOR: any;
 
@@ -44,16 +45,15 @@ declare var CKEDITOR: any;
         PanelGroupComponent,
         MATERIAL_DIRECTIVES,
         CKEditor,
-        DragnDropFormControl,
+        DragnDropFormControlComponent,
         FileUploadComponent,
-        PanelFormControlSummary,
+        PanelFormControlSummaryComponent,
         REACTIVE_FORM_DIRECTIVES
     ],
     viewProviders: [NgControl]
 })
-export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
-    constructor(public builder: FormBuilder, private log: LoggerService) { }
-
+export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, RegistersSubscribers {
+    _subscriptions: Subscription[] = [];
     panelForm: FormGroup;
     ready: boolean = true;
     panelToggleStates: { [key: string] : boolean } = {};
@@ -72,13 +72,14 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChildren(CKEditor) _ckEditors: QueryList<CKEditor>;
 
     private _controlPanels: { [key: string]: PanelComponent } = {};
-    private _subscriptions: Subscription[] = [];
+
+    constructor(public builder: FormBuilder, private log: LoggerService) { }
 
     /**
      * Initialize the directive/component after Angular initializes
      * the data-bound input properties.
      */
-    ngOnInit() {
+    ngOnInit(): void {
         let group = {};
 
         this.formClass = 'panel-form' + (this.formClass ? ' ' + this.formClass : '');
@@ -103,7 +104,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
     /**
      * After Angular creates the component's view(s).
      */
-    ngAfterViewInit() {
+    ngAfterViewInit(): void {
         this.controls.forEach(control => {
             let panel = this.getPanel(control);
 
@@ -111,7 +112,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.panelToggleStates[control.name] = expanded;
             });
 
-            this._subscriptions.push(sub);
+            this.registerSubscriber(sub);
 
             this._controlPanels[control.name] = panel;
         });
@@ -144,7 +145,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
             });
 
-            this._subscriptions.push(sub);
+            this.registerSubscriber(sub);
         });
 
         this.log.log('PanelFormComponent afterViewInit', this);
@@ -172,7 +173,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
      *
      * @param Event
      */
-    expandPanel(e) {
+    expandPanel(e): void {
         e.currentTarget.nextElementSibling.click();
     }
 
@@ -188,6 +189,13 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     /**
+     * Register a subscriber to be unsubscribed on ngOnDestroy
+     */
+    registerSubscriber(sub: Subscription) {
+        this._subscriptions.push(sub);
+    }
+
+    /**
      * Callback to form ngSubmit()
      */
     submit(): void {
@@ -198,7 +206,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy {
      * Cleanup just before Angular destroys the directive/component. Unsubscribe
      * observables and detach event handlers to avoid memory leaks.
      */
-    ngOnDestroy() {
+    ngOnDestroy(): void {
         this._subscriptions.forEach(sub => {
             if (sub) sub.unsubscribe();
         });
