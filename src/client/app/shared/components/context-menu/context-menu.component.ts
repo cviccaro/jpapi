@@ -79,11 +79,6 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy, Registers
 			this._leftPos = (e.clientX+10) + 'px';
 		}
 
-		console.log('Opening context menu at position ', {
-			top: this._topPos,
-			left: this._leftPos
-		});
-
 		this.opened = true;
 	}
 
