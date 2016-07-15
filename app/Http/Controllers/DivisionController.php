@@ -94,6 +94,7 @@ class DivisionController extends Controller
         }
 
         $json['data'] = array_values($json['data']);
+        
         foreach ($json['data'] as &$item) {
             $item['blogs'] = count($item['blogs']);
             $item['projects'] = count($item['projects']);

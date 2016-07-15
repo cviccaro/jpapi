@@ -5,6 +5,7 @@
             <jpa-panel2-bar>
                 <jpa-panel2-bar-title (click)="expandPanel($event)">
                     <span>{{ control.label }}</span><span *ngIf="control.required" class="required">*</span>
+                    <span *ngIf="control.hint" class="hint"><md-hint>{{ control.hint }}</md-hint></span>
                 </jpa-panel2-bar-title>
                 <jpa-panel2-bar-subtitle>
                     <jpa-panel2-form-control-summary [control]="control" [expanded]="panelToggleStates[control.name]"></jpa-panel2-form-control-summary>

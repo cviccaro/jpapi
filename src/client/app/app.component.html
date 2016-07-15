@@ -27,6 +27,10 @@
           <md-icon md-list-icon>place</md-icon>
           <span md-line>Divisions</span>
         </a>
+        <a md-list-item [routerLink]="['/settings']" [class.active]="routeIs('/settings')">
+          <md-icon md-list-icon>settings_application</md-icon>
+          <span md-line>Settings</span>
+        </a>
         <a *ngIf="loggedIn" md-list-item (click)="logout()">
           <md-icon md-list-icon>power_settings_new</md-icon>
           <span md-line>Logout</span>
@@ -64,6 +68,9 @@
   </div>
   <div class="sidebar-button" [class.active]="routeIs('/divisions')" jpaTooltip tooltip="Divisions">
     <a md-icon-button [routerLink]="['/divisions']"><md-icon>place</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/settings')" jpaTooltip tooltip="Settings">
+    <a md-icon-button [routerLink]="['/settings']"><md-icon>settings_application</md-icon></a>
   </div>
   <div class="sidebar-button" jpaTooltip tooltip="Main Menu">
     <button md-icon-button (click)="sidenav.toggle()"><md-icon>more_horiz</md-icon></button>

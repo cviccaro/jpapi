@@ -23,6 +23,7 @@ export interface PanelFormControlConfig {
     editIcon?: string | boolean;
     hidden?: boolean;
     conditions?: PanelFormControlCondition[];
+    hint?: string;
 }
 
 let uniqueId = 0;
@@ -40,6 +41,7 @@ export class PanelFormControl<T> {
     editText: string;
     emptyText: string;
     conditions: PanelFormControlCondition[];
+    hint: string;
 
     public _summarySource = new ReplaySubject<PanelFormControlSummary>(1); // Observable source
     public summary$ = this._summarySource.asObservable(); // Observable stream

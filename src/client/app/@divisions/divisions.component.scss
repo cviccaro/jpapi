@@ -1,40 +1,69 @@
 :host {
   padding-right: 40px;
   display: block;
-  md-grid-tile figure {
-    flex-direction: column;
-    justify-content: space-around;
-    -webkit-justify-content: space-around;
 
-    p {
-      margin-top: 8px;
-    }
-    position: relative;
-    & > *:not(.background) {
-      z-index: 2;
-    }
-    .background {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 1;
-      background-size: cover;
-    }
-  }
-  md-grid-tile.has-background {
-    figure {
-      & > *:not(.background) {
-        color: #fff;
+  md-grid-tile {
+    &.has-background {
+      figure {
+        & > *:not(.background) {
+          color: #fff;
+        }
       }
     }
-  }
 
-  md-grid-tile:hover {
+    &:hover {
+      figure {
+        .actions {
+          display: flex;
+        }
+      }
+    }
+
     figure {
-      .actions {
-        display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      -webkit-justify-content: space-around;
+
+      p {
+        margin: 4px 0;
+      }
+
+      position: relative;
+
+      & > *:not(.background) {
+        z-index: 2;
+      }
+
+      .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+        background-size: cover;
+        background-position: center center;
+      }
+
+      .division-name {
+        padding-top: 24px;
+        margin: 0;
+      }
+
+      .division-info {
+        padding-bottom: 16px;
+        font-size: 14px;
+        .count {
+          font-size: 18px;
+          margin-right: 4px;
+        }
+        md-icon {
+          vertical-align: text-bottom;
+          margin-right: 8px;
+        }
+        p {
+          padding: 0 8px;
+        }
       }
     }
   }

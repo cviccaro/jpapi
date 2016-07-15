@@ -10,7 +10,8 @@ import {
 	TooltipDirective,
 	JpaContextMenu,
 	LoggerService,
-	CONTEXT_MENU_DIRECTIVES
+	CONTEXT_MENU_DIRECTIVES,
+	CapitalizePipe
 } from '../shared/index';
 
 @Component({
@@ -18,7 +19,8 @@ import {
 	selector: 'jpa-divisions',
 	templateUrl: './divisions.component.html',
 	styleUrls: ['./divisions.component.css'],
-	directives: [ MATERIAL_DIRECTIVES, CONTEXT_MENU_DIRECTIVES, TooltipDirective ]
+	directives: [ MATERIAL_DIRECTIVES, CONTEXT_MENU_DIRECTIVES, TooltipDirective ],
+	pipes: [ CapitalizePipe ]
 })
 export class DivisionsComponent implements AfterViewInit {
 	public divisions: Division[] = [];

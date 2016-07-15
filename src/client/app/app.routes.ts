@@ -1,13 +1,25 @@
 import { provideRouter, RouterConfig } from '@angular/router';
 
-import { LoginRoutes } from './@login/index';
-import { HomeRoutes } from './@home/index';
 import { BlogRoutes } from './@blogs/index';
-import { ProjectRoutes } from './@projects/index';
 import { ClientRoutes } from './@clients/index';
 import { DivisionRoutes } from './@divisions/index';
+import { HomeRoutes } from './@home/index';
+import { LoginRoutes } from './@login/index';
+import { ProjectRoutes } from './@projects/index';
+import { SettingsRoutes } from './@settings/index';
 
-import { AuthGuard, LoginGuard, BlogListGuard, BlogGuard, ProjectGuard, ProjectListGuard, ClientsGuard, DivisionsGuard, CkEditorGuard } from './shared/index';
+import {
+    AuthGuard,
+    LoginGuard,
+    BlogListGuard,
+    BlogGuard,
+    ProjectGuard,
+    ProjectListGuard,
+    ClientsGuard,
+    DivisionsGuard,
+    CkEditorGuard,
+    SettingsGuard
+} from './shared/index';
 
 const routes: RouterConfig = [
     ...LoginRoutes,
@@ -15,7 +27,8 @@ const routes: RouterConfig = [
     ...BlogRoutes,
     ...ProjectRoutes,
     ...ClientRoutes,
-    ...DivisionRoutes
+    ...DivisionRoutes,
+    ...SettingsRoutes
 ];
 
 export const APP_ROUTER_PROVIDERS = [
@@ -28,5 +41,6 @@ export const APP_ROUTER_PROVIDERS = [
     ProjectGuard,
     ClientsGuard,
     DivisionsGuard,
-    CkEditorGuard
+    CkEditorGuard,
+    SettingsGuard
 ];

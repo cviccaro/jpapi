@@ -17,13 +17,13 @@ Route::get('/', function () {
 });
 
 Route::get('/admin', function () {
-    return view('angular');
+    return view('angular-dev');
 });
 Route::get('/admin/{page}', function () {
-    return view('angular');
+    return view('angular-dev');
 });
 Route::get('/admin/{page}/{subpage}', function () {
-    return view('angular');
+    return view('angular-dev');
 });
 
 Route::get('blogs', 'BlogController@all');
@@ -54,6 +54,8 @@ Route::get('projects/uri/{uri}', 'ProjectController@getFromSlug');
 Route::get('projects/{id}', 'ProjectController@get');
 
 Route::get('img/{model}/{name}', 'ImageController@getPublic');
+
+Route::get('settings', 'SettingsController@all');
 
 /*
 |--------------------------------------------------------------------------
@@ -92,6 +94,8 @@ Route::group([], function () {
     Route::put('projects/{id}', 'ProjectController@update');
     Route::post('projects/update/{id}', 'ProjectController@update');
     Route::delete('projects/{id}', 'ProjectController@remove');
+
+    Route::post('settings', 'SettingsController@updateMany');
 
     Route::post('upload/image', 'ImageController@uploadTemp');
 });

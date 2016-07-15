@@ -16,8 +16,11 @@
             </jpa-context-menu>
             <button class="item-actions" md-icon-button jpaTooltip tooltip="Manage" (click)="menu.open($event)"><md-icon>more_vert</md-icon></button> 
         </div>
-        <!-- <img *ngIf="division.image_id" [src]="division.image.url" [title]="division.name" /> -->
-        <h4 class="division-name">{{ division.name }}</h4>
-        <p>{{ division.blogs }} Blogs</p>
+        <h2 class="division-name">{{ division.name | capitalize }}</h2>
+        <span class="filler"></span>
+        <div class="division-info flex-row">
+            <p><md-icon class="md-18">speaker_notes</md-icon><span class="count">{{ division.blogs }}</span></p>
+            <p><md-icon class="md-18">work</md-icon><span class="count">{{ division.projects }}</span></p>
+        </div>
     </md-grid-tile>
 </md-grid-list>

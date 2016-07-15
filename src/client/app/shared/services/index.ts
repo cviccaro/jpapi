@@ -5,6 +5,7 @@ export * from './client.service';
 export * from './division.service';
 export * from './logger.service';
 export * from './project.service';
+export * from './settings.service';
 export * from './tag.service';
 export * from './xhr';
 
@@ -15,17 +16,19 @@ import { ClientService } from './client.service';
 import { DivisionService } from './division.service';
 import { LoggerService } from './logger.service';
 import { ProjectService } from './project.service';
+import { SettingsService } from './settings.service';
 import { TagService } from './tag.service';
 import { XhrService } from './xhr';
 
 export const APP_SERVICES = [
     AuthService,
     BlogService,
+    CacheService,
     ClientService,
     DivisionService,
-    TagService,
+    LoggerService,
     ProjectService,
-    CacheService,
-    XhrService,
-    LoggerService
+    SettingsService,
+    TagService,
+    XhrService
 ];
