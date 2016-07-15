@@ -145,6 +145,7 @@ export class BlogListComponent implements OnInit, OnDestroy, RegistersSubscriber
             id: blog.id,
             title: blog.title,
             subtitle: blog.tags.length ? blog.tags[0].name : '',
+            thumbnail: blog.image,
             dates: {
                 updated_at: blog.updated_at,
                 created_at: blog.created_at

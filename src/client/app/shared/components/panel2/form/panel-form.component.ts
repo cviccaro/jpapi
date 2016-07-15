@@ -95,6 +95,8 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
                 validators.push(Validators.required);
             }
 
+            if (Array.isArray(control.value) && control.value.length === 0) control.value = '';
+
             group[control.name] = [control.value, validators];
 
             this.panelToggleStates[control.name] = false;
@@ -128,6 +130,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
 
         this._formControls.forEach(formControl => {
             let sub = formControl.valueChanges.debounceTime(250).subscribe(e => {
+
                let panel = this._controlPanels[formControl.name].panel;
                let summary = this._controlPanels[formControl.name].summary;
 
@@ -154,8 +157,6 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
 
             this.registerSubscriber(sub);
         });
-
-        this.log.log('PanelFormComponent View Initialized.', this);
     }
 
     /**
@@ -192,12 +193,8 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
      * @return void
      */
     handleChange(control: PanelFormControl<any>, e: any): void {
-        setTimeout(() => { 
-            this.model[control.name] = control.value = this.panelForm.value[control.name]; 
-            let panel = this._controlPanels[control.name].panel;
-            let summary = this._controlPanels[control.name].summary;
-
-            summary.updateSummary(panel.expanded);
+        setTimeout(() => {
+            this.model[control.name] = control.value = this.panelForm.value[control.name];
         });
     }
 

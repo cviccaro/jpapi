@@ -1,8 +1,9 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { MATERIAL_DIRECTIVES } from '../../../../libs/angular2-material';
 import { Subscription } from 'rxjs/Subscription';
-import { PanelFormControl, PanelFormControlSummary } from '../control';
+import { PanelFormControl, PanelFormControlSummary, PanelFormControlFile } from '../index';
 import { LoggerService } from '../../../../services/index';
+import { ManagedImage, RegistersSubscribers } from '../../../../models/index';
 
 @Component({
     moduleId: module.id,
@@ -10,7 +11,7 @@ import { LoggerService } from '../../../../services/index';
     templateUrl: './summary.component.html',
     directives: [ MATERIAL_DIRECTIVES ]
 })
-export class PanelFormControlSummaryComponent implements OnInit, OnChanges, OnDestroy {
+export class PanelFormControlSummaryComponent implements OnInit, OnChanges, OnDestroy, RegistersSubscribers {
     @Input() control: PanelFormControl<any>;
     @Input() expanded: boolean;
 
@@ -18,45 +19,62 @@ export class PanelFormControlSummaryComponent implements OnInit, OnChanges, OnDe
         return this._summary;
     }
 
-    private _summarySub: Subscription;
+    _subscriptions: Subscription[] = [];
     private _summary: PanelFormControlSummary;
 
     constructor(private log: LoggerService) { }
 
+
+    /**
+     * Ask the control to update it's summary
+     * @param {boolean} expanded
+     */
     updateSummary(expanded?: boolean): void {
         expanded = expanded === undefined ? this.expanded : expanded;
         this._summary = this.control.summary(expanded);
     }
 
     /**
-     * Initialize the directive/component after Angular initializes 
-     * the data-bound input properties.
+     * Subscribe to control's summary observable and
+     * image loaded observable (if image control)
      */
     ngOnInit(): void {
         // Subscribe to control's observable summary source
-        this._summarySub = this.control.summary$.debounceTime(500).subscribe(summary => {
-            this._summary = summary;
-        });
+        this.registerSubscriber(
+            this.control.summary$.distinctUntilChanged().subscribe(summary => this._summary = summary)
+        );
 
-        // Get the initial summary
-        this.updateSummary();
+        if (this.control.controlType === 'file' && this.control['type'] === 'image' && this.control.value) {
+            this.registerSubscriber(
+                (<ManagedImage>this.control.value).imageLoaded.subscribe(() => this.updateSummary())
+            );
+        }
     }
 
     /**
-     * Request the summary be determined again, which will 
-     * push to the summary$ observable on the control
-     * 
+     * Implements RegistersSubscribers
+     */
+    registerSubscriber(sub: Subscription): void {
+        this._subscriptions.push(sub);
+    }
+
+    /**
+     * Ask the control to update it's summary if the
+     * parent pane's expanded property changes
+     *
      * @param {SimpleChanges} changes [description]
      */
-    ngOnChanges(changes: SimpleChanges) {
+    ngOnChanges(changes: SimpleChanges): void {
         if (changes.hasOwnProperty('expanded')) this.updateSummary(changes['expanded'].currentValue);
     }
 
     /**
-     * Cleanup just before Angular destroys the directive/component. Unsubscribe 
+     * Cleanup just before Angular destroys the directive/component. Unsubscribe
      * observables and detach event handlers to avoid memory leaks.
      */
-    ngOnDestroy() {
-        if (this._summarySub) this._summarySub.unsubscribe();
+    ngOnDestroy(): void {
+        this._subscriptions.forEach(sub => {
+            if (sub) sub.unsubscribe();
+        });
     }
 }

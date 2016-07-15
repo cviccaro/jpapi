@@ -26,7 +26,19 @@
                 </template>
                 <template [ngSwitchCase]="'files'">
                     <jpa-file-upload
-                        [multiple]="control.multiple"
+                        [multiple]="true"
+                        [name]="control.name"
+                        [formControlName]="control.name"
+                        [type]="control.type"
+                        [icon]="control.editIcon"
+                        [control]="control"
+                        [accept]="control.accept"
+                        (change)="handleChange(control, $event)">
+                    </jpa-file-upload>
+                </template>
+                <template [ngSwitchCase]="'file'">
+                    <jpa-file-upload
+                        [multiple]="false"
                         [name]="control.name"
                         [formControlName]="control.name"
                         [type]="control.type"

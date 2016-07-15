@@ -1,4 +1,5 @@
 import { PagerData } from './pager/pager-data';
+import { JpFile } from '../../models/index';
 
 export interface ListConfig {
     sortOptions?: { name: string, value: string }[];
@@ -12,6 +13,7 @@ export interface ListLineItem {
 	id: number;
 	title: string;
 	subtitle?: string;
+    thumbnail?: JpFile;
 	dates?: {
 		updated_at: any,
 		created_at: any

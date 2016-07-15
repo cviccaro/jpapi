@@ -14,6 +14,7 @@ import {
     PanelFormControlTextfield,
     PanelFormControlSelect,
     PanelFormControlTextarea,
+    PanelFormControlFile,
     PanelFormControlFiles,
     LoggerService,
     RegistersSubscribers
@@ -99,17 +100,15 @@ export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers
               required: true,
               ckeditor: true
           }),
-          new PanelFormControlFiles({
+          new PanelFormControlFile({
               name: 'image',
               label: 'Cover Image',
               required: true,
-              multiple: false,
               type: 'image'
           }),
           new PanelFormControlFiles({
               name: 'images',
-              required: false,
-              multiple: true,
+              required: true,
               filesLabel: 'images in gallery',
               type: 'image'
           })

@@ -143,6 +143,7 @@ export class ProjectListComponent implements OnInit, OnDestroy, RegistersSubscri
             id: project.id,
             title: project.title,
             subtitle: project.client.name,
+            thumbnail: project.image,
             dates: {
                 updated_at: project.updated_at,
                 created_at: project.created_at

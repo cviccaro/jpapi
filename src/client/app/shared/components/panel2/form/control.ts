@@ -79,7 +79,6 @@ export class PanelFormControl<T> {
         }
     }
 
-    //@todo: make observable so can use distinctuntilchanged
     summary(panelExpanded: boolean): PanelFormControlSummary {
         let summary: any;
 

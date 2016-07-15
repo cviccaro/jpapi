@@ -1,14 +1,15 @@
-<md-toolbar layout="row" layout-padding class="list-toolbar">
-  <div layout="row" layout-align="start center" flex="50">
+<md-toolbar class="list-toolbar">
+  <div class="list-title-wrapper">
     <h2 class="list-title">{{ listTitle }}</h2>
     <h4 class="list-info">Showing {{ listConfig.page.from }} - {{ listConfig.page.to }} of {{ listConfig.page.total }}</h4>
-    <div class="list-toolbar-actions">
-      <button md-mini-fab color="secondary" (click)="add()" jpaTooltip tooltip="Create">
-        <md-icon class="md-24">add</md-icon>
-      </button>
-    </div>
   </div>
-  <div layout="row" layout-align="end center" flex="50" class="sorts" [hidden]="!listData.length">
+  <div class="list-toolbar-buttons">
+    <button md-icon-button class="menu-btn" (click)="add()" jpaTooltip tooltip="Create">
+      <md-icon >add</md-icon>
+    </button>
+  </div>
+  <span class="filler"></span>
+  <div class="sorts" [hidden]="!listData.length">
     <md-input-container>
       <label>Per Page</label>
       <select [(ngModel)]="listConfig.page.per_page" (ngModelChange)="fetch()">
@@ -32,13 +33,45 @@
 </md-toolbar>
 <md-list layout="column" *ngIf="listData.length">
     <md-list-item *ngFor="let line of listData; let index = index; let isOdd = odd; let isEven = even" [class.md-3-line]="true" [class.odd]="isOdd" [class.even]="isEven">
-        <div class="md-list-item-content md-no-style" layout="row" layout-align="center center" layout-padding>
-            <div class="item-text" layout="column" flex="70">
+        <div class="md-list-item-content flex-row">
+            <div class="item-thumbnail">
+              <img *ngIf="line.thumbnail" [src]="line.thumbnail.url" />
+            </div>
+            <div class="item-text flex-col">
               <h3 md-line>{{ line.title }}</h3>
               <h4 md-line>{{ line.subtitle }}</h4>
-              <p md-line>Last updated {{ line.dates.updated_at | amTimeAgo }} | Created {{ line.dates.created_at | amCalendar }}</p>
+              <!-- <p md-line>Last updated {{ line.dates.updated_at | amTimeAgo }} | Created {{ line.dates.created_at | amCalendar }}</p> -->
             </div>
-            <div class="actions" layout="row" flex="30" layout-align="end center">
+            <span class="filler"></span>
+            <div class="item-dates">
+              <div class="date updated">
+                <div class="icon-wrapper">
+                  <md-icon>update</md-icon>
+                </div>
+                <div class="detail">
+                  <div class="detail-title-row">
+                    {{ line.dates.updated_at | amDateFormat: 'LL' }}
+                  </div>
+                  <div class="detail-subtitle-row">
+                    Updated {{ line.dates.updated_at | amTimeAgo }}
+                  </div>
+                </div>
+              </div>
+              <div class="date created">
+                <div class="icon-wrapper">
+                  <md-icon>event</md-icon>
+                </div>
+                <div class="detail">
+                  <div class="detail-title-row">
+                    {{ line.dates.created_at | amDateFormat: 'LL' }}
+                  </div>
+                  <div class="detail-subtitle-row">
+                    Created {{ line.dates.created_at | amTimeAgo }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="actions flex-row">
               <button md-icon-button (click)="edit(line, $event)" jpaTooltip tooltip="Edit" tooltipAlign="left">
                   <md-icon class="md-24">edit</md-icon>
               </button>
@@ -47,7 +80,6 @@
               </button>
             </div>
         </div>
-        <md-divider></md-divider>
     </md-list-item>
 </md-list>
 <div class="empty" [hidden]="listData.length">{{ listConfig.emptyText }}</div>

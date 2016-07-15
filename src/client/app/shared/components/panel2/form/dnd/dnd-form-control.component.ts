@@ -83,12 +83,12 @@ export class DragnDropFormControlComponent implements ControlValueAccessor, OnIn
     }
 
     /**
-     * Set the available options by filtering out 
+     * Set the available options by filtering out
      * current ones
      */
     setOptions(): void {
         if (this.options) {
-            let ids = this.value.map(item => item.id);
+            let ids = Array.isArray(this.value) ? this.value.map(item => item.id) : [];
 
             this.options = this._originalOptions.filter(option => {
                 return ids.indexOf(option.id) === -1;
@@ -122,7 +122,7 @@ export class DragnDropFormControlComponent implements ControlValueAccessor, OnIn
      * @param {any} value
      */
     pushValue(value: any): void {
-        let val = this.value.slice(0);
+        let val = Array.isArray(this.value) ? this.value.slice(0) : [];
 
         val.push(value);
 

@@ -8,6 +8,7 @@
     (dragleave)="onDragLeave($event)"
     (drop)="add($event)">
   </div>
+  <div *ngIf="value.length">
   <md-grid-list [cols]="cols" [rowHeight]="rowHeight" [gutterSize]="gutterSize" (dragend)="onDragEnd($event)" [ngSwitch]="type">
       <template [ngSwitchCase]="'file'">
         <md-grid-tile *ngFor="let file of value; let index = index"
@@ -43,6 +44,7 @@
         </md-grid-tile>
       </template>
   </md-grid-list>
+  </div>
 </div>
 <div class="single-file-wrapper" *ngIf="!multiple">
     <div class="single-file-container has-value" [hidden]="empty">

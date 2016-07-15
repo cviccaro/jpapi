@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import {TimeAgoPipe, CalendarPipe} from 'angular2-moment';
+import {TimeAgoPipe, CalendarPipe, DateFormatPipe} from 'angular2-moment';
 
 import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { TooltipDirective } from '../tooltip/index';
@@ -15,7 +15,7 @@ import { PagerComponent } from './pager/index';
         PagerComponent,
         TooltipDirective
     ],
-    pipes: [TimeAgoPipe, CalendarPipe]
+    pipes: [TimeAgoPipe, CalendarPipe, DateFormatPipe]
 })
 export class ListComponent {
 

@@ -15,6 +15,7 @@ import {
     PanelFormControlTextarea,
     PanelFormControlDragnDrop,
     PanelFormControlFiles,
+    PanelFormControlFile,
     LoggerService,
     RegistersSubscribers
 } from '../shared/index';
@@ -90,8 +91,7 @@ export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
         this.controls = [
           new PanelFormControlTextfield({
             name: 'title',
-            required: true,
-            order: 3
+            required: true
           }),
           new PanelFormControlDragnDrop({
               name: 'tags',
@@ -118,11 +118,10 @@ export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
             name: 'author',
             required: false
           }),
-          new PanelFormControlFiles({
+          new PanelFormControlFile({
               name: 'image',
               label: 'Cover Image',
               required: false,
-              multiple: false,
               type: 'image'
           })
         ];

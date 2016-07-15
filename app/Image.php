@@ -74,16 +74,20 @@ class Image extends Model
         return $this->hasOne('App\Staff');
     }
 
-    public static function createFromPath($path, $destination = false)
+    public static function createFromPath($path, $destination = false, $alias = false)
     {
         if (!$destination) {
             $destination = self::defaultDirectory();
         }
 
+        if (!$alias) {
+            $alias = File::basename($path);
+        }
+
         return self::create([
             'path' => $destination,
             'filename' => File::basename($path),
-            'alias' => File::basename($path),
+            'alias' => $alias,
             'mimetype' => File::mimeType($path),
             'extension' => File::extension($path),
             'size' => File::size($path),
@@ -113,7 +117,7 @@ class Image extends Model
         $filename = self::availableFilename($target_name, $destination);
         $file->move($directory, $filename);
 
-        return self::createFromPath(path_join([$directory, $filename]), $destination);
+        return self::createFromPath(path_join([$directory, $filename]), $destination, $target_name);
     }
 
     public static function availableFilename($filename, $directory = null)

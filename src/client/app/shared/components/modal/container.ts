@@ -48,7 +48,6 @@ export class ModalContainerComponent implements OnInit, OnDestroy, RegistersSubs
      */
     ngOnInit(): void {
         let sub = this.service.openModal.subscribe((config: ModalConfig) => {
-            console.log('Open modal config', config);
             this.config = config;
             this.opened = true;
         });

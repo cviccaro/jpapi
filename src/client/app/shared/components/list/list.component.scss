@@ -6,91 +6,152 @@
      * Actual MD List
      */
     md-list {
-      md-list-item {
-        display: block;
-        background: $white;
-        &.odd {
-          background: $grey_50;
-        }
-        .md-list-item-content {
-          width: 100%;
-          display: flex;
-          -webkit-align-items: flex-start;
-          -ms-flex-align: start;
-          align-items: flex-start;
-          -webkit-justify-content: center;
-          -ms-flex-pack: center;
-          justify-content: center;
-          .item-text {
-            [md-line] {
-              margin: 0;
-              line-height: 1.45em;
+        md-list-item {
+            display: block;
+            background: $white;
+
+            &.odd {
+                background: $grey_50;
             }
-          }
-          .actions {
-            button {
-              margin: auto 15px;
+
+            .md-list-item-content {
+                width: 100%;
+                align-items: center;
+
+                .item-thumbnail {
+                    max-width: 100px;
+                    width: 100px;
+                    margin-right: 16px;
+
+                    img {
+                        max-width: 100%;
+                    }
+                }
+
+                .item-text {
+                    [md-line] {
+                        margin: 0;
+                        line-height: 1.45em;
+                    }
+                }
+
+                .item-dates {
+                    display: flex;
+                    flex-direction: row;
+                    margin-right: 40px;
+                    .date {
+                      display: flex;
+                      flex-direction: row;
+                      margin-right: 24px;
+                      .icon-wrapper {
+                          display: flex;
+                          flex-direction: column;
+                          justify-content: center;
+                          margin-right: 4px;
+                          md-icon {
+                              color: $black_54;
+                          }
+                      }
+
+                      .detail {
+                          display: flex;
+                          flex-direction: column;
+
+                          .detail-title-row {
+                              font-size: 15px;
+                              color: $black_88;
+                              overflow: hidden;
+                              text-overflow: ellipsis;
+                          }
+
+                          .detail-subtitle-row {
+                              font-size: 13px;
+                              color: $black_54;
+                          }
+                      }
+                    }
+                }
+
+                .actions {
+                    button {
+                        margin: auto 15px;
+                    }
+                }
             }
-          }
+
+            &:last-child {
+                md-divider {
+                    display: none;
+                }
+            }
         }
-        &:last-child {
-          md-divider {
-            display: none;
-          }
-        }
-      }
     }
 
     /**
      * Toolbar
      */
-    md-toolbar {
+    .list-toolbar {
         background: none;
-        padding: 0;
+        padding: 0 40px 0 0;
+
         button[md-button],
         button[md-raised-button] {
             height: 36px;
         }
+
+        .list-title-wrapper {
+            flex-direction: column;
+            display: flex;
+        }
+
         .list-info {
-          padding-left: 0.5em;
-          border-left: 1px solid #ccc;
-          line-height: normal;
+            font-size: 12px;
+            margin: 9px 0 0 1px;
         }
+
         .list-title {
-          padding-right: 0.5em;
-          margin: auto 0;
-          line-height: normal;
+            padding-right: 0.5em;
+            margin: auto 0;
+            line-height: normal;
         }
-        .list-toolbar-actions {
-          margin-left: 1em;
+
+        .list-toolbar-buttons {
+            margin-top: 4px;
+            align-self: flex-start;
         }
+
         .sorts {
-          justify-content: space-between;
-          md-input-container {
-            label {
-              font-size: 14px;
+            display: flex;
+            flex-direction: row;
+            flex: 1;
+            justify-content: space-between;
+            margin-top: 4px;
+            align-self: flex-start;
+
+            md-input-container {
+                label {
+                    font-size: 14px;
+                }
+
+                select {
+                    font-size: 14px;
+                    min-width: 120px;
+                }
             }
-            select {
-              font-size: 14px;
-              min-width: 120px;
-            }
-          }
         }
     }
-    // button[md-button],
-    // button[md-raised-button] {
-    //     md-icon {
-    //         position: relative;
-    //         top: 8px;
-    //     }
-    // }
+
+    jpa-pager {
+        padding-right: 40px;
+    }
 
     .empty {
-      padding: 24px;
-      font-size: 24px;
-      text-align: center;
+        padding: 24px;
+        font-size: 24px;
+        text-align: center;
     }
-    [hidden]{
-      display: none;
+
+    [hidden] {
+        display: none;
     }
 }

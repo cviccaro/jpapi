@@ -1,4 +1,6 @@
-import { Observable } from 'rxjs/Rx';
+import { Output, EventEmitter, OnDestroy } from '@angular/core';
+
+import { Observable, Subscription } from 'rxjs/Rx';
 
 /**
  * Generic managed file configuration
@@ -109,9 +111,13 @@ export class ManagedFile implements JpFile {
 /**
  * A managed image
  */
-export class ManagedImage extends ManagedFile {
+export class ManagedImage extends ManagedFile implements OnDestroy {
     width: number;
     height: number;
+
+    @Output() imageLoaded = new EventEmitter();
+
+    private _dimensionSub: Subscription;
 
     constructor(attributes: JpFile, idx: number) {
         super(attributes, idx);
@@ -135,8 +141,8 @@ export class ManagedImage extends ManagedFile {
 
     /**
      * Track the progress of an HTML Image Load
-     * @param  {HTMLImageElement} imageEl 
-     * @return {Observable<any>}         
+     * @param  {HTMLImageElement} imageEl
+     * @return {Observable<any>}
      */
     load(imageEl: HTMLImageElement) : Observable<any> {
         return Observable.create(observer => {
@@ -152,9 +158,10 @@ export class ManagedImage extends ManagedFile {
      * @param {HTMLImageElement} imageEl [description]
      */
     watchForDimensions(imageEl: HTMLImageElement): void {
-        this.load(imageEl).subscribe(e => {
+        this._dimensionSub = this.load(imageEl).subscribe(e => {
             this.width = e.width;
             this.height = e.height;
+            this.imageLoaded.emit(this);
         });
     }
 
@@ -164,5 +171,12 @@ export class ManagedImage extends ManagedFile {
      */
     megapixels(): number {
         return Math.round((this.width * this.height) / 10000) / 100;
+    }
+
+    /**
+     * Clean up
+     */
+    ngOnDestroy(): void {
+        if (this._dimensionSub) this._dimensionSub.unsubscribe();
     }
 }

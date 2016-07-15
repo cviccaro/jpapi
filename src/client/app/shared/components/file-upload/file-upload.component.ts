@@ -88,8 +88,8 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
      * Outputs
      */
     @Output() imageLoaded = new EventEmitter<ManagedImage>();
-    @Output() fileRemoved = new EventEmitter<ManagedFile|ManagedImage>();
-    @Output() fileAdded = new EventEmitter<ManagedFile|ManagedImage>();
+    @Output() fileRemoved = new EventEmitter<ManagedFile | ManagedImage>();
+    @Output() fileAdded = new EventEmitter<ManagedFile | ManagedImage>();
     @Output() change = new EventEmitter();
 
     /**
@@ -100,9 +100,8 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     /**
      * Private variables
      */
-    private listener: EventListener;
     private _imagesLoaded: number = 0;
-    private _value: any;
+    private _value: any = '';
     private _dragging: boolean = false;
     private _onTouchedCallback: () => void = noop;
     private _onChangeCallback: (_: any) => void = noop;
@@ -165,32 +164,20 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         if (this.type === 'image' && this.accept === '*') this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
     }
 
-    ngAfterViewInit() {
+    /**
+     * Register the image preview element with the control
+     * to watch its loading process
+     */
+    ngAfterViewInit(): void {
         if (this.type === 'image' && !this.multiple) {
-            if (this._currentImageEl) {
-                 let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
+            if (this._currentImageEl && this.value.url) {
+                let imageEl = (<HTMLImageElement>this._currentImageEl.nativeElement);
 
-                 this.registerImageWatcher(imageEl);
+                this.control.value.watchForDimensions(imageEl);
 
-                 if (this.value.url) setTimeout(() => { imageEl.src = this._value.url; });
+                setTimeout(() => { imageEl.src = this._value.url; });
             }
         }
-    }
-
-    registerImageWatcher(imageEl: HTMLImageElement) {
-        this.listener = (event: Event) => {
-            let val = this.value;
-
-            val.width = imageEl.naturalWidth;
-            val.height = imageEl.naturalHeight;
-
-            this.value = val;
-
-            if (this.control) {
-                this.control.value = this.value;
-            }
-        };
-        imageEl.addEventListener('load', this.listener);
     }
 
     registerOnChange(fn: any) {
@@ -207,31 +194,22 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
      * Runs when value is first set
      */
     writeValue(value: any) {
-        this._value = this.convertValueForInputType(value);
+        this._value = this.control.value = this.convertValueForInputType(value);
     }
 
     /**
      * Convert the value to the appropriate
-     * type based on properties multiple and type
+     * type if empty
      *
      * @param {any} value [description]
      */
     convertValueForInputType(value: any): any {
-        if (!this.multiple) {
-            if ( !value ) return '';
-
-            return this.managedFile(this.type, value);
-        } else {
-            if ( !value ) return [];
-
-            return value.map((item, i) => this.managedFile(this.type, item, i));
-        }
-    }
-
-    managedFile(type: string, value: any, idx: number = 0) {
-        switch(type) {
-            case 'image': if (!(value instanceof ManagedImage)) return new ManagedImage(value, idx);
-            case 'file': if (!(value instanceof ManagedFile)) return new ManagedFile(value, idx);
+        if (!value || value.length === 0) {
+            if (this.multiple) {
+                return [];
+            } else {
+                return '';
+            }
         }
 
         return value;
@@ -342,9 +320,9 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         for (let i = 0; i < files.length; i++) {
             let file = files[i];
 
-            switch(this.type) {
+            switch (this.type) {
                 case 'image':
-                    let managedImage = new ManagedImage({_file: file}, i);
+                    let managedImage = new ManagedImage({ _file: file }, i);
 
                     let sub = managedImage.read().subscribe(e => {
                         managedImage.url = e;
@@ -358,7 +336,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
 
                     break;
                 default:
-                    let managedFile = new ManagedFile({_file: file}, i);
+                    let managedFile = new ManagedFile({ _file: file }, i);
 
                     this.addToGrid(managedFile);
 
@@ -369,12 +347,12 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         }
     }
 
-    addToGrid(file: ManagedFile|ManagedImage) {
+    addToGrid(file: ManagedFile | ManagedImage) {
         this.pushValue(file);
         this.fileAdded.emit(file);
     }
 
-    pushValue(file: ManagedFile|ManagedImage) {
+    pushValue(file: ManagedFile | ManagedImage) {
         let value = this.value.slice(0);
 
         value.push(file);
@@ -396,8 +374,8 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     /**
      * Move file within array
      */
-    moveFile(old_index, new_index): void {
-        let files = this.value;
+    moveFile(old_index: number, new_index: number): void {
+        let files = this.value.slice(0);
 
         const source = files[old_index];
         const target = files[new_index];
@@ -430,7 +408,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
             file = files[0];
         }
 
-        switch(this.type) {
+        switch (this.type) {
             case 'image':
                 this.attachSingleImage(file);
                 break;
@@ -442,13 +420,15 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     }
 
     attachSingleFile(file: File) {
-        let managedFile = new ManagedFile({_file: file}, 0);
+        let managedFile = new ManagedFile({ _file: file }, 0);
 
         this.value = managedFile;
     }
 
     attachSingleImage(file: File) {
-        let image = new ManagedImage({_file: file}, 0);
+        let image = new ManagedImage({ _file: file }, 0);
+
+        image.watchForDimensions(this._currentImageEl.nativeElement);
 
         this.isLoading = true;
 
@@ -481,9 +461,5 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         this._subscriptions.forEach(sub => {
             if (sub) sub.unsubscribe();
         });
-
-        if (this._currentImageEl && this.listener) {
-            (<HTMLImageElement>this._currentImageEl.nativeElement).removeEventListener('load', this.listener);
-        }
     }
 }

@@ -100,7 +100,6 @@ export class DivisionComponent implements OnInit, OnDestroy, RegistersSubscriber
               name: 'image',
               label: 'Backdrop',
               required: true,
-              multiple: false,
               type: 'image'
           }),
           // new PanelFormControlFiles({
