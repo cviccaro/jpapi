@@ -120,11 +120,16 @@ export class ProjectService {
 				case 'client':
 					break;
 				case 'images':
-					val.forEach((item,i) => {
-						for (let k in item) {
-							form.append(`${key}[${i}][${k}]`, item[k]);
-						}
-					});
+				case 'divisions':
+					if (val) {
+						val.forEach((item,i) => {
+							for (let k in item) {
+								form.append(`${key}[${i}][${k}]`, item[k]);
+							}
+						});
+					} else {
+						form.append(`${key}[0]`, '');
+					}
 					break;
 				case 'image':
 					if (val === '') {
@@ -136,6 +141,10 @@ export class ProjectService {
 				default:
 					if (val !== undefined && val !== null) {
 						form.append(key, val);
+						console.log('ProjectService appending to form ', {
+							key: key,
+							val: val
+						});
 					}
 					break;
 			}

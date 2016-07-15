@@ -13,7 +13,7 @@ import {
     PanelFormControlTextfield,
     PanelFormControlSelect,
     PanelFormControlTextarea,
-    PanelFormControlFiles,
+    PanelFormControlFile,
     LoggerService,
     RegistersSubscribers
 } from '../shared/index';
@@ -96,7 +96,7 @@ export class DivisionComponent implements OnInit, OnDestroy, RegistersSubscriber
           //     required: true,
           //     ckeditor: true
           // }),
-          new PanelFormControlFiles({
+          new PanelFormControlFile({
               name: 'image',
               label: 'Backdrop',
               required: true,

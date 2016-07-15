@@ -1,4 +1,6 @@
 :host {
+  padding-right: 40px;
+  display: block;
   md-grid-tile figure {
     flex-direction: column;
     justify-content: space-around;
@@ -6,6 +8,26 @@
 
     p {
       margin-top: 8px;
+    }
+    position: relative;
+    & > *:not(.background) {
+      z-index: 2;
+    }
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      background-size: cover;
+    }
+  }
+  md-grid-tile.has-background {
+    figure {
+      & > *:not(.background) {
+        color: #fff;
+      }
     }
   }
 

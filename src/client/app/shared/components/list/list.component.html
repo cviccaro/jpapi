@@ -38,12 +38,12 @@
               <img *ngIf="line.thumbnail" [src]="line.thumbnail.url" />
             </div>
             <div class="item-text flex-col">
-              <h3 md-line>{{ line.title }}</h3>
-              <h4 md-line>{{ line.subtitle }}</h4>
-              <!-- <p md-line>Last updated {{ line.dates.updated_at | amTimeAgo }} | Created {{ line.dates.created_at | amCalendar }}</p> -->
+              <h3 md-line>{{ line.line1 }}</h3>
+              <h4 *ngIf="line.line2" md-line>{{ line.line2 }}</h4>
+              <h5 *ngIf="line.line3" md-line>{{ line.line3 }}</h5>
             </div>
             <span class="filler"></span>
-            <div class="item-dates">
+            <div class="item-dates hidden-xs hidden-sm">
               <div class="date updated">
                 <div class="icon-wrapper">
                   <md-icon>update</md-icon>

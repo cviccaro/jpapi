@@ -40,7 +40,7 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        \Log::info('Received request to create blog: ' . print_r($request->toArray(), true));
+        \Log::info('Received request to create blog');
 
         $destination = path_join(['app', 'public', 'images', 'blogs']);
 
@@ -103,7 +103,7 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        \Log::info('Received request to update blog ' . $id . ': ' . print_r($request->toArray(), true));
+        \Log::info('Received request to update blog ' . $id);
 
         $destination = path_join(['app', 'public', 'images', 'blogs']);
 
@@ -131,7 +131,7 @@ class BlogController extends Controller
             $ids_clean = $blog->tags->map(function($tag) { return $tag->id; })->toArray();
             $ids_dirty = [];
 
-            \Log::info('Saving updated blog tags vs clean IDs ' . implode(', ', $ids_clean));
+            \Log::info('Saving updated blog tags');
 
             $tags = $request->get('tags');
 
@@ -148,8 +148,6 @@ class BlogController extends Controller
                 }
             }
 
-            \Log::info('Updated blog tags. Dirty IDs: ' . implode(', ', $ids_dirty));
-
             foreach ($ids_clean as $clean_id) {
                 if (!in_array($clean_id, $ids_dirty)) {
                     \Log::info('Detaching tag ' . $clean_id . ' from blog ' . $id);
@@ -162,7 +160,7 @@ class BlogController extends Controller
             $ids_clean = $blog->divisions->map(function($div) { return $div->id; })->toArray();
             $ids_dirty = [];
 
-            \Log::info('Saving updated blog divisions vs clean divisions ' . implode(', ', $ids_clean));
+            \Log::info('Saving updated blog divisions vs clean divisions ');
 
             $divisions = $request->get('divisions');
 
@@ -179,7 +177,7 @@ class BlogController extends Controller
                 }
             }
 
-            \Log::info('Updated blog divisions. Dirty IDs: ' . implode(', ', $ids_dirty));
+            \Log::info('Updated blog divisions.');
 
             foreach ($ids_clean as $clean_id) {
                 if (!in_array($clean_id, $ids_dirty)) {

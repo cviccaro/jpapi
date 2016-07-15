@@ -2,51 +2,62 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate, ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs/Rx';
 
-import { ProjectService, ClientService, CacheService } from '../services/index';
+import { ClientService, DivisionService, CacheService } from '../services/index';
 import { RegistersSubscribers } from '../index';
-
 
 @Injectable()
 export class ProjectGuard implements CanActivate, OnDestroy, RegistersSubscribers {
-    _subscriptions: Subscription[] = [];
+  _subscriptions: Subscription[] = [];
 
-    constructor(
-        private projectService: ProjectService,
-        private clientService: ClientService,
-        private route: ActivatedRoute,
-        public cache: CacheService
-    ) { }
+  constructor(
+    private cache: CacheService,
+    private clientService: ClientService,
+    private divisionService: DivisionService,
+    private route: ActivatedRoute
+  ) { }
 
-    /**
-     * Implemented as part of CanActivate
-     * @return {Observable<any>}
-     */
-    canActivate(): Observable<any> {
-      return Observable.create(observer => {
-        let sub = this.clientService.options().subscribe(res => {
-            this.cache.store('clients', res);
-            observer.complete(true);
-        });
+  /**
+   * Implemented as part of CanActivate
+   * @return {Observable<any>}
+   */
+  canActivate(): Observable<any> {
+    return Observable.create(observer => {
+      let gotDivisions = false;
+      let gotClients = false;
 
-        this.registerSubscriber(sub);
+      let sub = this.divisionService.options().subscribe(res => {
+        this.cache.store('divisions', res);
+        gotDivisions = true;
+        if (gotClients) observer.complete(true);
       });
-    }
 
-    /**
-     * Implemented as part of RegistersSubscribers
-     * @param {Subscription} sub
-     */
-    registerSubscriber(sub: Subscription): void {
-        this._subscriptions.push(sub);
-    }
+      this.registerSubscriber(sub);
 
-    /**
-     * Cleanup just before Angular destroys the directive/component. Unsubscribe
-     * observables and detach event handlers to avoid memory leaks.
-     */
-    ngOnDestroy(): void {
-        this._subscriptions.forEach(sub => {
-            if (sub) sub.unsubscribe();
-        });
-    }
+      let sub2 = this.clientService.options().subscribe(res => {
+        this.cache.store('clients', res);
+        gotClients = true;
+        if (gotDivisions) observer.complete(true);
+      });
+
+      this.registerSubscriber(sub2);
+    });
+  }
+
+  /**
+   * Implemented as part of RegistersSubscribers
+   * @param {Subscription} sub
+   */
+  registerSubscriber(sub: Subscription): void {
+    this._subscriptions.push(sub);
+  }
+
+  /**
+   * Cleanup just before Angular destroys the directive/component. Unsubscribe
+   * observables and detach event handlers to avoid memory leaks.
+   */
+  ngOnDestroy() {
+    this._subscriptions.forEach(sub => {
+      if (sub) sub.unsubscribe();
+    });
+  }
 }

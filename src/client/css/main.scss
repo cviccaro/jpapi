@@ -366,7 +366,8 @@ form {
 
 .with-actions {
   .actions {
-    position: relative;
+    position: absolute;
+    top: 0px;
     opacity: 0;
     display: flex;
     flex-direction: row;

@@ -143,8 +143,9 @@ export class BlogListComponent implements OnInit, OnDestroy, RegistersSubscriber
     mapList(blog: Blog): ListLineItem {
         return {
             id: blog.id,
-            title: blog.title,
-            subtitle: blog.tags.length ? blog.tags[0].name : '',
+            line1: blog.title,
+            line2: blog.tags.length ? blog.tags[0].name : '',
+            line3: blog.divisions.length ? blog.divisions[0].name : '',
             thumbnail: blog.image,
             dates: {
                 updated_at: blog.updated_at,

@@ -3,7 +3,8 @@
     <!-- <button md-icon-button (click)="add($event)" class="menu-btn" jpaTooltip tooltip="Create"><md-icon>add</md-icon></button> -->
 </md-toolbar>
 <md-grid-list cols="3" rowHeight="150px" gutterSize="8px">
-    <md-grid-tile *ngFor="let division of divisions" class="with-actions">
+    <md-grid-tile *ngFor="let division of divisions" class="with-actions" [class.has-background]="division.image_id">
+        <div class="background" *ngIf="division.image_id" [style.background-image]="'url(' + division.image.url + ')'"></div>
         <div class="actions">
             <jpa-context-menu #menu>
                 <jpa-context-menu-item>
@@ -15,7 +16,7 @@
             </jpa-context-menu>
             <button class="item-actions" md-icon-button jpaTooltip tooltip="Manage" (click)="menu.open($event)"><md-icon>more_vert</md-icon></button> 
         </div>
-        <img *ngIf="division.image_id" [src]="division.image.url" [title]="division.name" />
+        <!-- <img *ngIf="division.image_id" [src]="division.image.url" [title]="division.name" /> -->
         <h4 class="division-name">{{ division.name }}</h4>
         <p>{{ division.blogs }} Blogs</p>
     </md-grid-tile>

@@ -8,6 +8,7 @@ import {
 	JpaModal,
 	Division,
 	TooltipDirective,
+	JpaContextMenu,
 	LoggerService,
 	CONTEXT_MENU_DIRECTIVES
 } from '../shared/index';
@@ -30,6 +31,7 @@ export class DivisionsComponent implements AfterViewInit {
 		public modal: JpaModal,
 		public toaster: ToasterService,
 		public router: Router,
+		public menu: JpaContextMenu,
 		public log: LoggerService
 	) {
 		this.state = this.cache.get('divisions');
@@ -48,6 +50,7 @@ export class DivisionsComponent implements AfterViewInit {
 	 * @param {Division} division
 	 */
 	edit(division: Division) {
+		this.menu.close();
 		let command = ['/divisions', division.id];
 		this.log.log('Route to ', command);
 		this.router.navigate(command);

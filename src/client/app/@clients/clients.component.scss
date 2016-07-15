@@ -1,4 +1,6 @@
 :host {
+  padding-right: 40px;
+  display: block;
   md-grid-tile figure {
     flex-direction: column;
     justify-content: space-around;
@@ -6,6 +8,9 @@
 
     p {
       margin-top: 8px;
+    }
+    .actions {
+      top: -10px;
     }
   }
 

@@ -1,157 +1,161 @@
 :host {
-    display: flex;
-    flex-direction: column;
+  display: flex;
+  flex-direction: column;
 
-    /**
-     * Actual MD List
-     */
-    md-list {
-        md-list-item {
-            display: block;
-            background: $white;
+  /**
+   * Actual MD List
+   */
+  md-list {
+    md-list-item {
+      display: block;
+      background: $white;
 
-            &.odd {
-                background: $grey_50;
-            }
+      &.odd {
+        background: $grey_50;
+      }
 
-            .md-list-item-content {
-                width: 100%;
-                align-items: center;
+      .md-list-item-content {
+        width: 100%;
+        align-items: center;
 
-                .item-thumbnail {
-                    max-width: 100px;
-                    width: 100px;
-                    margin-right: 16px;
+        .item-thumbnail {
+          max-width: 100px;
+          width: 100px;
+          margin-right: 16px;
 
-                    img {
-                        max-width: 100%;
-                    }
-                }
-
-                .item-text {
-                    [md-line] {
-                        margin: 0;
-                        line-height: 1.45em;
-                    }
-                }
-
-                .item-dates {
-                    display: flex;
-                    flex-direction: row;
-                    margin-right: 40px;
-                    .date {
-                      display: flex;
-                      flex-direction: row;
-                      margin-right: 24px;
-                      .icon-wrapper {
-                          display: flex;
-                          flex-direction: column;
-                          justify-content: center;
-                          margin-right: 4px;
-                          md-icon {
-                              color: $black_54;
-                          }
-                      }
-
-                      .detail {
-                          display: flex;
-                          flex-direction: column;
-
-                          .detail-title-row {
-                              font-size: 15px;
-                              color: $black_88;
-                              overflow: hidden;
-                              text-overflow: ellipsis;
-                          }
-
-                          .detail-subtitle-row {
-                              font-size: 13px;
-                              color: $black_54;
-                          }
-                      }
-                    }
-                }
-
-                .actions {
-                    button {
-                        margin: auto 15px;
-                    }
-                }
-            }
-
-            &:last-child {
-                md-divider {
-                    display: none;
-                }
-            }
-        }
-    }
-
-    /**
-     * Toolbar
-     */
-    .list-toolbar {
-        background: none;
-        padding: 0 40px 0 0;
-
-        button[md-button],
-        button[md-raised-button] {
-            height: 36px;
+          img {
+            max-width: 100%;
+          }
         }
 
-        .list-title-wrapper {
-            flex-direction: column;
-            display: flex;
+        .item-text {
+          [md-line] {
+            margin: 0;
+            line-height: 1.45em;
+          }
         }
 
-        .list-info {
-            font-size: 12px;
-            margin: 9px 0 0 1px;
-        }
+        .item-dates {
+          display: flex;
+          flex-direction: row;
+          margin: 0;
 
-        .list-title {
-            padding-right: 0.5em;
-            margin: auto 0;
-            line-height: normal;
-        }
-
-        .list-toolbar-buttons {
-            margin-top: 4px;
-            align-self: flex-start;
-        }
-
-        .sorts {
+          .date {
             display: flex;
             flex-direction: row;
-            flex: 1;
-            justify-content: space-between;
-            margin-top: 4px;
-            align-self: flex-start;
+            margin-right: 24px;
+            min-width: 175px;
 
-            md-input-container {
-                label {
-                    font-size: 14px;
-                }
+            .icon-wrapper {
+              display: flex;
+              flex-direction: column;
+              justify-content: center;
+              margin-right: 4px;
 
-                select {
-                    font-size: 14px;
-                    min-width: 120px;
-                }
+              md-icon {
+                color: $black_54;
+              }
             }
+
+            .detail {
+              display: flex;
+              flex-direction: column;
+
+              .detail-title-row {
+                font-size: 15px;
+                color: $black_88;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+
+              .detail-subtitle-row {
+                font-size: 13px;
+                color: $black_54;
+              }
+            }
+          }
         }
+
+        .actions {
+          button {
+            margin: auto 15px;
+          }
+        }
+      }
+
+      &:last-child {
+        md-divider {
+          display: none;
+        }
+      }
+    }
+  }
+
+  /**
+   * Toolbar
+   */
+  .list-toolbar {
+    background: none;
+    padding: 0 40px 0 0;
+
+    button[md-button],
+    button[md-raised-button] {
+      height: 36px;
     }
 
-    jpa-pager {
-        padding-right: 40px;
+    .list-title-wrapper {
+      flex-direction: column;
+      display: flex;
     }
 
-    .empty {
-        padding: 24px;
-        font-size: 24px;
-        text-align: center;
+    .list-info {
+      font-size: 12px;
+      margin: 9px 0 0 1px;
     }
 
-    [hidden] {
-        display: none;
+    .list-title {
+      padding-right: 0.5em;
+      margin: auto 0;
+      line-height: normal;
     }
+
+    .list-toolbar-buttons {
+      margin-top: 4px;
+      align-self: flex-start;
+    }
+
+    .sorts {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      justify-content: space-between;
+      margin-top: 4px;
+      align-self: flex-start;
+
+      md-input-container {
+        label {
+          font-size: 14px;
+        }
+
+        select {
+          font-size: 14px;
+          min-width: 120px;
+        }
+      }
+    }
+  }
+
+  jpa-pager {
+    padding-right: 40px;
+  }
+
+  .empty {
+    padding: 24px;
+    font-size: 24px;
+    text-align: center;
+  }
+
+  [hidden] {
+    display: none;
+  }
 }

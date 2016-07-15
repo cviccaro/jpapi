@@ -11,8 +11,9 @@ export interface ListConfig {
 
 export interface ListLineItem {
 	id: number;
-	title: string;
-	subtitle?: string;
+	line1: string;
+	line2?: string;
+	line3?: string;
     thumbnail?: JpFile;
 	dates?: {
 		updated_at: any,

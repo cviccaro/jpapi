@@ -141,8 +141,9 @@ export class ProjectListComponent implements OnInit, OnDestroy, RegistersSubscri
     mapList(project: Project): ListLineItem {
         return {
             id: project.id,
-            title: project.title,
-            subtitle: project.client.name,
+            line1: project.title,
+            line2: project.client.name,
+            line3: project.divisions.length ? project.divisions[0].name : '',
             thumbnail: project.image,
             dates: {
                 updated_at: project.updated_at,

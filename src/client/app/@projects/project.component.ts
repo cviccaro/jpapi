@@ -16,6 +16,7 @@ import {
     PanelFormControlTextarea,
     PanelFormControlFile,
     PanelFormControlFiles,
+    PanelFormControlDragnDrop,
     LoggerService,
     RegistersSubscribers
 } from '../shared/index';
@@ -33,6 +34,7 @@ export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers
     _subscriptions: Subscription[] = [];
     ckEditors: QueryList<CKEditor>;
     clients: { label: string, value: any }[];
+    divisions: any[];
     controls: PanelFormControl<any>[];
     isNew: boolean = false;
     originalTitle: string;
@@ -65,6 +67,7 @@ export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers
      */
     ngOnInit() {
         this.clients = this.cache.get('clients');
+        this.divisions = this.cache.get('divisions');
 
         if (this.route.snapshot.params['id'] === 'new') {
             this.ready = true;
@@ -99,6 +102,11 @@ export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers
               name: 'description',
               required: true,
               ckeditor: true
+          }),
+          new PanelFormControlDragnDrop({
+              name: 'divisions',
+              required: false,
+              options: this.divisions
           }),
           new PanelFormControlFile({
               name: 'image',

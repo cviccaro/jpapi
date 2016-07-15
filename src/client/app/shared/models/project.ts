@@ -1,5 +1,6 @@
 import { JpClient } from './client';
 import { JpFile } from './file';
+import { Division } from './division';
 
 export class Project {
 	id: any = undefined;
@@ -10,6 +11,7 @@ export class Project {
     images: JpFile[] = [];
 	client: JpClient = new JpClient();
     client_id:number = undefined;
+    divisions: Division[] = [];
 	created_at: any = undefined;
 	updated_at: any = undefined;
 }

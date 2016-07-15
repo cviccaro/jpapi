@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use App\Image;
 use App\Project;
+use App\Division;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
@@ -39,7 +40,7 @@ class ProjectController extends Controller
      */
     public function store(Request $request)
     {
-        \Log::info('Received request to create work: ' . print_r($request->toArray(), true));
+        \Log::info('Received request to create work');
 
         $destination = path_join(['app', 'public', 'images', 'projects']);
 
@@ -76,7 +77,7 @@ class ProjectController extends Controller
             \Log::info('Saving new gallery images.');
 
             foreach ($images as $idx => $image) {
-                \Log::info('Processing gallery image ' . print_r($image, true));
+                \Log::info('Processing gallery image ' . $idx);
 
                 if (isset($files['images'][$idx])) {
                     $file = $files['images'][$idx]['_file'];
@@ -89,6 +90,19 @@ class ProjectController extends Controller
             }
 
             \Log::info('Saved new gallery images.');
+        }
+
+        if ($request->has('divisions')) {
+            \Log::info('Saving new project divisions');
+
+            $divisions = $request->get('divisions');
+
+            foreach ($divisions as $idx => $division) {
+                if (isset($division['id'])) {
+                    \Log::info('Saving new project with division ' . $division['id'] . ' with weight ' . ($idx * 5));
+                    $project->divisions()->save(Division::find($division['id']), ['weight' => $idx * 5]);
+                }
+            }
         }
 
         return $this->get($project->id);
@@ -104,7 +118,7 @@ class ProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        \Log::info('Received request to update work ' . $id . ': ' . print_r($request->toArray(), true));
+        \Log::info('Received request to update work ' . $id);
 
         $destination = path_join(['app', 'public', 'images', 'projects']);
 
@@ -141,11 +155,9 @@ class ProjectController extends Controller
             $ids_clean = $project->images->map(function($img) { return $img->id; })->toArray();
             $ids_dirty = [];
 
-            \Log::info('Updating gallery images.  Clean IDs: ' . implode(', ', $ids_clean));
-
             foreach ($images as $idx => $image) {
 
-                \Log::info('Processing gallery image ' . print_r($image, true));
+                \Log::info('Processing gallery image ' . $idx);
                 if (isset($image['id'])) {
                     $ids_dirty[] = $image['id'];
                 }
@@ -163,12 +175,41 @@ class ProjectController extends Controller
                 }
             }
 
-            \Log::info('Updated gallery images.  Dirty IDs: ' . implode(', ', $ids_dirty));
+            \Log::info('Updated gallery images.');
 
             foreach ($ids_clean as $clean_id) {
                 if (!in_array($clean_id, $ids_dirty)) {
                     \Log::info('Detaching image ' . $clean_id . ' from project ' . $id);
                     $project->images()->detach($clean_id);
+                }
+            }
+        }
+
+        if ($request->has('divisions')) {
+            $ids_clean = $project->divisions->map(function($div) { return $div->id; })->toArray();
+            $ids_dirty = [];
+
+            \Log::info('Saving updated project divisions');
+
+            $divisions = $request->get('divisions');
+
+            foreach ($divisions as $idx => $division) {
+                if (isset($division['id'])) {
+                    \Log::info('Updating division ' . $division['id'] . ' to weight ' . ($idx * 5));
+                    $ids_dirty[] = $division['id'];
+
+                    if (in_array($division['id'], $ids_clean)) {
+                        $project->divisions()->updateExistingPivot($division['id'], ['weight' => $idx * 5]);
+                    } else {
+                        $project->divisions()->save(Division::find($division['id']), ['weight' => $idx * 5]);
+                    }
+                }
+            }
+
+            foreach ($ids_clean as $clean_id) {
+                if (!in_array($clean_id, $ids_dirty)) {
+                    \Log::info('Detaching division ' . $clean_id . ' from project ' . $id);
+                    $project->divisions()->detach($clean_id);
                 }
             }
         }
