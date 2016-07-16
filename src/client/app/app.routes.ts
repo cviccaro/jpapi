@@ -10,37 +10,39 @@ import { SettingsRoutes } from './@settings/index';
 
 import {
     AuthGuard,
-    LoginGuard,
     BlogListGuard,
     BlogGuard,
+    ClientsGuard,
+    CkEditorGuard,
+    DivisionsGuard,
+    LoginGuard,
+    CanDeactivateGuard,
     ProjectGuard,
     ProjectListGuard,
-    ClientsGuard,
-    DivisionsGuard,
-    CkEditorGuard,
     SettingsGuard
 } from './shared/index';
 
 const routes: RouterConfig = [
-    ...LoginRoutes,
-    ...HomeRoutes,
     ...BlogRoutes,
-    ...ProjectRoutes,
     ...ClientRoutes,
     ...DivisionRoutes,
+    ...HomeRoutes,
+    ...LoginRoutes,
+    ...ProjectRoutes,
     ...SettingsRoutes
 ];
 
 export const APP_ROUTER_PROVIDERS = [
     provideRouter(routes),
     AuthGuard,
-    LoginGuard,
     BlogListGuard,
     BlogGuard,
-    ProjectListGuard,
-    ProjectGuard,
     ClientsGuard,
-    DivisionsGuard,
     CkEditorGuard,
+    DivisionsGuard,
+    LoginGuard,
+    CanDeactivateGuard,
+    ProjectGuard,
+    ProjectListGuard,
     SettingsGuard
 ];

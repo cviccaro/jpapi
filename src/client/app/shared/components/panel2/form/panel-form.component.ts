@@ -7,7 +7,8 @@ import {
     QueryList,
     ViewChildren,
     Output,
-    EventEmitter
+    EventEmitter,
+    HostListener
 } from '@angular/core';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { REACTIVE_FORM_DIRECTIVES, NgControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -26,6 +27,7 @@ import { PanelFormControl } from './control/index';
 import { DragnDropFormControlComponent } from '../../dnd/dnd-form-control.component';
 import { FileUploadComponent } from '../../file-upload/file-upload.component';
 import { PanelFormControlSummaryComponent } from './summary/summary.component';
+import {Observable} from "rxjs/Rx";
 
 @Component({
     moduleId: module.id,
@@ -64,6 +66,19 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
     @Input() submitText: string = 'Submit';
 
     @Output() formSubmit = new EventEmitter();
+
+    @HostListener('window:beforeunload', [ '$event'] )
+    onBeforeUnload(e: BeforeUnloadEvent): string|void {
+       if ( this.panelForm.dirty ) {
+           let message = 'Are you sure?';
+
+           e.returnValue = message;
+
+           return message;
+       }
+
+        return void 0;
+    }
 
     @ViewChildren(PanelComponent) _panels: QueryList<PanelComponent>;
     @ViewChildren(PanelFormControlSummaryComponent) _summaries: QueryList<PanelFormControlSummaryComponent>;

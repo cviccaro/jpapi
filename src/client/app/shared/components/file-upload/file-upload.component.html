@@ -28,18 +28,19 @@
       </template>
       <template [ngSwitchCase]="'image'">
         <md-grid-tile *ngFor="let image of value; let index = index"
+          class="with-actions"
           dnd-droppable
           [dropEnabled]="true"
           (onDropSuccess)="reorder($event, index)">
           <jpa-grid-image
-            dnd-draggable
-            [dragEnabled]="true"
-            [dragData]="index"
-            (onDragStart)="fileDragStart($event)"
-            [imageConfig]="image"
-            [index]="index"
-            (imageLoaded)="gridImageLoaded($event)"
-            (clickedRemove)="handleClickedRemove($event)">
+                  dnd-draggable
+                  [dragEnabled]="true"
+                  [dragData]="index"
+                  (onDragStart)="fileDragStart($event)"
+                  [image]="image"
+                  [index]="index"
+                  (imageLoaded)="gridImageLoaded($event)"
+                  (clickedRemove)="handleClickedRemove($event)">
           </jpa-grid-image>
         </md-grid-tile>
       </template>

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { CanDeactivate } from '@angular/router';
-declare var CKEDITOR: any;
 
 @Injectable()
 export class CkEditorGuard implements CanDeactivate<any> {

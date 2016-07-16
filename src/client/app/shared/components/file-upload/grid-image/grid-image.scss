@@ -8,16 +8,6 @@
     flex-direction: column;
     justify-content: center;
     @include basic-boxshadow(3);
-	.shade {
-		transition: all $transition_duration $transition_ease;
-		display: block;
-		background: transparent;
-		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		bottom: 0;
-	}
     .new {
         position: absolute;
         top: 10px;
@@ -33,15 +23,28 @@
     	}
     	cursor: pointer;
     }
-    &:hover {
-    	.shade {
-    		background: $black_54;
-    	}
-    }
     img {
         max-width: 100%;
     }
+
     &.dnd-drag-start {
         border: 2px dashed $black;
+    }
+    .shade {
+      padding: 16px 32px;
+      text-align: left;
+      justify-content: flex-end;
+      .flex-row {
+        justify-content: flex-start;
+      }
+      .image-name {
+        font-size: 15px;
+        margin-bottom: 16px;
+      }
+      p {
+        span {
+          margin-right: 8px;
+        }
+      }
     }
 }

@@ -49,7 +49,7 @@ export class PanelFormControlFile extends PanelFormControl<any> {
     }
 
     summary(panelExpanded: boolean): PanelFormControlSummary {
-        let val: any = this.value;
+        let val: ManagedImage = this.value;
 
         let summary: PanelFormControlSummary = { text: this.editableText, icon: this.editIcon };
 
@@ -58,6 +58,8 @@ export class PanelFormControlFile extends PanelFormControl<any> {
 
             if (this.type === 'image' && val.width && val.height) text += ` | ${val.width} x ${val.height} px`;
             if (this.type === 'file' && val.mimetype) text += ` | ${val.mimetype}`;
+
+            if (val.description) text += ` | ${val.description}`;
 
             summary = { text: text, icon: this.editIcon };
         }

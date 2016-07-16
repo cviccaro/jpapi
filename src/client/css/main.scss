@@ -302,9 +302,9 @@ md-icon {
   flex-direction: row;
 }
 
-.flex-column {
+.flex-col {
   display: flex;
-  justify-content: space-between;
+  //justify-content: space-between;
   flex-direction: column;
 }
 
@@ -364,19 +364,43 @@ form {
   }
 }
 
+.text-ellipsis {
+  -ms-text-overflow: ellipsis;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .with-actions {
   .actions {
-    position: absolute;
-    top: 0px;
-    opacity: 0;
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    transition: all $transition_duration $transition_ease;
+    position: absolute;
+    top: 0px;
     width: 100%;
   }
+  .shade {
+    background: $black_26;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    text-align: center;
+    font-size: 11px;
+  }
+  .actions,
+  .shade {
+    transition: opacity $transition_duration $transition_ease;
+    will-change: opacity;
+    opacity: 0;
+    color: rgba(255, 255, 255, 0.875);
+  }
   &:hover {
-    .actions {
+    .actions,.shade {
       opacity: 1;
     }
   }

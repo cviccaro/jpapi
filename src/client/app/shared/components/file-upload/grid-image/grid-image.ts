@@ -1,24 +1,34 @@
-import { Component, Input, Output, ViewChild, ElementRef, EventEmitter, HostListener, OnInit, OnDestroy } from '@angular/core';
+import {
+    Component,
+    Input,
+    Output,
+    ViewChild,
+    ElementRef,
+    EventEmitter,
+    HostListener,
+    OnInit,
+    OnDestroy
+} from '@angular/core';
 import { MdIcon } from '@angular2-material/icon/icon';
 
 import { JpFile } from '../../../index';
+import {LoggerService} from "../../../services/logger.service";
+import {ManagedImage} from "../../../models/file";
 
 @Component({
     moduleId: module.id,
     selector: 'jpa-grid-image',
     templateUrl: './grid-image.html',
     styleUrls: ['./grid-image.css'],
-    directives: [
-        MdIcon
-    ]
+    directives: [ MdIcon ]
 })
 export class GridImageComponent implements OnInit, OnDestroy {
     public hovering = false;
     public _listener: any;
 
-    @ViewChild('image') public _imageEl: ElementRef;
+    @ViewChild('img') public _imageEl: ElementRef;
 
-    @Input() imageConfig: JpFile;
+    @Input() image: ManagedImage;
     @Input() index: number;
 
     @Output() clickedRemove = new EventEmitter();
@@ -33,11 +43,13 @@ export class GridImageComponent implements OnInit, OnDestroy {
         this.hovering = false;
     }
 
+    constructor(private log: LoggerService) { }
+
     /**
      * Handle remove button being clicked
      */
     remove(): void {
-        this.clickedRemove.emit({ config: this.imageConfig, index: this.index });
+        this.clickedRemove.emit({ config: this.image, index: this.index });
     }
 
     /**
@@ -45,11 +57,11 @@ export class GridImageComponent implements OnInit, OnDestroy {
      * the data-bound input properties.
      */
     ngOnInit(): void {
-        this._imageEl.nativeElement.src = this.imageConfig.url;
+        this._imageEl.nativeElement.src = this.image.url;
 
-        this._listener = (<HTMLImageElement>this._imageEl.nativeElement).addEventListener('load', e => {
-            this.imageLoaded.emit({event: e, config: this.imageConfig});
-        });
+        this.image.watchForDimensions(<HTMLImageElement>this._imageEl.nativeElement);
+
+        this.log.debug('GridImage Initialized', this);
     }
 
     /**

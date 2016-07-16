@@ -1,6 +1,6 @@
 import { ProjectIndexComponent, ProjectListComponent, ProjectComponent } from './index';
 
-import { AuthGuard, ProjectListGuard, ProjectGuard, CkEditorGuard } from '../shared/index';
+import { AuthGuard, ProjectListGuard, ProjectGuard, CkEditorGuard, CanDeactivateGuard } from '../shared/index';
 
 export const ProjectRoutes = [
     {

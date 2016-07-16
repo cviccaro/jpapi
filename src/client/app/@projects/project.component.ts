@@ -1,6 +1,15 @@
-import { Component, HostBinding, OnInit, OnDestroy, ViewChild, QueryList } from '@angular/core';
+import {
+    Component,
+    HostBinding,
+    OnInit,
+    OnDestroy,
+    QueryList,
+    ViewChild,
+    HostListener,
+    AfterViewInit
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription } from 'rxjs/Rx';
+import { Subscription, Observable } from 'rxjs/Rx';
 import { ToasterService } from 'angular2-toaster/angular2-toaster';
 import { CKEditor } from 'ng2-ckeditor';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
@@ -43,9 +52,9 @@ export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers
 
     private _project: Project = new Project();
 
-    @HostBinding('class.new') get isNewClass() { return this.isNew; }
-
     @ViewChild(PanelFormComponent) private _formCmp: PanelFormComponent;
+
+    @HostBinding('class.new') get isNewClass() { return this.isNew; }
 
     get project(): Project { return this._project; }
     set project(v: Project) {
