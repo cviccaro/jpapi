@@ -94,7 +94,7 @@ class DivisionController extends Controller
         }
 
         $json['data'] = array_values($json['data']);
-        
+
         foreach ($json['data'] as &$item) {
             $item['blogs'] = count($item['blogs']);
             $item['projects'] = count($item['projects']);
@@ -118,6 +118,7 @@ class DivisionController extends Controller
         $division = Division::findOrFail($id);
 
         $collect = ['name', 'description'];
+        $files = $request->allFiles();
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
                 $division->{$attribute} = $request->get($attribute);
@@ -126,13 +127,16 @@ class DivisionController extends Controller
 
         if ($request->get('image') === '') {
             $division->image()->dissociate();
-        } elseif ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalName();
+        } elseif ($request->has('image')) {
+            $managedFile = $request->get('image');
+            if (isset($files['image']['_file'])) {
+                $file = $files['image']['_file'];
 
-            $image = Image::createFromUpload($file, $destination, $filename);
-
-            $division->image()->associate($image);
+                $image = Image::createFromUpload($file, $destination, $managedFile);
+                $division->image()->associate($image);
+            } else {
+                Image::find($division->image->id)->update($managedFile);
+            }
         }
 
         $division->save();

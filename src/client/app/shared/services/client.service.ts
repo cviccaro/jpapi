@@ -5,6 +5,7 @@ import 'rxjs/add/operator/map';
 
 import { LoggerService } from './logger.service';
 import { XhrService } from './xhr';
+import {ManagedImage} from "../models/file";
 
 @Injectable()
 export class ClientService {
@@ -35,7 +36,7 @@ export class ClientService {
     }
 
     /**
-     * Return options as list consumable by SELECT OPtions
+     * Return options as list consumable by SELECT Options
      */
 	options() {
         this.xhr.started();
@@ -48,44 +49,30 @@ export class ClientService {
 	}
 
     /**
-     * Update an existing client
-     * @param {[type]} id         [description]
-     * @param {[type]} attributes [description]
+     * Create new project
+     * @param attributes
+     * @returns {Observable<R>}
      */
-    update(id: number, values: any[]): Observable<any> {
-        let form = new FormData();
-        let _form = {};
+    create(attributes: { [key: string] : any}): Observable<any> {
+        let form = this.createFormData(attributes);
 
-        values.forEach(col => {
-            let key = col.name;
-            let value = col.value;
+        this.xhr.started();
 
-            switch(key) {
-                case 'image':
-                    if (value !== undefined && value !== null) {
-                        form.append(key, col.value[0]);
-                        _form[key] = col.value[0];
-                    }
-                    break;
-                case 'featured':
-                    if (value !== undefined && value !== null) {
-                        form.append(key, col.value ? 1 : 0);
-                        _form[key] = col.value ? 1 : 0;
-                    }
-                    break;
-                default:
-                    if (value !== undefined && value !== null) {
-                        form.append(key, value);
-                        _form[key] = value;
-                    }
-            }
-        });
+        return this.http.post('/clients', form)
+            .map(res => {
+                this.xhr.finished();
+                return res.json();
+            });
+    }
 
-        this.log.log('update client with data: ', {
-            values: values,
-            form: form,
-            _form: _form
-        });
+    /**
+     * Update existing client
+     * @param id
+     * @param attributes
+     * @returns {Observable<R>}
+     */
+    update(id: number, attributes: { [key: string] : any}): Observable<any> {
+        let form = this.createFormData(attributes);
 
         this.xhr.started();
 
@@ -97,54 +84,11 @@ export class ClientService {
     }
 
     /**
-     * Create new project
-     * @param {[type]} values [description]
+     * Destroy a client
+     * @param id
+     * @returns {Observable<R>}
      */
-    create(values: any[]): Observable<any> {
-        let form = new FormData();
-        let _form = {};
-
-        values.forEach(col => {
-            let key = col.name;
-            let value = col.value;
-
-            switch(key) {
-                case 'image':
-                    if (value !== undefined && value !== null) {
-                        form.append(key, col.value[0]);
-                        _form[key] = col.value[0];
-                    }
-                    break;
-                case 'featured':
-                    if (value !== undefined && value !== null) {
-                        form.append(key, col.value ? 1 : 0);
-                        _form[key] = col.value ? 1 : 0;
-                    }
-                    break;
-                default:
-                    if (value !== undefined && value !== null) {
-                        form.append(key, value);
-                        _form[key] = value;
-                    }
-            }
-        });
-
-        this.log.log('create client with data: ', {
-            values: values,
-            form: form,
-            _form: _form
-        });
-
-        this.xhr.started();
-
-        return this.http.post('/clients', form)
-            .map(res => {
-                this.xhr.finished();
-                return res.json();
-            });
-    }
-
-    destroy(id: number) {
+    destroy(id: number): Observable<any> {
         this.xhr.started();
 
         return Observable.create(observer => {
@@ -155,5 +99,40 @@ export class ClientService {
                     observer.complete();
                 });
         });
+    }
+
+    /**
+     * Create FormData from attributes
+     * @param {[key: string] : any} attributes
+     * @returns FormData
+     */
+    private createFormData(attributes: {[key: string] : any}): FormData {
+        let form = new FormData();
+
+        for (let key in attributes) {
+            let val = attributes[key];
+
+            switch(key) {
+                case 'image':
+                    if (val === '') {
+                        // File was deleted
+                        form.append(key, val);
+                    } else if (!!val) {
+                        (<ManagedImage>val).injectIntoForm(key, form);
+                    }
+                    break;
+                case 'featured':
+                    if (val !== undefined && val !== null) {
+                        form.append(key, val ? 1 : 0);
+                    }
+                    break;
+                default:
+                    if (val !== undefined && val !== null) {
+                        form.append(key, val);
+                    }
+            }
+        }
+
+        return form;
     }
 }

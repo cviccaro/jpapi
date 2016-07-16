@@ -100,6 +100,7 @@ class ClientController extends Controller
 
         $client = new Client();
 
+        $files = $request->allFiles();
         $collect = ['name', 'alias', 'description', 'featured'];
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
@@ -107,12 +108,11 @@ class ClientController extends Controller
             }
         }
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalName();
+        if ($request->has('image') && isset($files['image']['_file'])) {
+            $managedFile = $request->get('image');
+            $file = $files['image']['_file'];
 
-            $image = Image::createFromUpload($file, $destination, $filename);
-
+            $image = Image::createFromUpload($file, $destination, $managedFile);
             $client->image()->associate($image);
         }
 
@@ -128,12 +128,15 @@ class ClientController extends Controller
      */
     public function update(Request $request, $id)
     {
-        \Log::info('Received request to update client ' . $id . ' ' . print_r($request->toArray(), true));
+        \Log::info('Received request to update client ' . $id);
+        \Log::info('Request: ' . print_r($request->toArray(), true));
+        \Log::info('Files: ' . print_r($request->allFiles(), true));
 
         $destination = path_join(['app', 'public', 'images', 'clients']);
 
         $client = Client::findOrFail($id);
 
+        $files = $request->allFiles();
         $collect = ['name', 'alias', 'description', 'featured'];
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
@@ -141,15 +144,18 @@ class ClientController extends Controller
             }
         }
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalName();
-
-            $image = Image::createFromUpload($file, $destination, $filename);
-
-            $client->image()->associate($image);
-        } elseif ($request->has('image_remove') && $request->get('image_remove') === 'true') {
+        if ($request->get('image') === '') {
             $client->image()->dissociate();
+        } elseif ($request->has('image')) {
+            $managedFile = $request->get('image');
+            if (isset($files['image']['_file'])) {
+                $file = $files['image']['_file'];
+
+                $image = Image::createFromUpload($file, $destination, $managedFile);
+                $client->image()->associate($image);
+            } else {
+                Image::find($client->image->id)->update($managedFile);
+            }
         }
 
         $client->save();

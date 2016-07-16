@@ -24,6 +24,7 @@ class SettingsController extends Controller
         \Log::info('Update settings: ' . print_r($request->toArray(), true));
 
         $setting_controls = $request->all();
+        $files = $request->allFiles();
 
         $destination = path_join(['app', 'public', 'images', 'settings']);
 
@@ -36,8 +37,8 @@ class SettingsController extends Controller
                 switch ($model->control_type) {
                     case 'file':
                         $managedFile = $request->get($model->name);
-                        if ($request->hasFile($model->name . '_file')) {
-                            $file = $request->file($model->name . '_file');
+                        if (isset($files[$model->name]['_file'])) {
+                            $file = $files[$model->name]['_file'];
 
                             $image = Image::createFromUpload($file, $destination, $managedFile);
                             $model->value = $image->id;

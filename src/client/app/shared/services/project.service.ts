@@ -128,6 +128,7 @@ export class ProjectService {
 					} else {
 						form.append(`${key}[0]`, '');
 					}
+					break;
 				case 'divisions':
 					if (val) {
 						val.forEach((item,i) => {
@@ -144,7 +145,6 @@ export class ProjectService {
 						// File was deleted
 						form.append(key, val);
 					} else if (!!val) {
-					    console.log('Injecting managedimage into form ', { key: key, form: form, val: val});
                         (<ManagedImage>val).injectIntoForm(key, form);
 					}
 					break;

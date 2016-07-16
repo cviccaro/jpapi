@@ -46,11 +46,12 @@ class ProjectController extends Controller
 
         $project = new Project();
 
-        if ($request->has('title')) {
-            $project->title = $request->get('title');
-        }
-        if ($request->has('description')) {
-            $project->description = $request->get('description');
+        $files = $request->allFiles();
+        $collect = ['title', 'description'];
+        foreach ($collect as $attribute) {
+            if ($request->has($attribute)) {
+                $project->{$attribute} = $request->get($attribute);
+            }
         }
 
         if ($request->has('client_id')) {
@@ -59,24 +60,18 @@ class ProjectController extends Controller
             $project->client()->associate($client);
         }
 
-        if ($request->has('image')) {
+        if ($request->has('image') && isset($files['image']['_file'])) {
             $managedFile = $request->get('image');
+            $file = $files['image']['_file'];
 
-            if ($request->hasFile('image_file')) {
-                $file = $request->file('image_file');
-
-                $image = Image::createFromUpload($file, $destination, $managedFile);
-                $project->image()->associate($image);
-            } else {
-                Image::find($project->image->id)->update($managedFile);
-            }
+            $image = Image::createFromUpload($file, $destination, $managedFile);
+            $project->image()->associate($image);
         }
 
         $project->save();
 
         if ($request->has('images')) {
             $images = $request->get('images');
-            $files = $request->allFiles();
 
             \Log::info('Saving new gallery images.');
 
@@ -131,11 +126,12 @@ class ProjectController extends Controller
 
         $project = Project::findOrFail($id);
 
-        if ($request->has('title')) {
-            $project->title = $request->get('title');
-        }
-        if ($request->has('description')) {
-            $project->description = $request->get('description');
+        $files = $request->allFiles();
+        $collect = ['title', 'description'];
+        foreach ($collect as $attribute) {
+            if ($request->has($attribute)) {
+                $project->{$attribute} = $request->get($attribute);
+            }
         }
 
         if ($request->has('client_id')) {
@@ -148,9 +144,8 @@ class ProjectController extends Controller
             $project->image()->dissociate();
         } elseif ($request->has('image')) {
             $managedFile = $request->get('image');
-
-            if ($request->hasFile('image_file')) {
-                $file = $request->file('image_file');
+            if (isset($files['image']['_file'])) {
+                $file = $files['image']['_file'];
 
                 $image = Image::createFromUpload($file, $destination, $managedFile);
                 $project->image()->associate($image);
@@ -161,7 +156,6 @@ class ProjectController extends Controller
 
         if ($request->has('images')) {
             $images = $request->get('images');
-            $files = $request->allFiles();
 
             $ids_clean = $project->images->map(function($img) { return $img->id; })->toArray();
             $ids_dirty = [];
@@ -174,9 +168,12 @@ class ProjectController extends Controller
                 }
 
                 if (isset($files['images'][$idx])) {
-                    $file = $files['images'][$idx]['_file'];
-                    $filename = $file->getClientOriginalName();
-                    $image = Image::createFromUpload($file, $destination, $filename);
+                    $managedFile = $files['images'][$idx];
+                    $file = $managedFile['_file'];
+
+                    unset($managedFile['_file']);
+
+                    $image = Image::createFromUpload($file, $destination, $managedFile);
 
                     \Log::info('Saving new image to gallery with weight ' . ($idx * 5));
                     $project->images()->save($image, ['weight' => $idx * 5]);

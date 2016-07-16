@@ -63,13 +63,9 @@ export class ManagedFile implements JpFile {
             this.extension = file.name.split('.').pop();
             this.created_at = this.last_modified = file['lastModified'];
 
-            if ( file['webkitRelativePath'] ) {
+            if (file['webkitRelativePath']) {
                 this.webkitRelativePath = file['webkitRelativePath'];
             }
-
-            console.warn('ManagedFile constructed from UploadedFile', {this: this, attributes: attributes});
-        } else {
-            console.warn('ManagedFile constructed', {this: this, attributes: attributes});
         }
     }
 
@@ -121,11 +117,7 @@ export class ManagedFile implements JpFile {
             delete managedFile._file;
             delete managedFile.url;
 
-            if (form_key.match(/\[\d+\]/g)) {
-                form.append(`${form_key}[_file]`, upload);
-            } else {
-                form.append(`${form_key}_file`, upload);
-            }
+            form.append(`${form_key}[_file]`, upload);
         }
 
         // Attribute update

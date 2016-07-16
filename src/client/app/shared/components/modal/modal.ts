@@ -3,6 +3,7 @@ import { MATERIAL_DIRECTIVES }  from '../../libs/angular2-material';
 import { NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
 import { Observable } from 'rxjs/Rx';
 import { ModalConfig, ModalFormField, ModalAction } from './modal.interface';
+import {ManagedFile} from "../../models/file";
 
 @Component({
     moduleId: module.id,
@@ -28,13 +29,18 @@ export class ModalComponent implements OnChanges {
         this._actionEmitter.emit({ type: type, config: config, event: event });
     }
 
-    modalFormSubmit() {
+    /**
+     * Submit a modal-form
+     */
+    modalFormSubmit(): void {
         this._actionEmitter.emit({ type: 'submit', config: this.config, event: null });
     }
 
     handleChange(col: ModalFormField, e: Event) {
         if (col.type === 'file') {
-            col.value = (<HTMLInputElement>e.target).files;
+            col.value = new ManagedFile({
+                _file: (<HTMLInputElement>e.target).files[0]
+            }, 0);
         }
 
         let inputs = <ModalFormField[]>this.config.inputs;

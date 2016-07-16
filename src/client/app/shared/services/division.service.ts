@@ -5,6 +5,7 @@ import { Observable } from 'rxjs/Rx';
 
 import { LoggerService } from './logger.service';
 import { XhrService } from './xhr';
+import {ManagedImage} from "../models/file";
 
 @Injectable()
 export class DivisionService {
@@ -33,9 +34,10 @@ export class DivisionService {
 	        });
 	}
 
-	/**
-	 * Return options as list consumable by SELECT OPtions
-	 */
+    /**
+     * Return divisions consumable by select options
+     * @returns {Observable<R>}
+     */
 	options(): Observable<any> {
 		this.xhr.started();
 
@@ -61,6 +63,23 @@ export class DivisionService {
             });
 	}
 
+    /**
+     * Create a new division
+     * @param attributes
+     * @returns {Observable<R>}
+     */
+	create(attributes:{ [key: string] : any }): Observable<any> {
+		let form = this.createFormData(attributes);
+
+		this.xhr.started();
+
+		return this.http.post('/divisions', form)
+			.map(res => {
+				this.xhr.finished();
+				return res.json();
+			});
+	}
+
 	/**
 	 * Update an existing division
 	 * @param {[type]} id         [description]
@@ -69,8 +88,6 @@ export class DivisionService {
 	 */
 	update(id: number, attributes: { [key: string] : any }): Observable<any> {
 	    let form = this.createFormData(attributes);
-
-	    this.log.debug('DivisionService is sending POST update request with form ', form.toString());
 
 	    this.xhr.started();
 
@@ -111,13 +128,14 @@ export class DivisionService {
 	        let val = attributes[key];
 
 	        switch(key) {
-	            case 'image':
-	                if (val === '') {
-	                    form.append(key, val);
-	                } else if (!!val && val._file) {
-	                    form.append(key, val._file);
-	                }
-	                break;
+				case 'image':
+					if (val === '') {
+						// File was deleted
+						form.append(key, val);
+					} else if (!!val) {
+						(<ManagedImage>val).injectIntoForm(key, form);
+					}
+					break;
 	            default:
 	                if (val !== undefined && val !== null) form.append(key, val);
 	        }

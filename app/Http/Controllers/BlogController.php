@@ -47,6 +47,7 @@ class BlogController extends Controller
         $blog = new Blog();
 
         $collect = ['title', 'summary', 'body', 'author'];
+        $files = $request->allFiles();
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
                 $blog->{$attribute} = $request->get($attribute);
@@ -55,17 +56,12 @@ class BlogController extends Controller
 
         $blog->save();
 
-        if ($request->has('image')) {
+        if ($request->has('image') && isset($files['image']['_file'])) {
             $managedFile = $request->get('image');
+            $file = $files['image']['_file'];
 
-            if ($request->hasFile('image_file')) {
-                $file = $request->file('image_file');
-
-                $image = Image::createFromUpload($file, $destination, $managedFile);
-                $blog->image()->associate($image);
-            } else {
-                Image::find($project->image->id)->update($managedFile);
-            }
+            $image = Image::createFromUpload($file, $destination, $managedFile);
+            $blog->image()->associate($image);
         }
 
         if ($request->has('tags')) {
@@ -114,6 +110,7 @@ class BlogController extends Controller
         $blog = Blog::findOrFail($id);
 
         $collect = ['title', 'summary', 'body', 'author'];
+        $files = $request->allFiles();
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
                 $blog->{$attribute} = $request->get($attribute);
@@ -124,14 +121,13 @@ class BlogController extends Controller
             $blog->image()->dissociate();
         } elseif ($request->has('image')) {
             $managedFile = $request->get('image');
-
-            if ($request->hasFile('image_file')) {
-                $file = $request->file('image_file');
+            if (isset($files['image']['_file'])) {
+                $file = $files['image']['_file'];
 
                 $image = Image::createFromUpload($file, $destination, $managedFile);
                 $blog->image()->associate($image);
             } else {
-                Image::find($project->image->id)->update($managedFile);
+                Image::find($blog->image->id)->update($managedFile);
             }
         }
 

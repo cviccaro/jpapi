@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Rx';
 import 'rxjs/add/operator/map';
 
 import { XhrService } from './xhr';
+import {ManagedImage} from "../models/file";
 
 @Injectable()
 export class BlogService {
@@ -111,12 +112,20 @@ export class BlogService {
 
             switch(key) {
                 case 'images':
+                    if (val) {
+                        val.forEach((item, i) => {
+                            (<ManagedImage>item).injectIntoForm(`${key}[${i}]`, form);
+                        });
+                    } else {
+                        form.append(`${key}[0]`, '');
+                    }
                     break;
                 case 'image':
                     if (val === '') {
+                        // File was deleted
                         form.append(key, val);
-                    } else if (!!val && val._file) {
-                        form.append(key, val._file);
+                    } else if (!!val) {
+                        (<ManagedImage>val).injectIntoForm(key, form);
                     }
                     break;
                 case 'divisions':

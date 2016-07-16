@@ -30,7 +30,7 @@ import { FileUploadToolbarComponent } from './toolbar/index';
 import { FileCardComponent } from './file-card/index';
 import { FileIconComponent } from './file-icon/index';
 
-const noop = () => { };
+const noop = (_?:any) => { };
 let nextUniqueId = 0;
 
 export const IMAGE_UPLOAD_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
@@ -104,7 +104,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     private _value: any = '';
     private _dragging: boolean = false;
     private _onTouchedCallback: () => void = noop;
-    private _onChangeCallback: (_: any) => void = noop;
+    private _onChangeCallback: (v?: any) => void = noop;
     private _subscriptions: Subscription[] = [];
 
     private _blurEmitter: EventEmitter<FocusEvent> = new EventEmitter<FocusEvent>();
@@ -258,6 +258,10 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         this.imageLoaded.emit(e);
     }
 
+    /**
+     * When a user clicks remove on image
+     * @param e
+     */
     handleClickedRemove(e: any) {
         let value = this.value.slice(0);
         value.splice(e.index, 1);
@@ -266,7 +270,11 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         this.fileRemoved.emit(e);
     }
 
-    onDragOver(e: any) {
+    /**
+     * When a file is dragged-over
+     * @param e
+     */
+    onDragOver(e: Event) {
         if (this._dragging) {
             this._stopEvent(e);
             return;
@@ -283,7 +291,8 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         this.isDragOver = true;
     }
 
-    onDragLeave(e: any) {
+
+    onDragLeave(e: Event) {
         if (this._dragging) {
             return;
         }
@@ -292,15 +301,27 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         this.isDragOver = false;
     }
 
-    fileDragStart(e: any): void {
+    /**
+     * When a file starts being dragged
+     * @param e
+     */
+    fileDragStart(e: Event): void {
         this._dragging = true;
     }
 
-    onDragEnd(e: any) {
+    /**
+     * When the user stops dragging
+     * @param e
+     */
+    onDragEnd(e: Event) {
         this._stopEvent(e);
         this._dragging = false;
     }
 
+    /**
+     * Add a file to the grid
+     * @param event
+     */
     add(event: Event) {
         if (this._dragging) {
             this._dragging = false;
@@ -317,6 +338,10 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         this.readFiles(files);
     }
 
+    /**
+     * Read dropped in files
+     * @param files
+     */
     readFiles(files: any[] = []) {
         if (!files.length) {
             return;
@@ -424,8 +449,8 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         if (e instanceof File) {
             file = <File>e;
         } else {
-            this._stopEvent(e);
-            let files = e.target['files'] || e['dataTransfer']['files'];
+            this._stopEvent(<Event>e);
+            let files = (<Event>e).target['files'] || e['dataTransfer']['files'];
             file = files[0];
         }
 

@@ -68,12 +68,15 @@ export class ClientsComponent implements OnDestroy, RegistersSubscribers {
             title: 'Add a client'
         }).subscribe((action: ModalAction) => {
             if (action.type === 'submit') {
-                let form = action.config.inputs;
+                let attributes = action.config.inputs.reduce((carry, next) => {
+                    carry[next.name] = next.value;
+                    return carry;
+                }, {});
 
                 this.log.log('We can now save our client with this data: ', {
-                    form: form
+                    attributes: attributes
                 });
-                let sub = this.service.create(form)
+                let sub = this.service.create(attributes)
                     .subscribe(res => {
                         this.toaster.pop('success', 'Success!', res.name + ' has been created.');
                         setTimeout(() => { this.fetch(); },0);
@@ -121,12 +124,19 @@ export class ClientsComponent implements OnDestroy, RegistersSubscribers {
 
         let sub = this.modal.open(modalConfig).subscribe((action: ModalAction) => {
             if (action.type === 'submit') {
-                let form = action.config.inputs;
+                let attributes = action.config.inputs.reduce((carry, next) => {
+                    carry[next.name] = next.value;
+                    return carry;
+                }, {});
+
+                if (attributes.image_remove) {
+                    attributes.image = '';
+                }
 
                 this.log.log('We can now save our client with this data: ', {
-                    form: form
+                    attributes: attributes
                 });
-                let _sub = this.service.update(client.id, form)
+                let _sub = this.service.update(client.id, attributes)
                     .subscribe(res => {
                         this.toaster.pop('success', 'Success!', res.name + ' has been edited.');
                         setTimeout(() => { this.fetch(); },0);

@@ -1,4 +1,5 @@
 import { PanelFormControl, PanelFormControlConfig, PanelFormControlSummary } from './control';
+import {ManagedFile, ManagedImage} from "../../../models/file";
 
 export interface PanelFormControlFilesConfig extends PanelFormControlConfig {
     filesLabel?: string;
@@ -18,6 +19,30 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
 
         return !this.value || this.value.length === 0;
     }
+
+    get value(): any[] { return this._value; }
+    set value(v: any[]) {
+        if ( !!v && v.length ) {
+            let idx = 0;
+            v = v.map(item => {
+                if ( !( item instanceof ManagedImage || item instanceof ManagedFile ) ) {
+                    switch(this.type) {
+                        case 'file':
+                            item = new ManagedFile(item, idx++);
+                            break;
+                        case 'image':
+                            item = new ManagedImage(item, idx++);
+                            break;
+                    }
+                }
+
+                return item;
+            });
+        }
+        this._value = v;
+    }
+
+    private _value: Array<ManagedFile|ManagedImage>;
 
     constructor(config: PanelFormControlFilesConfig) {
         super(config);

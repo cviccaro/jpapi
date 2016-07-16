@@ -6,13 +6,13 @@ export interface PanelFormControlFileConfig extends PanelFormControlConfig {
     accept?: string;
 }
 
-export class PanelFormControlFile extends PanelFormControl<Array<any>> {
+export class PanelFormControlFile extends PanelFormControl<any> {
     controlType = 'file';
     editIcon: string | boolean = 'panorama';
     type: string;
     accept: string;
 
-    get value() { return this._value; }
+    get value(): any { return this._value; }
     set value(v: any) {
         if ( !!v ) {
             if ( !( v instanceof ManagedImage || v instanceof ManagedFile ) ) {
@@ -35,7 +35,7 @@ export class PanelFormControlFile extends PanelFormControl<Array<any>> {
         return !this.value || this.value.length === 0;
     }
 
-    private _value: ManagedImage;
+    private _value: ManagedFile|ManagedImage;
 
     constructor(config: PanelFormControlFileConfig) {
         super(config);
