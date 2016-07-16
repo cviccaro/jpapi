@@ -4,18 +4,13 @@ import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 import { XhrService } from './xhr';
 
-export interface JpSetting {
-	name: string;
-	description: string;
-	label: string;
-	value?: any;
-	control_type: string;
-	type?: string;
-}
+import { SettingFormControl } from '../models/index';
+import { LoggerService } from './logger.service';
+import {ManagedFile} from "../models/file";
 
 @Injectable()
 export class SettingsService {
-	constructor(public http: Http, private xhr: XhrService) {
+	constructor(public http: Http, private xhr: XhrService, private log: LoggerService) {
 		this.http = http;
 	}
 
@@ -24,17 +19,17 @@ export class SettingsService {
         	.map(res => res.json());
     }
 
-    updateMany(settings: JpSetting[]): Observable<any> {
-    	console.log('SettingsService.updateMany() ', settings);
+    updateMany(settings: SettingFormControl[]): Observable<any> {
+    	this.log.debug('SettingsService.updateMany() ', settings);
 
     	let form = new FormData();
 
     	for (let setting of settings) {
     		switch(setting.control_type) {
     			case 'file':
-    				if (setting.value && setting.value._file) {
-    					form.append(setting.name, setting.value._file);
-    				}
+    				if (setting.value) {
+						(<ManagedFile>setting.value).injectIntoForm(setting.name, form);
+					}
     				break;
                 default:
                     form.append(setting.name, setting.value);

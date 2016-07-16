@@ -1,4 +1,12 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import {
+    Component,
+    Input,
+    Output,
+    EventEmitter,
+    ViewChild,
+    ElementRef,
+    OnInit
+} from '@angular/core';
 import { NgSwitch, NgSwitchCase } from '@angular/common';
 
 import { DateFormatPipe } from 'angular2-moment';
@@ -6,6 +14,7 @@ import { DateFormatPipe } from 'angular2-moment';
 import { MATERIAL_DIRECTIVES } from '../../../libs/angular2-material';
 import { ManagedImage, ManagedFile } from '../../../models/file';
 import { TooltipDirective } from '../../tooltip/index';
+import { LoggerService } from '../../../services/index';
 
 @Component({
     moduleId: module.id,
@@ -15,18 +24,31 @@ import { TooltipDirective } from '../../tooltip/index';
     directives: [ MATERIAL_DIRECTIVES, NgSwitch, NgSwitchCase, TooltipDirective ],
     pipes: [ DateFormatPipe ]
 })
-export class FileUploadToolbarComponent {
+export class FileUploadToolbarComponent implements OnInit {
     new_file: any = '';
+    file_description: string = '';
+    file_description_placeholder: string = 'Add a description';
 
     @Input() file: ManagedImage|ManagedFile;
+    @Input() controlName: string;
     @Input() type: string = 'file';
     @Input() accept: string = '*';
     @Input() icon: string = 'panorama';
 
     @Output() onRemoveFile = new EventEmitter();
     @Output() onReplaceFile = new EventEmitter();
+    @Output() fileDescriptionChanged = new EventEmitter();
 
     @ViewChild('newFile') private _newFileInput : ElementRef;
+
+    constructor(private log: LoggerService) { }
+
+    /**
+     * Initialization
+     */
+    ngOnInit() {
+        if (this.file) this.file_description = this.file.description;
+    }
 
     /**
      * Handle the remove file button being clicked
@@ -64,9 +86,23 @@ export class FileUploadToolbarComponent {
     	this.onReplaceFile.emit(files[0]);
     }
 
-    fileDescriptionChanged(evt: Event) {
+    /**
+     * [onfileDescriptionChange description]
+     * @param {Event} evt [description]
+     */
+    onfileDescriptionChange(evt: Event) {
         evt.preventDefault();
         evt.stopPropagation();
         evt.stopImmediatePropagation();
+
+        this.log.debug('FileDescription changed', { evt: evt, this: this });
+
+        if (this.file_description.length) {
+            this.file_description_placeholder = 'Description';
+        } else {
+            this.file_description_placeholder = 'Add a description';
+        }
+
+        this.fileDescriptionChanged.emit(this.file_description);
     }
 }

@@ -7,6 +7,7 @@ import { AuthService } from './auth.service';
 import { XhrService  } from './xhr';
 
 import { AuthHttp } from 'angular2-jwt/angular2-jwt';
+import { ManagedImage } from "../models/file";
 
 @Injectable()
 export class ProjectService {
@@ -18,7 +19,7 @@ export class ProjectService {
 	}
 	/**
 	 * Get all projects with filters and sorts
-	 * @param {number}  id 
+	 * @param {number}  id
 	 * @return Observable<any>
 	 */
 	all(params: {} = {}): Observable<any> {
@@ -40,7 +41,7 @@ export class ProjectService {
 
 	/**
 	 * Find a project by ID
-	 * @param {number}  id 
+	 * @param {number}  id
 	 * @return Observable<any>
 	 */
 	find(id: number) : Observable<any> {
@@ -55,7 +56,7 @@ export class ProjectService {
 
 	/**
 	 * Destroy a project by ID
-	 * @param {number}  id 
+	 * @param {number}  id
 	 * @return Observable<any>
 	 */
     destroy(id: number): Observable<any> {
@@ -120,6 +121,13 @@ export class ProjectService {
 				case 'client':
 					break;
 				case 'images':
+					if (val) {
+						val.forEach((item, i) => {
+                            (<ManagedImage>item).injectIntoForm(`${key}[${i}]`, form);
+                        });
+					} else {
+						form.append(`${key}[0]`, '');
+					}
 				case 'divisions':
 					if (val) {
 						val.forEach((item,i) => {
@@ -133,9 +141,11 @@ export class ProjectService {
 					break;
 				case 'image':
 					if (val === '') {
+						// File was deleted
 						form.append(key, val);
-					} else if (!!val && val._file) {
-						form.append(key, val._file);
+					} else if (!!val) {
+					    console.log('Injecting managedimage into form ', { key: key, form: form, val: val});
+                        (<ManagedImage>val).injectIntoForm(key, form);
 					}
 					break;
 				default:

@@ -6,7 +6,13 @@
 </md-toolbar>
 <div class="toolbar-container">
 	<h3 class="toolbar-heading">Info</h3>
-	<md-input name="image_description" class="image-description" [(ngModel)]="file.title" placeholder="Add a description" (change)="fileDescriptionChanged($event)"></md-input>
+	<md-input
+		[name]="file_description"
+		class="file-description"
+		[(ngModel)]="file_description"
+		[placeholder]="file_description_placeholder"
+		(change)="onfileDescriptionChange($event)">
+	</md-input>
 	<div class="toolbar-hr"></div>
 	<h5 class="light details">Details</h5>
 	<div class="toolbar-row">
@@ -15,10 +21,10 @@
 		</div>
 		<div class="detail">
 			<div class="detail-title-row">
-				{{ file.date() | amDateFormat: 'LL' }}
+				{{ file.date | amDateFormat: 'LL' }}
 			</div>
 			<div class="detail-subtitle-row">
-				{{ file.date() | amDateFormat: 'h:mm A' }}
+				{{ file.date | amDateFormat: 'h:mm A' }}
 			</div>
 		</div>
 	</div>

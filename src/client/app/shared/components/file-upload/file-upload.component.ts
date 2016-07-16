@@ -160,8 +160,13 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         }
     }
 
+    /**
+     * [ngOnInit description]
+     */
     ngOnInit() {
-        if (this.type === 'image' && this.accept === '*') this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
+        if (this.type === 'image' && this.accept === '*') {
+            this.accept = 'image/jpeg, image/jpg, image/gif, image/png';
+        }
     }
 
     /**
@@ -178,6 +183,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
                 setTimeout(() => { imageEl.src = this._value.url; });
             }
         }
+        this.log.debug('FileUploadComponent View Initialized.', this);
     }
 
     registerOnChange(fn: any) {
@@ -347,11 +353,19 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         }
     }
 
+    /**
+     * Add an image to the grid
+     * @param {ManagedFile | ManagedImage} file [description]
+     */
     addToGrid(file: ManagedFile | ManagedImage) {
         this.pushValue(file);
         this.fileAdded.emit(file);
     }
 
+    /**
+     * Add a new file to the formcontrol value
+     * @param {ManagedFile | ManagedImage} file [description]
+     */
     pushValue(file: ManagedFile | ManagedImage) {
         let value = this.value.slice(0);
 
@@ -360,6 +374,11 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         this.value = value;
     }
 
+    /**
+     * Reorder files
+     * @param {DragEvent }}      event
+     * @param {number}       new_index
+     */
     reorder(event: { dragData: number, mouseEvent: DragEvent }, new_index: number): void {
         let old_index = event.dragData;
 
@@ -373,6 +392,8 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
 
     /**
      * Move file within array
+     * @param {number} old_index
+     * @param {number} new_index
      */
     moveFile(old_index: number, new_index: number): void {
         let files = this.value.slice(0);
@@ -389,22 +410,22 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     /**
      * Form reset
      */
-    reset() {
+    reset(): void {
         this.log.log('FileUploadComponent.reset()', this);
     }
 
     /**
      * Attach a single file
+     * @param {[type]} e
      */
-    handleSingleFileAttach(e) {
-        this._stopEvent(e);
-
+    handleSingleFileAttach(e: Event|File) {
         let file: File;
 
         if (e instanceof File) {
-            file = e;
+            file = <File>e;
         } else {
-            let files = e.target.files || e.dataTransfer.files;
+            this._stopEvent(e);
+            let files = e.target['files'] || e['dataTransfer']['files'];
             file = files[0];
         }
 
@@ -419,12 +440,20 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
         }
     }
 
+    /**
+     * [attachSingleFile description]
+     * @param {File} file [description]
+     */
     attachSingleFile(file: File) {
         let managedFile = new ManagedFile({ _file: file }, 0);
 
         this.value = managedFile;
     }
 
+    /**
+     * [attachSingleImage description]
+     * @param {File} file [description]
+     */
     attachSingleImage(file: File) {
         let image = new ManagedImage({ _file: file }, 0);
 
@@ -447,10 +476,20 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
     }
 
     /**
-     * Remove single file
+     * Remove the file
+     * @param {any} e [description]
      */
     removeFile(e: any) {
         this.value = '';
+    }
+
+    /**
+     * Set the file description on the file
+     * @param {string} v [description]
+     */
+    handleFileDescriptionChange(v: string) {
+        this.value.description = v;
+        this._onChangeCallback(this.value);
     }
 
     /**

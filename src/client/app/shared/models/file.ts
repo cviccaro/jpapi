@@ -7,25 +7,23 @@ import { Observable, Subscription } from 'rxjs/Rx';
  */
 export interface JpFile {
     alias?: string;
-    alt?: string;
     created_at?: any;
+    date?: number;
+    description?: string;
     extension?: string;
     filename?: string;
     id?: any;
     idx?: number;
-    isNew?: boolean;
     last_modified?: any;
     mimetype?: string;
     path?: string;
     size?: number;
     updated_at?: any;
-    title?: string;
     url?: string;
+    webkitRelativePath?: string;
 
     _file?: File;
-    webkitRelativePath?: any;
 
-    date?(): any;
     load?(imageEl?: HTMLImageElement) : Observable<any>;
     map?(mapFn: (key: string, val: any) => any): any;
 }
@@ -35,23 +33,21 @@ export interface JpFile {
  */
 export class ManagedFile implements JpFile {
     alias: string;
-    alt: string;
     created_at: any;
+    description: string;
     extension: string;
     filename: string;
     id: any;
     idx: number;
-    isNew: boolean;
     last_modified: any;
     mimetype: string;
     path: string;
     size: number;
     updated_at: any;
-    title: string;
     url: string;
+    webkitRelativePath: string;
 
     _file: File;
-    webkitRelativePath: string;
 
     constructor(attributes: JpFile, idx: number) {
         Object.assign(this, attributes);
@@ -65,23 +61,27 @@ export class ManagedFile implements JpFile {
             this.size = file.size;
             this.mimetype = file.type;
             this.extension = file.name.split('.').pop();
-            this.created_at = this.last_modified = file.lastModifiedDate;
+            this.created_at = this.last_modified = file['lastModified'];
 
             if ( file['webkitRelativePath'] ) {
                 this.webkitRelativePath = file['webkitRelativePath'];
             }
+
+            console.warn('ManagedFile constructed from UploadedFile', {this: this, attributes: attributes});
+        } else {
+            console.warn('ManagedFile constructed', {this: this, attributes: attributes});
         }
     }
 
     /**
      * Return the available date property
      */
-    date() {
-        return this.created_at || this.last_modified;
+    get date(): number {
+        return this.last_modified || this.created_at;
     }
 
     /**
-     * Calculate the fileize with a unit base
+     * Calculate and return a formatted filesize
      * @param  {string = 'kb'}
      * @return {number}
      */
@@ -105,6 +105,33 @@ export class ManagedFile implements JpFile {
         let keys = Object.keys(this);
 
         keys.forEach(key => mapFn.apply(this, [key, this[key]]));
+    }
+
+    /**
+     * Inject into FormData
+     */
+    injectIntoForm(form_key: string, form: FormData): void {
+        let managedFile = Object.assign({}, this);
+        let upload: File;
+
+        // File upload?
+        if (this._file) {
+            upload = this._file;
+
+            delete managedFile._file;
+            delete managedFile.url;
+
+            if (form_key.match(/\[\d+\]/g)) {
+                form.append(`${form_key}[_file]`, upload);
+            } else {
+                form.append(`${form_key}_file`, upload);
+            }
+        }
+
+        // Attribute update
+        for (let k in managedFile) {
+            form.append(`${form_key}[${k}]`, managedFile[k]);
+        }
     }
 }
 

@@ -7,7 +7,8 @@ import {
 	PANEL2_DIRECTIVES,
 	PanelFormControl,
 	PanelFormControlTextfield,
-	PanelFormControlFile
+	PanelFormControlFile,
+	SettingFormControl
 } from '../shared/index';
 
 @Component({
@@ -22,7 +23,7 @@ export class SettingsComponent implements OnInit {
 	ready: boolean = false;
 
 	model: any = {};
-	settings: any[];
+	settings: SettingFormControl[];
 
 	saving: boolean = false;
 
@@ -42,9 +43,8 @@ export class SettingsComponent implements OnInit {
 		this.ready = false;
 		this.controls = [];
 
-		this.settings.forEach(setting => {
-			console.log('Parsing setting ', setting);
-			this.settings[setting.name] = setting.value;
+		this.settings.forEach((setting:SettingFormControl) => {
+			this.log.debug('Parsing setting ', setting);
 
 			switch(setting.control_type) {
 				case 'text':
@@ -70,25 +70,24 @@ export class SettingsComponent implements OnInit {
 			}
 		});
 
-		this.log.log('Settings after parse: ', {settings: this.settings, model: this.model});
+		this.log.debug('Settings after parse: ', {settings: this.settings, model: this.model});
 
 		setTimeout(() => this.ready = true);
 	}
 
 	ngOnInit() {
-		this.settings = this.cache.get('settings');
-
 		this.ready = true;
-
-		this.log.log('SetingsComponent initialized!', this);
+		this.log.debug('SetingsComponent initialized!', this);
 	}
 
 	onSubmit(model) {
-		console.log('SettingsComponent on submit ', model);
+		this.log.log('SettingsComponent on submit ', model);
 
-		this.saving = true;
+		this.log.log(Object.assign({},this.settings));
 
-		// map back to settings objects
+//		this.saving = true;
+
+		// inject form model values
 		for (var key in model) {
 			let setting = this.settings.find(setting => setting.name === key);
 
@@ -98,6 +97,8 @@ export class SettingsComponent implements OnInit {
 				this.settings[index].value = model[key];
 			}
 		}
+
+		this.log.log(this.settings);
 
 		this.service.updateMany(this.settings)
 			.subscribe(res => {

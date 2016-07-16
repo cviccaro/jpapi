@@ -97,6 +97,6 @@ class BlogQueue {
         $faker = \Faker\Factory::create();
         $filepath = $faker->image(storage_path($uploads_destination), 340, 206);
 
-        return Image::createFromPath($filepath, $uploads_destination);
+        return Image::manage($filepath, $uploads_destination);
     }
 }

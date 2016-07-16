@@ -59,13 +59,17 @@ class ProjectController extends Controller
             $project->client()->associate($client);
         }
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalName();
+        if ($request->has('image')) {
+            $managedFile = $request->get('image');
 
-            $image = Image::createFromUpload($file, $destination, $filename);
+            if ($request->hasFile('image_file')) {
+                $file = $request->file('image_file');
 
-            $project->image()->associate($image);
+                $image = Image::createFromUpload($file, $destination, $managedFile);
+                $project->image()->associate($image);
+            } else {
+                Image::find($project->image->id)->update($managedFile);
+            }
         }
 
         $project->save();
@@ -80,9 +84,12 @@ class ProjectController extends Controller
                 \Log::info('Processing gallery image ' . $idx);
 
                 if (isset($files['images'][$idx])) {
-                    $file = $files['images'][$idx]['_file'];
-                    $filename = $file->getClientOriginalName();
-                    $image = Image::createFromUpload($file, $destination, $filename);
+                    $managedFile = $files['images'][$idx];
+                    $file = $managedFile['_file'];
+
+                    unset($managedFile['_file']);
+
+                    $image = Image::createFromUpload($file, $destination, $managedFile);
 
                     \Log::info('Saving new image to gallery with weight ' . ($idx * 5));
                     $project->images()->save($image, ['weight' => $idx * 5]);
@@ -136,16 +143,20 @@ class ProjectController extends Controller
 
             $project->client()->associate($client);
         }
-        
+
         if ($request->get('image') === '') {
             $project->image()->dissociate();
-        } elseif ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalName();
+        } elseif ($request->has('image')) {
+            $managedFile = $request->get('image');
 
-            $image = Image::createFromUpload($file, $destination, $filename);
+            if ($request->hasFile('image_file')) {
+                $file = $request->file('image_file');
 
-            $project->image()->associate($image);
+                $image = Image::createFromUpload($file, $destination, $managedFile);
+                $project->image()->associate($image);
+            } else {
+                Image::find($project->image->id)->update($managedFile);
+            }
         }
 
         if ($request->has('images')) {

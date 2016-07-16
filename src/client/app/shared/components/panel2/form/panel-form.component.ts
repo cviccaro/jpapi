@@ -193,6 +193,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
      * @return void
      */
     handleChange(control: PanelFormControl<any>, e: any): void {
+        this.log.debug('PanelFormComponent#handleChange() ', { control: control, e: e});
         setTimeout(() => {
             this.model[control.name] = control.value = this.panelForm.value[control.name];
         });
@@ -209,7 +210,7 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
      * Callback to form ngSubmit()
      */
     submit(): void {
-        this.log.log('Submitting form ', this.panelForm.value);
+        this.log.debug('Submitting form ', this.panelForm.value);
         this.formSubmit.emit(this.panelForm.value);
     }
 

@@ -4,22 +4,29 @@ namespace App;
 
 use \File;
 use \Storage;
+use Carbon\Carbon;
 
 use Illuminate\Database\Eloquent\Model;
 
 class Image extends Model
 {
-    protected $fillable = ['path', 'filename', 'alias', 'mimetype', 'extension', 'size', 'last_modified'];
+    protected $fillable = ['path', 'filename', 'alias', 'description', 'mimetype', 'extension', 'size', 'last_modified'];
 
     protected $appends = ['url'];
 
-    public static function defaultDirectory()
+    protected $dates = ['last_modified', 'created_at', 'updated_at'];
+
+    /**
+     * Default storage directory
+     * @return string
+     */
+    protected static function defaultDirectory()
     {
         return path_join(['app', 'public', 'images']);
     }
 
     /**
-     * Get the blog associated with this image
+     * The blog associated with this image
      */
     public function blog()
     {
@@ -27,7 +34,7 @@ class Image extends Model
     }
 
     /**
-     * Get all of the blogs that are assigned this image
+     * The blogs that are assigned this image
      */
     public function blogs()
     {
@@ -35,7 +42,7 @@ class Image extends Model
     }
 
     /**
-     * Get the client associated with this image
+     * The client associated with this image
      */
     public function client()
     {
@@ -43,7 +50,7 @@ class Image extends Model
     }
 
     /**
-     * Get the division associated with this image
+     * The division associated with this image
      */
     public function division()
     {
@@ -51,7 +58,7 @@ class Image extends Model
     }
 
     /**
-     * Get the project associated with this image
+     * The project associated with this image
      */
     public function project()
     {
@@ -59,7 +66,7 @@ class Image extends Model
     }
 
     /**
-     * Get all of the projects that are assigned this image
+     * The projects that are assigned this image
      */
     public function projects()
     {
@@ -67,34 +74,45 @@ class Image extends Model
     }
 
     /**
-     * Get the staff associated with this image
+     * The staff associated with this image
      */
     public function staff()
     {
         return $this->hasOne('App\Staff');
     }
 
-    public static function createFromPath($path, $destination = false, $alias = false)
+    /**
+     * Store a new record for a managed image
+     * @param  string $path
+     * @param  array  $attributes
+     * @return Image
+     */
+    public static function manage($path, $attributes = array())
     {
-        if (!$destination) {
-            $destination = self::defaultDirectory();
-        }
+        \Log::info('Image::manage ' . print_r(func_get_args(), true));
 
-        if (!$alias) {
-            $alias = File::basename($path);
-        }
-
-        return self::create([
-            'path' => $destination,
+        $defaults = [
+            'path' => self::defaultDirectory(),
             'filename' => File::basename($path),
-            'alias' => $alias,
+            'alias' => File::basename($path),
+            'description' => '',
             'mimetype' => File::mimeType($path),
             'extension' => File::extension($path),
             'size' => File::size($path),
             'last_modified' => File::lastModified($path)
-        ]);
+        ];
+
+        $attributes = array_merge($defaults, $attributes);
+
+        return self::create($attributes);
     }
 
+    /**
+     * Create a new
+     * @param  [type] $url         [description]
+     * @param  [type] $destination [description]
+     * @return [type]              [description]
+     */
     public static function createFromUrl($url, $destination)
     {
         $directory = storage_path($destination);
@@ -106,18 +124,28 @@ class Image extends Model
         $data = file_get_contents($url);
         File::put($filepath, $data);
 
-        return self::createFromPath($filepath, $destination);
+        return self::manage($filepath, ['path' => $destination, 'alias' => $original_name]);
     }
 
-    public static function createFromUpload($file, $destination, $target_name)
+    public static function createFromUpload($upload, $destination, array $attributes = array())
     {
-        \Log::info('Image::createFromUpload ' . print_r(['file' => $file, 'destination' => $destination, 'target_name' => $target_name], true));
-        $directory = storage_path($destination);
+        \Log::info('Image::createFromUpload ' . print_r(func_get_args(), true));
 
+        $target_name = $upload->getClientOriginalName();
         $filename = self::availableFilename($target_name, $destination);
-        $file->move($directory, $filename);
 
-        return self::createFromPath(path_join([$directory, $filename]), $destination, $target_name);
+        $directory = storage_path($destination);
+        $filepath = path_join([$directory, $filename]);
+
+        $upload->move($directory, $filename);
+
+        $attributes['path'] = $destination;
+        $attributes['alias'] = $target_name;
+        $attributes['filename'] = $filename;
+        if (isset($attributes['last_modified'])) {
+            $attributes['last_modified'] = Carbon::createFromTimestamp($attributes['last_modified'] / 1000);
+        }
+        return self::manage($filepath, $attributes);
     }
 
     public static function availableFilename($filename, $directory = null)

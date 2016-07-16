@@ -21,31 +21,37 @@ class SettingsController extends Controller
 
     public function updateMany(Request $request)
     {
-        $settings = $request->all();
+        \Log::info('Update settings: ' . print_r($request->toArray(), true));
+
+        $setting_controls = $request->all();
 
         $destination = path_join(['app', 'public', 'images', 'settings']);
 
-        foreach ($settings as $key => $setting) {
-            $model = Setting::where('name', $key)->first();
+        foreach ($setting_controls as $key => $control_value) {
+            if ( !ends_with($key, '_file') ) {
+                $model = Setting::where('name', $key)->first();
 
-            switch ($model->control_type) {
-                case 'file':
-                    $file = $request->file($model->name);
+                \Log::info('Updating a setting: ' . print_r($model->toArray(), true));
 
-                    if ($model->type === 'image') {
-                        $filename = $file->getClientOriginalName();
+                switch ($model->control_type) {
+                    case 'file':
+                        $managedFile = $request->get($model->name);
+                        if ($request->hasFile($model->name . '_file')) {
+                            $file = $request->file($model->name . '_file');
 
-                        $image = Image::createFromUpload($file, $destination, $filename);
+                            $image = Image::createFromUpload($file, $destination, $managedFile);
+                            $model->value = $image->id;
+                        } else {
+                            Image::find($model->value->id)->update($managedFile);
+                        }
+                        break;
+                    case 'text':
+                        $model->value = $control_value;
+                        break;
+                }
 
-                        $model->value = $image->id;
-                    }
-                    break;
-                case 'text':
-                    $model->value = $setting;
-                    break;
+                $model->save();
             }
-
-            $model->save();
         }
 
         return $this->all($request);

@@ -53,16 +53,20 @@ class BlogController extends Controller
             }
         }
 
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalName();
-
-            $image = Image::createFromUpload($file, $destination, $filename);
-
-            $blog->image()->associate($image);
-        }
-
         $blog->save();
+
+        if ($request->has('image')) {
+            $managedFile = $request->get('image');
+
+            if ($request->hasFile('image_file')) {
+                $file = $request->file('image_file');
+
+                $image = Image::createFromUpload($file, $destination, $managedFile);
+                $blog->image()->associate($image);
+            } else {
+                Image::find($project->image->id)->update($managedFile);
+            }
+        }
 
         if ($request->has('tags')) {
             \Log::info('Saving new blog tags and divisions');
@@ -118,13 +122,17 @@ class BlogController extends Controller
 
         if ($request->get('image') === '') {
             $blog->image()->dissociate();
-        } elseif ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = $file->getClientOriginalName();
+        } elseif ($request->has('image')) {
+            $managedFile = $request->get('image');
 
-            $image = Image::createFromUpload($file, $destination, $filename);
+            if ($request->hasFile('image_file')) {
+                $file = $request->file('image_file');
 
-            $blog->image()->associate($image);
+                $image = Image::createFromUpload($file, $destination, $managedFile);
+                $blog->image()->associate($image);
+            } else {
+                Image::find($project->image->id)->update($managedFile);
+            }
         }
 
         if ($request->has('tags')) {

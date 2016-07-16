@@ -51,7 +51,7 @@
       <div class="viewport">
         <div class="viewport-inner" [ngSwitch]="type">
           <template [ngSwitchCase]="'image'">
-            <img #currentImage class="current-image" />
+            <img #currentImage class="current-image" [alt]="value?.description" [title]="value?.description" />
           </template>
           <template ngSwitchDefault>
             <jpa-file-card *ngIf="value" [file]="value" [actions]="false"></jpa-file-card>
@@ -64,9 +64,11 @@
         [icon]="icon"
         class="side-toolbar"
         [file]="value"
+        [controlName]="control.name"
         [accept]="control.accept"
         (onRemoveFile)="removeFile($event)"
-        (onReplaceFile)="handleSingleFileAttach($event)">
+        (onReplaceFile)="handleSingleFileAttach($event)"
+        (fileDescriptionChanged)="handleFileDescriptionChange($event)">
       </jpa-file-upload-toolbar>
     </div>
     <div class="single-file-container empty-value" *ngIf="empty">

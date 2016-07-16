@@ -29,7 +29,7 @@ class StaffQueue {
         $destination = storage_path($uploads_destination);
 
         $image_path = resource_path(path_join(['assets', 'images', 'staff-placeholder-' . rand(1, 3) . '_0.jpg']));
-        $image = Image::createFromPath($image_path, $uploads_destination);
+        $image = Image::manage($image_path, $uploads_destination);
 
         // Associate
         $staff->image()->associate($image)->save();
