@@ -15,8 +15,13 @@ export class SettingsService {
 	}
 
     all(): Observable<any> {
+    	this.xhr.started();
+
         return this.http.get('/settings')
-        	.map(res => res.json());
+        	.map(res => {
+        		this.xhr.finished();
+        		return res.json()
+			});
     }
 
     updateMany(settings: SettingFormControl[]): Observable<any> {
@@ -37,6 +42,11 @@ export class SettingsService {
     		}
     	}
 
-    	return this.http.post('settings', form).map(res => res.json());
+		this.xhr.started();
+
+    	return this.http.post('settings', form).map(res => {
+    		this.xhr.finished();
+    		return res.json();
+		});
     }
 }

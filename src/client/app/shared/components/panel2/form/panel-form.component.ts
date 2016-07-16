@@ -22,12 +22,10 @@ import { PanelComponent } from '../panel2.component';
 import { PanelBarComponent, PanelBarSubtitleComponent } from '../bar/index';
 import { PanelContentComponent } from '../content/index';
 import { PanelGroupComponent } from '../group/index';
-import { PanelFormControl } from './control';
-import { DragnDropFormControlComponent } from './dnd/dnd-form-control.component';
+import { PanelFormControl } from './control/index';
+import { DragnDropFormControlComponent } from '../../dnd/dnd-form-control.component';
 import { FileUploadComponent } from '../../file-upload/file-upload.component';
 import { PanelFormControlSummaryComponent } from './summary/summary.component';
-
-declare var CKEDITOR: any;
 
 @Component({
     moduleId: module.id,

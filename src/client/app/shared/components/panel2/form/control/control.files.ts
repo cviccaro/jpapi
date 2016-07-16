@@ -1,5 +1,5 @@
 import { PanelFormControl, PanelFormControlConfig, PanelFormControlSummary } from './control';
-import {ManagedFile, ManagedImage} from "../../../models/file";
+import {ManagedFile, ManagedImage} from "../../../../models/file";
 
 export interface PanelFormControlFilesConfig extends PanelFormControlConfig {
     filesLabel?: string;

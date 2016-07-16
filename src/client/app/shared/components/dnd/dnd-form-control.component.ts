@@ -8,16 +8,16 @@ import {
     Provider
 } from '@angular/core';
 import { DND_DIRECTIVES } from 'ng2-dnd/ng2-dnd';
-import { ChipComponent } from '../../../chip/index';
+import { ChipComponent } from '../chip/index';
 
-import { MATERIAL_DIRECTIVES } from '../../../../libs/angular2-material';
+import { MATERIAL_DIRECTIVES } from '../../libs/angular2-material';
 import { NG_VALUE_ACCESSOR, ControlValueAccessor, NgModel } from '@angular/forms';
 
 export const DND_FORM_CONTROL_VALUE_ACCESSOR = new Provider(NG_VALUE_ACCESSOR, {
     useExisting: forwardRef(() => DragnDropFormControlComponent),
     multi: true
 });
-const noop = () => { };
+const noop = (_?:any) => { };
 
 @Component({
     moduleId: module.id,

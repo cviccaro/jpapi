@@ -84,25 +84,36 @@ export class FileUploadToolbarComponent implements OnInit {
         let files: FileList = (<HTMLInputElement>evt.target).files;
 
     	this.onReplaceFile.emit(files[0]);
+
+        this.file_description = '';
+        this.setFileDescriptionPlaceholder();
     }
 
     /**
-     * [onfileDescriptionChange description]
+     * File descipriton changed
      * @param {Event} evt [description]
      */
-    onfileDescriptionChange(evt: Event) {
+    onFileDescriptionChange(evt: Event): void {
         evt.preventDefault();
         evt.stopPropagation();
         evt.stopImmediatePropagation();
 
         this.log.debug('FileDescription changed', { evt: evt, this: this });
 
+        this.setFileDescriptionPlaceholder();
+
+        this.fileDescriptionChanged.emit(this.file_description);
+    }
+
+    /**
+     * Set file description placeholder based on
+     * file description
+     */
+    setFileDescriptionPlaceholder(): void {
         if (this.file_description.length) {
             this.file_description_placeholder = 'Description';
         } else {
             this.file_description_placeholder = 'Add a description';
         }
-
-        this.fileDescriptionChanged.emit(this.file_description);
     }
 }

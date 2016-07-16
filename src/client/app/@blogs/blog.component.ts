@@ -14,7 +14,6 @@ import {
     PanelFormControlTextfield,
     PanelFormControlTextarea,
     PanelFormControlDragnDrop,
-    PanelFormControlFiles,
     PanelFormControlFile,
     LoggerService,
     RegistersSubscribers

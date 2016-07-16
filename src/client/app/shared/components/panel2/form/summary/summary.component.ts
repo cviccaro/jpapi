@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, OnChanges, SimpleChanges } from '@angular/core';
 import { MATERIAL_DIRECTIVES } from '../../../../libs/angular2-material';
 import { Subscription } from 'rxjs/Subscription';
-import { PanelFormControl, PanelFormControlSummary, PanelFormControlFile } from '../index';
+import { PanelFormControl, PanelFormControlSummary } from '../index';
 import { LoggerService } from '../../../../services/index';
 import { ManagedImage, RegistersSubscribers } from '../../../../models/index';
 

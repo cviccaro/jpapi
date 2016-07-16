@@ -151,10 +151,6 @@ export class ProjectService {
 				default:
 					if (val !== undefined && val !== null) {
 						form.append(key, val);
-						console.log('ProjectService appending to form ', {
-							key: key,
-							val: val
-						});
 					}
 					break;
 			}
