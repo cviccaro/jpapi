@@ -1,4 +1,18 @@
 :host {
   display: block;
   padding: 0 16px;
+  md-card {
+    max-width: 470px;
+    .md-card {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    md-card-actions {
+      button {
+        font-size: 13px;
+        text-transform: uppercase;
+      }
+    }
+  }
 }

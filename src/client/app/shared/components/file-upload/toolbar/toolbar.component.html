@@ -36,7 +36,7 @@
 			<div class="detail-title-row">
 				{{ file.alias || file.filename }}
 			</div>
-			<div class="detail-subtitle-row flex-row" [ngSwitch]="type">
+			<div class="detail-subtitle-row layout-row" [ngSwitch]="type">
 				<template [ngSwitchCase]="'file'">
 					<span class="mimetype">{{ file.mimetype }}</span><span class="filesize">{{ file.filesize() }} KB</span>
 				</template>

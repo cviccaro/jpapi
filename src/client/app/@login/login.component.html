@@ -1,7 +1,7 @@
 <md-card>
     <md-card-title>Login</md-card-title>
     <form id="loginForm" #loginForm="ngForm" (ngSubmit)="onSubmit()" [class.submitted]="submitted">
-        <md-card-content layout="column">
+        <md-card-content class="layout-column">
             <md-input name="email" [(ngModel)]="email" placeholder="Email address" type="email" required class="full-width">
             </md-input>
             <md-input name="password" [(ngModel)]="password" type="password" placeholder="Password" required class="full-width">

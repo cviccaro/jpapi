@@ -1,4 +1,4 @@
-<md-toolbar layout="row" layout-padding class="list-toolbar">
+<md-toolbar class="list-toolbar">
     <h2 class="list-title">Divisions</h2>
     <!-- <button md-icon-button (click)="add($event)" class="menu-btn" jpaTooltip tooltip="Create"><md-icon>add</md-icon></button> -->
 </md-toolbar>
@@ -18,7 +18,7 @@
         </div>
         <h2 class="division-name">{{ division.name | capitalize }}</h2>
         <span class="filler"></span>
-        <div class="division-info flex-row">
+        <div class="division-info layout-row">
             <p><md-icon class="md-18">speaker_notes</md-icon><span class="count">{{ division.blogs }}</span></p>
             <p><md-icon class="md-18">work</md-icon><span class="count">{{ division.projects }}</span></p>
         </div>

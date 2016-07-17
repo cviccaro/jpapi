@@ -27,6 +27,7 @@ Route::get('/admin/{page}/{subpage}', function () {
 });
 
 Route::get('blogs', 'BlogController@all');
+Route::get('blogs/metadata', 'BlogController@metadata');
 Route::get('blogs/paged', 'BlogController@paged');
 Route::get('blogs/recent', 'BlogController@recent');
 Route::get('blogs/uri/{uri}', 'BlogController@getFromSlug');

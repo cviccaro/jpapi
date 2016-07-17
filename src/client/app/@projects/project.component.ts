@@ -4,9 +4,7 @@ import {
     OnInit,
     OnDestroy,
     QueryList,
-    ViewChild,
-    HostListener,
-    AfterViewInit
+    ViewChild
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs/Rx';

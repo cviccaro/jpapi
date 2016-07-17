@@ -31,13 +31,13 @@
     </md-input-container>
   </div>
 </md-toolbar>
-<md-list layout="column" *ngIf="listData.length">
+<md-list class="layout-column" *ngIf="listData.length">
     <md-list-item *ngFor="let line of listData; let index = index; let isOdd = odd; let isEven = even" [class.md-3-line]="true" [class.odd]="isOdd" [class.even]="isEven">
-        <div class="md-list-item-content flex-row">
+        <div class="md-list-item-content layout-row">
             <div class="item-thumbnail">
               <img *ngIf="line.thumbnail" [src]="line.thumbnail.url" />
             </div>
-            <div class="item-text flex-col">
+            <div class="item-text layout-column">
               <h3 md-line>{{ line.line1 }}</h3>
               <h4 *ngIf="line.line2" md-line>{{ line.line2 }}</h4>
               <h5 *ngIf="line.line3" md-line>{{ line.line3 }}</h5>
@@ -71,7 +71,7 @@
                 </div>
               </div>
             </div>
-            <div class="actions flex-row">
+            <div class="actions layout-row">
               <button md-icon-button (click)="edit(line, $event)" jpaTooltip tooltip="Edit" tooltipAlign="left">
                   <md-icon class="md-24">edit</md-icon>
               </button>

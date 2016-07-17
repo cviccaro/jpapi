@@ -23,10 +23,10 @@ import {
 } from './shared/index';
 
 const routes: RouterConfig = [
+    ...HomeRoutes,
     ...BlogRoutes,
     ...ClientRoutes,
     ...DivisionRoutes,
-    ...HomeRoutes,
     ...LoginRoutes,
     ...ProjectRoutes,
     ...SettingsRoutes

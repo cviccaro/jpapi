@@ -36,6 +36,19 @@ export class BlogService {
 	}
 
     /**
+     * Get some information about the blogs
+     * @returns {Observable<R>}
+     */
+    metadata(): Observable<any> {
+        this.xhr.started();
+        return this.http.get('/blogs/metadata')
+            .map(res => {
+                this.xhr.finished();
+                return res.json();
+            });
+    }
+
+    /**
      * Find a project by ID
      * @param {number}  id 
      * @return Observable<any>

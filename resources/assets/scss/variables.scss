@@ -5,11 +5,13 @@
  */
 $white: #fff;
 $black: #000;
+$dark_blue: #0262C2;
 $black_14: rgba(0,0,0,0.14);
 $black_20: rgba(0,0,0,0.20);
 $black_26: rgba(0,0,0,0.26);
 $black_54: rgba(0,0,0,0.54);
 $black_88: rgba(0,0,0,0.8705);
+
 $grey_50: material-color('grey', '50');
 $grey_100: material-color('grey', '100');
 $grey_200: material-color('grey', '200');
@@ -19,9 +21,30 @@ $grey_500: material-color('grey', '500');
 $grey_600: material-color('grey', '600');
 $grey_700: material-color('grey', '700');
 $grey_800: material-color('grey', '800');
+$grey_900: material-color('grey', '900');
+
+$brown_50: material-color('brown', '50');
+$brown_100: material-color('brown', '100');
+$brown_200: material-color('brown', '200');
+$brown_300: material-color('brown', '300');
+$brown_400: material-color('brown', '400');
+$brown_500: material-color('brown', '500');
+$brown_600: material-color('brown', '600');
+$brown_700: material-color('brown', '700');
+$brown_800: material-color('brown', '800');
+$brown_900: material-color('brown', '900');
+
+$blue_50: material-color('blue', '50');
+$blue_100: material-color('blue', '100');
+$blue_200: material-color('blue', '200');
+$blue_300: material-color('blue', '300');
 $blue_400: material-color('blue', '400');
+$blue_500: material-color('blue', '500');
+$blue_600: material-color('blue', '600');
 $blue_700: material-color('blue', '700');
+$blue_800: material-color('blue', '800');
 $blue_900: material-color('blue', '900');
+
 $red_500: material-color('red', '500');
 $red_900: material-color('red', '900');
 $yellow_500: material-color('yellow', '500');
@@ -100,6 +123,7 @@ $transition_ease: cubic-bezier(.75,.17,.59,1.09);
     width: 22px;
     height: 22px;
 }
+
 .md-24 {
     font-size: 24px;
     width: 24px;
@@ -110,4 +134,22 @@ $transition_ease: cubic-bezier(.75,.17,.59,1.09);
     font-size: 32px;
     width: 32px;
     height: 32px;
+}
+
+.md-36 {
+    font-size: 36px;
+    width: 36px;
+    height: 36px;
+}
+
+.md-42 {
+    font-size: 42px;
+    width: 42px;
+    height: 42px;
+}
+
+.md-48 {
+    font-size: 48px;
+    width: 48px;
+    height: 48px;
 }

@@ -342,6 +342,16 @@ class BlogController extends Controller
                         ->get();
 
         return $this->respond('done', $blogs);
+    }
 
+    public function metadata(Request $request) {
+        $metadata = [];
+
+        $metadata['count'] = Blog::count();
+        $metadata['most_used_tag'] = 'Adobe';
+        $metadata['most_used_division'] = 'Interactive';
+        $metadata['update'] = Blog::orderBy('updated_at', 'desc')->take(1)->get()->first()->updated_at->getTimestamp();
+
+        return $this->respond('done', $metadata);
     }
 }

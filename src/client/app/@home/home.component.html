@@ -1,4 +1,200 @@
-<h3>HOME!</h3>
-<!-- <pre>{{ model | json }}</pre> -->
-<!-- <jpa-panel2-form *ngIf="ready" [controls]="controls" [model]="model" submitText="Save" (formSubmit)="onSubmit($event)">
-</jpa-panel2-form> -->
+<div class="container-fluid">
+    <h2 class="form-title">Home</h2>
+    <div class="layout-row layout-align-space-between">
+        <md-card>
+            <md-card-title-group>
+                <md-card-title>Blogs</md-card-title>
+                <md-card-subtitle>{{ blog_data?.count }} blogs</md-card-subtitle>
+            </md-card-title-group>
+            <md-card-content>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon>label_outline</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Most used tag
+                        </div>
+                        <div class="detail-subtitle-row">
+                            {{ blog_data?.most_used_tag }}
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="brown">business</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Most used division
+                        </div>
+                        <div class="detail-subtitle-row">
+                            {{ blog_data?.most_used_division }}
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="md-secondary">event</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Most recent update
+                        </div>
+                        <div class="detail-subtitle-row">
+                            {{ (blog_data?.update | amFromUnix) | amCalendar }}
+                        </div>
+                    </div>
+                </div>
+            </md-card-content>
+            <md-card-actions>
+                <button md-button>View All</button>
+                <button md-button>Edit Most Recent</button>
+            </md-card-actions>
+        </md-card>
+
+        <md-card>
+            <md-card-title-group>
+                <md-card-title>Projects</md-card-title>
+                <md-card-subtitle>35 projects</md-card-subtitle>
+            </md-card-title-group>
+            <md-card-content>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon>panorama</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            images
+                        </div>
+                        <div class="detail-subtitle-row">
+                            652
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="brown">store</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Most projects
+                        </div>
+                        <div class="detail-subtitle-row">
+                            Adobe
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="md-secondary">event</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Recent update
+                        </div>
+                        <div class="detail-subtitle-row">
+                            July 17, 2016 11:25 pm
+                        </div>
+                    </div>
+                </div>
+            </md-card-content>
+            <md-card-actions>
+                <button md-button>View All</button>
+                <button md-button>Edit Most Recent</button>
+            </md-card-actions>
+        </md-card>
+
+        <md-card>
+            <md-card-title-group>
+                <md-card-title>Clients</md-card-title>
+                <md-card-subtitle>16 clients</md-card-subtitle>
+            </md-card-title-group>
+            <md-card-content>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon>panorama</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Images
+                        </div>
+                        <div class="detail-subtitle-row">
+                            14
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="md-warn">star</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Featured
+                        </div>
+                        <div class="detail-subtitle-row">
+                            14
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="md-secondary">event</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Recent update
+                        </div>
+                        <div class="detail-subtitle-row">
+                            July 17, 2016 11:25 pm
+                        </div>
+                    </div>
+                </div>
+            </md-card-content>
+            <span class="filler"></span>
+            <md-card-actions>
+                <button md-button>View All</button>
+            </md-card-actions>
+        </md-card>
+
+        <md-card>
+            <md-card-title-group>
+                <md-card-title>Divisions</md-card-title>
+                <md-card-subtitle>3 clients</md-card-subtitle>
+            </md-card-title-group>
+            <md-card-content>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon>panorama</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Images
+                        </div>
+                        <div class="detail-subtitle-row">
+                            3
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="md-secondary">event</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Recent update
+                        </div>
+                        <div class="detail-subtitle-row">
+                            July 17, 2016 11:25 pm
+                        </div>
+                    </div>
+                </div>
+            </md-card-content>
+            <span class="filler"></span>
+            <md-card-actions>
+                <button md-button>View All</button>
+            </md-card-actions>
+        </md-card>
+
+    </div>
+</div>
