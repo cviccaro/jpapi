@@ -19,13 +19,13 @@ Route::get('/', function () {
  * Main
  */
 Route::get('/admin', function () {
-    return view('angular-dev');
+    return view(env('ANGULAR_VIEW'));
 });
 Route::get('/admin/{page}', function () {
-    return view('angular-dev');
+    return view(env('ANGULAR_VIEW'));
 });
 Route::get('/admin/{page}/{subpage}', function () {
-    return view('angular-dev');
+    return view(env('ANGULAR_VIEW'));
 });
 
 /**
