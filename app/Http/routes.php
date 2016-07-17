@@ -11,11 +11,13 @@
 |
 */
 
-
 Route::get('/', function () {
     return View::make('welcome');
 });
 
+/**
+ * Main
+ */
 Route::get('/admin', function () {
     return view('angular-dev');
 });
@@ -26,37 +28,65 @@ Route::get('/admin/{page}/{subpage}', function () {
     return view('angular-dev');
 });
 
+/**
+ * Blogs
+ */
 Route::get('blogs', 'BlogController@all');
 Route::get('blogs/metadata', 'BlogController@metadata');
 Route::get('blogs/paged', 'BlogController@paged');
 Route::get('blogs/recent', 'BlogController@recent');
+Route::get('blogs/related/{id}', 'BlogController@related');
 Route::get('blogs/uri/{uri}', 'BlogController@getFromSlug');
 Route::get('blogs/{id}', 'BlogController@get');
-Route::get('blogs/related/{id}', 'BlogController@related');
 
+/**
+ * Staff
+ */
 Route::get('staff', 'StaffController@all');
 Route::get('staff/{id}', 'StaffController@get');
 
+/**
+ * Clients
+ */
 Route::get('clients', 'ClientController@all');
+Route::get('clients/metadata', 'ClientController@metadata');
 Route::get('clients/paged', 'ClientController@paged');
 Route::get('clients/featured', 'ClientController@featured');
 
+/**
+ * Divisions
+ */
 Route::get('divisions/paged', 'DivisionController@paged');
+Route::get('divisions/metadata', 'DivisionController@metadata');
 Route::get('divisions/{id}', 'DivisionController@get');
 
-Route::get('options/clients', 'ClientController@options');
-Route::get('options/divisions', 'DivisionController@options');
-Route::get('options/tags', 'TagController@options');
-
+/**
+ * Projects
+ */
 Route::get('projects', 'ProjectController@all');
+Route::get('projects/metadata', 'ProjectController@metadata');
 Route::get('projects/paged', 'ProjectController@paged');
 Route::get('projects/recent', 'ProjectController@recent');
 Route::get('projects/uri/{uri}', 'ProjectController@getFromSlug');
 Route::get('projects/{id}', 'ProjectController@get');
 
+/**
+ * Images
+ */
 Route::get('img/{model}/{name}', 'ImageController@getPublic');
 
+/**
+ * Settings
+ */
 Route::get('settings', 'SettingsController@all');
+
+/**
+ * Select options
+ */
+Route::get('options/clients', 'ClientController@options');
+Route::get('options/divisions', 'DivisionController@options');
+Route::get('options/tags', 'TagController@options');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -103,5 +133,7 @@ Route::group([], function () {
 
 
 Route::get('test', function () {
-    dd(App\Division::with('blogs', 'projects')->get()->toArray());
+    $divisions = App\Project::withCount('images')->get()->sum('images_count');
+
+    dd($divisions);
 });

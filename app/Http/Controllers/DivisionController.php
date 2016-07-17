@@ -143,4 +143,21 @@ class DivisionController extends Controller
 
         return $this->get($id);
     }
+
+    /**
+     * Metadata about the division stored in DB
+     */
+    public function metadata(Request $request) {
+        $m = self::MODEL;
+
+        $metadata = [];
+
+        $metadata['count'] = $m::count();
+        $metadata['newest'] = $m::orderBy('created_at', 'DESC')->first();
+        $metadata['blogs_most'] = $m::withCount('blogs')->orderBy('blogs_count', 'DESC')->first()->name;
+        $metadata['projects_most'] = $m::withCount('projects')->orderBy('projects_count', 'DESC')->first()->name;
+        $metadata['update'] = $m::orderBy('updated_at', 'desc')->take(1)->get()->first()->updated_at->getTimestamp();
+
+        return $this->respond('done', $metadata);
+    }
 }

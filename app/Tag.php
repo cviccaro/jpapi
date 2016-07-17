@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Tag extends Model
 {
+    use MostUsed;
+
     public $fillable = ['name', 'description'];
 
     /**

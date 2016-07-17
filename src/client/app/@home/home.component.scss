@@ -1,18 +1,75 @@
 :host {
   display: block;
   padding: 0 16px;
+  .layout-row {
+    flex-wrap: wrap;
+  }
   md-card {
-    max-width: 470px;
+    &:nth-child(2n - 1) {
+      margin-right: 16px;
+    }
     .md-card {
       display: flex;
       flex-direction: column;
       height: 100%;
+      .icon-wrapper {
+        min-width: 64px;
+      }
+      .icon-and-detail {
+        padding-left: 16px;
+      }
     }
     md-card-actions {
-      button {
+      display: flex;
+      flex-direction: row;
+      padding-top: 24px;
+      [md-button] {
         font-size: 13px;
         text-transform: uppercase;
+        flex: 1;
+        margin: 0 16px 0 0;
+        color: $dark_blue;
+        &:last-child {
+          margin-right: 0;
+        }
       }
+    }
+  }
+}
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991px) {
+  .layout-row {
+    md-card {
+      flex-basis: calc(50% - 16px);
+      margin-bottom: 24px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  .layout-row {
+    md-card {
+      flex-basis: calc(33% - 16px);
+      margin-right: 16px;
+      margin-bottom: 24px;
+      &:nth-child(3n - 1) {
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+/* Large devices (desktops, 1200px and up) */
+@media (min-width: 1200px) {
+  .layout-row {
+    md-card {
+      flex-basis: calc(25% - 16px);
+      margin-right: 16px;
     }
   }
 }

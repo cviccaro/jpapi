@@ -18,8 +18,6 @@ class ClientController extends Controller
     /**
      * Display the clients in a format consumable
      * by HTMLOptionElements
-     *
-     * @return Response
      */
     public function options(Request $request)
     {
@@ -29,18 +27,18 @@ class ClientController extends Controller
         return $this->respond('done', $list);
     }
 
+    /**
+     * Featured only
+     */
     public function featured(Request $request)
     {
-        $models = Client::where('featured', true)->get();
+        $models = Client::featured()->get();
 
         return $this->respond('done', $models);
     }
 
     /**
      * Paged
-     *
-     * @param  Request
-     * @return Response
      */
     public function paged(Request $request)
     {
@@ -164,8 +162,19 @@ class ClientController extends Controller
     }
 
     /**
-     * Destroy a client
-     *
-     * @return Response
+     * Metadata about clients
      */
+    public function metadata(Request $request) {
+        $metadata = [];
+
+        $m = self::MODEL;
+
+        $metadata['count'] = $m::count();
+        $metadata['newest'] = $m::orderBy('created_at', 'DESC')->first();
+        $metadata['images'] = $m::has('image')->count();
+        $metadata['featured'] = $m::featured()->count();
+        $metadata['update'] = $m::orderBy('updated_at', 'desc')->take(1)->get()->first()->updated_at->getTimestamp();
+
+        return $this->respond('done', $metadata);
+    }
 }

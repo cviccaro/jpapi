@@ -342,4 +342,28 @@ class ProjectController extends Controller
             'total' => $count
         ]);
     }
+
+    /**
+     * Metadata about the projects stored in DB
+     * @param  Request $request
+     * @return Response
+     */
+    public function metadata(Request $request) {
+        $metadata = [];
+
+        $metadata['count'] = Project::count();
+        $metadata['newest'] = Project::orderBy('created_at', 'DESC')->first();
+        $metadata['images'] = Project::withCount('images')
+                                ->get()
+                                ->sum('images_count');
+        $metadata['most_used_client'] = Client::mostUsed(self::MODEL)->name;
+        $metadata['update'] = Project::orderBy('updated_at', 'desc')
+                                ->take(1)
+                                ->get()
+                                ->first()
+                                ->updated_at
+                                ->getTimestamp();
+
+        return $this->respond('done', $metadata);
+    }
 }

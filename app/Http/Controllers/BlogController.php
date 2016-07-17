@@ -2,10 +2,10 @@
 
 use App\Blog;
 use App\Division;
-use App\Http\Controllers\Controller;
-use App\Http\Requests;
 use App\Image;
 use App\Tag;
+use App\Http\Controllers\Controller;
+use App\Http\Requests;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
@@ -17,9 +17,6 @@ class BlogController extends Controller
 
     /**
      * All
-     *
-     * @param  Request
-     * @return Response
      */
     public function all(Request $request)
     {
@@ -35,8 +32,6 @@ class BlogController extends Controller
 
     /**
      * Create a new blog
-     *
-     * @return Response
      */
     public function store(Request $request)
     {
@@ -98,8 +93,6 @@ class BlogController extends Controller
      * Update the specified resource in storage.
      *
      * @param  int  $id
-     * @param Request $request
-     * @return Response
      */
     public function update(Request $request, $id)
     {
@@ -199,8 +192,7 @@ class BlogController extends Controller
     /**
      * Get a single blog
      *
-     * @param $id [integer]
-     * @return Response
+     * @param $id
      */
     public function get($id)
     {
@@ -221,8 +213,7 @@ class BlogController extends Controller
     /**
      * Get From Slug
      *
-     * @param  $slug string
-     * @return Response
+     * @param $slug
      */
     public function getFromSlug($slug)
     {
@@ -237,9 +228,6 @@ class BlogController extends Controller
 
     /**
      * Paged
-     *
-     * @param  Request
-     * @return Response
      */
     public function paged(Request $request)
     {
@@ -288,9 +276,6 @@ class BlogController extends Controller
 
     /**
      * Recent
-     *
-     * @param  Request
-     * @return Response
      */
     public function recent(Request $request)
     {
@@ -321,9 +306,7 @@ class BlogController extends Controller
     /**
      * Related
      *
-     * @param Request
-     * @param $id (Blog ID)
-     * @return Response
+     * @param $id
      */
     public function related(Request $request, $id)
     {
@@ -344,13 +327,19 @@ class BlogController extends Controller
         return $this->respond('done', $blogs);
     }
 
+    /**
+     * Metadata about the blogs stored in DB
+     */
     public function metadata(Request $request) {
+        $m = self::MODEL;
+
         $metadata = [];
 
-        $metadata['count'] = Blog::count();
-        $metadata['most_used_tag'] = 'Adobe';
-        $metadata['most_used_division'] = 'Interactive';
-        $metadata['update'] = Blog::orderBy('updated_at', 'desc')->take(1)->get()->first()->updated_at->getTimestamp();
+        $metadata['count'] = $m::count();
+        $metadata['newest'] = $m::orderBy('created_at', 'DESC')->first();
+        $metadata['most_used_tag'] = Tag::mostUsed(self::MODEL)->name;
+        $metadata['most_used_division'] = Division::mostUsed(self::MODEL)->name;
+        $metadata['update'] = $m::orderBy('updated_at', 'desc')->take(1)->get()->first()->updated_at->getTimestamp();
 
         return $this->respond('done', $metadata);
     }

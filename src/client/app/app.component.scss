@@ -182,11 +182,5 @@
             background-color: rgba(0,0,0,0.12);
           }
       }
-      &.md-24 {
-          @extend .md-24;
-          md-icon {
-              @extend .md-24;
-          }
-      }
   }
 }
