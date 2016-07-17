@@ -8,6 +8,17 @@
         & > *:not(.background) {
           color: #fff;
         }
+        .actions {
+          button {
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    .actions {
+      button {
+        color: $black_54;
       }
     }
 

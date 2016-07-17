@@ -35,6 +35,11 @@
       }
     }
   }
+  .container-fluid.well {
+
+    padding: 24px;
+    box-shadow: inset 0px 0px 16px rgba(0,0,0,0.12);
+  }
 }
 
 /* Small devices (tablets, 768px and up) */
