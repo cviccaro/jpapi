@@ -3,12 +3,15 @@ import { Http } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 import { XhrService } from './xhr';
+import {AuthHttp} from "./auth.http";
 
 @Injectable()
 export class TagService {
-	constructor(public http: Http, private xhr: XhrService) {
-		this.http = http;
-	}
+	constructor(
+	    public http: Http,
+        public authHttp: AuthHttp,
+        private xhr: XhrService
+    ) { }
 
     /**
      * Return options as list consumable by SELECT OPtions
@@ -32,7 +35,7 @@ export class TagService {
         this.xhr.started();
 
         return Observable.create(observer => {
-            this.http.delete(`/tags/${id}`)
+            this.authHttp.delete(`/tags/${id}`)
                 .subscribe(res => {
                     this.xhr.finished();
                     observer.next();

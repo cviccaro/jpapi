@@ -6,12 +6,15 @@ import { Observable } from 'rxjs/Rx';
 import { LoggerService } from './logger.service';
 import { XhrService } from './xhr';
 import {ManagedImage} from "../models/file";
+import {AuthHttp} from "./auth.http";
 
 @Injectable()
 export class DivisionService {
-	constructor(public http: Http, public xhr: XhrService, private log: LoggerService) {
-		this.http = http;
-	}
+	constructor(
+		public http: Http,
+		public authHttp: AuthHttp,
+		public xhr: XhrService
+	) {	}
 	/**
 	 * Get all divisions with filters and sorts
 	 * @param {params}
@@ -73,7 +76,7 @@ export class DivisionService {
 
 		this.xhr.started();
 
-		return this.http.post('/divisions', form)
+		return this.authHttp.post('/divisions', form)
 			.map(res => {
 				this.xhr.finished();
 				return res.json();
@@ -91,7 +94,7 @@ export class DivisionService {
 
 	    this.xhr.started();
 
-	    return this.http.post('/divisions/' + id, form)
+	    return this.authHttp.post('/divisions/' + id, form)
 	        .map(res => {
 	            this.xhr.finished();
 	            return res.json();
@@ -107,7 +110,7 @@ export class DivisionService {
 	    this.xhr.started();
 
 	    return Observable.create(observer => {
-	        this.http.delete(`/divisions/${id}`)
+	        this.authHttp.delete(`/divisions/${id}`)
 	            .subscribe(res => {
 	                this.xhr.finished();
 	                observer.next();

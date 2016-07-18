@@ -5,13 +5,15 @@ import 'rxjs/add/operator/map';
 
 import { XhrService } from './xhr';
 import {ManagedImage} from "../models/file";
+import {AuthHttp} from "./auth.http";
 
 @Injectable()
 export class BlogService {
-
-	constructor(public http: Http, public xhr: XhrService) {
-		this.http = http;
-	}
+	constructor(
+	    public http: Http,
+        public authHttp: AuthHttp,
+        public xhr: XhrService
+    ) {	}
 
     /**
      * Get all projects with filters and sorts
@@ -71,7 +73,7 @@ export class BlogService {
         this.xhr.started();
 
         return Observable.create(observer => {
-            this.http.delete(`/blogs/${id}`)
+            this.authHttp.delete(`/blogs/${id}`)
                 .subscribe(res => {
                     this.xhr.finished();
                     observer.next();
@@ -88,7 +90,7 @@ export class BlogService {
 
         this.xhr.started();
 
-        return this.http.post('/blogs', form)
+        return this.authHttp.post('/blogs', form)
             .map(res => {
                 this.xhr.finished();
                 return res.json();
@@ -105,7 +107,7 @@ export class BlogService {
 
         this.xhr.started();
 
-        return this.http.post(`/blogs/update/${id}`, form)
+        return this.authHttp.post(`/blogs/update/${id}`, form)
             .map(res => {
                 this.xhr.finished();
                 return res.json();

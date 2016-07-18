@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http, Headers, Response } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
-import { AuthHttp, JwtHelper } from 'angular2-jwt/angular2-jwt';
 
+import { AuthHttp } from './auth.http';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
 import { LoggerService } from './logger.service';
 
@@ -28,7 +28,7 @@ export class AuthService {
 
     private _authorized = false;
 
-    constructor(private http: Http, private authHttp: AuthHttp, private helper: JwtHelper, private log: LoggerService) {
+    constructor(private http: Http, private authHttp: AuthHttp, private log: LoggerService) {
         if (this.hasStorage) {
             ['token', 'expires'].forEach(key => {
                 let val = localStorage.getItem(`id_${key}`);
@@ -38,11 +38,11 @@ export class AuthService {
             this.log.warn('authService#local storage is not supported.');
         }
 
-        // @todo: check token.
         if (this.token !== '') {
             this.log.log('authService#Found authorization token in localStorage.  Checking expiration date...');
             if (this.expires !== undefined && this.timeLeft(this.expires) > 0) {
                 this.authorized = true;
+                this.setToken(this.token, false);
                 //this.log.log('authService#PASS: Authorization token is still valid for ' + this.timeLeft(this.expires) + ' seconds.');
             } else {
                 this.log.log('authService#FAIL: Authorization token expired on ',this.expires);
@@ -63,8 +63,10 @@ export class AuthService {
      * @param  {string} token string
      * @return {AuthService} this 
      */
-    setToken(token: string): AuthService {
-        if (this.hasStorage) localStorage.setItem('id_token', token);
+    setToken(token: string, store = true): AuthService {
+        this.log.log('set token ', token);
+        if (store && this.hasStorage) localStorage.setItem('id_token', token);
+        this.authHttp.token = token;
         this.token = token;
         this.emitAuthorizationToken(token);
         return this;

@@ -5,13 +5,18 @@ import 'rxjs/add/operator/map';
 
 import { LoggerService } from './logger.service';
 import { XhrService } from './xhr';
-import {ManagedImage} from "../models/file";
+import { ManagedImage } from "../models/file";
+import { AuthService } from "./auth.service";
+import {AuthHttp} from "./auth.http";
 
 @Injectable()
 export class ClientService {
-	constructor(public http: Http, private xhr: XhrService, private log: LoggerService) {
-		this.http = http;
-	}
+	constructor(
+	    public http: Http,
+        private xhr: XhrService,
+        private authHttp: AuthHttp,
+        private log: LoggerService
+    ) {	}
 
     /**
      * Get all clients with filters and sorts
@@ -22,10 +27,9 @@ export class ClientService {
         let query = new URLSearchParams();
 
         for (var key in params) {
-            const param: string = params[key];
+            const param:string = params[key];
             query.set(key, param);
         }
-
         this.xhr.started();
 
         return this.http.get('/clients/paged', {search: query})
@@ -58,7 +62,7 @@ export class ClientService {
 
         this.xhr.started();
 
-        return this.http.post('/clients', form)
+        return this.authHttp.post('/clients', form)
             .map(res => {
                 this.xhr.finished();
                 return res.json();
@@ -76,7 +80,7 @@ export class ClientService {
 
         this.xhr.started();
 
-        return this.http.post('/clients/update/' + id, form)
+        return this.authHttp.post('/clients/update/' + id, form)
             .map(res => {
                 this.xhr.finished();
                 return res.json();
@@ -92,7 +96,7 @@ export class ClientService {
         this.xhr.started();
 
         return Observable.create(observer => {
-            this.http.delete(`/clients/${id}`)
+            this.authHttp.delete(`/clients/${id}`)
                 .subscribe(res => {
                     this.xhr.finished();
                     observer.next();

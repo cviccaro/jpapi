@@ -19,13 +19,13 @@ Route::get('/', function () {
  * Main
  */
 Route::get('/admin', function () {
-    return view(env('ANGULAR_VIEW'));
+    return view(env('ANGULAR_VIEW', 'angular'));
 });
 Route::get('/admin/{page}', function () {
-    return view(env('ANGULAR_VIEW'));
+    return view(env('ANGULAR_VIEW', 'angular'));
 });
 Route::get('/admin/{page}/{subpage}', function () {
-    return view(env('ANGULAR_VIEW'));
+    return view(env('ANGULAR_VIEW', 'angular'));
 });
 
 /**
@@ -88,24 +88,16 @@ Route::get('options/divisions', 'DivisionController@options');
 Route::get('options/tags', 'TagController@options');
 
 
-/*
-|--------------------------------------------------------------------------
-| Authorized routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It's a breeze. Simply tell Laravel the URIs it should respond to
-| and give it the controller to call when that URI is requested.
-|
-*/
+/**
+ * Authorization routes
+ */
 Route::group(['namespace' => 'Auth'], function () {
     Route::post('authenticate', 'AuthController@authenticate');
     Route::get('authenticate/refresh', 'AuthController@refresh');
     Route::get('authenticate/check', 'AuthController@check');
 });
 
-// Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
-Route::group([], function () {
+Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
     Route::post('blogs', 'BlogController@store');
     Route::put('blogs/{id}', 'BlogController@update');
     Route::post('blogs/update/{id}', 'BlogController@update');

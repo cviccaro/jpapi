@@ -7,12 +7,16 @@ import { XhrService } from './xhr';
 import { SettingFormControl } from '../models/index';
 import { LoggerService } from './logger.service';
 import {ManagedFile} from "../models/file";
+import {AuthHttp} from "./auth.http";
 
 @Injectable()
 export class SettingsService {
-	constructor(public http: Http, private xhr: XhrService, private log: LoggerService) {
-		this.http = http;
-	}
+	constructor(
+		public http: Http,
+		public authHttp: AuthHttp,
+		private xhr: XhrService,
+		private log: LoggerService
+	) { }
 
     all(): Observable<any> {
     	this.xhr.started();
@@ -44,7 +48,7 @@ export class SettingsService {
 
 		this.xhr.started();
 
-    	return this.http.post('settings', form).map(res => {
+    	return this.authHttp.post('settings', form).map(res => {
     		this.xhr.finished();
     		return res.json();
 		});

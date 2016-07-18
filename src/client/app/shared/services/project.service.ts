@@ -6,17 +6,17 @@ import 'rxjs/add/operator/map';
 import { AuthService } from './auth.service';
 import { XhrService  } from './xhr';
 
-import { AuthHttp } from 'angular2-jwt/angular2-jwt';
 import { ManagedImage } from "../models/file";
+import {AuthHttp} from "./auth.http";
 
 @Injectable()
 export class ProjectService {
-	public authToken: string;
+	constructor(
+		public http: Http,
+		public authHttp: AuthHttp,
+		public xhr: XhrService
+	) {	}
 
-	constructor(public http: Http, public authHttp: AuthHttp, public authService: AuthService, public xhr: XhrService) {
-		this.http = http;
-		this.authToken = authService.getToken();
-	}
 	/**
 	 * Get all projects with filters and sorts
 	 * @param {number}  id
@@ -63,7 +63,7 @@ export class ProjectService {
         this.xhr.started();
 
         return Observable.create(observer => {
-            this.http.delete(`/projects/${id}`)
+            this.authHttp.delete(`/projects/${id}`)
                 .subscribe(res => {
                     this.xhr.finished();
                     observer.next();
@@ -82,7 +82,7 @@ export class ProjectService {
 
 		this.xhr.started();
 
-		return this.http.post(`/projects/update/${id}`, form)
+		return this.authHttp.post(`/projects/update/${id}`, form)
 		    .map(res => {
 		        this.xhr.finished();
 		        return res.json();
@@ -98,7 +98,7 @@ export class ProjectService {
 
 		this.xhr.started();
 
-		return this.http.post('/projects', form)
+		return this.authHttp.post('/projects', form)
 		    .map(res => {
 		        this.xhr.finished();
 		        return res.json();
