@@ -10,6 +10,7 @@ import {
 	PanelFormControlFile,
 	SettingFormControl
 } from '../shared/index';
+import {PanelFormControlTextarea} from '../shared/components/panel2/form/control/control.textarea';
 
 @Component({
 	moduleId: module.id,
@@ -55,6 +56,14 @@ export class SettingsComponent implements OnInit {
 					}));
 
 					this.model[setting.name] = setting.value;
+					break;
+				case 'textarea':
+					this.controls.push(new PanelFormControlTextarea({
+						name: setting.name,
+						label: setting.label,
+						hint: setting.description,
+						ckeditor: true
+					}));
 					break;
 				case 'file':
 					let config = {

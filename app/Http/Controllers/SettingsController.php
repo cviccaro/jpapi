@@ -46,7 +46,7 @@ class SettingsController extends Controller
                             Image::find($model->value->id)->update($managedFile);
                         }
                         break;
-                    case 'text':
+                    default:
                         $model->value = $control_value;
                         break;
                 }
