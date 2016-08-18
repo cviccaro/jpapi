@@ -32,7 +32,7 @@ class ClientController extends Controller
      */
     public function featured(Request $request)
     {
-        $models = Client::featured()->get();
+        $models = Client::featured()->orderBy('name', 'ASC')->get();
 
         return $this->respond('done', $models);
     }

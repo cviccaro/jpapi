@@ -12,6 +12,6 @@ class StaffController extends Controller {
 	const MODEL = 'App\Staff';
 
 	public function all(Request $request) {
-		return Staff::all();
+		return Staff::orderBy('last_name', 'ASC')->get();
 	}
 }
