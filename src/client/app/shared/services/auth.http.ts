@@ -43,7 +43,7 @@ export class AuthHttp {
     delete(url: string, options?: RequestOptionsArgs) : Observable<Response> {
         options = this.injectToken(options);
         this.log.debug('AuthHttp.delete # ', {url: url, options: options});
-        return this.http.put(url, options);
+        return this.http.delete(url, options);
     }
 
     /**
