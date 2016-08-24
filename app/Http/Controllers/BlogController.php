@@ -316,6 +316,7 @@ class BlogController extends Controller
         $division_id = Blog::find($id)->divisions()->first()->id;
 
         $blogs = Blog::with('divisions', 'image', 'images', 'tags')
+                        ->where('id', '!=', $id)
                         ->whereHas('divisions', function($query) use ($division_id) {
                             $query->where('id', $division_id);
                         })
