@@ -43,6 +43,7 @@ Route::get('blogs/{id}', 'BlogController@get');
  * Staff
  */
 Route::get('staff', 'StaffController@all');
+Route::get('staff/active', 'StaffController@active');
 Route::get('staff/{id}', 'StaffController@get');
 
 /**

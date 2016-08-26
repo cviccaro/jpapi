@@ -7,11 +7,15 @@ use App\Staff;
 use Illuminate\Http\Request;
 
 class StaffController extends Controller {
-	use RESTActions;
+  use RESTActions;
 
-	const MODEL = 'App\Staff';
+  const MODEL = 'App\Staff';
 
-	public function all(Request $request) {
-		return Staff::orderBy('last_name', 'ASC')->get();
-	}
+  public function all(Request $request) {
+    return Staff::orderBy('last_name', 'ASC')->get();
+  }
+
+  public function active(Request $request) {
+    return Staff::active()->orderBy('last_name', 'ASC')->get();
+  }
 }
