@@ -44,6 +44,7 @@ Route::get('blogs/{id}', 'BlogController@get');
  */
 Route::get('staff', 'StaffController@all');
 Route::get('staff/active', 'StaffController@active');
+Route::get('staff/metadata', 'StaffController@metadata');
 Route::get('staff/{id}', 'StaffController@get');
 
 /**
@@ -90,7 +91,7 @@ Route::get('options/tags', 'TagController@options');
 
 
 /**
- * Authorization routes
+ * Authorization API Routes
  */
 Route::group(['namespace' => 'Auth'], function () {
     Route::post('authenticate', 'AuthController@authenticate');
@@ -98,6 +99,9 @@ Route::group(['namespace' => 'Auth'], function () {
     Route::get('authenticate/check', 'AuthController@check');
 });
 
+/**
+ * Authorized API Routes
+ */
 Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
     Route::post('blogs', 'BlogController@store');
     Route::put('blogs/{id}', 'BlogController@update');
@@ -106,8 +110,8 @@ Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
 
     Route::post('divisions/{id}', 'DivisionController@update');
 
-    Route::post('staff', 'StaffController@add');
-    Route::put('staff/{id}', 'StaffController@put');
+    Route::post('staff', 'StaffController@store');
+    Route::post('staff/update/{id}', 'StaffController@update');
     Route::delete('staff/{id}', 'StaffController@remove');
 
     Route::post('clients', 'ClientController@store');

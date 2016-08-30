@@ -196,6 +196,71 @@
             </md-card-actions>
         </md-card>
 
+        <md-card *ngIf="staff_data">
+            <md-card-title-group>
+                <md-card-title>Staff</md-card-title>
+                <md-card-subtitle>{{ staff_data.count }} people</md-card-subtitle>
+            </md-card-title-group>
+            <md-card-content>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon>panorama</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Images
+                        </div>
+                        <div class="detail-subtitle-row">
+                            {{ staff_data.images }}
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="md-warn">star</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Active
+                        </div>
+                        <div class="detail-subtitle-row">
+                            {{ staff_data.active }}
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="md-secondary">event</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Recent update
+                        </div>
+                        <div class="detail-subtitle-row" *ngIf="staff_data.update">
+                            {{ (staff_data.update | amFromUnix) | amCalendar }}
+                        </div>
+                    </div>
+                </div>
+                <div class="icon-and-detail">
+                    <div class="icon-wrapper">
+                        <md-icon class="md-accent">fiber_new</md-icon>
+                    </div>
+                    <div class="detail">
+                        <div class="detail-title-row">
+                            Newest person
+                        </div>
+                        <div class="detail-subtitle-row">
+                            {{ staff_data.newest?.first_name + ' ' + staff_data.newest?.last_name }}
+                        </div>
+                    </div>
+                </div>
+            </md-card-content>
+            <span class="filler"></span>
+            <md-card-actions>
+                <a md-button [routerLink]="['/staff']">View All</a>
+            </md-card-actions>
+        </md-card>
+
         <md-card *ngIf="division_data">
             <md-card-title-group>
                 <md-card-title>Divisions</md-card-title>

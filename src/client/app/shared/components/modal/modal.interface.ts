@@ -10,6 +10,7 @@ export interface ModalConfig {
     inputs?: ModalInput[];
     formClass?: any;
     showTitle?: boolean;
+    minWidth?: any;
 }
 
 export interface ModalAction {
@@ -59,6 +60,9 @@ export class ModalFormField extends GenericFormField {
             column.label = column.name.substr(0,1).toUpperCase() + column.name.substr(1,column.name.length-1);
             column.placeholder = column.label;
         }
+
+        if (!column.placeholder) column.placeholder = column.label;
+
         Object.assign(this, column);
     }
 

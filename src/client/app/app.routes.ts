@@ -7,6 +7,7 @@ import { HomeRoutes } from './@home/index';
 import { LoginRoutes } from './@login/index';
 import { ProjectRoutes } from './@projects/index';
 import { SettingsRoutes } from './@settings/index';
+import { StaffRoutes } from './@staff/index';
 
 import {
     AuthGuard,
@@ -19,7 +20,8 @@ import {
     CanDeactivateGuard,
     ProjectGuard,
     ProjectListGuard,
-    SettingsGuard
+    SettingsGuard,
+    StaffGuard
 } from './shared/index';
 
 const routes: RouterConfig = [
@@ -29,7 +31,8 @@ const routes: RouterConfig = [
     ...DivisionRoutes,
     ...LoginRoutes,
     ...ProjectRoutes,
-    ...SettingsRoutes
+    ...SettingsRoutes,
+    ...StaffRoutes
 ];
 
 export const APP_ROUTER_PROVIDERS = [
@@ -44,5 +47,6 @@ export const APP_ROUTER_PROVIDERS = [
     CanDeactivateGuard,
     ProjectGuard,
     ProjectListGuard,
-    SettingsGuard
+    SettingsGuard,
+    StaffGuard
 ];

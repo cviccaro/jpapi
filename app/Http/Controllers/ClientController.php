@@ -92,7 +92,7 @@ class ClientController extends Controller
      */
     public function store(Request $request)
     {
-        \Log::info('Received request to create client: ' . print_r($request->toArray(), true));
+        \Log::info('Received request to create client');
 
         $destination = path_join(['app', 'public', 'images', 'clients']);
 
@@ -126,10 +126,6 @@ class ClientController extends Controller
      */
     public function update(Request $request, $id)
     {
-        \Log::info('Received request to update client ' . $id);
-        \Log::info('Request: ' . print_r($request->toArray(), true));
-        \Log::info('Files: ' . print_r($request->allFiles(), true));
-
         $destination = path_join(['app', 'public', 'images', 'clients']);
 
         $client = Client::findOrFail($id);

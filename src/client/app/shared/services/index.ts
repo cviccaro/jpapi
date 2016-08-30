@@ -7,6 +7,7 @@ export * from './division.service';
 export * from './logger.service';
 export * from './metadata.service';
 export * from './project.service';
+export * from './staff.service';
 export * from './settings.service';
 export * from './tag.service';
 export * from './xhr';
@@ -18,9 +19,10 @@ import { CacheService } from './cache.service';
 import { ClientService } from './client.service';
 import { DivisionService } from './division.service';
 import { LoggerService } from './logger.service';
-import { MetadataService } from "./metadata.service";
+import { MetadataService } from './metadata.service';
 import { ProjectService } from './project.service';
 import { SettingsService } from './settings.service';
+import { StaffService } from './staff.service';
 import { TagService } from './tag.service';
 import { XhrService } from './xhr';
 
@@ -35,6 +37,7 @@ export const APP_SERVICES = [
     MetadataService,
     ProjectService,
     SettingsService,
+    StaffService,
     TagService,
     XhrService
 ];

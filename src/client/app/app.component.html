@@ -23,6 +23,10 @@
           <md-icon md-list-icon>business</md-icon>
           <span md-line>Clients</span>
         </a>
+        <a md-list-item [routerLink]="['/staff']" [class.active]="routeIs('/staff')">
+          <md-icon md-list-icon>perm_identity</md-icon>
+          <span md-line>Staff</span>
+        </a>
         <a md-list-item [routerLink]="['/divisions']" [class.active]="routeIs('/divisions')">
           <md-icon md-list-icon>place</md-icon>
           <span md-line>Divisions</span>
@@ -65,6 +69,9 @@
   </div>
   <div class="sidebar-button" [class.active]="routeIs('/clients')" jpaTooltip tooltip="Clients">
     <a md-icon-button [routerLink]="['/clients']"><md-icon>business</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/staff')" jpaTooltip tooltip="Staff">
+    <a md-icon-button [routerLink]="['/staff']"><md-icon>perm_identity</md-icon></a>
   </div>
   <div class="sidebar-button" [class.active]="routeIs('/divisions')" jpaTooltip tooltip="Divisions">
     <a md-icon-button [routerLink]="['/divisions']"><md-icon>place</md-icon></a>

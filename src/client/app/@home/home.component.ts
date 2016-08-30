@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { ROUTER_DIRECTIVES } from "@angular/router";
+import { ROUTER_DIRECTIVES } from '@angular/router';
 import { MATERIAL_DIRECTIVES } from '../shared/libs/angular2-material';
 import { CalendarPipe, FromUnixPipe } from 'angular2-moment/index';
 import { MetadataService, LoggerService } from '../shared/services/index';
@@ -16,10 +16,11 @@ import { MetadataService, LoggerService } from '../shared/services/index';
     pipes: [ FromUnixPipe, CalendarPipe ]
 })
 export class HomeComponent {
-    blog_data: { [key: string] : any };
-    client_data: { [key: string] : any } = {};
-    division_data: { [key: string] : any } = {};
-    project_data: { [key: string] : any } = {};
+    blog_data: Object = {};
+    client_data: Object = {};
+    division_data: Object = {};
+    project_data: Object = {};
+    staff_data: Object = {};
 
     constructor(
         private metaService: MetadataService,
@@ -27,11 +28,8 @@ export class HomeComponent {
     ) {
         this.metaService.get('blogs').subscribe(res => this.blog_data = res);
         this.metaService.get('projects').subscribe(res => this.project_data = res);
-        this.metaService.get('clients').subscribe(res => this.client_data= res);
-        this.metaService.get('divisions').subscribe(res => this.division_data= res);
-    }
-
-    ngOnInit() {
-        this.log.debug('HomeComponent Initialized', this);
+        this.metaService.get('clients').subscribe(res => this.client_data = res);
+        this.metaService.get('divisions').subscribe(res => this.division_data = res);
+        this.metaService.get('staff').subscribe(res => this.staff_data = res);
     }
 }
