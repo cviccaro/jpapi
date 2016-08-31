@@ -46,7 +46,7 @@ class DivisionController extends Controller
         if (is_numeric($id)) {
             $model = $query->find($id);
         } else {
-            $model = $query->where('name', $id)->get();
+            $model = $query->where('name', $id)->first();
         }
 
         if (is_null($model)) {
