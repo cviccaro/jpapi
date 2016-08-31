@@ -38,9 +38,15 @@ class DivisionController extends Controller
         $m = self::MODEL;
         
         if ($request->get('thin')) {
-            $model = $m::with('image', 'logo')->find($id);
+            $query = $m::with('image', 'logo');
         } else {
-            $model = $m::with('blogs', 'projects', 'image', 'logo')->find($id);
+            $query = $m::with('blogs', 'projects', 'image', 'logo');
+        }
+
+        if (is_numeric($id)) {
+            $model = $query->find($id);
+        } else {
+            $model = $query->where('name', $id)->get();
         }
 
         if (is_null($model)) {
