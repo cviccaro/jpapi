@@ -8,7 +8,7 @@ class Division extends Model
 {
     use MostUsed;
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'site_title', 'site_logo', 'splash_headline', 'splash_body'];
 
     protected $with = ['image'];
 
@@ -34,5 +34,13 @@ class Division extends Model
     public function image()
     {
         return $this->belongsTo('App\Image');
+    }
+
+    /**
+     * Logo associated with this Division
+     */
+    public function logo()
+    {
+        return $this->belongsTo('App\Image', 'site_logo');
     }
 }

@@ -13,7 +13,7 @@ export class PanelFormControlTextarea extends PanelFormControl<string> {
   get empty(): boolean {
     if (typeof this.value === 'undefined') return true;
 
-    return this.value === '';
+    return this.value === '' || this.value === null;
   }
 
   constructor(config: TextareaConfig) {

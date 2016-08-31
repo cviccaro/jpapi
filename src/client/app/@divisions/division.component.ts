@@ -85,30 +85,34 @@ export class DivisionComponent implements OnInit, OnDestroy, RegistersSubscriber
               name: 'name',
               required: true
           }),
-          // new PanelFormControlSelect({
-          //     name: 'client_id',
-          //     label: 'Client',
-          //     required: true,
-          //     options: this.clients
-          // }),
-          // new PanelFormControlTextarea({
-          //     name: 'description',
-          //     required: true,
-          //     ckeditor: true
-          // }),
           new PanelFormControlFile({
               name: 'image',
               label: 'Backdrop',
               required: true,
               type: 'image'
           }),
-          // new PanelFormControlFiles({
-          //     name: 'images',
-          //     required: false,
-          //     multiple: true,
-          //     filesLabel: 'images in gallery',
-          //     type: 'image'
-          // })
+          new PanelFormControlTextfield({
+              name: 'site_title',
+              label: 'Site Title',
+              required: false
+          }),
+          new PanelFormControlTextfield({
+              name: 'splash_headline',
+              label: 'Splash Headline',
+              required: false
+          }),
+          new PanelFormControlTextarea({
+              label: 'Splash Body',
+              name: 'splash_body',
+              required: false,
+              ckeditor: true
+          }),
+          new PanelFormControlFile({
+              name: 'logo',
+              label: 'Logo',
+              required: false,
+              type: 'image'
+          })
         ];
 
         this.log.info('DivisionComponent#'+(this.isNew?'create':'edit')+' initialized.', this);

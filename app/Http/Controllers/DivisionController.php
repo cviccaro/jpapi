@@ -33,10 +33,16 @@ class DivisionController extends Controller
      *
      * @return Response
      */
-    public function get($id)
+    public function get(Request $request, $id)
     {
         $m = self::MODEL;
-        $model = $m::with('blogs', 'projects', 'image')->find($id);
+        
+        if ($request->get('thin')) {
+            $model = $m::with('image', 'logo')->find($id);
+        } else {
+            $model = $m::with('blogs', 'projects', 'image', 'logo')->find($id);
+        }
+
         if (is_null($model)) {
             return $this->respond('not_found');
         }
@@ -117,7 +123,7 @@ class DivisionController extends Controller
 
         $division = Division::findOrFail($id);
 
-        $collect = ['name', 'description'];
+        $collect = ['name', 'description', 'site_title', 'splash_headline', 'splash_body'];
         $files = $request->allFiles();
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
@@ -125,23 +131,26 @@ class DivisionController extends Controller
             }
         }
 
-        if ($request->get('image') === '') {
-            $division->image()->dissociate();
-        } elseif ($request->has('image')) {
-            $managedFile = $request->get('image');
-            if (isset($files['image']['_file'])) {
-                $file = $files['image']['_file'];
+        $images = ['image', 'logo'];
+        foreach($images as $image_key) {
+            if ($request->get($image_key) === '') {
+                $division->{$image_key}()->dissociate();
+            } elseif ($request->has($image_key)) {
+                $managedFile = $request->get($image_key);
+                if (isset($files[$image_key]['_file'])) {
+                    $file = $files[$image_key]['_file'];
 
-                $image = Image::createFromUpload($file, $destination, $managedFile);
-                $division->image()->associate($image);
-            } else {
-                Image::find($division->image->id)->update($managedFile);
+                    $image = Image::createFromUpload($file, $destination, $managedFile);
+                    $division->{$image_key}()->associate($image);
+                } else {
+                    Image::find($division->{$image_key}->id)->update($managedFile);
+                }
             }
         }
 
         $division->save();
 
-        return $this->get($id);
+        return $this->get($request, $id);
     }
 
     /**

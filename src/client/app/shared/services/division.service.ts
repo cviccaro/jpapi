@@ -132,6 +132,7 @@ export class DivisionService {
 
 	        switch(key) {
 				case 'image':
+				case 'logo':
 					if (val === '') {
 						// File was deleted
 						form.append(key, val);
