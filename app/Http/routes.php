@@ -89,6 +89,10 @@ Route::get('options/clients', 'ClientController@options');
 Route::get('options/divisions', 'DivisionController@options');
 Route::get('options/tags', 'TagController@options');
 
+/**
+ * Contact Form
+ */
+Route::post('contact-form-submit', 'SubmissionController@submit');
 
 /**
  * Authorization API Routes
