@@ -15,6 +15,7 @@ import {
     PanelFormControlTextarea,
     PanelFormControlDragnDrop,
     PanelFormControlFile,
+    PanelFormControlSelect,
     LoggerService,
     RegistersSubscribers
 } from '../shared/index';
@@ -38,6 +39,7 @@ export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
     ready: boolean = false;
     saving: boolean = false;
     tags: { id: number, name: string }[];
+    staff: any[];
 
     private _blog: Blog = new Blog();
 
@@ -66,6 +68,7 @@ export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
     ngOnInit() {
         this.tags = this.cache.get('tags');
         this.divisions = this.cache.get('divisions');
+        this.staff = this.cache.get('staff');
 
         let id = this.route.snapshot.params['id'];
 
@@ -113,9 +116,11 @@ export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
               required: false,
               ckeditor: true
           }),
-          new PanelFormControlTextfield({
-            name: 'author',
-            required: false
+          new PanelFormControlSelect({
+            name: 'author_id',
+            label: 'Author',
+            required: false,
+            options: this.staff
           }),
           new PanelFormControlFile({
               name: 'image',

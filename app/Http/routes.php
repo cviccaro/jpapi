@@ -88,6 +88,7 @@ Route::get('settings', 'SettingsController@all');
 Route::get('options/clients', 'ClientController@options');
 Route::get('options/divisions', 'DivisionController@options');
 Route::get('options/tags', 'TagController@options');
+Route::get('options/staff', 'StaffController@options');
 
 /**
  * Contact Form

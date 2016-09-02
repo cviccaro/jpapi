@@ -32,6 +32,20 @@ export class StaffService {
         });
     }
 
+
+    /**
+     * Return options as list consumable by SELECT Options
+     */
+    options() {
+        this.xhr.started();
+
+        return this.http.get('/options/staff')
+            .map(res => {
+                this.xhr.finished();
+                return res.json();
+            });
+    }
+
     /**
      * Create new project
      * @param attributes

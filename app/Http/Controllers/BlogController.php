@@ -4,6 +4,7 @@ use App\Blog;
 use App\Division;
 use App\Image;
 use App\Tag;
+use App\Staff;
 use App\Http\Controllers\Controller;
 use App\Http\Requests;
 use Illuminate\Http\Request;
@@ -41,7 +42,7 @@ class BlogController extends Controller
 
         $blog = new Blog();
 
-        $collect = ['title', 'summary', 'body', 'author'];
+        $collect = ['title', 'summary', 'body'];
         $files = $request->allFiles();
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
@@ -50,6 +51,14 @@ class BlogController extends Controller
         }
 
         $blog->save();
+
+        if ($request->has('author_id')) {
+            $author = Staff::find($request->get('author_id'));
+
+            if ($author) {
+                $blog->author()->associate($author);
+            }
+        }
 
         $images = ['image', 'splash'];
 
@@ -106,11 +115,19 @@ class BlogController extends Controller
 
         $blog = Blog::findOrFail($id);
 
-        $collect = ['title', 'summary', 'body', 'author'];
+        $collect = ['title', 'summary', 'body'];
         $files = $request->allFiles();
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
                 $blog->{$attribute} = $request->get($attribute);
+            }
+        }
+
+        if ($request->has('author_id') && $request->get('author_id') !== $blog->author_id) {
+            $author = Staff::find($request->get('author_id'));
+
+            if ($author) {
+                $blog->author()->associate($author);
             }
         }
 

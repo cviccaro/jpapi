@@ -30,6 +30,10 @@
                                 {{ col.label }}
                             </md-slide-toggle>
                         </template>
+                        <template [ngSwitchCase]="'textarea'">
+                            <label [attr.for]="col.name">{{ col.label }}</label>
+                            <textarea [name]="col.name" [(ngModel)]="col.value" [required]="col.required" (change)="handleChange(col, $event)"></textarea>
+                        </template>
                         <template ngSwitchDefault>
                             <md-input [placeholder]="col.placeholder" [name]="col.name" [(ngModel)]="col.value" [required]="col.required" (change)="handleChange(col, $event)">
                             </md-input>

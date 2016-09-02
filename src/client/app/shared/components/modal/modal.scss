@@ -91,6 +91,19 @@
             md-input {
                 width: 100%;
             }
+
+            &.type-textarea {
+                label {
+                    display: block;
+                    font-size: 12px;
+                    color: $grey_400;
+                    font-weight: normal;
+                }
+                textarea {
+                    min-height: 100px;
+                    width: 100%;
+                }
+            }
         }
         &.update {
             .modal-form-col.name-image_remove {

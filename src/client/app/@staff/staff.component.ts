@@ -32,6 +32,7 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
       inputs: [
           { name: 'first_name', required: true, label: 'First Name' },
           { name: 'last_name', required: true, label: 'Last Name' },
+          { name: 'bio', required: false, label: 'Bio', type: 'textarea' },
           { name: 'title', required: true},
           { name: 'email', required: true, type: 'email'},
           { name: 'phone', type: 'tel' },

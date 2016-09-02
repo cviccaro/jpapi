@@ -20,6 +20,25 @@ class StaffController extends Controller {
     return Staff::active()->orderBy('last_name', 'ASC')->get();
   }
 
+  /**
+   * Display the staff in a format consumable
+   * by HTMLOptionElements
+   *
+   * @return Response
+   */
+  public function options(Request $request)
+  {
+      $list = Staff::all();
+
+      $data = [];
+
+      foreach($list as $model) {
+        $data[] = ['label' => $model->full_name, 'value' => $model->id];
+      }
+
+      return $this->respond('done', $data);
+  }
+
   public function update(Request $request, $id)
   {
     $destination = path_join(['app', 'public', 'images', 'staff']);
@@ -27,7 +46,7 @@ class StaffController extends Controller {
     $person = Staff::findOrFail($id);
 
     $files = $request->allFiles();
-    $collect = ["first_name", "last_name", "title", "email", "phone", "linkedin", "active"];
+    $collect = ["first_name", "last_name", "title", "email", "phone", "linkedin", "active", "bio"];
     foreach ($collect as $attribute) {
         if ($request->has($attribute)) {
             $person->{$attribute} = $request->get($attribute);
@@ -67,7 +86,7 @@ class StaffController extends Controller {
     $person = new Staff();
 
     $files = $request->allFiles();
-    $collect = ["first_name", "last_name", "title", "email", "phone", "linkedin", "active"];
+    $collect = ["first_name", "last_name", "title", "email", "phone", "linkedin", "active", "bio"];
     foreach ($collect as $attribute) {
         if ($request->has($attribute)) {
             $person->{$attribute} = $request->get($attribute);
