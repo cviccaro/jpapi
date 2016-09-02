@@ -1,6 +1,7 @@
 import {JpFile} from './file';
 import {Tag} from './tag';
 import {Division} from './division';
+import {Staff} from './staff';
 
 export class Blog {
 	id: any;
@@ -8,7 +9,9 @@ export class Blog {
 
 	divisions: Division[] = [];
 
-	author: string = '';
+	author_id: number;
+	author: Staff;
+
 	body: string = '';
 	summary: string = '';
 
