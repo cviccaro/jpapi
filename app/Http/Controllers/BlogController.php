@@ -204,7 +204,7 @@ class BlogController extends Controller
      */
     public function get($id)
     {
-        $blog = Blog::with('divisions', 'image', 'images', 'tags', 'splash')->find($id);
+        $blog = Blog::with('divisions', 'image', 'images', 'tags', 'splash', 'author')->find($id);
 
         if(is_null($blog)){
             return $this->respond('not_found');
@@ -246,7 +246,7 @@ class BlogController extends Controller
         $order_by = $request->input('order_by', 'updated_at');
         $descending = $request->input('descending', 'true') === 'true';
 
-        $blogs = Blog::with('divisions', 'image', 'images', 'tags', 'splash')->get();
+        $blogs = Blog::with('divisions', 'image', 'images', 'tags', 'splash', 'author')->get();
 
         $blogs = $blogs->sortBy(function ($blog) use ($order_by) {
             switch ($order_by) {
@@ -290,7 +290,7 @@ class BlogController extends Controller
         $take = $request->input('take', 3);
         $skip = $request->input('skip', 0);
 
-        $blogs = Blog::with('divisions', 'image', 'images', 'tags', 'splash')->orderBy('created_at', 'desc');
+        $blogs = Blog::with('divisions', 'image', 'images', 'tags', 'splash', 'author')->orderBy('created_at', 'desc');
         $count = Blog::count();
         if ($request->has('division')) {
             $division = Division::where('name', $request->input('division'))->first();
@@ -323,7 +323,7 @@ class BlogController extends Controller
 
         $division_id = Blog::find($id)->divisions()->first()->id;
 
-        $blogs = Blog::with('divisions', 'image', 'images', 'tags', 'splash')
+        $blogs = Blog::with('divisions', 'image', 'images', 'tags', 'splash', 'author')
                         ->where('id', '!=', $id)
                         ->whereHas('divisions', function($query) use ($division_id) {
                             $query->where('id', $division_id);

@@ -35,4 +35,9 @@ class Blog extends Model
     {
         return $this->belongsTo('App\Image', 'splash_image_id');
     }
+
+    public function author()
+    {
+        return $this->belongsTo('App\Author');
+    }
 }
