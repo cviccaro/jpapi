@@ -30,4 +30,9 @@ class Blog extends Model
     {
         return $this->morphToMany('App\Tag', 'taggable')->withPivot('weight');
     }
+
+    public function splash()
+    {
+        return $this->belongsTo('App\Image', 'splash_image_id');
+    }
 }

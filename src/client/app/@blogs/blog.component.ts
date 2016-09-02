@@ -122,6 +122,12 @@ export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
               label: 'Cover Image',
               required: false,
               type: 'image'
+          }),
+          new PanelFormControlFile({
+              name: 'splash',
+              label: 'Splash Image',
+              required: false,
+              type: 'image'
           })
         ];
 

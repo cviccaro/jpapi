@@ -15,6 +15,8 @@ export class Blog {
 	image: JpFile;
 	image_id: number;
 	images: JpFile[] = [];
+	splash: JpFile;
+	splash_image_id: JpFile;
 
 	tags: Tag[] = [];
 

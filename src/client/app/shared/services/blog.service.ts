@@ -136,6 +136,7 @@ export class BlogService {
                     }
                     break;
                 case 'image':
+                case 'splash':
                     if (val === '') {
                         // File was deleted
                         form.append(key, val);
@@ -153,6 +154,7 @@ export class BlogService {
                     break;
                 default:
                     if (val !== undefined && val !== null) form.append(key, val);
+                    break;
             }
         }
 
