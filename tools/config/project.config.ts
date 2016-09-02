@@ -51,5 +51,10 @@ export class ProjectConfig extends SeedConfig {
             main: 'lib/CKEditor.js',
             defaultExtension: 'js'
         };
+
+        this.SYSTEM_BUILDER_CONFIG.packages['lodash'] = {
+            main: 'index.js',
+            defaultExtension: 'js'
+        };
     }
 }
