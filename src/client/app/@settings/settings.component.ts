@@ -64,6 +64,8 @@ export class SettingsComponent implements OnInit {
 						hint: setting.description,
 						ckeditor: true
 					}));
+
+					this.model[setting.name] = setting.value;
 					break;
 				case 'file':
 					let config = {
