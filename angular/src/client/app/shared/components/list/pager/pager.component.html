@@ -1,0 +1,13 @@
+<button md-icon-button class="previous" (click)="previous()" [hidden]="pagerData.current_page === 1">
+    <md-icon>arrow_back</md-icon>
+</button>
+<ul class="pagination">
+    <li class="pager-page"
+        *ngFor="let page of pages; let index = index;"
+        [class.active]="pagerData.current_page === (index + 1)">
+        <a (click)="changePage(index+1)">{{ index+1 }}</a>
+    </li>
+</ul>
+<button md-icon-button class="next" (click)="next()" [hidden]="pagerData.current_page === pagerData.last_page">
+    <md-icon>arrow_forward</md-icon>
+</button>

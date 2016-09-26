@@ -1,0 +1,15 @@
+<md-icon *ngIf="!image.id" class="new">fiber_new</md-icon>
+<div class="actions">
+	<span class="remove" (click)="remove()">
+	    <md-icon>delete_forever</md-icon>
+	</span>
+</div>
+<div class="shade">
+    <h4 class="image-name text-ellipsis">{{ image.alias || image.filename }}</h4>
+    <p class="layout-row">
+        <span>{{ image.megapixels() }}MP</span>
+        <span>{{ image.width }} x {{ image.height }} px</span>
+        <span>{{ image.filesize() }}kb</span>
+    </p>
+</div>
+<img #img class="grid-image" [alt]="image.description" [title]="image.description" [class.new]="image.id === undefined" />

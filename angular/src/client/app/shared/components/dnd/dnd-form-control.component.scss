@@ -1,0 +1,35 @@
+:host {
+    flex: 1;
+    flex-direction: row;
+    display: flex;
+    .drop-area,
+    .chips.available {
+        width: 48%;
+    }
+    .available {
+        margin-left: 1%;
+    }
+    .drop-area {
+        margin-right: 1%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        transition: all $transition_duration $transition_ease;
+        will-change: border;
+        &.dnd-drag-enter {
+            border: 2px dashed $accent;
+        }
+        jpa-chip {
+            background: $grey_400;
+        }
+    }
+
+    jpa-chip {
+        cursor: pointer;
+        margin-right: 12px;
+        margin-bottom: 12px;
+    }
+    .chip-wrapper {
+        display: inline-block;
+    }
+}

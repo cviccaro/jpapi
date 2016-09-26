@@ -1,0 +1,87 @@
+<md-sidenav-layout fullscreen [class.opened]="sidenav.opened">
+    <md-sidenav #sidenav mode="side" class="app-sidenav" [hidden]="!loggedIn">
+      <md-nav-list>
+        <md-list-item class="title">
+          <span md-line>JP API</span>
+        </md-list-item>
+        <a md-list-item [routerLink]="['/']" [class.active]="routeIs('/', true)">
+          <md-icon md-list-icon>home</md-icon>
+          <span md-line>Home</span>
+        </a>
+        <a md-list-item [routerLink]="['/blogs']" [class.active]="routeIs('/blogs')">
+          <md-icon md-list-icon>speaker_notes</md-icon>
+          <span md-line>Blogs</span>
+        </a>
+        </md-nav-list>
+        <md-nav-list>
+        <a md-list-item [routerLink]="['/projects']" [class.active]="routeIs('/projects')">
+          <md-icon md-list-icon>work</md-icon>
+          <span md-line>Projects</span>
+        </a>
+        <a md-list-item [routerLink]="['/clients']" [class.active]="routeIs('/clients')">
+          <md-icon md-list-icon>business</md-icon>
+          <span md-line>Clients</span>
+        </a>
+        <a md-list-item [routerLink]="['/staff']" [class.active]="routeIs('/staff')">
+          <md-icon md-list-icon>perm_identity</md-icon>
+          <span md-line>Staff</span>
+        </a>
+        <a md-list-item [routerLink]="['/divisions']" [class.active]="routeIs('/divisions')">
+          <md-icon md-list-icon>place</md-icon>
+          <span md-line>Divisions</span>
+        </a>
+        <a md-list-item [routerLink]="['/settings']" [class.active]="routeIs('/settings')">
+          <md-icon md-list-icon>settings_application</md-icon>
+          <span md-line>Settings</span>
+        </a>
+        <a *ngIf="loggedIn" md-list-item (click)="logout()">
+          <md-icon md-list-icon>power_settings_new</md-icon>
+          <span md-line>Logout</span>
+        </a>
+      </md-nav-list>
+    </md-sidenav>
+
+    <md-toolbar class="app-toolbar">
+        <button md-icon-button class="app-icon-button" [hidden]="_routeDepth === 2" (click)="sidenav.toggle()" [hidden]="!loggedIn">
+            <md-icon class="material-icons app-toolbar-menu">menu</md-icon>
+        </button>
+        <button md-icon-button class="app-icon-button" [hidden]="!(_routeDepth === 2)" (click)="back()">
+            <md-icon class="material-icons app-toolbar-back">arrow_back</md-icon>
+        </button>
+        <span class="app-title">Administration</span>
+        <span class="app-toolbar-filler"></span>
+    </md-toolbar>
+    <md-progress-bar [hidden]="!loading" mode="indeterminate" class="app-progress" color="primary"></md-progress-bar>
+    <div class="app-content" (click)="closeSidebarIfOpen()">
+        <router-outlet></router-outlet>
+    </div>
+</md-sidenav-layout>
+<div class="app-sidebar" *ngIf="loggedIn" [hidden]="_routeDepth === 2">
+  <div class="sidebar-button" [class.active]="routeIs('/', true)" jpaTooltip tooltip="Home">
+    <a md-icon-button [routerLink]="['/']"><md-icon>home</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/blogs')" jpaTooltip tooltip="Blogs">
+    <a md-icon-button [routerLink]="['/blogs']"><md-icon>speaker_notes</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/projects')" jpaTooltip tooltip="Projects">
+    <a md-icon-button [routerLink]="['/projects']"><md-icon>work</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/clients')" jpaTooltip tooltip="Clients">
+    <a md-icon-button [routerLink]="['/clients']"><md-icon>business</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/staff')" jpaTooltip tooltip="Staff">
+    <a md-icon-button [routerLink]="['/staff']"><md-icon>perm_identity</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/divisions')" jpaTooltip tooltip="Divisions">
+    <a md-icon-button [routerLink]="['/divisions']"><md-icon>place</md-icon></a>
+  </div>
+  <div class="sidebar-button" [class.active]="routeIs('/settings')" jpaTooltip tooltip="Settings">
+    <a md-icon-button [routerLink]="['/settings']"><md-icon>settings_application</md-icon></a>
+  </div>
+  <div class="sidebar-button" jpaTooltip tooltip="Main Menu">
+    <button md-icon-button (click)="sidenav.toggle()"><md-icon>more_horiz</md-icon></button>
+  </div>
+</div>
+<toaster-container [toasterconfig]="toasterConfig">
+</toaster-container>
+<jpa-modal-container></jpa-modal-container>

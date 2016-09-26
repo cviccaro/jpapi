@@ -1,0 +1,90 @@
+<md-toolbar class="list-toolbar">
+  <div class="list-title-wrapper">
+    <h2 class="list-title">{{ listTitle }}</h2>
+    <h4 class="list-info">Showing {{ listConfig.page.from }} - {{ listConfig.page.to }} of {{ listConfig.page.total }}</h4>
+  </div>
+  <div class="list-toolbar-buttons">
+    <button md-icon-button class="menu-btn" (click)="add()" jpaTooltip tooltip="Create">
+      <md-icon >add</md-icon>
+    </button>
+  </div>
+  <span class="filler"></span>
+  <div class="sorts" [hidden]="!listData.length">
+    <div class="form-group">
+      <label>Per Page</label>
+      <select [(ngModel)]="listConfig.page.per_page" (ngModelChange)="fetch()">
+        <option *ngFor="let option of listConfig.per_pageOptions" [value]="option">{{ option }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Sort</label>
+      <select [(ngModel)]="listConfig.sort.by" (ngModelChange)="fetch()">
+        <option *ngFor="let option of listConfig.sortOptions" [value]="option.value">{{ option.name }}</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>Order</label>
+      <select [(ngModel)]="listConfig.sort.descending" (ngModelChange)="fetch()">
+        <option value="false">Ascending</option>
+        <option value="true">Descending</option>
+      </select>
+    </div>
+  </div>
+</md-toolbar>
+<md-list class="layout-column" *ngIf="listData.length">
+    <md-list-item *ngFor="let line of listData; let index = index; let isOdd = odd; let isEven = even" [class.md-3-line]="true" [class.odd]="isOdd" [class.even]="isEven">
+        <div class="md-list-item-content layout-row">
+            <div class="item-thumbnail">
+              <img *ngIf="line.thumbnail" [src]="line.thumbnail.url" />
+            </div>
+            <div class="item-text layout-column">
+              <h3 md-line>{{ line.line1 }}</h3>
+              <h4 *ngIf="line.line2" md-line>{{ line.line2 }}</h4>
+              <h5 *ngIf="line.line3" md-line>{{ line.line3 }}</h5>
+            </div>
+            <span class="filler"></span>
+            <div class="item-dates hidden-xs hidden-sm">
+              <div class="date updated">
+                <div class="icon-wrapper">
+                  <md-icon>update</md-icon>
+                </div>
+                <div class="detail">
+                  <div class="detail-title-row">
+                    {{ line.dates.updated_at | amDateFormat: 'LL' }}
+                  </div>
+                  <div class="detail-subtitle-row">
+                    Updated {{ line.dates.updated_at | amTimeAgo }}
+                  </div>
+                </div>
+              </div>
+              <div class="date created">
+                <div class="icon-wrapper">
+                  <md-icon>event</md-icon>
+                </div>
+                <div class="detail">
+                  <div class="detail-title-row">
+                    {{ line.dates.created_at | amDateFormat: 'LL' }}
+                  </div>
+                  <div class="detail-subtitle-row">
+                    Created {{ line.dates.created_at | amTimeAgo }}
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="actions layout-row">
+              <button md-icon-button (click)="edit(line, $event)" jpaTooltip tooltip="Edit" tooltipAlign="left">
+                  <md-icon class="md-24">edit</md-icon>
+              </button>
+              <button md-fab color="danger" (click)="delete(line, $event)" jpaTooltip tooltip="Delete">
+                  <md-icon class="md-24">delete</md-icon>
+              </button>
+            </div>
+        </div>
+    </md-list-item>
+</md-list>
+<div class="empty" [hidden]="listData.length">{{ listConfig.emptyText }}</div>
+<jpa-pager
+  *ngIf="listConfig.page"
+  [pagerData]="listConfig.page"
+  (pageChanged)="pageChanged($event)">
+</jpa-pager>

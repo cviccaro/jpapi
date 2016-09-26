@@ -1,15 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <base href="/">
+  <base href="<%= APP_BASE %>">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>JP API Administration</title>
+  <title><%= APP_TITLE %></title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <!-- inject:css -->
-  <link rel="stylesheet" href="/css/main.css?1474898669445">
   <!-- endinject -->
 
 </head>
@@ -27,31 +26,27 @@
   </script>
 
   <!-- shims:js -->
-  <script src="/node_modules/core-js/client/shim.min.js?1474898669439"></script>
-  <script src="/node_modules/systemjs/dist/system.src.js?1474898669441"></script>
   <!-- endinject -->
 
-  
-  <script src="/app/system-config.js"></script>
-  
+  <% if (ENV === 'dev') { %>
+  <script src="<%= APP_BASE %>app/system-config.js"></script>
+  <% } %>
 
   <!-- libs:js -->
-  <script src="/node_modules/zone.js/dist/zone.js?1474898669443"></script>
-  <script src="/node_modules/rxjs/bundles/Rx.min.js?1474898669444"></script>
   <!-- endinject -->
 
   <!-- inject:js -->
   <!-- endinject -->
 
-  
+  <% if (ENV === 'dev') { %>
   <script>
-  System.import('app/main')
+  System.import('<%= BOOTSTRAP_MODULE %>')
     .catch(function (e) {
       console.error(e,
         'Report this error at https://github.com/mgechev/angular2-seed/issues');
     });
   </script>
-  
+  <% } %>
   
   <script src="https://use.typekit.net/wqu6orw.js"></script>
   <script>try{Typekit.load({ async: true });}catch(e){}</script>

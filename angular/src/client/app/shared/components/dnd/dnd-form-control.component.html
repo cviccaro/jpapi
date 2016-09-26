@@ -1,0 +1,33 @@
+<div class="drop-area well" dnd-droppable [dropEnabled]="true" (onDropSuccess)="onDropSuccess($event)">
+  <div class="chips value" *ngIf="value.length">
+    <div *ngFor="let option of value; let index = index;"
+        class="chip-wrapper"
+        dnd-droppable
+        (onDragEnter)="onDragEnter($event, index)"
+        [dropEnabled]="true"
+        (onDropSuccess)="reorderFromDrag($event, index)">
+      <jpa-chip
+        [id]="option.id"
+        [name]="option.name"
+        (onRemove)="remove($event)"
+        dnd-draggable
+        [dragData]="{option: option, index: index, preventAdd: true}"
+        [dragEnabled]="true">
+      </jpa-chip>
+    </div>
+  </div>
+</div>
+<div class="chips available">
+  <jpa-chip
+    *ngFor="let option of options; let index = index; let odd = odd; let even = even;"
+    [id]="option.id"
+    [removeEnabled]="false"
+    [name]="option.name"
+    [class.even]="even"
+    [class.odd]="odd"
+    [dragEnabled]="true"
+    [dragData]="{option: option, index: index}"
+    (click)="pushValue(option)"
+    dnd-draggable>
+  </jpa-chip>
+</div>

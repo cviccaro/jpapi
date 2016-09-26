@@ -64,3 +64,4 @@ ftpsync.settings
 composer.lock
 src/bower_components
 resources/assets/images
+angular/node_modules

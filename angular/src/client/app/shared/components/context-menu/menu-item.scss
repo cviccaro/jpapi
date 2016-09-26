@@ -1,0 +1,40 @@
+:host {
+	display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    min-height: 48px;
+    height: 48px;
+    -webkit-align-content: center;
+    -ms-flex-line-pack: center;
+    align-content: center;
+    -webkit-justify-content: flex-start;
+    -ms-flex-pack: start;
+    justify-content: flex-start;
+    button {
+    	border-radius: 0;
+	    margin: auto 0;
+	    font-size: 15px;
+	    text-transform: none;
+	    font-weight: 400;
+	    height: 100%;
+	    padding-left: 16px;
+	    padding-right: 16px;
+	    text-align: left;
+	    display: -webkit-flex;
+	    display: -ms-flexbox;
+	    display: flex;
+	    -webkit-align-items: baseline;
+	    -ms-flex-align: baseline;
+	    align-items: baseline;
+	    -webkit-align-content: flex-start;
+	    -ms-flex-line-pack: start;
+	    align-content: flex-start;
+	    width: 100%;
+    }
+    md-icon {
+    	color: rgba(0,0,0,0.54);
+    }
+}

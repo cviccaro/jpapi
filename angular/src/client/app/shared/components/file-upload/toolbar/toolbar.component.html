@@ -1,0 +1,49 @@
+<md-toolbar>
+	<span class="filler"></span>
+	<button md-icon-button (click)="removeFile($event)" class="danger" jpaTooltip tooltip="Delete"><md-icon>delete</md-icon></button>
+	<button md-icon-button (click)="replaceFile($event)" jpaTooltip tooltip="Replace"><md-icon>file_upload</md-icon></button>
+	<input name="new_file" type="file" #newFile [accept]="accept" class="new-file" (change)="fileReplaced($event)" />
+</md-toolbar>
+<div class="toolbar-container">
+	<h3 class="toolbar-heading">Info</h3>
+	<md-input
+		[name]="file_description"
+		class="file-description"
+		[(ngModel)]="file_description"
+		[placeholder]="file_description_placeholder"
+		(change)="onFileDescriptionChange($event)">
+	</md-input>
+	<div class="toolbar-hr"></div>
+	<h5 class="light details">Details</h5>
+	<div class="toolbar-row">
+		<div class="icon-wrapper">
+			<md-icon>event</md-icon>
+		</div>
+		<div class="detail">
+			<div class="detail-title-row">
+				{{ file.date | amDateFormat: 'LL' }}
+			</div>
+			<div class="detail-subtitle-row">
+				{{ file.date | amDateFormat: 'h:mm A' }}
+			</div>
+		</div>
+	</div>
+	<div class="toolbar-row">
+		<div class="icon-wrapper">
+			<md-icon>{{ icon }}</md-icon>
+		</div>
+		<div class="detail">
+			<div class="detail-title-row">
+				{{ file.alias || file.filename }}
+			</div>
+			<div class="detail-subtitle-row layout-row" [ngSwitch]="type">
+				<template [ngSwitchCase]="'file'">
+					<span class="mimetype">{{ file.mimetype }}</span><span class="filesize">{{ file.filesize() }} KB</span>
+				</template>
+				<template [ngSwitchCase]="'image'">
+					<span class="megapixels">{{ file.megapixels() }}MP</span><span class="dimensions">{{ file.width }} x {{ file.height }}</span><span class="filesize">{{ file.filesize() }} KB</span>
+				</template>
+			</div>
+		</div>
+	</div>
+</div>

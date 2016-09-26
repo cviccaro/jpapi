@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+  will-change: box-shadow;
+  @include basic-transition;
+  position: relative;
+
+  &.child-expanded {
+      box-shadow: none;
+      -webkit-box-shadow: none;
+      .jpa-panel {
+        box-shadow: 0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0, 0, 0, 0.12);
+      }
+  }
+
+  .jpa-panel {
+      box-shadow: none;
+
+      &.expanded {
+        margin-bottom: 24px;
+      }
+  }
+  .jpa-panel.jpa-panel.expanded {
+    margin-top: 24px;
+  }
+}
