@@ -1,6 +1,6 @@
 import {
 	Injectable,
-	ComponentResolver,
+	ComponentFactoryResolver,
 	ComponentFactory,
 	ComponentRef,
 	ViewContainerRef,
@@ -20,7 +20,7 @@ export class JpaContextMenu implements OnDestroy {
 
 	@Output() get onClose(): Observable<any> { return this._closeEmitter.asObservable(); }
 
-	constructor(private _cr: ComponentResolver) { }
+	constructor(private _cr: ComponentFactoryResolver) { }
 
 	registerContainer(vc: ViewContainerRef) {
 		// @todo: there must be a better way to get the container than
@@ -34,26 +34,23 @@ export class JpaContextMenu implements OnDestroy {
 			// @todo: avoid messing with DOM..
 			document.body.appendChild(component.element.nativeElement);
 
-			// Resolve the ContextMenuComponent, and build it
-			this._cr.resolveComponent(ContextMenuFocusTrapComponent).then((cmpFactory: ComponentFactory<any>) => {
-				// Create the component, outputs a promise...
-				return this.viewContainer.createComponent(cmpFactory, this.viewContainer.length);
-			}).then((cmpRef: ComponentRef<ContextMenuFocusTrapComponent>) => {
-				// Store reference to FocusTrap component
-				this._focusTrapRef = cmpRef;
+			let componentFactory = this._cr.resolveComponentFactory(ContextMenuFocusTrapComponent);
+			let cmpRef = this.viewContainer.createComponent(componentFactory);
 
-				// Subscribe to focus trap's event
-				(<ContextMenuFocusTrapComponent>this._focusTrapRef.instance).onClickOutside.subscribe(e => {
-					this.close();
-				});
+			// Store reference to component
+			this._focusTrapRef = cmpRef;
 
-				// Append it to DOM
-				this.viewContainer.element.nativeElement.appendChild(cmpRef.location.nativeElement);
-
-				// Resolve the FocusTrap
-				observer.next(this._focusTrapRef);
-				observer.complete();
+			// Subscribe to focus trap's event
+			(<ContextMenuFocusTrapComponent>this._focusTrapRef.instance).onClickOutside.subscribe(e => {
+				this.close();
 			});
+
+			// Append it to DOM
+			this.viewContainer.element.nativeElement.appendChild(cmpRef.location.nativeElement);
+
+			// Resolve the FocusTrap
+			observer.next(this._focusTrapRef);
+			observer.complete();
 		});
 	}
 

@@ -9,17 +9,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <!-- inject:css -->
-  <link rel="stylesheet" href="/css/main.css?1474898669445">
+  <link rel="stylesheet" href="/node_modules/@angular2-material/core/overlay/overlay.css?1475092216520">
+  <link rel="stylesheet" href="/css/main.css?1475092216521">
   <!-- endinject -->
 
 </head>
 <body>
 
-  <jpa-app></jpa-app>
-  <div id="bootstrapping">
-    <div class="uil-ring-css"><div></div></div>
-    <p>Loading...</p>
-  </div>
+  <jpa-app>Loading...</jpa-app>
 
   <script>
     // Fixes undefined module function in SystemJS bundle
@@ -27,8 +24,8 @@
   </script>
 
   <!-- shims:js -->
-  <script src="/node_modules/core-js/client/shim.min.js?1474898669439"></script>
-  <script src="/node_modules/systemjs/dist/system.src.js?1474898669441"></script>
+  <script src="/node_modules/core-js/client/shim.min.js?1475092216513"></script>
+  <script src="/node_modules/systemjs/dist/system.src.js?1475092216514"></script>
   <!-- endinject -->
 
   
@@ -36,8 +33,8 @@
   
 
   <!-- libs:js -->
-  <script src="/node_modules/zone.js/dist/zone.js?1474898669443"></script>
-  <script src="/node_modules/rxjs/bundles/Rx.min.js?1474898669444"></script>
+  <script src="/node_modules/zone.js/dist/zone.js?1475092216517"></script>
+  <script src="/node_modules/rxjs/bundles/Rx.min.js?1475092216519"></script>
   <!-- endinject -->
 
   <!-- inject:js -->
@@ -55,5 +52,6 @@
   
   <script src="https://use.typekit.net/wqu6orw.js"></script>
   <script>try{Typekit.load({ async: true });}catch(e){}</script>
+  <script src="https://cdn.ckeditor.com/4.5.8/standard/ckeditor.js"></script>
 </body>
 </html>

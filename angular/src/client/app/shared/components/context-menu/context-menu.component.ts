@@ -58,11 +58,14 @@ export class ContextMenuComponent implements AfterViewInit, OnDestroy, Registers
 		e.preventDefault();
 		e.stopPropagation();
 
+		console.log('ContextMenuComponent.open() called.', e);
+
 		if (this.opened) {
 			return;
 		}
 
 		let sub = this.service.resolveBackdrop(this).subscribe((cmpRef: ComponentRef<ContextMenuFocusTrapComponent>) => {
+			console.log('Resolved backdrop to : ', cmpRef);
 			this.backdrop = cmpRef;
 		});
 		this.registerSubscriber(sub);

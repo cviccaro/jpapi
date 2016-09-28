@@ -1,4 +1,4 @@
-:host {
+:host /deep/ {
 	position: relative;
     width: 100%;
     height: 100%;
@@ -26,10 +26,6 @@
     img {
         max-width: 100%;
     }
-
-    &.dnd-drag-start {
-        border: 2px dashed $black;
-    }
     .shade {
       padding: 16px 32px;
       text-align: left;
@@ -47,4 +43,10 @@
         }
       }
     }
+}
+
+:host {
+  &.dnd-drag-start {
+      border: 2px dashed $black;
+  }
 }

@@ -7,61 +7,39 @@
             </md-card-title-group>
             <md-card-content>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon>label_outline</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon>label_outline</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Tag most used
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ blog_data.most_used_tag }}
-                        </div>
+                        <div class="detail-title-row">Tag most used</div>
+                        <div class="detail-subtitle-row">{{ blog_data.most_used_tag }}</div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="brown">business</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="brown">business</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Division most used
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ blog_data.most_used_division }}
-                        </div>
+                        <div class="detail-title-row">Division most used</div>
+                        <div class="detail-subtitle-row">{{ blog_data.most_used_division }}</div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-secondary">event</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-secondary">event</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Most recent update
-                        </div>
+                        <div class="detail-title-row">Most recent update</div>
                         <div class="detail-subtitle-row" *ngIf="blog_data">
                             {{ (blog_data.update | amFromUnix) | amCalendar }}
                         </div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-accent">fiber_new</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-accent">fiber_new</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Newest blog
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ blog_data.newest?.title }}
-                        </div>
+                        <div class="detail-title-row">Newest blog</div>
+                        <div class="detail-subtitle-row">{{ blog_data.newest?.title }}</div>
                     </div>
                 </div>
             </md-card-content>
             <md-card-actions>
-                <a md-button [routerLink]="['/blogs']">View All</a>
-                <a md-button *ngIf="blog_data.newest" [routerLink]="['/blogs', blog_data.newest.id]">Edit Newest</a>
+                <a md-button routerLink="/admin/blogs">View All</a>
+                <a md-button *ngIf="blog_data.newest" [routerLink]="['/admin/blogs', blog_data.newest.id]">Edit Newest</a>
             </md-card-actions>
         </md-card>
 
@@ -72,61 +50,41 @@
             </md-card-title-group>
             <md-card-content>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon>panorama</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon>panorama</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            images
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ project_data.images }}
-                        </div>
+                        <div class="detail-title-row">images</div>
+                        <div class="detail-subtitle-row">{{ project_data.images }}</div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="brown">store</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="brown">store</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Client most used
-                        </div>
+                        <div class="detail-title-row">Client most used</div>
                         <div class="detail-subtitle-row">
                             {{ project_data.most_used_client }}
                         </div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-secondary">event</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-secondary">event</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Recent update
-                        </div>
+                        <div class="detail-title-row">Recent update</div>
                         <div class="detail-subtitle-row" *ngIf="project_data.update">
                             {{ (project_data.update | amFromUnix) | amCalendar }}
                         </div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-accent">fiber_new</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-accent">fiber_new</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Newest project
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ project_data.newest?.title }}
-                        </div>
+                        <div class="detail-title-row"> Newest project</div>
+                        <div class="detail-subtitle-row">{{ project_data.newest?.title }}</div>
                     </div>
                 </div>
             </md-card-content>
             <md-card-actions>
-                <a md-button [routerLink]="['/projects']">View All</a>
-                <a md-button *ngIf="project_data.newest" [routerLink]="['/projects', project_data.newest.id]">Edit Newest</a>
+                <a md-button routerLink="/admin/projects">View All</a>
+                <a md-button *ngIf="project_data.newest" [routerLink]="['/admin/projects', project_data.newest.id]">Edit Newest</a>
             </md-card-actions>
         </md-card>
 
@@ -137,61 +95,41 @@
             </md-card-title-group>
             <md-card-content>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon>panorama</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon>panorama</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Images
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ client_data.images }}
-                        </div>
+                        <div class="detail-title-row">Images</div>
+                        <div class="detail-subtitle-row">{{ client_data.images }}</div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-warn">star</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-warn">star</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Featured
-                        </div>
+                        <div class="detail-title-row">Featured</div>
                         <div class="detail-subtitle-row">
                             {{ client_data.featured }}
                         </div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-secondary">event</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-secondary">event</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Recent update
-                        </div>
+                        <div class="detail-title-row">Recent update</div>
                         <div class="detail-subtitle-row" *ngIf="client_data.update">
                             {{ (client_data.update | amFromUnix) | amCalendar }}
                         </div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-accent">fiber_new</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-accent">fiber_new</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Newest client
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ client_data.newest?.name }}
-                        </div>
+                        <div class="detail-title-row">Newest client</div>
+                        <div class="detail-subtitle-row">{{ client_data.newest?.name }}</div>
                     </div>
                 </div>
             </md-card-content>
             <span class="filler"></span>
             <md-card-actions>
-                <a md-button [routerLink]="['/clients']">View All</a>
+                <a md-button routerLink="/admin/clients">View All</a>
                 <!--<a md-button *ngIf="client_data.newest" [routerLink]="['/clients', client_data.newest.id]">Edit Newest</a>-->
             </md-card-actions>
         </md-card>
@@ -203,52 +141,32 @@
             </md-card-title-group>
             <md-card-content>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon>panorama</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon>panorama</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Images
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ staff_data.images }}
-                        </div>
+                        <div class="detail-title-row">Images</div>
+                        <div class="detail-subtitle-row">{{ staff_data.images }}</div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-warn">star</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-warn">star</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Active
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ staff_data.active }}
-                        </div>
+                        <div class="detail-title-row">Active</div>
+                        <div class="detail-subtitle-row">{{ staff_data.active }}</div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-secondary">event</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-secondary">event</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Recent update
-                        </div>
+                        <div class="detail-title-row">Recent update</div>
                         <div class="detail-subtitle-row" *ngIf="staff_data.update">
                             {{ (staff_data.update | amFromUnix) | amCalendar }}
                         </div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-accent">fiber_new</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-accent">fiber_new</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Newest person
-                        </div>
+                        <div class="detail-title-row">Newest person</div>
                         <div class="detail-subtitle-row">
                             {{ staff_data.newest?.first_name + ' ' + staff_data.newest?.last_name }}
                         </div>
@@ -257,7 +175,7 @@
             </md-card-content>
             <span class="filler"></span>
             <md-card-actions>
-                <a md-button [routerLink]="['/staff']">View All</a>
+                <a md-button routerLink="/admin/staff">View All</a>
             </md-card-actions>
         </md-card>
 
@@ -268,62 +186,40 @@
             </md-card-title-group>
             <md-card-content>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon>speaker_notes</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon>speaker_notes</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Most used in blogs
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ division_data.blogs_most }}
-                        </div>
+                        <div class="detail-title-row">Most used in blogs</div>
+                        <div class="detail-subtitle-row">{{ division_data.blogs_most }}</div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="brown">work</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="brown">work</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Most used in projects
-                        </div>
-                        <div class="detail-subtitle-row">
-                            {{ division_data.projects_most }}
-                        </div>
+                        <div class="detail-title-row">Most used in projects</div>
+                        <div class="detail-subtitle-row">{{ division_data.projects_most }}</div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-secondary">event</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-secondary">event</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Recent update
-                        </div>
+                        <div class="detail-title-row">Recent update</div>
                         <div class="detail-subtitle-row">
                             {{ (division_data.update | amFromUnix) | amCalendar }}
                         </div>
                     </div>
                 </div>
                 <div class="icon-and-detail">
-                    <div class="icon-wrapper">
-                        <md-icon class="md-accent">fiber_new</md-icon>
-                    </div>
+                    <div class="icon-wrapper"><md-icon class="md-accent">fiber_new</md-icon></div>
                     <div class="detail">
-                        <div class="detail-title-row">
-                            Newest division
-                        </div>
-                        <div class="detail-subtitle-row">
-                           {{ division_data.newest?.name }}
-                        </div>
+                        <div class="detail-title-row">Newest division</div>
+                        <div class="detail-subtitle-row">{{ division_data.newest?.name }}</div>
                     </div>
                 </div>
             </md-card-content>
             <span class="filler"></span>
             <md-card-actions>
-                <a md-button [routerLink]="['/divisions']">View All</a>
-                <a md-button *ngIf="division_data.newest" [routerLink]="['/divisions', division_data.newest.id]">Edit Newest</a>
+                <a md-button routerLink="/admin/divisions">View All</a>
+                <a md-button *ngIf="division_data.newest" [routerLink]="['/admin/divisions', division_data.newest.id]">Edit Newest</a>
             </md-card-actions>
         </md-card>
 

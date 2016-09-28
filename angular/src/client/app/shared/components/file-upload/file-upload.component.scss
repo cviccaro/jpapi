@@ -1,4 +1,4 @@
-:host {
+:host /deep/ {
     display: block;
 
     .file-drop-zone-wrapper {
@@ -105,8 +105,10 @@
             width: 24.5%;
         }
     }
+}
 
-    &.file-upload-image {
+:host {
+    &.file-upload-image /deep/ {
         .viewport {
             .viewport-inner {
                 border: 16px solid black;
@@ -115,7 +117,7 @@
             }
         }
     }
-    &.file-upload-file {
+    &.file-upload-file /deep/ {
         .viewport {
             display: flex;
             flex-direction: row;

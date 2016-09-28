@@ -90,6 +90,8 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
         });
 
         this.panelForm = this.builder.group(group);
+
+        this.log.debug('PanelFormComponent initialized.', this);
     }
 
     /**

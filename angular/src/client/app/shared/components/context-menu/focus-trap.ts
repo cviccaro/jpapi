@@ -3,6 +3,7 @@ import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 
 @Component({
+	moduleId: module.id,
 	selector: 'jpa-context-menu-focus-trap',
 	template: '',
 	styles: [

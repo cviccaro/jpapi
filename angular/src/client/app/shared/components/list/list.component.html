@@ -4,7 +4,7 @@
     <h4 class="list-info">Showing {{ listConfig.page.from }} - {{ listConfig.page.to }} of {{ listConfig.page.total }}</h4>
   </div>
   <div class="list-toolbar-buttons">
-    <button md-icon-button class="menu-btn" (click)="add()" jpaTooltip tooltip="Create">
+    <button md-icon-button class="menu-btn" (click)="add()" md-tooltip="Create">
       <md-icon >add</md-icon>
     </button>
   </div>
@@ -72,10 +72,10 @@
               </div>
             </div>
             <div class="actions layout-row">
-              <button md-icon-button (click)="edit(line, $event)" jpaTooltip tooltip="Edit" tooltipAlign="left">
+              <button md-icon-button (click)="edit(line, $event)" md-tooltip="Edit" tooltipAlign="left">
                   <md-icon class="md-24">edit</md-icon>
               </button>
-              <button md-fab color="danger" (click)="delete(line, $event)" jpaTooltip tooltip="Delete">
+              <button md-fab color="danger" (click)="delete(line, $event)" md-tooltip="Delete">
                   <md-icon class="md-24">delete</md-icon>
               </button>
             </div>

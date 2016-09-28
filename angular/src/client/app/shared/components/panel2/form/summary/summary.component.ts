@@ -7,7 +7,8 @@ import { ManagedImage, RegistersSubscribers } from '../../../../models/index';
 @Component({
     moduleId: module.id,
     selector: 'jpa-panel2-form-control-summary',
-    templateUrl: './summary.component.html'
+    templateUrl: './summary.component.html',
+    styleUrls: [ './summary.component.css' ]
 })
 export class PanelFormControlSummaryComponent implements OnInit, OnChanges, OnDestroy, RegistersSubscribers {
     @Input() control: PanelFormControl<any>;

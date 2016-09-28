@@ -1,7 +1,7 @@
 <md-toolbar>
 	<span class="filler"></span>
-	<button md-icon-button (click)="removeFile($event)" class="danger" jpaTooltip tooltip="Delete"><md-icon>delete</md-icon></button>
-	<button md-icon-button (click)="replaceFile($event)" jpaTooltip tooltip="Replace"><md-icon>file_upload</md-icon></button>
+	<button md-icon-button (click)="removeFile($event)" class="danger" md-tooltip="Delete"><md-icon>delete</md-icon></button>
+	<button md-icon-button (click)="replaceFile($event)" md-tooltip="Replace"><md-icon>file_upload</md-icon></button>
 	<input name="new_file" type="file" #newFile [accept]="accept" class="new-file" (change)="fileReplaced($event)" />
 </md-toolbar>
 <div class="toolbar-container">

@@ -2,7 +2,7 @@
  * Styling largely lifted wholesale from angular-material dialog
  */
 
-:host {
+:host /deep/ {
     opacity: 1;
     background: white;
     min-width: 320px;
@@ -116,14 +116,16 @@
             }
         }
     }
+}
 
-    &.form {
+:host {
+    &.form /deep/ {
         .jpa-modal-actions {
             padding: 24px 0 0;
         }
     }
 
-    &.modal-640 {
+    &.modal-640 /deep/ {
         min-width: 640px;
     }
 }

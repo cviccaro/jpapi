@@ -3,3 +3,4 @@ export * from './models/index';
 export * from './middleware/index';
 export * from './pipes/index';
 export * from './services/index';
+export * from './shared.module';

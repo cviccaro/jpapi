@@ -8,7 +8,8 @@
     position: relative;
     border-radius: 2px;
     background: white;
-    &.expanded {
+
+    &.expanded /deep/ {
         .toggle {
             md-icon {
                 color: $accent;

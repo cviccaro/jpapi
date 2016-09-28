@@ -30,7 +30,8 @@ export const IMAGE_UPLOAD_VALUE_ACCESSOR: any = {
     moduleId: module.id,
     selector: 'jpa-file-upload',
     templateUrl: './file-upload.component.html',
-    styleUrls: ['./file-upload.component.css']
+    styleUrls: ['./file-upload.component.css'],
+    providers: [ IMAGE_UPLOAD_VALUE_ACCESSOR ]
 })
 export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterViewInit, OnDestroy {
     public isDragOver: boolean = false;

@@ -12,7 +12,6 @@
             }
         }
     }
-
     .shade {
         transition: all $transition_duration $transition_ease;
         display: block;
@@ -38,13 +37,16 @@
         }
         cursor: pointer;
     }
+    img {
+        max-width: 100%;
+    }
+}
+
+:host {
     &.actions-hovering {
         .shade {
             background: $black_54;
         }
-    }
-    img {
-        max-width: 100%;
     }
     &.dnd-drag-start {
         border: 2px dashed $black;

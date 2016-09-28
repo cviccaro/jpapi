@@ -1,15 +1,15 @@
 import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
-//import { Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { MdSidenav } from '@angular2-material/sidenav';
 import { Subscription } from 'rxjs/Subscription';
 
-// import {
-//     AuthService,
-//     JpaContextMenu,
-//     JpaTooltip,
-//     XhrService,
-//     RegistersSubscribers
-// } from './shared/index';
+import {
+    AuthService,
+    JpaContextMenu,
+  //  JpaTooltip,
+    XhrService,
+    RegistersSubscribers
+} from './shared/index';
 
 @Component({
     moduleId: module.id,
@@ -17,7 +17,7 @@ import { Subscription } from 'rxjs/Subscription';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit, OnDestroy {
+export class AppComponent implements OnInit, OnDestroy, RegistersSubscribers {
    // toasterConfig: ToasterConfig;
     loading = true;
     loggedIn = false;
@@ -30,56 +30,56 @@ export class AppComponent implements OnInit, OnDestroy {
     @ViewChild(MdSidenav) private _sidenav: MdSidenav;
 
     constructor(
-        //public router: Router,
-        // public authService: AuthService,
-        // public contextMenu: JpaContextMenu,
+        public router: Router,
+        public authService: AuthService,
+        public contextMenu: JpaContextMenu,
         // public tooltip: JpaTooltip,
         public container: ViewContainerRef,
-        // public progress: XhrService
+        public progress: XhrService
     ) {
         console.log('AppComponent constructed', this);
         // this.tooltip.registerContainer(container);
-        // this.contextMenu.registerContainer(container);
+        this.contextMenu.registerContainer(container);
         // this.toasterConfig = new ToasterConfig({
         //     showCloseButton: true
         // });
-        // this.loggedIn = this.authService.authorized;
+        this.loggedIn = this.authService.authorized;
     }
 
     /**
      * Initialize the directive/component after Angular initializes the data-bound input properties.
      */
     ngOnInit(): void {
-        // let sub1 = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
-        // let sub2 = this.router.events.subscribe(evt => {
-        //     if (evt.toString().match('^NavigationEnd')) {
-        //         this._sidenav.close();
-        //         this._routeDepth = evt.url.split('/').length - 1;
-        //         this._routeUrl = evt.url;
-        //         this.loading = false;
-        //     } else if (evt.toString().match('^NavigationStart')) {
-        //         this.loading = true;
-        //     }
-        // });
-        // let sub3 = this.progress.start.subscribe(e => this.loading = true);
-        // let sub4 = this.progress.done.subscribe(e => this.loading = false);
-        // this._subscriptions = [sub1, sub2, sub3, sub4];
+        let sub1 = this.authService.whenAuthorized.subscribe(authorized => this.loggedIn = authorized);
+        let sub2 = this.router.events.subscribe(evt => {
+            if (evt.toString().match('^NavigationEnd')) {
+                this._sidenav.close();
+                this._routeDepth = evt.url.split('/').length - 1;
+                this._routeUrl = evt.url;
+                this.loading = false;
+            } else if (evt.toString().match('^NavigationStart')) {
+                this.loading = true;
+            }
+        });
+        let sub3 = this.progress.start.subscribe(e => this.loading = true);
+        let sub4 = this.progress.done.subscribe(e => this.loading = false);
+        this._subscriptions = [sub1, sub2, sub3, sub4];
     }
 
     /**
      * Navigate up one level in the route tree
      */
     back(): void {
-        // let parentRoute = this._routeUrl.split('/')[1];
-        // this.router.navigate(['/'+parentRoute]);
+        let parentRoute = this._routeUrl.split('/')[2];
+        this.router.navigate(['/admin/'+parentRoute]);
     }
 
     /**
      * Logout of the app
      */
     logout(): void {
-        // this.authService.reset();
-        // this.router.navigate(['/login']);
+        this.authService.reset();
+        this.router.navigate(['/admin/login']);
     }
 
     /**

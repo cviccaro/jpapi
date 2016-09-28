@@ -7,10 +7,26 @@ import { AppComponent } from './app.component';
 import { routes } from './app.routes';
 
 import { HomeModule } from './home/home.module';
+import { LoginModule } from './login/login.module';
+import { SettingsModule } from './settings/settings.module';
 import { SharedModule } from './shared/shared.module';
+import { StaffModule } from './staff/staff.module';
+import { DivisionsModule } from './divisions/divisions.module';
+import { ClientsModule } from './clients/clients.module';
 
 @NgModule({
-  imports: [BrowserModule, HttpModule, RouterModule.forRoot(routes), HomeModule, SharedModule.forRoot()],
+  imports: [
+  	BrowserModule,
+  	HttpModule,
+  	RouterModule.forRoot(routes),
+  	HomeModule,
+  	LoginModule,
+  	SettingsModule,
+  	StaffModule,
+    DivisionsModule,
+    ClientsModule,
+  	SharedModule.forRoot()
+	],
   declarations: [AppComponent],
   bootstrap: [AppComponent],
   providers: [{

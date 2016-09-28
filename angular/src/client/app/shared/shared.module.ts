@@ -4,10 +4,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 import { MdCardModule } from '@angular2-material/card';
-import { MdCoreModule, MdRippleModule } from '@angular2-material/core';
+import { MdCoreModule, MdRippleModule, OverlayModule, OVERLAY_PROVIDERS } from '@angular2-material/core';
 import { MdCheckboxModule } from '@angular2-material/checkbox';
 import { MdButtonModule } from '@angular2-material/button';
-import {MdGridListModule} from '@angular2-material/grid-list';
+import { MdGridListModule } from '@angular2-material/grid-list';
 import { MdInputModule } from '@angular2-material/input';
 import { MdListModule } from '@angular2-material/list';
 import { MdIconModule, MdIconRegistry } from '@angular2-material/icon';
@@ -15,6 +15,8 @@ import { MdProgressBarModule } from '@angular2-material/progress-bar';
 import { MdSidenavModule } from '@angular2-material/sidenav';
 import { MdSlideToggleModule } from '@angular2-material/slide-toggle';
 import { MdToolbarModule } from '@angular2-material/toolbar';
+import { MdTooltipModule } from '@angular2-material/tooltip';
+
 import { MomentModule } from 'angular2-moment';
 import { CKEditorModule } from 'ng2-ckeditor';
 import { DndModule } from 'ng2-dnd';
@@ -38,8 +40,6 @@ import {
   ModalContainerComponent,
   PagerComponent,
   PANEL2_DIRECTIVES,
-  TooltipComponent,
-  TooltipDirective,
   JpaModal,
   JpaContextMenu
 } from './components/index';
@@ -85,6 +85,8 @@ import { APP_SERVICES } from './services/index';
     MdSidenavModule,
     MdSlideToggleModule,
     MdToolbarModule,
+    MdTooltipModule,
+    OverlayModule,
     MomentModule,
     CKEditorModule,
     ToasterModule,
@@ -108,9 +110,10 @@ import { APP_SERVICES } from './services/index';
     ModalContainerComponent,
     PagerComponent,
     PANEL2_DIRECTIVES,
-    TooltipComponent,
-    TooltipDirective,
     CapitalizePipe
+  ],
+  entryComponents: [
+    ContextMenuFocusTrapComponent
   ],
   exports: [
     CommonModule,
@@ -130,6 +133,8 @@ import { APP_SERVICES } from './services/index';
     MdSidenavModule,
     MdSlideToggleModule,
     MdToolbarModule,
+    MdTooltipModule,
+    OverlayModule,
     MomentModule,
     CKEditorModule,
     DndModule,
@@ -151,8 +156,6 @@ import { APP_SERVICES } from './services/index';
     ModalContainerComponent,
     PagerComponent,
     PANEL2_DIRECTIVES,
-    TooltipComponent,
-    TooltipDirective,
     CapitalizePipe
   ]
 })
@@ -162,21 +165,22 @@ export class SharedModule {
       ngModule: SharedModule,
       providers: [
         APP_SERVICES,
-        // AuthGuard,
+        OVERLAY_PROVIDERS,
+        MdIconRegistry,
+        AuthGuard,
         // BlogGuard,
         // BlogListGuard,
         // CanDeactivateGuard,
         // CkEditorGuard,
-        // ClientsGuard,
-        // DivisionsGuard,
-        // LoginGuard,
+        ClientsGuard,
+        DivisionsGuard,
+        LoginGuard,
         // ProjectGuard,
         // ProjectListGuard,
-        // SettingsGuard,
-        // StaffGuard,
-        MdIconRegistry,
+        SettingsGuard,
+        StaffGuard,
         JpaModal,
-        //JpaContextMenu
+        JpaContextMenu,
       ]
     };
   }

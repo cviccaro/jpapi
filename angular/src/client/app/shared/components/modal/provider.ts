@@ -1,4 +1,4 @@
-import { Injectable, ComponentResolver, } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import {Observable, Observer} from 'rxjs/Rx';
 import 'rxjs/add/operator/share';
@@ -33,7 +33,7 @@ export class JpaModal {
         }
     };
 
-    constructor(private _cr: ComponentResolver) {
+    constructor() {
         this.openModal = new Observable<ModalConfig>(observer => this._openModal = observer).share();
 
     }
