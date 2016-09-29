@@ -27,8 +27,6 @@ export class PanelFormControlSelect extends PanelFormControl<string | number> {
     summary(panelExpanded: boolean) {
         let summary: PanelFormControlSummary;
 
-        console.log(this);
-
         if (panelExpanded || this.empty) {
             summary = { text: this.editableText, icon: this.editIcon };
         } else {

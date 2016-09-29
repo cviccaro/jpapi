@@ -61,7 +61,6 @@ export class FileUploadToolbarComponent implements OnInit {
     replaceFile(evt: Event): void {
     	evt.preventDefault();
     	evt.stopPropagation();
-        console.log(this._newFileInput);
     	this._newFileInput.nativeElement.click();
     }
 
