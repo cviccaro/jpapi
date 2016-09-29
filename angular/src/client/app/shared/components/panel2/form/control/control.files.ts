@@ -1,5 +1,5 @@
 import { PanelFormControl, PanelFormControlConfig, PanelFormControlSummary } from './control';
-import {ManagedFile, ManagedImage} from "../../../../models/file";
+import { ManagedFile, ManagedImage } from '../../../../models/file';
 
 export interface PanelFormControlFilesConfig extends PanelFormControlConfig {
     filesLabel?: string;
@@ -61,7 +61,7 @@ export class PanelFormControlFiles extends PanelFormControl<Array<any>> {
         let text: string;
 
         if (val !== '') {
-            let map = val.reduce((carry, item) => {
+            let map = val.reduce((carry: any, item: any) => {
                 if (item['id'] !== undefined) {
                     carry.current++;
                 } else {

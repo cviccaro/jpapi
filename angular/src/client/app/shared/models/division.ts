@@ -1,4 +1,4 @@
-import {JpFile} from './file';
+import { JpFile } from './file';
 
 export class Division {
 	id: number;

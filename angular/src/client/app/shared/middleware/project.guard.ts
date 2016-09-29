@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable, Subscription, Observer } from 'rxjs/Rx';
 
 import { ClientService, DivisionService, CacheService } from '../services/index';
 import { RegistersSubscribers } from '../index';
@@ -19,15 +19,15 @@ export class ProjectGuard implements CanActivate, OnDestroy, RegistersSubscriber
    * Implemented as part of CanActivate
    * @return {Observable<any>}
    */
-  canActivate(): Observable<any> {
-    return Observable.create(observer => {
+  canActivate(): Observable<boolean> {
+    return Observable.create((observer: Observer<boolean>) => {
       let gotDivisions = false;
       let gotClients = false;
 
       let sub = this.divisionService.options().subscribe(res => {
         this.cache.store('divisions', res);
         gotDivisions = true;
-        if (gotClients) observer.complete(true);
+        if (gotClients) observer.complete();
       });
 
       this.registerSubscriber(sub);
@@ -35,7 +35,7 @@ export class ProjectGuard implements CanActivate, OnDestroy, RegistersSubscriber
       let sub2 = this.clientService.options().subscribe(res => {
         this.cache.store('clients', res);
         gotClients = true;
-        if (gotDivisions) observer.complete(true);
+        if (gotDivisions) observer.complete();
       });
 
       this.registerSubscriber(sub2);

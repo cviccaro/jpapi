@@ -9,8 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <!-- inject:css -->
-  <link rel="stylesheet" href="/node_modules/@angular2-material/core/overlay/overlay.css?1475164237417">
-  <link rel="stylesheet" href="/css/main.css?1475164237418">
+  <link rel="stylesheet" href="/css/main.css?1475176024711">
   <!-- endinject -->
 
 </head>
@@ -24,30 +23,18 @@
   </script>
 
   <!-- shims:js -->
-  <script src="/node_modules/core-js/client/shim.min.js?1475164237410"></script>
-  <script src="/node_modules/systemjs/dist/system.src.js?1475164237411"></script>
   <!-- endinject -->
 
-  
-  <script src="/app/system-config.js"></script>
   
 
   <!-- libs:js -->
-  <script src="/node_modules/zone.js/dist/zone.js?1475164237415"></script>
-  <script src="/node_modules/rxjs/bundles/Rx.min.js?1475164237416"></script>
   <!-- endinject -->
 
   <!-- inject:js -->
+  <script src="/js/shims.js?1475176024705"></script>
+  <script src="/js/app.js?1475176024708"></script>
   <!-- endinject -->
 
-  
-  <script>
-  System.import('app/main')
-    .catch(function (e) {
-      console.error(e,
-        'Report this error at https://github.com/mgechev/angular2-seed/issues');
-    });
-  </script>
   
   
   <script src="https://use.typekit.net/wqu6orw.js"></script>

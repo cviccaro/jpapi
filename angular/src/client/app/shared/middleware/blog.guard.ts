@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable, Subscription, Observer } from 'rxjs/Rx';
 
 import { TagService, DivisionService, CacheService, StaffService } from '../services/index';
 import { RegistersSubscribers } from '../index';
@@ -20,8 +20,8 @@ export class BlogGuard implements CanActivate, OnDestroy, RegistersSubscribers {
    * Implemented as part of CanActivate
    * @return {Observable<any>}
    */
-  canActivate(): Observable<any> {
-    return Observable.create(observer => {
+  canActivate(): Observable<boolean> {
+    return Observable.create((observer: Observer<boolean>) => {
       let gotDivisions = false;
       let gotTags = false;
       let gotStaff = false;
@@ -29,7 +29,7 @@ export class BlogGuard implements CanActivate, OnDestroy, RegistersSubscribers {
       let sub = this.divisionService.options().subscribe(res => {
         this.cache.store('divisions', res);
         gotDivisions = true;
-        if (gotStaff && gotTags) observer.complete(true);
+        if (gotStaff && gotTags) observer.complete();
       });
 
       this.registerSubscriber(sub);
@@ -37,7 +37,7 @@ export class BlogGuard implements CanActivate, OnDestroy, RegistersSubscribers {
       let sub2 = this.tagService.options().subscribe(res => {
         this.cache.store('tags', res);
         gotTags = true;
-        if (gotStaff && gotDivisions) observer.complete(true);
+        if (gotStaff && gotDivisions) observer.complete();
       });
 
       this.registerSubscriber(sub2);
@@ -45,7 +45,7 @@ export class BlogGuard implements CanActivate, OnDestroy, RegistersSubscribers {
       let sub3 = this.staffService.options().subscribe(res => {
         this.cache.store('staff', res);
         gotStaff = true;
-        if (gotTags && gotDivisions) observer.complete(true);
+        if (gotTags && gotDivisions) observer.complete();
       });
 
       this.registerSubscriber(sub3);

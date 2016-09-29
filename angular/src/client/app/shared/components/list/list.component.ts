@@ -35,14 +35,15 @@ export class ListComponent {
 
     /**
      * Handle edit button click
-     * @param {[type]} item   [description]
-     * @param {[type]} $event [description]
      */
-    edit(item, $event) {
+    edit(item: any, $event: any) {
         this.listItemEdit.emit(item);
     }
 
-    delete(item, $event) {
+    /**
+     * Handle delete button click
+     */
+    delete(item: any, $event: any) {
         this.listItemDelete.emit(item);
     }
 

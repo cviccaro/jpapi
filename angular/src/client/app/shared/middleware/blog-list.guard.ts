@@ -3,7 +3,7 @@ import { CanActivate } from '@angular/router';
 
 import { BlogService, CacheService } from '../services/index';
 
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable, Subscription, Observer } from 'rxjs/Rx';
 
 @Injectable()
 export class BlogListGuard implements CanActivate, OnDestroy {
@@ -15,8 +15,8 @@ export class BlogListGuard implements CanActivate, OnDestroy {
      * Implemented as part of CanActivate
      * @return {Observable<any>}
      */
-    canActivate() {
-        return Observable.create(observer => {
+    canActivate(): Observable<boolean> {
+        return Observable.create((observer: Observer<boolean>) => {
             this.sub = this.blogService.all({
                current_page: 1,
                length: 15,
@@ -24,7 +24,7 @@ export class BlogListGuard implements CanActivate, OnDestroy {
                descending: true
            }).subscribe(res => {
                this.cache.store('blogList', res);
-               observer.complete(true);
+               observer.complete();
            });
         });
     }

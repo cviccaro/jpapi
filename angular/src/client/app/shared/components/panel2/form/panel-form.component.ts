@@ -41,6 +41,13 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
 
     @Output() formSubmit = new EventEmitter();
 
+    @ViewChildren(PanelComponent) _panels: QueryList<PanelComponent>;
+    @ViewChildren(PanelFormControlSummaryComponent) _summaries: QueryList<PanelFormControlSummaryComponent>;
+    @ViewChildren(NgControl) _formControls: QueryList<NgControl>;
+    @ViewChildren(CKEditorComponent) _ckEditors: QueryList<CKEditorComponent>;
+
+    private _controlPanels: { [key: string]: { panel: PanelComponent, summary: PanelFormControlSummaryComponent } } = {};
+
     @HostListener('window:beforeunload', [ '$event'] )
     onBeforeUnload(e: BeforeUnloadEvent): string|void {
        if ( this.panelForm.dirty ) {
@@ -53,13 +60,6 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
 
         return void 0;
     }
-
-    @ViewChildren(PanelComponent) _panels: QueryList<PanelComponent>;
-    @ViewChildren(PanelFormControlSummaryComponent) _summaries: QueryList<PanelFormControlSummaryComponent>;
-    @ViewChildren(NgControl) _formControls: QueryList<NgControl>;
-    @ViewChildren(CKEditorComponent) _ckEditors: QueryList<CKEditorComponent>;
-
-    private _controlPanels: { [key: string]: { panel: PanelComponent, summary: PanelFormControlSummaryComponent } } = {};
 
     constructor(public builder: FormBuilder, private log: LoggerService) { }
 
@@ -170,8 +170,8 @@ export class PanelFormComponent implements OnInit, AfterViewInit, OnDestroy, Reg
      *
      * @param Event
      */
-    expandPanel(e): void {
-        e.currentTarget.nextElementSibling.click();
+    expandPanel(e: Event): void {
+        (<any>e.currentTarget).nextElementSibling.click();
     }
 
     /**

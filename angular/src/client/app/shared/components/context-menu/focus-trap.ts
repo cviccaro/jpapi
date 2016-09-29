@@ -13,13 +13,16 @@ import { Observable } from 'rxjs/Rx';
 export class ContextMenuFocusTrapComponent {
     private _clickOutsideEmitter:EventEmitter<any> = new EventEmitter<any>();
 
-    @Output('clickOutside') get onClickOutside(): Observable<any> { return this._clickOutsideEmitter.asObservable(); }
-    @HostListener('click')
-    onClick(e) {
-    	this.clickedOutside(e);
-    }
+  @Output('clickOutside') get onClickOutside(): Observable<any> {
+  	return this._clickOutsideEmitter.asObservable();
+  }
 
-	clickedOutside(e) {
+  @HostListener('click')
+  onClick(e: any) {
+  	this.clickedOutside(e);
+  }
+
+	clickedOutside(e: any) {
 		this._clickOutsideEmitter.emit('');
 	}
 }

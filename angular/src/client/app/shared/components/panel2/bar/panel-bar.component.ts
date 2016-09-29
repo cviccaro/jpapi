@@ -33,7 +33,7 @@ export class PanelBarComponent implements AfterContentInit, OnDestroy, Registers
         let titles = this.titleCmps.toArray().concat(this.subTitleCmps.toArray());
 
         titles.forEach(titleCmp => {
-            let sub = titleCmp.onClick.subscribe(evt => {
+            let sub = titleCmp.onClick.subscribe((evt: Event) => {
                 this.toggle(evt);
             });
 

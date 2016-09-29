@@ -64,7 +64,7 @@ export class ClientsComponent implements OnDestroy, RegistersSubscribers {
             title: 'Add a client'
         }).subscribe((action: ModalAction) => {
             if (action.type === 'submit') {
-                let attributes = action.config.inputs.reduce((carry, next) => {
+                let attributes = action.config.inputs.reduce((carry: any, next: any) => {
                     carry[next.name] = next.value;
                     return carry;
                 }, {});
@@ -120,7 +120,7 @@ export class ClientsComponent implements OnDestroy, RegistersSubscribers {
 
         let sub = this.modal.open(modalConfig).subscribe((action: ModalAction) => {
             if (action.type === 'submit') {
-                let attributes = action.config.inputs.reduce((carry, next) => {
+                let attributes = action.config.inputs.reduce((carry: any, next: any) => {
                     carry[next.name] = next.value;
                     return carry;
                 }, {});

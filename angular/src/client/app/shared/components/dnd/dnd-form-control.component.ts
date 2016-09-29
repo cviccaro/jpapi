@@ -156,7 +156,7 @@ export class DragnDropFormControlComponent implements ControlValueAccessor, OnIn
      * @param {number} id
      */
     remove(id: number): void {
-        let filtered = this.value.filter(item => {
+        let filtered = this.value.filter((item: any) => {
             return item.id === id;
         });
 

@@ -1,12 +1,12 @@
-import {Component, OnDestroy, OnInit, ViewChild, ViewContainerRef} from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { MdSidenav } from '@angular2-material/sidenav';
 import { Subscription } from 'rxjs/Subscription';
+import { ToasterConfig } from 'angular2-toaster';
 
 import {
     AuthService,
     JpaContextMenu,
-  //  JpaTooltip,
     XhrService,
     RegistersSubscribers
 } from './shared/index';
@@ -18,7 +18,7 @@ import {
     styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit, OnDestroy, RegistersSubscribers {
-   // toasterConfig: ToasterConfig;
+    toasterConfig: ToasterConfig;
     loading = true;
     loggedIn = false;
 
@@ -33,16 +33,13 @@ export class AppComponent implements OnInit, OnDestroy, RegistersSubscribers {
         public router: Router,
         public authService: AuthService,
         public contextMenu: JpaContextMenu,
-        // public tooltip: JpaTooltip,
         public container: ViewContainerRef,
         public progress: XhrService
     ) {
-        console.log('AppComponent constructed', this);
-        // this.tooltip.registerContainer(container);
         this.contextMenu.registerContainer(container);
-        // this.toasterConfig = new ToasterConfig({
-        //     showCloseButton: true
-        // });
+        this.toasterConfig = new ToasterConfig({
+            showCloseButton: true
+        });
         this.loggedIn = this.authService.authorized;
     }
 
@@ -61,8 +58,8 @@ export class AppComponent implements OnInit, OnDestroy, RegistersSubscribers {
                 this.loading = true;
             }
         });
-        let sub3 = this.progress.start.subscribe(e => this.loading = true);
-        let sub4 = this.progress.done.subscribe(e => this.loading = false);
+        let sub3 = this.progress.start.subscribe(() => this.loading = true);
+        let sub4 = this.progress.done.subscribe(() => this.loading = false);
         this._subscriptions = [sub1, sub2, sub3, sub4];
     }
 

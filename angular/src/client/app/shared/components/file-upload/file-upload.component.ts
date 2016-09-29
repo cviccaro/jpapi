@@ -304,7 +304,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
             return;
         }
 
-        let files = event.target['files'] || event['dataTransfer']['files'];
+        let files: FileList = (<any>event.target)['files'] || (<any>event)['dataTransfer']['files'];
 
         this._stopEvent(event);
         this.isDragOver = false;
@@ -316,7 +316,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
      * Read dropped in files
      * @param files
      */
-    readFiles(files: any[] = []) {
+    readFiles(files: FileList|Array<File> = []) {
         if (!files.length) {
             return;
         }
@@ -424,7 +424,7 @@ export class FileUploadComponent implements ControlValueAccessor, OnInit, AfterV
             file = <File>e;
         } else {
             this._stopEvent(<Event>e);
-            let files = (<Event>e).target['files'] || e['dataTransfer']['files'];
+            let files: FileList = (<any>e).target['files'] || (<any>e)['dataTransfer']['files'];
             file = files[0];
         }
 

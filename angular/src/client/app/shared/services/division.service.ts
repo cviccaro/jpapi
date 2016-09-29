@@ -1,12 +1,10 @@
 import { Injectable } from '@angular/core';
 import { Http, URLSearchParams } from '@angular/http';
-import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Observer } from 'rxjs/Rx';
 
-import { LoggerService } from './logger.service';
 import { XhrService } from './xhr';
-import {ManagedImage} from "../models/file";
-import {AuthHttp} from "./auth.http";
+import { ManagedImage } from '../models/file';
+import { AuthHttp } from './auth.http';
 
 @Injectable()
 export class DivisionService {
@@ -20,7 +18,7 @@ export class DivisionService {
 	 * @param {params}
 	 * @return Observable<any>
 	 */
-	all(params: {} = {}): Observable<any> {
+	all(params: any = {}): Observable<any> {
 	    let query = new URLSearchParams();
 
 	    for (var key in params) {
@@ -109,11 +107,11 @@ export class DivisionService {
 	destroy(id: number): Observable<any> {
 	    this.xhr.started();
 
-	    return Observable.create(observer => {
+	    return Observable.create((observer: Observer<any>) => {
 	        this.authHttp.delete(`/divisions/${id}`)
 	            .subscribe(res => {
 	                this.xhr.finished();
-	                observer.next();
+	                observer.next(true);
 	                observer.complete();
 	            });
 	    });

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Observer } from 'rxjs/Rx';
 import { DivisionService, CacheService } from '../services/index';
 
 @Injectable()
@@ -14,10 +14,10 @@ export class DivisionsGuard implements CanActivate, OnDestroy {
      * @return {Observable<any>}
      */
     canActivate(): Observable<any> {
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<boolean>) => {
             this.sub = this.service.all().subscribe(res => {
                this.cache.store('divisions', res);
-               observer.complete(true);
+               observer.complete();
            });
         });
     }

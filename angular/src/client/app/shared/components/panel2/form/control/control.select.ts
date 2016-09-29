@@ -14,7 +14,7 @@ export class PanelFormControlSelect extends PanelFormControl<string | number> {
 
         switch (typeof this.value) {
             case 'number': return this.value === undefined || this.value === null;
-            default: return !!this.value && this.value['length'] === 0;
+            default: return !!this.value && (<any>this.value)['length'] === 0;
         }
     }
 

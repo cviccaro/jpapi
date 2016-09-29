@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 
-import {Observable, Observer} from 'rxjs/Rx';
-import 'rxjs/add/operator/share';
+import { Observable, Observer } from 'rxjs/Rx';
 
 import { ModalConfig } from './modal.interface';
 
@@ -34,7 +33,7 @@ export class JpaModal {
     };
 
     constructor() {
-        this.openModal = new Observable<ModalConfig>(observer => this._openModal = observer).share();
+        this.openModal = new Observable<ModalConfig>((observer: any) => this._openModal = observer).share();
 
     }
 
@@ -58,6 +57,6 @@ export class JpaModal {
 
         this._openModal.next(this.config);
 
-        return Observable.create(observer => this.buttonClicked = observer);
+        return Observable.create((observer: Observer<any>) => this.buttonClicked = observer);
     }
 }

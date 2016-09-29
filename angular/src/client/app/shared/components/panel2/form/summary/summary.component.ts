@@ -23,7 +23,6 @@ export class PanelFormControlSummaryComponent implements OnInit, OnChanges, OnDe
 
     constructor(private log: LoggerService) { }
 
-
     /**
      * Ask the control to update it's summary
      * @param {boolean} expanded
@@ -43,7 +42,7 @@ export class PanelFormControlSummaryComponent implements OnInit, OnChanges, OnDe
             this.control.summary$.distinctUntilChanged().subscribe(summary => this._summary = summary)
         );
 
-        if (this.control.controlType === 'file' && this.control['type'] === 'image' && this.control.value) {
+        if (this.control.controlType === 'file' && (<any>this.control)['type'] === 'image' && this.control.value) {
             this.registerSubscriber(
                 (<ManagedImage>this.control.value).imageLoaded.subscribe(() => this.updateSummary())
             );

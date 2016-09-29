@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Http, URLSearchParams } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
+import { Observable, Observer } from 'rxjs/Rx';
 
 import { LoggerService } from './logger.service';
 import { XhrService } from './xhr';
-import { ManagedImage } from "../models/file";
-import { AuthService } from "./auth.service";
-import {AuthHttp} from "./auth.http";
+import { ManagedImage } from '../models/file';
+import { AuthHttp } from './auth.http';
 
 @Injectable()
 export class ClientService {
@@ -23,7 +21,7 @@ export class ClientService {
      * @param {params}
      * @return Observable<any>
      */
-    all(params: {} = {}) {
+    all(params: any = {}) {
         let query = new URLSearchParams();
 
         for (var key in params) {
@@ -95,11 +93,11 @@ export class ClientService {
     destroy(id: number): Observable<any> {
         this.xhr.started();
 
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<any>) => {
             this.authHttp.delete(`/clients/${id}`)
                 .subscribe(res => {
                     this.xhr.finished();
-                    observer.next();
+                    observer.next(true);
                     observer.complete();
                 });
         });

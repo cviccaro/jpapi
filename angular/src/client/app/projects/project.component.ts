@@ -148,7 +148,11 @@ export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers
                 },err => {
                     this.log.log('Error when saving project: ', err);
                     this.saving = false;
-                    this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
+                    this.toasterService.pop(
+                      'error',
+                      'Uh oh.',
+                      'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!'
+                    );
                 });
 
             this.registerSubscriber(sub);
@@ -164,7 +168,11 @@ export class ProjectComponent implements OnInit, OnDestroy, RegistersSubscribers
                 }, err => {
                     this.log.log('Error when saving projet: ', err);
                     this.saving = false;
-                    this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!');
+                    this.toasterService.pop(
+                      'error',
+                      'Uh oh.',
+                      'Something went wrong when saving this project.  Sorry.  Try again later and/or alert the developer!'
+                    );
                 });
 
             this.registerSubscriber(sub);

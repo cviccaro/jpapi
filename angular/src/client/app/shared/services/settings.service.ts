@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 import { XhrService } from './xhr';
 
 import { SettingFormControl } from '../models/index';
 import { LoggerService } from './logger.service';
-import {ManagedFile} from "../models/file";
-import {AuthHttp} from "./auth.http";
+import { ManagedFile } from '../models/file';
+import { AuthHttp } from './auth.http';
 
 @Injectable()
 export class SettingsService {
@@ -24,7 +23,7 @@ export class SettingsService {
         return this.http.get('/settings')
         	.map(res => {
         		this.xhr.finished();
-        		return res.json()
+        		return res.json();
 			});
     }
 

@@ -4,10 +4,10 @@ import { Injectable } from '@angular/core';
 export class LoggerService {
 	self = this;
 	enabled = true;
-	noop = () => {};
+	noop = () => { /**/ };
 
 	constructor() {
-		if ('<%= ENV %>' === 'prod') this.enabled = false;
+		if ((<any>'<%= ENV %>') === 'prod') this.enabled = false;
 	}
 
 	get debug() {

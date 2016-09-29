@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Response } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Rx';
 import { XhrService } from './xhr';
-import {AuthHttp} from './auth.http';
+import { AuthHttp } from './auth.http';
 import { ManagedImage } from '../models/file';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class StaffService {
      * Get all staff
      * @return Observable<any>
      */
-    all() {
+    all(): Observable<Response> {
         this.xhr.started();
 
         return Observable.create((observer:any) => {

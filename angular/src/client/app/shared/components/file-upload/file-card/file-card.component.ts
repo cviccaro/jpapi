@@ -12,7 +12,6 @@ import {
     OnDestroy
 } from '@angular/core';
 import { Subscription } from 'rxjs/Rx';
-import { DateFormatPipe } from 'angular2-moment';
 import { ManagedFile, ManagedImage } from '../../../models/file';
 
 @Directive({
@@ -67,8 +66,8 @@ export class FileCardComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         if (this.actionDelegate) {
-            this.hoverSub = this.actionDelegate.hover.subscribe(e => this.hovering = true);
-            this.hoverOutSub = this.actionDelegate.hoverOut.subscribe(e => this.hovering = false);
+            this.hoverSub = this.actionDelegate.hover.subscribe(() => this.hovering = true);
+            this.hoverOutSub = this.actionDelegate.hoverOut.subscribe(() => this.hovering = false);
         }
     }
 

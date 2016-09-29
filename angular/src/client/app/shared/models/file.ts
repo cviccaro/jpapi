@@ -1,6 +1,6 @@
 import { Output, EventEmitter, OnDestroy } from '@angular/core';
 
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable, Subscription, Observer } from 'rxjs/Rx';
 
 /**
  * Generic managed file configuration
@@ -56,12 +56,12 @@ export class ManagedFile implements JpFile {
 
         if (attributes._file) {
             // Fill in managed file from File object
-            let file = attributes._file;
+            let file: File = attributes._file;
             this.filename = file.name;
             this.size = file.size;
             this.mimetype = file.type;
             this.extension = file.name.split('.').pop();
-            this.created_at = this.last_modified = file['lastModified'];
+            this.created_at = this.last_modified = (<any>file)['lastModified'];
 
             if (file['webkitRelativePath']) {
                 this.webkitRelativePath = file['webkitRelativePath'];
@@ -100,7 +100,7 @@ export class ManagedFile implements JpFile {
     map(mapFn: (key: string, val: any) => any): void {
         let keys = Object.keys(this);
 
-        keys.forEach(key => mapFn.apply(this, [key, this[key]]));
+        keys.forEach(key => mapFn.apply(this, [key, (<any>this)[key]]));
     }
 
     /**
@@ -122,7 +122,7 @@ export class ManagedFile implements JpFile {
 
         // Attribute update
         for (let k in managedFile) {
-            form.append(`${form_key}[${k}]`, managedFile[k]);
+            form.append(`${form_key}[${k}]`, (<any>managedFile)[k]);
         }
     }
 }
@@ -149,7 +149,7 @@ export class ManagedImage extends ManagedFile implements OnDestroy {
     read() : Observable<any> {
         let file = this._file;
 
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<any>) => {
             let reader = new FileReader();
 
             reader.onload = readerEvt => observer.next(reader.result);
@@ -164,7 +164,7 @@ export class ManagedImage extends ManagedFile implements OnDestroy {
      * @return {Observable<any>}
      */
     load(imageEl: HTMLImageElement) : Observable<any> {
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<any>) => {
             imageEl.onload = (e) => observer.next({
                 width: imageEl.naturalWidth,
                 height: imageEl.naturalHeight

@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Observer } from 'rxjs/Rx';
 
 import { ProjectService, CacheService } from '../services/index';
 
@@ -14,8 +14,8 @@ export class ProjectListGuard implements CanActivate, OnDestroy {
      * Implemented as part of CanActivate
      * @return {Observable<any>}
      */
-    canActivate() {
-        return Observable.create(observer => {
+    canActivate() : Observable<boolean> {
+        return Observable.create((observer: Observer<boolean>) => {
             this.sub = this.projectService.all({
                current_page: 1,
                length: 15,
@@ -23,7 +23,7 @@ export class ProjectListGuard implements CanActivate, OnDestroy {
                descending: true
            }).subscribe(res => {
                this.cache.store('projectList', res);
-               observer.complete(true);
+               observer.complete();
            });
         });
     }

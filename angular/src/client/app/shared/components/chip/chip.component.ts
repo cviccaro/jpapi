@@ -13,7 +13,7 @@ export class ChipComponent {
 
 	@Output() onRemove = new EventEmitter();
 
-	remove(e) {
+	remove(e: Event) {
 		e.preventDefault();
 		e.stopPropagation();
 

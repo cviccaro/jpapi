@@ -1,7 +1,7 @@
-import {Injectable} from '@angular/core';
-import {Http, RequestOptionsArgs, Response, Request, BaseRequestOptions} from '@angular/http';
-import {Subscription, Observable} from "rxjs/Rx";
-import {LoggerService} from "./logger.service";
+import { Injectable } from '@angular/core';
+import { Http, RequestOptionsArgs, Response, Request, BaseRequestOptions } from '@angular/http';
+import { Subscription, Observable } from 'rxjs/Rx';
+import { LoggerService } from './logger.service';
 
 @Injectable()
 export class AuthHttp {

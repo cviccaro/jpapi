@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges, HostBinding } from '@angular/core';
 import { Observable } from 'rxjs/Rx';
 import { ModalConfig, ModalFormField, ModalAction } from './modal.interface';
-import {ManagedFile} from '../../models/file';
+import { ManagedFile } from '../../models/file';
 
 @Component({
     moduleId: module.id,

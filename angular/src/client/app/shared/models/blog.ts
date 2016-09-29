@@ -1,7 +1,7 @@
-import {JpFile} from './file';
-import {Tag} from './tag';
-import {Division} from './division';
-import {Staff} from './staff';
+import { JpFile } from './file';
+import { Tag } from './tag';
+import { Division } from './division';
+import { Staff } from './staff';
 
 export class Blog {
 	id: any;

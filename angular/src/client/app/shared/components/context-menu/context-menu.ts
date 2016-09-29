@@ -1,14 +1,13 @@
 import {
 	Injectable,
 	ComponentFactoryResolver,
-	ComponentFactory,
 	ComponentRef,
 	ViewContainerRef,
 	Output,
 	OnDestroy,
 	EventEmitter
 } from '@angular/core';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Observer } from 'rxjs/Rx';
 import { ContextMenuComponent } from './context-menu.component';
 import { ContextMenuFocusTrapComponent } from './focus-trap';
 
@@ -29,7 +28,7 @@ export class JpaContextMenu implements OnDestroy {
 	}
 
 	resolveBackdrop(component: ContextMenuComponent) {
-		return Observable.create(observer => {
+		return Observable.create((observer: Observer<any>) => {
 			// Avoid z-index issues by moving menu to body.
 			// @todo: avoid messing with DOM..
 			document.body.appendChild(component.element.nativeElement);

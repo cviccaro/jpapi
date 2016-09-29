@@ -21,7 +21,7 @@ export class ProjectConfig extends SeedConfig {
         // Add `NPM` third-party libraries to be injected/bundled.
         this.NPM_DEPENDENCIES = [
             ...this.NPM_DEPENDENCIES,
-           // { src: 'angular2-toaster/lib/toaster.css', inject: true },
+            { src: 'angular2-toaster/lib/toaster.css', inject: true },
             { src: '@angular2-material/core/overlay/overlay.css', inject: true, vendor: false }
             // {src: 'jquery/dist/jquery.min.js', inject: 'libs'},
             // {src: 'lodash/lodash.min.js', inject: 'libs'},
@@ -45,7 +45,9 @@ export class ProjectConfig extends SeedConfig {
         this.PROD_DEST = `public`;
 
         this.SYSTEM_CONFIG_DEV.packageConfigPaths.push('/node_modules/@angular2-material/*/package.json');
-        this.SYSTEM_BUILDER_CONFIG.packageConfigPaths.push(join(this.PROJECT_ROOT, 'node_modules', '@angular2-material', '*', 'package.json'));
+        this.SYSTEM_BUILDER_CONFIG.packageConfigPaths.push(
+          join(this.PROJECT_ROOT, 'node_modules', '@angular2-material', '*', 'package.json')
+        );
 
         this.SYSTEM_BUILDER_CONFIG.packages['moment'] = {
             main: 'min/moment-with-locales.min.js',

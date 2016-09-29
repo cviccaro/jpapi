@@ -42,7 +42,7 @@ export class PanelComponent implements AfterContentInit, PanelToggle, OnDestroy 
         this.content.hidden = !v;
     }
     ngAfterContentInit() {
-        this._toggleSub = this.bar.onToggle.subscribe(e => {
+        this._toggleSub = this.bar.onToggle.subscribe(() => {
             this.expanded = !this.expanded;
             this.onToggle.emit(this.expanded);
         });

@@ -38,9 +38,8 @@ export class ModalContainerComponent implements OnInit, OnDestroy, RegistersSubs
 
     @ViewChild('modal') private modal: ModalComponent;
 
-    constructor(public el: ElementRef, private service: JpaModal) {
-        console.log('JPAPI ModalContainer constructed', this);
-    }
+    constructor(public el: ElementRef, private service: JpaModal) { /**/ }
+
     /**
      * Initialize the directive/component after Angular initializes
      * the data-bound input properties.

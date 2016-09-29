@@ -9,7 +9,7 @@ import {
 	PanelFormControlFile,
 	SettingFormControl
 } from '../shared/index';
-import {PanelFormControlTextarea} from '../shared/components/panel2/form/control/control.textarea';
+import { PanelFormControlTextarea } from '../shared/components/panel2/form/control/control.textarea';
 
 @Component({
 	moduleId: module.id,
@@ -89,7 +89,7 @@ export class SettingsComponent implements OnInit {
 		this.log.debug('SettingsComponent initialized!', this);
 	}
 
-	onSubmit(model) {
+	onSubmit(model: any) {
 		this.log.log('SettingsComponent on submit ', model);
 
 		this.log.log(Object.assign({},this.settings));

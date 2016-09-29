@@ -10,8 +10,8 @@ import {
     OnDestroy
 } from '@angular/core';
 
-import {LoggerService} from '../../../services/logger.service';
-import {ManagedImage} from '../../../models/file';
+import { LoggerService } from '../../../services/logger.service';
+import { ManagedImage } from '../../../models/file';
 
 @Component({
     moduleId: module.id,
@@ -32,11 +32,11 @@ export class GridImageComponent implements OnInit, OnDestroy {
     @Output() imageLoaded = new EventEmitter();
 
     @HostListener('mouseenter')
-    onMouseEnter(e) {
+    onMouseEnter() {
         this.hovering = true;
     }
     @HostListener('mouseleave')
-    onMouseLeave(e) {
+    onMouseLeave() {
         this.hovering = false;
     }
 

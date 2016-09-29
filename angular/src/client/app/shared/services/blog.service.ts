@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Http, URLSearchParams } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
-import 'rxjs/add/operator/map';
-
+import { Observable, Observer } from 'rxjs/Rx';
 import { XhrService } from './xhr';
-import {ManagedImage} from "../models/file";
-import {AuthHttp} from "./auth.http";
+import { ManagedImage } from '../models/file';
+import { AuthHttp } from './auth.http';
 
 @Injectable()
 export class BlogService {
@@ -24,7 +22,7 @@ export class BlogService {
 		let query = new URLSearchParams();
 
 		for (var key in params) {
-			const param: string = params[key];
+			const param: string = (<any>params)[key];
 			query.set(key, param);
 		}
 
@@ -72,11 +70,11 @@ export class BlogService {
     destroy(id: number): Observable<any> {
         this.xhr.started();
 
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<any>) => {
             this.authHttp.delete(`/blogs/${id}`)
                 .subscribe(res => {
                     this.xhr.finished();
-                    observer.next();
+                    observer.next(true);
                     observer.complete();
                 });
         });
@@ -128,8 +126,8 @@ export class BlogService {
             switch(key) {
                 case 'images':
                     if (val) {
-                        val.forEach((item, i) => {
-                            (<ManagedImage>item).injectIntoForm(`${key}[${i}]`, form);
+                        val.forEach((item: ManagedImage, i: number) => {
+                            item.injectIntoForm(`${key}[${i}]`, form);
                         });
                     } else {
                         form.append(`${key}[0]`, '');
@@ -146,7 +144,7 @@ export class BlogService {
                     break;
                 case 'divisions':
                 case 'tags':
-                    val.forEach((item,i) => {
+                    val.forEach((item: any, i: number) => {
                         for (let k in item) {
                             form.append(`${key}[${i}][${k}]`, item[k]);
                         }

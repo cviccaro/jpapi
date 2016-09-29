@@ -154,7 +154,11 @@ export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
                 }, err => {
                     this.log.log('Error when saving blog: ', err);
                     this.saving = false;
-                    this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
+                    this.toasterService.pop(
+                      'error',
+                      'Uh oh.',
+                      'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!'
+                    );
                 });
             this.registerSubscriber(sub);
         } else {
@@ -169,7 +173,11 @@ export class BlogComponent implements OnInit, OnDestroy, RegistersSubscribers {
                 }, err => {
                     this.log.log('Error when saving blog: ', err);
                     this.saving = false;
-                    this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!');
+                    this.toasterService.pop(
+                      'error',
+                      'Uh oh.',
+                      'Something went wrong when saving this blog.  Sorry.  Try again later and/or alert the developer!'
+                    );
                 });
 
             this.registerSubscriber(sub);

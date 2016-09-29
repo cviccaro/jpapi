@@ -3,7 +3,7 @@ import * as gulpLoadPlugins from 'gulp-load-plugins';
 import * as merge from 'merge-stream';
 import * as path from 'path';
 import Config from '../../config';
-import * as fs from 'fs';
+//import * as fs from 'fs';
 const join = path.join;
 
 const plugins = <any>gulpLoadPlugins();
@@ -16,22 +16,22 @@ const plugins = <any>gulpLoadPlugins();
  *
  * @returns {NodeJS.ReadWriteStream}
  */
-function copyNodeModulesTemp() {
-  let i = Config.INJECTABLES.filter(glob => {
-    if (glob.indexOf('*') === -1) {
-      return !fs.existsSync(join(Config.TMP_DIR, 'node_modules', glob));
-    } else {
-      return !fs.existsSync(join(Config.TMP_DIR, 'node_modules', path.dirname(glob)));
-    }
-  });
+// function copyNodeModulesTemp() {
+//   let i = Config.INJECTABLES.filter(glob => {
+//     if (glob.indexOf('*') === -1) {
+//       return !fs.existsSync(join(Config.TMP_DIR, 'node_modules', glob));
+//     } else {
+//       return !fs.existsSync(join(Config.TMP_DIR, 'node_modules', path.dirname(glob)));
+//     }
+//   });
 
-  return gulp.src(i, { cwd: 'node_modules/**' })
-    .pipe(gulp.dest(join(Config.TMP_DIR, 'node_modules')));
-}
-function copyNodeModules() {
-  return gulp.src(join(Config.TMP_DIR, 'node_modules', '**', '*'))
-    .pipe(gulp.dest('../public/node_modules'));
-}
+//   return gulp.src(i, { cwd: 'node_modules/**' })
+//     .pipe(gulp.dest(join(Config.TMP_DIR, 'node_modules')));
+// }
+// function copyNodeModules() {
+//   return gulp.src(join(Config.TMP_DIR, 'node_modules', '**', '*'))
+//     .pipe(gulp.dest('../public/node_modules'));
+// }
 
 function copyHtAccess() {
   return gulp.src(join(Config.APP_SRC, '.htaccess'))

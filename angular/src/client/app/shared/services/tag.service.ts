@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
-import 'rxjs/add/operator/map';
-import { Observable } from 'rxjs/Rx';
+import { Observable, Observer } from 'rxjs/Rx';
 import { XhrService } from './xhr';
-import {AuthHttp} from "./auth.http";
+import { AuthHttp } from './auth.http';
 
 @Injectable()
 export class TagService {
@@ -34,11 +33,11 @@ export class TagService {
     destroy(id: number) {
         this.xhr.started();
 
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<any>) => {
             this.authHttp.delete(`/tags/${id}`)
                 .subscribe(res => {
                     this.xhr.finished();
-                    observer.next();
+                    observer.next(true);
                     observer.complete();
                 });
         });

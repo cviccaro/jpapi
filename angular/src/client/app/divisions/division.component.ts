@@ -133,7 +133,11 @@ export class DivisionComponent implements OnInit, OnDestroy, RegistersSubscriber
         //         },err => {
         //             this.log.log('Error when saving division: ', err);
         //             this.saving = false;
-        //             this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this division.  Sorry.  Try again later and/or alert the developer!');
+        //             this.toasterService.pop(
+        //               'error',
+        //               'Uh oh.',
+        //               'Something went wrong when saving this division.  Sorry.  Try again later and/or alert the developer!'
+        //             );
         //         });
 
         //     this.registerSubscriber(sub);
@@ -149,7 +153,11 @@ export class DivisionComponent implements OnInit, OnDestroy, RegistersSubscriber
                 }, err => {
                     this.log.log('Error when saving division: ', err);
                     this.saving = false;
-                    this.toasterService.pop('error', 'Uh oh.', 'Something went wrong when saving this division.  Sorry.  Try again later and/or alert the developer!');
+                    this.toasterService.pop(
+                      'error',
+                      'Uh oh.',
+                      'Something went wrong when saving this division.  Sorry.  Try again later and/or alert the developer!'
+                    );
                 });
 
             this.registerSubscriber(sub);

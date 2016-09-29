@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Http, Headers, Response } from '@angular/http';
-import { Observable } from 'rxjs/Rx';
+import { Http, Headers } from '@angular/http';
+import { Observable, Observer } from 'rxjs/Rx';
 
 import { AuthHttp } from './auth.http';
 import { ReplaySubject } from 'rxjs/ReplaySubject';
@@ -32,7 +32,7 @@ export class AuthService {
         if (this.hasStorage) {
             ['token', 'expires'].forEach(key => {
                 let val = localStorage.getItem(`id_${key}`);
-                if (val) this[key] = val;
+                if (val) (<any>this)[key] = val;
             });
         } else {
             this.log.warn('authService#local storage is not supported.');
@@ -119,7 +119,7 @@ export class AuthService {
      */
     login(email: string, password: string) : Observable<any> {
         this.log.log('authService#login: ', email, password);
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<any>) => {
             this.http.post('authenticate', { email: email, password: password })
                 .map(res => res.json())
                 .subscribe(
@@ -140,7 +140,7 @@ export class AuthService {
      */
     refresh(): Observable<any> {
         this.log.log('authService#refresh');
-        return Observable.create(observer => {
+        return Observable.create((observer: Observer<any>) => {
             let headers = new Headers({'Authorization': 'Bearer ' + this.token});
             this.http.get('authenticate/refresh', {headers: headers})
                 .map(res => res.json())
@@ -180,7 +180,7 @@ export class AuthService {
      * @param {Response} error
      * @return {obj} object with title, message properties
      */
-    parseErrorFromResponse(error: Response) : {title: string, message: string} {
+    parseErrorFromResponse(error: any) : {title: string, message: string} {
         let title = 'Error';
         let message = 'Something went wrong and I\'m not sure what.  Try again later.';
 
@@ -189,7 +189,7 @@ export class AuthService {
             message = 'An error occured on the server.  Come back later and try again.';
         } else {
             try {
-                let json = JSON.parse(error['_body']);
+                let json: any = JSON.parse(error['_body']);
                 message = json.errorText || json.error;
 
                 if (json.error === 'invalid_credentials') title = 'Login failed';

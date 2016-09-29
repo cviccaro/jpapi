@@ -1,5 +1,5 @@
 import { ReplaySubject } from 'rxjs/Rx';
-import {LoggerService} from "../../../../services/logger.service";
+import { LoggerService } from '../../../../services/logger.service';
 
 export interface PanelFormControlSummary {
     text: any;

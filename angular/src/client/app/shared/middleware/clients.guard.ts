@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { CanActivate } from '@angular/router';
-import { Observable, Subscription } from 'rxjs/Rx';
+import { Observable, Subscription, Observer } from 'rxjs/Rx';
 
 import { ClientService, CacheService } from '../services/index';
 
@@ -14,11 +14,11 @@ export class ClientsGuard implements CanActivate, OnDestroy {
      * Implemented as part of CanActivate
      * @return {Observable<any>}
      */
-    canActivate(): Observable<any> {
-        return Observable.create(observer => {
+    canActivate(): Observable<boolean> {
+        return Observable.create((observer: Observer<boolean>) => {
             this.sub = this.service.all().subscribe(res => {
                this.cache.store('clients', res);
-               observer.complete(true);
+               observer.complete();
            });
         });
     }
