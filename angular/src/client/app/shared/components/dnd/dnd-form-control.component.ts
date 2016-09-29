@@ -20,7 +20,8 @@ const noop = (_?:any) => { /**/ };
     moduleId: module.id,
     selector: 'jpa-dnd-form-control',
     templateUrl: './dnd-form-control.component.html',
-    styleUrls: ['./dnd-form-control.component.css']
+    styleUrls: ['./dnd-form-control.component.css'],
+    providers: [ DND_FORM_CONTROL_VALUE_ACCESSOR ]
 })
 export class DragnDropFormControlComponent implements ControlValueAccessor, OnInit {
     public _dropzone: number;

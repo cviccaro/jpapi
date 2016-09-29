@@ -1,0 +1,12 @@
+<div class="md-whiteframe-6dp">
+    <jpa-list
+        listTitle="Blogs"
+        [listConfig]="listConfig"
+        [listData]="listData"
+        (listUpdate)="fetch($event)"
+        (listItemAdd)="add($event)"
+        (listItemEdit)="edit($event)"
+        (listItemDelete)="destroy($event)"
+        (onPageChange)="onPageChange($event)">
+    </jpa-list>
+</div>

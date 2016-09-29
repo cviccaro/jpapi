@@ -13,6 +13,8 @@ import { SharedModule } from './shared/shared.module';
 import { StaffModule } from './staff/staff.module';
 import { DivisionsModule } from './divisions/divisions.module';
 import { ClientsModule } from './clients/clients.module';
+import { BlogsModule } from './blogs/blogs.module';
+import { ProjectsModule } from './projects/projects.module';
 
 @NgModule({
   imports: [
@@ -25,6 +27,8 @@ import { ClientsModule } from './clients/clients.module';
   	StaffModule,
     DivisionsModule,
     ClientsModule,
+    BlogsModule,
+    ProjectsModule,
   	SharedModule.forRoot()
 	],
   declarations: [AppComponent],

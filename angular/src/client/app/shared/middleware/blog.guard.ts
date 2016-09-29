@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { CanActivate, ActivatedRoute } from '@angular/router';
+import { CanActivate } from '@angular/router';
 import { Observable, Subscription } from 'rxjs/Rx';
 
 import { TagService, DivisionService, CacheService, StaffService } from '../services/index';
@@ -13,8 +13,7 @@ export class BlogGuard implements CanActivate, OnDestroy, RegistersSubscribers {
     private cache: CacheService,
     private tagService: TagService,
     private divisionService: DivisionService,
-    private staffService: StaffService,
-    private route: ActivatedRoute
+    private staffService: StaffService
   ) { }
 
   /**

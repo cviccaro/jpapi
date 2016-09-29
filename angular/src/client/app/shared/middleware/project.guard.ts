@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { CanActivate, ActivatedRoute } from '@angular/router';
+import { CanActivate } from '@angular/router';
 import { Observable, Subscription } from 'rxjs/Rx';
 
 import { ClientService, DivisionService, CacheService } from '../services/index';
@@ -12,8 +12,7 @@ export class ProjectGuard implements CanActivate, OnDestroy, RegistersSubscriber
   constructor(
     private cache: CacheService,
     private clientService: ClientService,
-    private divisionService: DivisionService,
-    private route: ActivatedRoute
+    private divisionService: DivisionService
   ) { }
 
   /**

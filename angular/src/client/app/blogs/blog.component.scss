@@ -1,0 +1,19 @@
+:host /deep/ {
+    display: block;
+    md-grid-list {
+        justify-content: space-between;
+        md-grid-tile {
+            img {
+                width: 100%;
+            }
+        }
+    }
+}
+
+:host {
+    &.new /deep/ {
+        .panel-content-right {
+            display: none;
+        }
+    }
+}
