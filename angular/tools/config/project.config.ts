@@ -139,6 +139,10 @@ export class ProjectConfig extends SeedConfig {
           format: 'cjs',
           main: 'toolbar.umd.js',
         };
+        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/tooltip'] = {
+          format: 'cjs',
+          main: 'tooltip.umd.js',
+        };
 
         let PACKAGES: string[] = [];
 
