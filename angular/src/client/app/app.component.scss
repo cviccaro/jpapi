@@ -10,9 +10,11 @@
     flex-direction: column;
     flex: 1;
     position: relative;
+    z-index: 3;
     md-sidenav-layout {
       &.opened {
-        z-index: 2;
+        z-index: 4;
+        background-color: #fff;
       }
       & > md-content {
         height: 100%;

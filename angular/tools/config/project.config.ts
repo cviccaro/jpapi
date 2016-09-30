@@ -22,7 +22,7 @@ export class ProjectConfig extends SeedConfig {
         this.NPM_DEPENDENCIES = [
             ...this.NPM_DEPENDENCIES,
             { src: 'angular2-toaster/lib/toaster.css', inject: true },
-            { src: '@angular2-material/core/overlay/overlay.css', inject: true, vendor: false }
+            { src: '@angular/material/core/overlay/overlay.css', inject: true, vendor: false }
             // {src: 'jquery/dist/jquery.min.js', inject: 'libs'},
             // {src: 'lodash/lodash.min.js', inject: 'libs'},
         ];
@@ -44,9 +44,9 @@ export class ProjectConfig extends SeedConfig {
 
         this.PROD_DEST = `public`;
 
-        this.SYSTEM_CONFIG_DEV.packageConfigPaths.push('/node_modules/@angular2-material/*/package.json');
+        this.SYSTEM_CONFIG_DEV.packageConfigPaths.push('/node_modules/@angular/material/*/package.json');
         this.SYSTEM_BUILDER_CONFIG.packageConfigPaths.push(
-          join(this.PROJECT_ROOT, 'node_modules', '@angular2-material', '*', 'package.json')
+          join(this.PROJECT_ROOT, 'node_modules', '@angular', 'material', '*', 'package.json')
         );
 
         this.SYSTEM_BUILDER_CONFIG.packages['moment'] = {
@@ -79,69 +79,9 @@ export class ProjectConfig extends SeedConfig {
             defaultExtension: 'js'
         };
 
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/core'] = {
+        this.SYSTEM_BUILDER_CONFIG.packages['@angular/material'] = {
           format: 'cjs',
-          main: 'core.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/button'] = {
-          format: 'cjs',
-          main: 'button.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/card'] = {
-          format: 'cjs',
-          main: 'card.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/checkbox'] = {
-          format: 'cjs',
-          main: 'checkbox.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/grid-list'] = {
-          format: 'cjs',
-          main: 'grid-list.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/icon'] = {
-          format: 'cjs',
-          main: 'icon.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/input'] = {
-          format: 'cjs',
-          main: 'input.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/list'] = {
-          format: 'cjs',
-          main: 'list.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/progress-bar'] = {
-          format: 'cjs',
-          main: 'progress-bar.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/progress-circle'] = {
-          format: 'cjs',
-          main: 'progress-circle.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/radio'] = {
-          format: 'cjs',
-          main: 'radio.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/sidenav'] = {
-          format: 'cjs',
-          main: 'sidenav.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/slide-toggle'] = {
-          format: 'cjs',
-          main: 'slide-toggle.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/tabs'] = {
-          format: 'cjs',
-          main: 'tabs.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/toolbar'] = {
-          format: 'cjs',
-          main: 'toolbar.umd.js',
-        };
-        this.SYSTEM_BUILDER_CONFIG.packages['@angular2-material/tooltip'] = {
-          format: 'cjs',
-          main: 'tooltip.umd.js',
+          main: 'material.umd.js',
         };
 
         let PACKAGES: string[] = [];
