@@ -12,7 +12,8 @@ import {
     LoggerService,
     ListLineItem,
     PagerJSONData,
-    RegistersSubscribers
+    RegistersSubscribers,
+    StorageService
 } from '../shared/index';
 
 /**
@@ -37,8 +38,17 @@ export class ProjectListComponent implements OnInit, OnDestroy, RegistersSubscri
         public modal: JpaModal,
         public toaster: ToasterService,
         public cache: CacheService,
-        public log: LoggerService
+        public log: LoggerService,
+        public storage: StorageService
     ) {
+        let sort: any = null;
+        let sortDesc: any = null;
+
+        if (this.storage.supported) {
+            sort = this.storage.getItem('projects_sort');
+            sortDesc = this.storage.getItem('projects_sort_direction') !== 'ASC';
+        }
+
         this.listConfig = {
             sortOptions: [
                 { name: 'Updated At', value: 'updated_at' },
@@ -48,8 +58,8 @@ export class ProjectListComponent implements OnInit, OnDestroy, RegistersSubscri
             ],
             per_pageOptions: [5, 10, 15, 25, 50, 100],
             sort: {
-                by: 'updated_at',
-                descending: true
+                by: sort === null ? 'updated_at' : sort,
+                descending: sortDesc === null ? true : sortDesc
             },
             page: {
                 current_page: 1,
@@ -119,6 +129,14 @@ export class ProjectListComponent implements OnInit, OnDestroy, RegistersSubscri
     fetch(params: ListConfig = {}): void {
         let page = params.page || this.listConfig.page;
         let sort = params.sort || this.listConfig.sort;
+
+        if ( this.storage.supported ) {
+            this.storage.setItem('projects_sort', this.listConfig.sort.by);
+
+            let desc = <any>this.listConfig.sort.descending === 'true' ? 'DESC' : 'ASC';
+
+            this.storage.setItem('projects_sort_direction', desc);
+        }
 
         this.projectService.all({
             current_page: page.current_page,

@@ -9,6 +9,7 @@ export * from './metadata.service';
 export * from './project.service';
 export * from './staff.service';
 export * from './settings.service';
+export * from './storage.service';
 export * from './tag.service';
 export * from './xhr';
 
@@ -23,6 +24,7 @@ import { MetadataService } from './metadata.service';
 import { ProjectService } from './project.service';
 import { SettingsService } from './settings.service';
 import { StaffService } from './staff.service';
+import { StorageService } from './storage.service';
 import { TagService } from './tag.service';
 import { XhrService } from './xhr';
 
@@ -38,6 +40,7 @@ export const APP_SERVICES = [
     ProjectService,
     SettingsService,
     StaffService,
+    StorageService,
     TagService,
     XhrService
 ];
