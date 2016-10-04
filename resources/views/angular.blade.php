@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <!-- inject:css -->
-  <link rel="stylesheet" href="/css/main.css?1475265534010">
+  <link rel="stylesheet" href="/css/main.css?1475604584506">
   <!-- endinject -->
 
 </head>
@@ -31,8 +31,8 @@
   <!-- endinject -->
 
   <!-- inject:js -->
-  <script src="/js/shims.js?1475265534004"></script>
-  <script src="/js/app.js?1475265534006"></script>
+  <script src="/js/shims.js?1475604584502"></script>
+  <script src="/js/app.js?1475604584503"></script>
   <!-- endinject -->
 
   

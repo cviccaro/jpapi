@@ -22,8 +22,8 @@ export class ProjectConfig extends SeedConfig {
         this.NPM_DEPENDENCIES = [
             ...this.NPM_DEPENDENCIES,
             { src: 'angular2-toaster/lib/toaster.css', inject: true },
-            { src: '@angular/material/core/overlay/overlay.css', inject: true, vendor: false }
-            // {src: 'jquery/dist/jquery.min.js', inject: 'libs'},
+            { src: '@angular/material/core/overlay/overlay.css', inject: true, vendor: false },
+            {src: 'hammerjs/hammer.min.js', inject: 'libs'},
             // {src: 'lodash/lodash.min.js', inject: 'libs'},
         ];
 
