@@ -3,20 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-// import { MdCardModule } from '@angular2-material/card';
-// import { MdCoreModule, MdRippleModule, OverlayModule, OVERLAY_PROVIDERS } from '@angular2-material/core';
-// import { MdCheckboxModule } from '@angular2-material/checkbox';
-// import { MdButtonModule } from '@angular2-material/button';
-// import { MdGridListModule } from '@angular2-material/grid-list';
-// import { MdInputModule } from '@angular2-material/input';
-// import { MdListModule } from '@angular2-material/list';
-// import { MdIconModule, MdIconRegistry } from '@angular2-material/icon';
-// import { MdProgressBarModule } from '@angular2-material/progress-bar';
-// import { MdSidenavModule } from '@angular2-material/sidenav';
-// import { MdSlideToggleModule } from '@angular2-material/slide-toggle';
-// import { MdToolbarModule } from '@angular2-material/toolbar';
-// import { MdTooltipModule } from '@angular2-material/tooltip';
-
 import { MaterialModule, MdIconRegistry, OVERLAY_PROVIDERS } from '@angular/material';
 import { MomentModule } from 'angular2-moment';
 import { CKEditorModule } from 'ng2-ckeditor';
