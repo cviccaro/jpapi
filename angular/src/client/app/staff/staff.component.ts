@@ -140,12 +140,11 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
 
 	    if (hasImage) {
 	    	modalConfig.inputs.splice(modalConfig.inputs.length-2, 1);
-	    	let smallImageLabel = 'Add Small Image';
 
 	    	let imageSmallConfig: ModalInput = {
 		    	name: 'image_small',
 	    		type: 'file',
-	    		label: smallImageLabel,
+	    		label: 'Add Small Image',
 	    		conditions: [{
 	          target: 'image_small_remove',
 	          condition: (source, target) => {
@@ -162,7 +161,7 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
   		    	label: 'Slide to Delete Small Image',
   		    	prefix: '<h4>Small Image</h4>'
   		    });
-  		    smallImageLabel = 'Replace Small Image';
+  		    imageSmallConfig.label = 'Replace Small Image';
   	    } else {
   	    	imageSmallConfig.prefix = '<h4>Small Image</h4>';
   	    }
