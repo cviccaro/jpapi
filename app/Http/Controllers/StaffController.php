@@ -67,6 +67,20 @@ class StaffController extends Controller {
         }
     }
 
+    if ($request->get('image_small') === '') {
+        $person->image_small()->dissociate();
+    } elseif ($request->has('image_small')) {
+        $managedFile = $request->get('image_small');
+        if (isset($files['image_small']['_file'])) {
+            $file = $files['image_small']['_file'];
+
+            $image_small = Image::createFromUpload($file, $destination, $managedFile);
+            $person->image_small()->associate($image_small);
+        } else {
+            Image::find($person->image_small->id)->update($managedFile);
+        }
+    }
+
     $person->save();
 
     return $this->get($person->id);

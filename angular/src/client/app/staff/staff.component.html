@@ -17,6 +17,7 @@
           <button class="item-actions" md-icon-button jpaTooltip tooltip="Manage" (click)="menu.open($event)"><md-icon>more_vert</md-icon></button>
         </div>
         <img *ngIf="person.image_id" [src]="person.image.url" [title]="person.first_name + ' ' + person.last_name" />
+        <img *ngIf="person.image_id === null && person.image_small_id" [src]="person.image_small.url" [title]="person.first_name + ' ' + person.last_name" />
         <h4 class="person-name">{{ person.first_name + ' ' + person.last_name}}</h4>
     </md-grid-tile>
 </md-grid-list>

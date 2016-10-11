@@ -185,8 +185,12 @@ class Image extends Model
     }
 
     public function url() {
-        $path = str_replace([self::defaultDirectory(), '\\'],['', '/'],$this->path) . '/' . $this->filename;
-
+        if (preg_match('/app\/public\//', $this->path)) {
+            $path = str_replace('app/public/images', '', $this->path) . '/' . $this->filename;
+        } else {
+            $path = str_replace(['app\public\images', '\\'],['', '/'],$this->path) . '/' . $this->filename;
+        }
+        
         return url('img' . $path);
     }
 

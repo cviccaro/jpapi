@@ -8,6 +8,8 @@ export interface Staff {
 	email: string;
 	image: JpFile;
 	image_id: number;
+	image_small: JpFile;
+	image_small_id: number;
 	linkedin: string;
 	occupation: string;
 	title: string;

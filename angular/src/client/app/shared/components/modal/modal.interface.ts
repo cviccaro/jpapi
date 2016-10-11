@@ -35,6 +35,7 @@ export interface ModalInput {
     hint?: any;
     hidden?: boolean;
     conditions?: ModalInputCondition[];
+    prefix?: string;
 }
 
 export class GenericFormField implements ModalInput {
@@ -47,6 +48,7 @@ export class GenericFormField implements ModalInput {
     hint: any;
     conditions: ModalInputCondition[];
     hidden: boolean = false;
+    prefix: string;
 }
 
 export class ModalFormField extends GenericFormField {

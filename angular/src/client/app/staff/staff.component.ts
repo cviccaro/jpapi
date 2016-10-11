@@ -7,6 +7,7 @@ import {
     JpaModal,
     ModalAction,
     ModalConfig,
+    ModalInput,
     LoggerService,
     RegistersSubscribers,
     Staff
@@ -35,6 +36,7 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
           { name: 'linkedin', label: 'LinkedIn URL' },
           { name: 'active', type: 'checkbox' },
           { name: 'image', type: 'file', label: 'Add Image'},
+          { name: 'image_small', type: 'file', label: 'Add Small Image', prefix: '<h4>Image Small</h4>'}
       ],
       minWidth: '50%',
       formClass: 'staff-form',
@@ -54,6 +56,7 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
 	    public log: LoggerService
 	) {
 		this.staff = this.cache.get('staff');
+		this.log.log('Staff: ', this.staff);
 	}
 
 /**
@@ -106,12 +109,21 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
     	);
 
     	modalConfig.inputs.forEach(input => {
-    		if (input.name !== 'image') input.value = (<any>person)[input.name];
+    		if (input.type !== 'file') input.value = (<any>person)[input.name];
     	});
 
+    	let hasImage = false;
+
 	    if (person.image_id !== null) {
+	    	hasImage = true;
+
 	    	modalConfig.formClass += ' has-image';
-		    modalConfig.inputs[modalConfig.inputs.length-1] = { name: 'image_remove', type: 'toggle', label: 'Slide to Delete Image'};
+		    modalConfig.inputs[modalConfig.inputs.length-2] = {
+		    	name: 'image_remove',
+		    	type: 'toggle',
+		    	label: 'Slide to Delete Image',
+		    	prefix: '<h4>Image</h4>'
+		    };
 		    modalConfig.inputs.push({
 		    	name: 'image',
 	    		type: 'file',
@@ -126,6 +138,48 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
 	      });
 	    }
 
+	    if (hasImage) {
+	    	modalConfig.inputs.splice(modalConfig.inputs.length-2, 1);
+	    	let smallImageLabel = 'Add Small Image';
+
+	    	let imageSmallConfig: ModalInput = {
+		    	name: 'image_small',
+	    		type: 'file',
+	    		label: smallImageLabel,
+	    		conditions: [{
+	          target: 'image_small_remove',
+	          condition: (source, target) => {
+	              return target.value;
+	          },
+	          action: 'hidden'
+	        }]
+	      };
+
+  	    if (person.image_small_id !== null) {
+  	    	modalConfig.inputs.push({
+  		    	name: 'image_small_remove',
+  		    	type: 'toggle',
+  		    	label: 'Slide to Delete Small Image',
+  		    	prefix: '<h4>Small Image</h4>'
+  		    });
+  		    smallImageLabel = 'Replace Small Image';
+  	    } else {
+  	    	imageSmallConfig.prefix = '<h4>Small Image</h4>';
+  	    }
+
+		    modalConfig.inputs.push(imageSmallConfig);
+
+	    } else {
+  	    if (person.image_small_id !== null) {
+  	    	modalConfig.inputs.push({
+  		    	name: 'image_small_remove',
+  		    	type: 'toggle',
+  		    	label: 'Slide to Delete Small Image',
+  		    	prefix: '<h4>Small Image</h4>'
+  		    });
+  	    }
+	    }
+
 	    this.registerSubscriber(
 		    this.modal.open(modalConfig).subscribe((action: ModalAction) => {
 		        if (action.type === 'submit') {
@@ -136,6 +190,10 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
 
 		            if (attributes.image_remove) {
 		                attributes.image = '';
+		            }
+
+		            if (attributes.image_small_remove) {
+		                attributes.image_small = '';
 		            }
 
 		            this.log.log('We can now save our person with this data: ', {

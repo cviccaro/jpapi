@@ -111,6 +111,7 @@ export class StaffService {
             let val = attributes[key];
 
             switch(key) {
+                case 'image_small':
                 case 'image':
                     if (val === '') {
                         // File was deleted

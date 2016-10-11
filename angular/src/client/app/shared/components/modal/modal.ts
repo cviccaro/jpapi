@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, SimpleChanges, OnChanges, HostBinding } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { Observable } from 'rxjs/Rx';
 import { ModalConfig, ModalFormField, ModalAction } from './modal.interface';
 import { ManagedFile } from '../../models/file';
@@ -21,6 +22,8 @@ export class ModalComponent implements OnChanges {
     @HostBinding('style.minWidth') get minWidthStyle() { return this._minWidth; }
 
     private _actionEmitter: EventEmitter<ModalAction> = new EventEmitter<ModalAction>();
+
+    constructor(public sanitizer: DomSanitizer) { }
 
     action(type: string, config: ModalConfig, event: any) {
         event.preventDefault();
@@ -63,5 +66,9 @@ export class ModalComponent implements OnChanges {
                 }
             }
         }
+    }
+
+    trust(text: string) {
+        return this.sanitizer.bypassSecurityTrustHtml(text);
     }
 }

@@ -18,6 +18,7 @@
                     *ngFor="let col of config.inputs; let rowIndex = index; let odd = odd; let even = even;">
                     <div [ngSwitch]="col.type">
                         <template [ngSwitchCase]="'file'">
+                            <span *ngIf="col.prefix" [innerHTML]="trust(col.prefix)"></span>
                             <label [attr.for]="col.name">{{ col.label }}</label><input type="file" [name]="col.name" [(ngModel)]="_files[col.name]" (change)="handleChange(col, $event)" [required]="col.required" />
                         </template>
                         <template [ngSwitchCase]="'checkbox'">
@@ -26,6 +27,7 @@
                             </md-checkbox>
                         </template>
                         <template [ngSwitchCase]="'toggle'">
+                            <span *ngIf="col.prefix" [innerHTML]="trust(col.prefix)"></span>
                             <md-slide-toggle [name]="col.name" [(ngModel)]="col.value" (change)="handleChange(col, $event)">
                                 {{ col.label }}
                             </md-slide-toggle>
