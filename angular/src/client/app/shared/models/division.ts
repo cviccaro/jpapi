@@ -3,6 +3,7 @@ import { JpFile } from './file';
 export class Division {
 	id: number;
     name: string;
+    display_name: string;
     image_id: number = null;
     image: JpFile;
     description: string;

@@ -16,7 +16,7 @@
             </jpa-context-menu>
             <button class="item-actions" md-icon-button jpaTooltip tooltip="Manage" (click)="menu.open($event)"><md-icon>more_vert</md-icon></button> 
         </div>
-        <h2 class="division-name">{{ division.name | capitalize }}</h2>
+        <h2 class="division-name">{{ division.display_name ? division.display_name : (division.name | capitalize) }}</h2>
         <span class="filler"></span>
         <div class="division-info layout-row">
             <p><md-icon class="md-18" title="Blogs">speaker_notes</md-icon><span class="count">{{ division.blogs }}</span></p>

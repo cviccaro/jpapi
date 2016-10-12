@@ -8,7 +8,7 @@ class Division extends Model
 {
     use MostUsed;
 
-    protected $fillable = ['name', 'site_title', 'site_logo', 'splash_headline', 'splash_body'];
+    protected $fillable = ['name', 'display_name', 'site_title', 'site_logo', 'splash_headline', 'splash_body'];
 
     protected $with = ['image'];
 

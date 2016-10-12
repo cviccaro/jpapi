@@ -16,12 +16,19 @@ class DivisionTableSeeder extends Seeder {
 
         Division::create([
             'name' => 'creative',
+            'display_name' => 'Creative'
         ]);
         Division::create([
             'name' => 'interactive',
+            'display_name' => 'Interactive'
         ]);
         Division::create([
             'name' => 'publishing',
+            'display_name' => 'Publishing'
+        ]);
+        Division::create([
+            'name' => 'mdm',
+            'display_name' => 'MDM'
         ]);
     }
 

@@ -77,6 +77,11 @@ export class DivisionComponent implements OnInit, OnDestroy, RegistersSubscriber
               name: 'name',
               required: true
           }),
+          new PanelFormControlTextfield({
+              name: 'display_name',
+              label: 'Display Name',
+              required: false
+          }),
           new PanelFormControlFile({
               name: 'image',
               label: 'Backdrop',

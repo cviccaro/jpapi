@@ -129,7 +129,7 @@ class DivisionController extends Controller
 
         $division = Division::findOrFail($id);
 
-        $collect = ['name', 'description', 'site_title', 'splash_headline', 'splash_body'];
+        $collect = ['name', 'display_name', 'description', 'site_title', 'splash_headline', 'splash_body'];
         $files = $request->allFiles();
         foreach ($collect as $attribute) {
             if ($request->has($attribute)) {
