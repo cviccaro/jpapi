@@ -35,7 +35,7 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
           { name: 'phone', type: 'tel' },
           { name: 'linkedin', label: 'LinkedIn URL' },
           { name: 'active', type: 'checkbox' },
-          { name: 'image', type: 'file', label: 'Add Image'},
+          { name: 'image', type: 'file', label: 'Add Image', prefix: '<h4>Image</h4>'},
           { name: 'image_small', type: 'file', label: 'Add Small Image', prefix: '<h4>Image Small</h4>'}
       ],
       minWidth: '50%',
@@ -101,6 +101,8 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
 	edit(person: Staff): void {
 	    this.menu.close();
 
+	    this.log.log('Edit staff: ', person);
+
 	    let modalConfig: ModalConfig = _.extend(_.cloneDeep(this.modalConfig),
 		    {
 		    	formClass: 'staff-form update',
@@ -108,8 +110,17 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
 	    	}
     	);
 
-    	modalConfig.inputs.forEach(input => {
-    		if (input.type !== 'file') input.value = (<any>person)[input.name];
+    	modalConfig.inputs.forEach((input: any, i: number) => {
+    		switch(input.type) {
+    			case 'file':
+    				break;
+  				case 'checkbox':
+  					modalConfig.inputs[i]['value'] = !!(<any>person)[input.name];
+  					break;
+    			default:
+    				modalConfig.inputs[i]['value'] = (<any>person)[input.name];
+    				break;
+    		}
     	});
 
     	let hasImage = false;
@@ -178,6 +189,8 @@ export class StaffComponent implements RegistersSubscribers, OnDestroy {
   		    });
   	    }
 	    }
+
+	    this.log.log('Modal config inputs: ', modalConfig.inputs);
 
 	    this.registerSubscriber(
 		    this.modal.open(modalConfig).subscribe((action: ModalAction) => {
