@@ -132,10 +132,3 @@ Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
 
     Route::post('upload/image', 'ImageController@uploadTemp');
 });
-
-
-Route::get('test', function () {
-    $divisions = App\Project::withCount('images')->get()->sum('images_count');
-
-    dd($divisions);
-});
