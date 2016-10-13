@@ -78,6 +78,11 @@ Route::get('projects/{id}', 'ProjectController@get');
 Route::get('img/{model}/{name}', 'ImageController@getPublic');
 
 /**
+ * Other uploads
+ */
+Route::get('uploads/{any}', 'UploadController@get')->where('any', '.*');
+
+/**
  * Settings
  */
 Route::get('settings', 'SettingsController@all');
