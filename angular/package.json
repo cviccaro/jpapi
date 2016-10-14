@@ -30,8 +30,8 @@
     "webdriver-update": "webdriver-manager update"
   },
   "devDependencies": {
-    "@angular/compiler-cli": "^0.6.1",
-    "@angular/platform-server": "^2.0.0",
+    "@angular/compiler-cli": "^2.1.0",
+    "@angular/platform-server": "^2.1.0",
     "@angular/tsc-wrapped": "^0.3.0",
     "@types/async": "^2.0.31",
     "@types/browser-sync": "^0.0.32",
@@ -131,14 +131,14 @@
     "yargs": "^4.8.0"
   },
   "dependencies": {
-    "@angular/common": "^2.0.0",
-    "@angular/compiler": "^2.0.0",
-    "@angular/core": "^2.0.0",
-    "@angular/forms": "^2.0.0",
-    "@angular/http": "^2.0.0",
-    "@angular/platform-browser": "^2.0.0",
-    "@angular/platform-browser-dynamic": "^2.0.0",
-    "@angular/router": "^3.0.0",
+    "@angular/common": "^2.1.0",
+    "@angular/compiler": "^2.1.0",
+    "@angular/core": "^2.1.0",
+    "@angular/forms": "^2.1.0",
+    "@angular/http": "^2.1.0",
+    "@angular/platform-browser": "^2.1.0",
+    "@angular/platform-browser-dynamic": "^2.1.0",
+    "@angular/router": "^3.1.0",
     "@angular/material": "^2.0.0-alpha.9-3",
     "angular2-jwt": "^0.1.19",
     "angular2-moment": "1.0.0-beta.1",
@@ -155,6 +155,6 @@
     "rxjs": "5.0.0-beta.12",
     "sass-material-colors": "0.0.5",
     "systemjs": "0.19.38",
-    "zone.js": "0.6.23"
+    "zone.js": "0.6.25"
   }
 }

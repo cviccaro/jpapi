@@ -65,3 +65,6 @@ composer.lock
 src/bower_components
 resources/assets/images
 angular/node_modules
+resources/views/angular.blade.php
+storage/debugbar
+storage/temp
