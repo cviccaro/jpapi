@@ -14,6 +14,7 @@ class VerifyCsrfToken extends BaseVerifier
     protected $except = [
         'upload/image',
         'project/update/*',
-        'contact-form-submit'
+        'contact-form-submit',
+        'recaptcha/validate'
     ];
 }

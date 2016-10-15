@@ -99,6 +99,7 @@ Route::get('options/staff', 'StaffController@options');
  * Contact Form
  */
 Route::post('contact-form-submit', 'SubmissionController@submit');
+Route::post('recaptcha/validate', 'SubmissionController@validateRecaptcha');
 
 /**
  * Authorization API Routes

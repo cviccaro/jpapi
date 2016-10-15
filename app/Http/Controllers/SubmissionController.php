@@ -26,4 +26,33 @@ class SubmissionController extends Controller
 
     	return response(['success' => $saved]);
     }
+
+    public function validateRecaptcha(Request $request)
+    {
+        if ($request->has('response')) {
+            $captchaResponse = $request->input('response');
+
+            $client = new \GuzzleHttp\Client();
+
+            $form = [
+                'response' => $captchaResponse,
+                'secret' => env('RECAPTCHA_SECRET_KEY'),
+                'remoteip' => $_SERVER['REMOTE_ADDR']
+            ];
+
+            \Log::info('ReCAPTCHA # Requesting Google validate this user response' . print_r($form, true));
+
+            $res = $client->request('POST', 'https://www.google.com/recaptcha/api/siteverify', ['form_params' => $form]);
+
+            \Log::info('ReCAPTCHA # Response from Google\'s validation of user response : ' . $res->getBody());
+
+            if (app()->environment() == 'local') {
+                \Debugbar::disable();
+            }
+
+            return response($res->getBody(), $res->getStatusCode());
+        }
+
+        return response('No response to validate in request', 400);
+    }
 }
