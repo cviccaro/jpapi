@@ -1,6 +1,6 @@
 <IfModule mod_headers.c>
     Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Headers "X-XSRF-TOKEN"
+    Header set Access-Control-Allow-Headers "Content-Type, X-XSRF-TOKEN"
 </IfModule>
 
 <IfModule mod_rewrite.c>
