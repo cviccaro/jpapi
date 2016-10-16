@@ -53,6 +53,6 @@ class SubmissionController extends Controller
             return response($res->getBody(), $res->getStatusCode());
         }
 
-        return response('No response to validate in request', 400);
+        return response(['success' => FALSE]);
     }
 }
