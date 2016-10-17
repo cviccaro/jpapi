@@ -25,6 +25,8 @@ class ImageController extends Controller {
 
 	    $response = \Response::make($file, 200);
 	    $response->header('Content-Type', $type);
+	    $response->setExpires(new \DateTime("tomorrow"));
+	    $response->header('Cache-Control', 'public, max-age=10800, pre-check=10800');
 
 	    return $response;
 	}
