@@ -17,7 +17,10 @@ trait RESTActions
 
     protected function respond($status, $data = [])
     {
-        return response()->json($data, $this->statusCodes[$status]);
+        return response()
+                ->json($data, $this->statusCodes[$status])
+                ->setExpires(new \DateTime("tomorrow"))
+                ->header('Cache-Control', 'public, max-age=10800, pre-check=10800');
     }
 
 
