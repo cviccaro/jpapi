@@ -1,6 +1,6 @@
 <html>
 	<head>
-		<link href="/assets/css/bootstrap.min.css" type="text/css" rel="stylesheet" />
+		<link href="<?php print url('assets/css/bootstrap.min.css'); ?>" type="text/css" rel="stylesheet" />
 		<style type="text/css">
 			header {
 				margin-bottom: 24px;
@@ -25,10 +25,10 @@
 	<body>
 		<header class="container">
 			<div class="row">
-				<div class="logo col-md-4">
-					<img src="/assets/images/logo.png" title="JP Enterprises" />
+				<div class="logo col-md-2">
+					<img src="<?php print url('/assets/images/logo.png'); ?>" title="JP Enterprises" />
 				</div>
-				<h2 class="col-md-8">Contact Form Submission</h2>
+				<h2 class="col-md-10">Contact Form Submission</h2>
 			</div>
 		</header>
 		<div class="container content">
