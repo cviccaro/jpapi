@@ -1,3 +1,4 @@
+/* tslint:disable:triple-equals */
 import { PanelFormControl, PanelFormControlConfig, PanelFormControlSummary } from './control';
 
 export interface SelectConfig extends PanelFormControlConfig {

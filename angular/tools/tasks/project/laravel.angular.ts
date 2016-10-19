@@ -38,6 +38,11 @@ function copyHtAccess() {
     .pipe(gulp.dest('../public'));
 }
 
+function copyCssAssets() {
+  return gulp.src(join(Config.APP_SRC, 'assets', 'css', '*'))
+    .pipe(gulp.dest('../public/assets/css'));
+}
+
 /**
  * Copy built files and rename and move
  * index.html to views folder
@@ -56,7 +61,7 @@ function copyBuiltFiles() {
 }
 
 //let stream = Config.ENV === 'prod' ?
-  let stream = merge(copyBuiltFiles(), copyHtAccess());
+  let stream = merge(copyBuiltFiles(), copyCssAssets(), copyHtAccess());
   //: merge(copyNodeModulesTemp(), copyNodeModules(), copyBuiltFiles(), copyHtAccess());
 
 export = () => stream;

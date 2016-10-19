@@ -23,7 +23,7 @@ export class ProjectConfig extends SeedConfig {
             ...this.NPM_DEPENDENCIES,
             { src: 'angular2-toaster/lib/toaster.css', inject: true },
             { src: '@angular/material/core/overlay/overlay.css', inject: true, vendor: false },
-            {src: 'hammerjs/hammer.min.js', inject: 'libs'},
+            // {src: 'hammerjs/hammer.min.js', inject: 'libs'},
             // {src: 'lodash/lodash.min.js', inject: 'libs'},
         ];
 
@@ -45,7 +45,7 @@ export class ProjectConfig extends SeedConfig {
 
         this.PROD_DEST = `public`;
 
-        this.SYSTEM_CONFIG_DEV.packageConfigPaths.push('/node_modules/@angular/material/*/package.json');
+        //this.SYSTEM_CONFIG_DEV.packageConfigPaths.push('/node_modules/@angular/material/*/package.json');
         this.SYSTEM_BUILDER_CONFIG.packageConfigPaths.push(
           join(this.PROJECT_ROOT, 'node_modules', '@angular', 'material', '*', 'package.json')
         );
@@ -71,7 +71,7 @@ export class ProjectConfig extends SeedConfig {
         };
 
         this.SYSTEM_BUILDER_CONFIG.packages['ng2-ckeditor'] = {
-            main: 'lib/CKEditor.js',
+            main: 'lib/index.js',
             defaultExtension: 'js'
         };
 
