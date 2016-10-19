@@ -66,7 +66,7 @@ export class ProjectConfig extends SeedConfig {
         };
 
         this.SYSTEM_BUILDER_CONFIG.packages['ng2-dnd'] = {
-            main: 'lib/index.js',
+            main: 'index.js',
             defaultExtension: 'js'
         };
 
