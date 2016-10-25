@@ -26,4 +26,11 @@ class UploadController extends Controller
 
         abort(404);
     }
+
+    public function browse(Request $request)
+    {
+        $files = File::files(storage_path('app/public'));
+
+        return view('file-upload.browse', ['files' => $files]);
+    }
 }

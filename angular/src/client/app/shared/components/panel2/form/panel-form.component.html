@@ -55,6 +55,7 @@
                             <ckeditor #textarea
                                 [formControlName]="control.name"
                                 debounce="250"
+                                [config]="control.ckeditorConfig"
                                 (change)="handleChange(control, $event)">
                             </ckeditor>
                         </template>

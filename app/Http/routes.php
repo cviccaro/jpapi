@@ -138,3 +138,5 @@ Route::group(['middleware' => ['jwt.auth','jwt.refresh']], function () {
 
     Route::post('upload/image', 'ImageController@uploadTemp');
 });
+
+Route::get('file-upload/browse', 'UploadController@browse');

@@ -21,6 +21,9 @@ export class PanelFormControlTextarea extends PanelFormControl<string> {
 
     this.ckeditor = config.ckeditor || false;
     this.ckeditorConfig = config.ckeditorConfig || {};
+
+    this.ckeditorConfig['filebrowserBrowseUrl'] = '/file-upload/browse';
+    this.ckeditorConfig['filebrowserUploadUrl'] = '/file-upload/upload';
   }
 
   summary(panelExpanded: boolean): PanelFormControlSummary {

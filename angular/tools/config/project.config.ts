@@ -23,7 +23,7 @@ export class ProjectConfig extends SeedConfig {
             ...this.NPM_DEPENDENCIES,
             { src: 'angular2-toaster/lib/toaster.css', inject: true },
             { src: '@angular/material/core/overlay/overlay.css', inject: true, vendor: false },
-            {src: 'hammerjs/hammer.min.js', inject: 'libs'}
+            { src: 'hammerjs/hammer.min.js', inject: 'libs' }
             // {src: 'lodash/lodash.min.js', inject: 'libs'},
         ];
 
@@ -39,7 +39,7 @@ export class ProjectConfig extends SeedConfig {
         this.mergeObject(this.PLUGIN_CONFIGS['gulp-sass'], {
           includePaths: [
             './node_modules/',
-            './../resources/assets/scss/'
+            './../resources/assets/sass/'
           ]
         });
 
@@ -66,7 +66,7 @@ export class ProjectConfig extends SeedConfig {
         };
 
         this.SYSTEM_BUILDER_CONFIG.packages['ng2-dnd'] = {
-            main: 'index.js',
+            main: 'lib/index.js',
             defaultExtension: 'js'
         };
 
@@ -92,5 +92,9 @@ export class ProjectConfig extends SeedConfig {
         }
 
         this.INJECTABLES = this.NPM_DEPENDENCIES.map(dep => dep.src).concat(PACKAGES);
+
+        this.SYSTEM_CONFIG_DEV.packages = this.SYSTEM_BUILDER_CONFIG.packages;
+
+        console.log(this);
     }
 }
