@@ -1,14 +1,17 @@
 <?php namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator as Paginator;
+use Feed;
+use URL;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests;
 use App\Blog;
 use App\Division;
 use App\Image;
 use App\Tag;
 use App\Staff;
-use App\Http\Controllers\Controller;
-use App\Http\Requests;
-use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator as Paginator;
 
 class BlogController extends Controller
 {
@@ -368,5 +371,39 @@ class BlogController extends Controller
         $metadata['update'] = $m::orderBy('updated_at', 'desc')->take(1)->get()->first()->updated_at->getTimestamp();
 
         return $this->respond('done', $metadata);
+    }
+
+    /**
+     * RSS Feed
+     */
+    public function rss(Request $request) {
+        $feed = new Feed();
+
+        // cache the feed for 60 minutes (second parameter is optional)
+        $feed->setCache(60);
+
+        // check if there is cached feed and build new only if is not
+        if (!$feed->isCached()) {
+           // creating rss feed with our most recent 20 posts
+           $posts = Blog::orderBy('created_at', 'desc')->take(20)->get();
+
+           // set your feed's title, description, link, pubdate and language
+           $feed->title = 'JP Enterprises Blogs';
+           $feed->description = 'The latest blogs from JP Enterprises';
+           $feed->logo = 'https://www.jpenterprises.com/favicon-144.png';
+           $feed->link = url($request->url());
+           $feed->setDateFormat('datetime'); // 'datetime', 'timestamp' or 'carbon'
+           $feed->pubdate = $posts[0]->created_at;
+           $feed->lang = 'en';
+           $feed->setShortening(true); // true or false
+           $feed->setTextLimit(100); // maximum length of description text
+
+           foreach ($posts as $post) {
+               // set item's title, author, url, pubdate, description, content, enclosure (optional)*
+               $feed->add($post->title, $post->author->name, URL::to($post->slug), $post->created_at, $post->description, $post->body);
+           }
+        }
+
+        return $feed->render('atom');
     }
 }

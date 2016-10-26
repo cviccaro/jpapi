@@ -10,7 +10,8 @@
         "tymon/jwt-auth": "^0.5.9",
         "barryvdh/laravel-debugbar": "^2.2",
         "doctrine/dbal": "^2.5.4",
-        "guzzlehttp/guzzle": "^6.2"
+        "guzzlehttp/guzzle": "^6.2",
+        "roumen/feed": "^2.10"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

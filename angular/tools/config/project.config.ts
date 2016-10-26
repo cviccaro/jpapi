@@ -94,7 +94,5 @@ export class ProjectConfig extends SeedConfig {
         this.INJECTABLES = this.NPM_DEPENDENCIES.map(dep => dep.src).concat(PACKAGES);
 
         this.SYSTEM_CONFIG_DEV.packages = this.SYSTEM_BUILDER_CONFIG.packages;
-
-        console.log(this);
     }
 }
