@@ -377,15 +377,17 @@ class BlogController extends Controller
      * RSS Feed
      */
     public function rss(Request $request) {
+        $base_url = env('JP_SITE_URL', 'https://www.jpenterprises.com') . '/blogs';
+
         $feed = new Feed();
 
         // cache the feed for 60 minutes (second parameter is optional)
-        $feed->setCache(60);
+        //$feed->setCache(60);
 
         // check if there is cached feed and build new only if is not
         if (!$feed->isCached()) {
            // creating rss feed with our most recent 20 posts
-           $posts = Blog::orderBy('created_at', 'desc')->take(20)->get();
+           $posts = Blog::with('author')->orderBy('created_at', 'desc')->take(20)->get();
 
            // set your feed's title, description, link, pubdate and language
            $feed->title = 'JP Enterprises Blogs';
@@ -400,7 +402,7 @@ class BlogController extends Controller
 
            foreach ($posts as $post) {
                // set item's title, author, url, pubdate, description, content, enclosure (optional)*
-               $feed->add($post->title, $post->author->name, URL::to($post->slug), $post->created_at, $post->description, $post->body);
+               $feed->add($post->title, $post->author->fullName, $base_url . '/' . $post->uri, $post->created_at, $post->description, $post->body);
            }
         }
 
